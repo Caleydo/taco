@@ -1,0 +1,150 @@
+/**
+ * Created by Samuel Gratzl on 15.12.2014.
+ * copied by Reem Hourieh on 13.5.2015.
+ */
+body, html {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fac7e8; }
+
+h1 {
+  background-image: url(assets/icons/icon.svg);
+  background-position: left center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  padding-left: 1.1em; }
+
+#sidebar {
+  display: inline-block;
+  width: 12%;
+  height: 100%;
+  vertical-align: top; }
+  #sidebar .selectioninfo .no-selection {
+    display: none; }
+  #sidebar #toolbar i {
+    background-size: 100%;
+    margin: 0 0.1em; }
+
+#content {
+  display: inline-block;
+  width: 87.5%;
+  height: 100%; }
+
+*[draggable] {
+  cursor: move; }
+
+svg {
+  vector-effect: non-scaling-stroke;
+  shape-rendering: geometricPrecision; }
+
+#board {
+  width: 100%;
+  height: 69%;
+  position: relative;
+  background-color: white; }
+  #board.mode-block {
+    border: 1px solid #2e6da4; }
+  #board.mode-select {
+    border: 1px solid #4cae4c; }
+  #board.mode-band {
+    border: 1px solid #d58512; }
+  #board .block {
+    position: absolute;
+    width: auto;
+    height: auto; }
+    #board .block.select-selected {
+      border: 1px solid orange;
+      background: none; }
+    #board .block.select-hovered {
+      border: 1px solid #ffc46b;
+      background: none; }
+    #board .block .mode-block {
+      pointer-events: none; }
+    #board .block.ui-state-disabled {
+      opacity: 1; }
+  #board .selection-clearer {
+    width: 100%;
+    height: 100%;
+    position: absolute; }
+  #board .link-container svg {
+    position: absolute; }
+    #board .link-container svg path.rel-back {
+      stroke: none;
+      fill: white;
+      opacity: 0; }
+    #board .link-container svg path.rel-item {
+      pointer-events: none;
+      stroke: black;
+      stroke-width: 1;
+      stroke-opacity: 0.9; }
+      #board .link-container svg path.rel-item.select-selected {
+        stroke: orange; }
+      #board .link-container svg path.rel-item.select-hovered {
+        stroke: #ffc46b; }
+    #board .link-container svg path.rel-group, #board .link-container svg path.rel-block {
+      pointer-events: none;
+      stroke: black;
+      stroke-width: 1;
+      stroke-opacity: 0.9;
+      fill: black;
+      opacity: 0.2; }
+      #board .link-container svg path.rel-group.select-selected, #board .link-container svg path.rel-block.select-selected {
+        fill: orange; }
+      #board .link-container svg path.rel-group.select-hovered, #board .link-container svg path.rel-block.select-hovered {
+        fill: #ffc46b; }
+  #board .placeholder {
+    z-index: 100;
+    position: absolute;
+    border-radius: 10px;
+    background-color: #e2e2e2;
+    font-size: 300%;
+    text-align: center;
+    border: 2px outset gray;
+    padding: 0.1em;
+    width: auto;
+    min-width: 1em;
+    height: auto;
+    min-height: 3em; }
+    #board .placeholder > div {
+      position: absolute;
+      width: 100%;
+      height: 100%; }
+    #board .placeholder .over {
+      border-color: black; }
+    #board .placeholder i {
+      display: block;
+      background-size: 100%;
+      background-position: center;
+      background-color: #d6d6d6;
+      padding: 0 0.1em;
+      border-radius: 10px;
+      border: 2px outset gray; }
+
+#blockbrowser {
+  width: 100%;
+  height: 30%;
+  display: block;
+  overflow: auto; }
+  #blockbrowser table {
+    width: 100%;
+    /*tbody {
+      width: 100%;
+      height: 100%;
+      display: table-row-group;
+      overflow: auto;
+    }*/ }
+    #blockbrowser table button {
+      padding-top: 0;
+      padding-bottom: 0; }
+
+.select-selected {
+  border: 1px solid orange;
+  background-color: orange; }
+
+svg .select-selected {
+  stroke: orange;
+  stroke-width: 1px;
+  fill: orange;
+  vector-effect: non-scaling-stroke; }

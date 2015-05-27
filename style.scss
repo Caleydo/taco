@@ -1,0 +1,224 @@
+/**
+ * Created by Samuel Gratzl on 15.12.2014.
+ * copied by Reem Hourieh on 13.5.2015.
+ */
+
+body, html {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+
+  background-color: #fac7e8;
+}
+
+h1 {
+  background-image: url(assets/icons/icon.svg);
+  background-position: left center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  padding-left: 1.1em;
+}
+
+#sidebar {
+  display: inline-block;
+  width: 12%;
+  height: 100%;
+  vertical-align: top;
+
+  .selectioninfo {
+    .no-selection {
+      display: none;
+    }
+  }
+
+  #toolbar {
+    i {
+      background-size: 100%;
+      margin: 0 0.1em;
+    }
+
+    .btn-group {
+      //display: block;
+    }
+  }
+}
+
+$select-color: orange;
+$hover-color: #ffc46b;
+
+#content {
+  display: inline-block;
+  width: 87.5%;
+  height: 100%;
+}
+
+*[draggable] {
+  cursor: move;
+}
+
+svg {
+  vector-effect : non-scaling-stroke;
+  shape-rendering: geometricPrecision;
+}
+
+#board {
+  width: 100%;
+  height: 69%;
+  position: relative;
+  background-color: white;
+
+  &.mode-block {
+    border: 1px solid #2e6da4;
+  }
+  &.mode-select {
+    border: 1px solid #4cae4c;
+  }
+  &.mode-band {
+    border: 1px solid #d58512;
+  }
+
+  .block {
+    position: absolute;
+    width: auto;
+    height: auto;
+
+    &.select-selected {
+      border: 1px solid $select-color;
+      background: none;
+    }
+    &.select-hovered {
+      border: 1px solid $hover-color;
+      background: none;
+    }
+
+    .mode-block {
+      pointer-events: none;
+    }
+
+    &.ui-state-disabled {
+      opacity: 1;
+    }
+  }
+
+  .selection-clearer {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+
+  .link-container {
+    svg {
+      position: absolute;
+
+      path.rel-back {
+        stroke: none;
+        fill: white;
+        opacity: 0;
+      }
+      path.rel-item {
+        pointer-events: none;
+        stroke: black;
+        stroke-width: 1;
+        stroke-opacity: 0.9;
+
+        &.select-selected {
+          stroke: $select-color;
+        }
+        &.select-hovered {
+          stroke: $hover-color;
+        }
+      }
+      path.rel-group, path.rel-block {
+        pointer-events: none;
+        stroke: black;
+        stroke-width: 1;
+        stroke-opacity: 0.9;
+        fill: black;
+        opacity: 0.2;
+
+        &.select-selected {
+          fill: $select-color;
+        }
+        &.select-hovered {
+          fill: $hover-color;
+        }
+      }
+
+    }
+  }
+
+  .placeholder {
+    z-index: 100;
+    position: absolute;
+    border-radius: 10px;
+    background-color: #e2e2e2;
+
+    font-size: 300%;
+    text-align: center;
+
+    border: 2px outset gray;
+    padding: 0.1em;
+
+    width: auto;
+    min-width: 1em;
+    height: auto;
+    min-height: 3em;
+
+    > div {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .over {
+      border-color: black;
+    }
+
+    i {
+      display: block;
+      background-size: 100%;
+      background-position: center;
+      background-color: #d6d6d6;
+      padding: 0 0.1em;
+      border-radius: 10px;
+      border: 2px outset gray;
+    }
+  }
+}
+
+#blockbrowser {
+  width: 100%;
+  height: 30%;
+  display: block;
+  overflow: auto;
+
+  table {
+    width: 100%;
+
+    button {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    /*tbody {
+      width: 100%;
+      height: 100%;
+      display: table-row-group;
+      overflow: auto;
+    }*/
+  }
+}
+
+.select-selected {
+  //html variant
+  border: 1px solid $select-color;
+  background-color: $select-color;
+}
+
+svg .select-selected {
+  //svg variant
+  stroke: $select-color;
+  stroke-width: 1px;
+  fill: $select-color;
+  vector-effect: non-scaling-stroke;
+}
