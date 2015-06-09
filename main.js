@@ -4,7 +4,7 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-define(['../caleydo/data', 'd3', 'jquery', '../caleydo/event', '../caleydo-selectioninfo/main', '../caleydo/idtype', 'bootstrap', 'font-awesome'], function (data, d3, $, events, idtypes, links) {
+require(['../caleydo/data', 'd3', 'jquery', '../caleydo/event', '../caleydo-selectioninfo/main', '../caleydo/idtype', 'bootstrap', 'font-awesome'], function (data, d3, $, events, idtypes, links) {
   'use strict';
   //var info = selectionInfo.create(document.getElementById('selectioninfo'));
   //var board = boards.create(document.getElementById('board'));
@@ -18,7 +18,7 @@ define(['../caleydo/data', 'd3', 'jquery', '../caleydo/event', '../caleydo-selec
 
   data.list().then(function (items) {
     items = items.filter(function (d) {
-      return d.desc.type !== 'matrix';
+      return d.desc.type === 'matrix';
     });
     var $base = d3.select('#blockbrowser table tbody');
     var $rows = $base.selectAll('tr').data(items);
