@@ -27,7 +27,11 @@
     "name": "Taco small input",
     "path": "small_table_in.csv",
     "type": "matrix",
+<<<<<<< HEAD
     "size": [12, 10],
+=======
+    "size": [13, 10],
+>>>>>>> origin/master
     "rowtype": "patient",
     "coltype": "gene",
     "value": {
@@ -39,7 +43,11 @@
     "name": "Taco small output",
     "path": "small_table_out.csv",
     "type": "matrix",
+<<<<<<< HEAD
     "size": [14, 12],
+=======
+    "size": [15, 12],
+>>>>>>> origin/master
     "rowtype": "patient",
     "coltype": "gene",
     "value": {
@@ -51,7 +59,7 @@
     "name": "Taco medium input",
     "path": "med_table_in.csv",
     "type": "matrix",
-    "size": [50, 100],
+    "size": [51, 100],
     "rowtype": "patient",
     "coltype": "gene",
     "value": {
@@ -63,7 +71,7 @@
     "name": "Taco medium output",
     "path": "med_table_out.csv",
     "type": "matrix",
-    "size": [60, 110],
+    "size": [110, 60],
     "rowtype": "patient",
     "coltype": "gene",
     "value": {
@@ -75,7 +83,7 @@
     "name": "Taco big input",
     "path": "taco_big_table_in.csv",
     "type": "matrix",
-    "size": [1000, 1200],
+    "size": [1200, 1000],
     "rowtype": "patient",
     "coltype": "gene",
     "value": {
@@ -87,7 +95,7 @@
     "name": "Taco big output",
     "path": "taco_big_table_out.csv",
     "type": "matrix",
-    "size": [1010, 1210],
+    "size": [1210, 1010],
     "rowtype": "patient",
     "coltype": "gene",
     "value": {
