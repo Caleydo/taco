@@ -27,11 +27,8 @@
     "name": "Taco small input",
     "path": "small_table_in.csv",
     "type": "matrix",
-<<<<<<< HEAD
     "size": [12, 10],
-=======
     "size": [13, 10],
->>>>>>> origin/master
     "rowtype": "patient",
     "coltype": "gene",
     "value": {
@@ -43,11 +40,8 @@
     "name": "Taco small output",
     "path": "small_table_out.csv",
     "type": "matrix",
-<<<<<<< HEAD
     "size": [14, 12],
-=======
     "size": [15, 12],
->>>>>>> origin/master
     "rowtype": "patient",
     "coltype": "gene",
     "value": {
