@@ -3,7 +3,7 @@
     "name": "Taco tiny input",
     "path": "tiny_table_in.csv",
     "type": "matrix",
-    "size": [10, 4],
+    "size": [9, 4],
     "rowtype": "patient",
     "coltype": "gene",
     "value": {
@@ -15,7 +15,7 @@
     "name": "Taco tiny output",
     "path": "tiny_table_out.csv",
     "type": "matrix",
-    "size": [12, 4],
+    "size": [11, 3],
     "rowtype": "patient",
     "coltype": "gene",
     "value": {
