@@ -1,22 +1,8 @@
 /**
  * Created by Reem on 6/15/2015.
  */
-define(["require", "exports", 'd3'],
-  function (require, exports, d3) {
-
-
-    var h_data = [
-      {score: 1.5, row: 0, col: 0},
-      {score: 0.7, row: 0, col: 1},
-      {score: -1.2, row: 1, col: 0},
-      {score: 0.0, row: 1, col: 1},
-      {score: 0.1, row: 2, col: 0},
-      {score: 0.4, row: 2, col: 1},
-      {score: 2.0, row: 0, col: 2},
-      {score: -1.8, row: 1, col: 2},
-      {score: 0.6, row: 2, col: 2}
-    ];
-    
+define(["require", "exports", 'd3', 'underscore'],
+  function (require, exports, d3, _) {
 
     var DiffHeatmap = (function () {
       function DiffHeatmap(data) {
@@ -50,22 +36,37 @@ define(["require", "exports", 'd3'],
       .domain([-2, -1, 0, 1, 2])
       .range([colorDeleted, colorLow, colorMed, colorHigh, colorAdded]);
 
-    var svg = d3.select("#board")
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var drawDiffHeatmap = function(){
 
+      var svg = d3.select("#board")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    exports.heatMap = svg.selectAll(".board")
-      .data(h_data, function (d) {return d.col + ':' + d.row;})
-      .enter()
-      .append("svg:rect")
-      .attr("x", function (d) {return d.row * w;})
-      .attr("y", function (d) {return d.col * h;})
-      .attr("width", function (d) {return w;})
-      .attr("height", function (d) {return h;})
-      .style("fill", function (d) {return colorScale(d.score);});
+      var heatMap = svg.selectAll(".board")
+        .data(this.h_data, function (d) {return d.col + ':' + d.row;})
+        .enter()
+        .append("svg:rect")
+        .attr("x", function (d) {return d.row * w;})
+        .attr("y", function (d) {return d.col * h;})
+        .attr("width", function (d) {return w;})
+        .attr("height", function (d) {return h;})
+        .style("fill", function (d) {return colorScale(d.score);})
+        .style("stroke","rgb(0,0,0)");
+    };
+    exports.drawDiffHeatmap = drawDiffHeatmap;
+
+    var createDiffMatrix = function(ids1, ids2, dim1, dim2, diff_arrays){
+
+      var k1 = [1,2,4],
+        k2 = [2,3,4];
+
+      var idk = _.union(k1,k2);
+      console.log(idk);
+
+    };
+    exports.createDiffMatrix = createDiffMatrix;
 
   });
