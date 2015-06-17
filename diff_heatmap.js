@@ -14,7 +14,6 @@ define(["require", "exports", 'd3', 'underscore'],
       //if we want to have a function here
       //ok i think i need a getter here
 
-
       return DiffHeatmap;
       })();
     exports.DiffHeatmap = DiffHeatmap;
@@ -49,8 +48,8 @@ define(["require", "exports", 'd3', 'underscore'],
         .data(this.h_data, function (d) {return d.col + ':' + d.row;})
         .enter()
         .append("svg:rect")
-        .attr("x", function (d) {return d.row * w;})
-        .attr("y", function (d) {return d.col * h;})
+        .attr("x", function (d) {return d.col * w;})
+        .attr("y", function (d) {return d.row * h;})
         .attr("width", function (d) {return w;})
         .attr("height", function (d) {return h;})
         .style("fill", function (d) {return colorScale(d.score);})
@@ -58,14 +57,101 @@ define(["require", "exports", 'd3', 'underscore'],
     };
     exports.drawDiffHeatmap = drawDiffHeatmap;
 
-    var createDiffMatrix = function(ids1, ids2, dim1, dim2, diff_arrays){
+    var createDiffMatrix = function(rows1, rows2, cols1, cols2, diff_arrays){
 
-      var k1 = [1,2,4],
-        k2 = [2,3,4];
+      var row_ids = _.union(rows1, rows2);
+      console.log("uni", row_ids);
+      var col_ids = _.union(cols1, cols2);
+      console.log("uni cols", col_ids);
 
-      var idk = _.union(k1,k2);
-      console.log(idk);
+      console.log("diff arrays ", diff_arrays);
+      //todo: are the ids always a number? how to merge then?
+      var default_value = 0;
+      var delimiter = ':';
 
+      function makeArray(row_ids, col_ids, val) {
+        var list = d3.map();
+
+        row_ids.forEach(function(row_e, row_index, row_array){
+          col_ids.forEach(function(col_e, col_index, col_array){
+            //todo: this will draw later based on int ids
+            list.set(row_e+delimiter+col_e, {score: val, row:row_e, col:col_e});
+          });
+        });
+        return list;
+        }
+
+
+      function diffById(diffm, row, col) {
+        return diffm.get(row+delimiter+col);
+      }
+
+      var diff_matrix = makeArray( row_ids, col_ids, default_value);
+
+      //console.log('access diff matrix', diffById(diff_matrix, 1,0));
+
+      /*
+      function makeArray(w, h, val) {
+        var arr = [];
+        for(i = 0; i < h; i++) {
+          arr[i] = [];
+          for(j = 0; j < w; j++) {
+            arr[i][j] = val;
+          }
+        }
+        return arr;
+      }
+      */
+/*
+      function makeArray(w, h, val) {
+        var arr = [];
+        for(i = 0; i < h; i++) {
+          //arr[i] = [];
+
+          for(j = 0; j < w; j++) {
+            //arr[i][j] = val;
+            arr.push({score: val, row: i, col:j});
+          }
+        }
+        return arr;
+      }*/
+
+      //todo: change the parse int
+      diff_arrays.added_rows.forEach(function(e, i, arr){
+        if (row_ids.indexOf(parseInt(e)) != -1) {
+          console.log("found an added row", parseInt(e));
+          col_ids.forEach(function(col, j, cols){
+            diffById(diff_matrix, parseInt(e),parseInt(col)).score = 2;
+          });
+        }
+      });
+      diff_arrays.deleted_rows.forEach(function(e, i, arr){
+        if (row_ids.indexOf(parseInt(e)) != -1) {
+          console.log("found a deleted row", parseInt(e));
+          col_ids.forEach(function(col, j, cols){
+            diffById(diff_matrix, parseInt(e),parseInt(col)).score = -2;
+          });
+        }
+      });
+      diff_arrays.added_cols.forEach(function(e, i, arr){
+        if (col_ids.indexOf(parseInt(e)) != -1) {
+          console.log("found an added cols", parseInt(e));
+          row_ids.forEach(function(row, j, rows){
+            diffById(diff_matrix, parseInt(row), parseInt(e)).score = 2;
+          });
+        }
+      });
+      diff_arrays.deleted_cols.forEach(function(e, i, arr){
+        if (col_ids.indexOf(parseInt(e)) != -1) {
+          console.log("found a deleted cols", parseInt(e));
+          row_ids.forEach(function(row, j, rows){
+            diffById(diff_matrix,parseInt(row), parseInt(e)).score = -2;
+          });
+        }
+      });
+
+      console.log("diff matrix", diff_matrix);
+      return diff_matrix.values();
     };
     exports.createDiffMatrix = createDiffMatrix;
 
