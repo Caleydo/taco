@@ -25,17 +25,18 @@ var gridSize = 16,
   w = gridSize,
   rectPadding = 60;
 
-var colorLow = 'green', colorMed = 'yellow', colorHigh = 'red';
+var colorDeleted = 'red', colorLow = 'yellow', colorMed = 'white', colorHigh = 'blue', colorAdded = 'green';
 
 var margin = {top: 20, right: 80, bottom: 30, left: 50},
   width = 640 - margin.left - margin.right,
   height = 380 - margin.top - margin.bottom;
 
 var colorScale = d3.scale.linear()
-  .domain([-1, 0, 1])
-  .range([colorLow, colorMed, colorHigh]);
+  .domain([-2, -1, 0, 1, 2])
+  .range([colorDeleted, colorLow, colorMed, colorHigh, colorAdded]);
 
-var svg = d3.select("#board").append("svg")
+var svg = d3.select("#board")
+  .append("svg")
   .attr("width", width + margin.left + margin.right)
   .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -43,7 +44,8 @@ var svg = d3.select("#board").append("svg")
 
 var heatMap = svg.selectAll(".board")
   .data(h_data, function(d) { return d.col + ':' + d.row; })
-  .enter().append("svg:rect")
+  .enter()
+  .append("svg:rect")
   .attr("x", function(d) { return d.row * w; })
   .attr("y", function(d) { return d.col * h; })
   .attr("width", function(d) { return w; })

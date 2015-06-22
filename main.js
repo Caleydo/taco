@@ -4,10 +4,26 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo/data', 'd3', 'jquery', '../caleydo/event', '../caleydo-selectioninfo/main', '../caleydo/idtype', 'bootstrap', 'font-awesome'], function (data, d3, $, events, idtypes, links) {
+require(['../caleydo/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap', 'bootstrap', 'font-awesome'],
+  function (data, d3, $, difflog_parser, heatmap) {
   'use strict';
-  //var info = selectionInfo.create(document.getElementById('selectioninfo'));
-  //var board = boards.create(document.getElementById('board'));
+  var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
+
+    var diff_arrays = difflog_parser.Diff;
+    //console.log(heatmap);
+
+    //heatmap.DiffHeatmap(h_data);
+    //heatmap.drawDiffHeatmap();
+
+    var rows1= [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      rows2= [12, 1, 2, 3, 4, 5, 10, 6, 7, 8, 11],
+      cols1 = [0, 1, 2, 3, 4],
+      cols2 = [0, 3, 4],
+      dim1 = [9,4], dim2 = [11,3];
+    var h_data = heatmap.createDiffMatrix(rows1, rows2, cols1, cols2, diff_arrays);
+
+    heatmap.DiffHeatmap(h_data);
+    heatmap.drawDiffHeatmap();
 
   function toType(desc) {
     if (desc.type === 'vector') {
@@ -16,6 +32,19 @@ require(['../caleydo/data', 'd3', 'jquery', '../caleydo/event', '../caleydo-sele
     return desc.type;
   }
 
+  //from caleydo demo app
+  function addIt(selectedDataset) {
+    console.log("selected dataset size", selectedDataset.dim);
+
+    //selectedDataset.rows for ids
+    selectedDataset.rows().then(function(data){ console.log("what we got from rows", data)});
+    selectedDataset.cols().then(function(data){ console.log("what we got from cols", data)});
+    //data.get with the id to access a specific dataset
+
+    selectedDataset.data().then(function(data) {
+      console.log(data);
+    })
+  }
   data.list().then(function (items) {
     items = items.filter(function (d) {
       return d.desc.type === 'matrix';
@@ -24,18 +53,13 @@ require(['../caleydo/data', 'd3', 'jquery', '../caleydo/event', '../caleydo-sele
     var $rows = $base.selectAll('tr').data(items);
     $rows.enter().append('tr').html(function (d) {
       return '<th>' + d.desc.name + '</th><td>' + toType(d.desc) + '</td><td>' +
-        d.idtypes.map(function (d) { return d.name; }).join(', ') + '</td><td>' + d.dim.join(' x ') + '</td>';
-    }).attr('draggable', true)
-      .on('dragstart', function (d) {
-        var e = d3.event;
-        e.dataTransfer.effectAllowed = 'copy'; //none, copy, copyLink, copyMove, link, linkMove, move, all
-        e.dataTransfer.setData('text/plain', d.desc.name);
-        e.dataTransfer.setData('application/json', JSON.stringify(d.desc));
-        var p = JSON.stringify(d.persist());
-        e.dataTransfer.setData('application/caleydo-data-item', p);
-        //encode the id in the mime type
-        e.dataTransfer.setData('application/caleydo-data-item-' + p, p);
-        //board.currentlyDragged = d;
-      });
+        d.idtypes.map(function (d) {
+          return d.name;
+        }).join(', ') + '</td><td>' + d.dim.join(' x ') + '</td>';
+    }).on('click',function(d){
+      addIt(d);
+      var ev = d3.event;
+    });
   });
+
 });
