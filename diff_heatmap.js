@@ -4,18 +4,15 @@
 define(["require", "exports", 'd3', 'underscore'],
   function (require, exports, d3, _) {
 
-    var DiffHeatmap = (function () {
-      function DiffHeatmap(data) {
-        this.h_data = data;
-      //}
-      //DiffHeatmap.prototype.get_data = function () {
-      //  return this.h_data;
-      };
-      //if we want to have a function here
-      //ok i think i need a getter here
+    function DiffHeatmap(data) {
+      this.h_data = data;
+    }
+    DiffHeatmap.prototype.get_data = function () {
+      return this.h_data;
+    };
+    //if we want to have a function here
+    //ok i think i need a getter here
 
-      return DiffHeatmap;
-      })();
     exports.DiffHeatmap = DiffHeatmap;
 
     //height of each row in the heatmap

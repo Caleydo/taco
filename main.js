@@ -22,7 +22,8 @@ require(['../caleydo/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap'
       dim1 = [9,4], dim2 = [11,3];
     var h_data = heatmap.createDiffMatrix(rows1, rows2, cols1, cols2, diff_arrays);
 
-    heatmap.DiffHeatmap(h_data);
+    var h = new heatmap.DiffHeatmap(h_data);
+    h.get_data();
     heatmap.drawDiffHeatmap();
 
   function toType(desc) {
