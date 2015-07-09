@@ -13,11 +13,7 @@ body, html {
 }
 
 h1 {
-  background-image: url(assets/icons/icon.svg);
-  background-position: left center;
-  background-size: contain;
-  background-repeat: no-repeat;
-  padding-left: 1.1em;
+
 }
 
 #sidebar {
@@ -25,12 +21,6 @@ h1 {
   width: 12%;
   height: 100%;
   vertical-align: top;
-
-  .selectioninfo {
-    .no-selection {
-      display: none;
-    }
-  }
 
   #toolbar {
     i {
