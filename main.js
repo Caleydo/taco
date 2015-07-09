@@ -4,7 +4,7 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap', 'bootstrap', 'font-awesome'],
+require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap', 'bootstrap', 'font-awesome'],
   function (data, d3, $, difflog_parser, heatmap) {
   'use strict';
   var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];

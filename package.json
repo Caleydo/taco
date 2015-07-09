@@ -1,25 +1,33 @@
 {
   "name": "taco-vis",
   "version": "0.0.1",
-  "dependencies": {
-    "d3": "~3.5.5",
-    "bootstrap" : "~3.3.1"
-  },"caleydo" : {
-  "plugins": [
-    {
-      "type": "vis",
-      "id": "taco-vis",
-      "name": "Taco",
-      "filter": "idk"
-    }
-  ],
-  "requirejs-config": {
-    "paths": {
-      "bootstrap": "${baseUrl}/bootstrap/dist/js/bootstrap"
+  "peerDependencies": {
+  },
+  "caleydo": {
+    "plugins": {
+      "web": [
+        {
+          "type": "vis",
+          "id": "taco-vis",
+          "name": "Taco",
+          "filter": "idk"
+        },
+        {
+          "type": "app",
+          "id": "taco",
+          "name": "Taco"
+        }
+      ]
     },
-    "shim": {
-      "bootstrap": ["css!${baseUrl}/bootstrap/dist/css/bootstrap"]
+    "requirejs-config": {
+      "paths": {
+        "bootstrap": "${baseUrl}/bootstrap/dist/js/bootstrap"
+      },
+      "shim": {
+        "bootstrap": [
+          "css!${baseUrl}/bootstrap/dist/css/bootstrap"
+        ]
+      }
     }
   }
-}
 }
