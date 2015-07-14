@@ -5,26 +5,22 @@
  */
 
 require(['../caleydo/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap', 'bootstrap', 'font-awesome'],
-  function (data, d3, $, difflog_parser, heatmap) {
+  function (data, d3, $, difflog_parser, dHeatmap) {
   'use strict';
   var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
 
-    var diff_arrays = difflog_parser.Diff;
-    //console.log(heatmap);
-
-    //heatmap.DiffHeatmap(h_data);
-    //heatmap.drawDiffHeatmap();
+    var diff_parser = difflog_parser.create('data/tiny_table.log')
+    var diff_arrays = diff_parser.getDiff();
 
     var rows1= [1, 2, 3, 4, 5, 6, 7, 8, 9],
       rows2= [12, 1, 2, 3, 4, 5, 10, 6, 7, 8, 11],
       cols1 = [0, 1, 2, 3, 4],
-      cols2 = [0, 3, 4],
-      dim1 = [9,4], dim2 = [11,3];
-    var h_data = heatmap.createDiffMatrix(rows1, rows2, cols1, cols2, diff_arrays);
+      cols2 = [0, 3, 4];
+    var h_data = dHeatmap.createDiffMatrix(rows1, rows2, cols1, cols2, diff_arrays);
 
-    var h = new heatmap.DiffHeatmap(h_data);
-    h.get_data();
-    heatmap.drawDiffHeatmap();
+    var h = new dHeatmap.create(h_data);
+
+    h.drawDiffHeatmap();
 
   function toType(desc) {
     if (desc.type === 'vector') {

@@ -11,9 +11,10 @@ define(["require", "exports", 'd3', 'underscore'],
       return this.h_data;
     };
     //if we want to have a function here
-    //ok i think i need a getter here
 
-    exports.DiffHeatmap = DiffHeatmap;
+    exports.create = function(data){
+      return new DiffHeatmap(data)
+    };
 
     //height of each row in the heatmap
     //width of each column in the heatmap
@@ -32,7 +33,7 @@ define(["require", "exports", 'd3', 'underscore'],
       .domain([-2, -1, 0, 1, 2])
       .range([colorDeleted, colorLow, colorMed, colorHigh, colorAdded]);
 
-    var drawDiffHeatmap = function(){
+    DiffHeatmap.prototype.drawDiffHeatmap = function(){
 
       var svg = d3.select("#board")
         .append("svg")
@@ -52,9 +53,8 @@ define(["require", "exports", 'd3', 'underscore'],
         .style("fill", function (d) {return colorScale(d.score);})
         .style("stroke","rgb(0,0,0)");
     };
-    exports.drawDiffHeatmap = drawDiffHeatmap;
 
-    var createDiffMatrix = function(rows1, rows2, cols1, cols2, diff_arrays){
+    exports.createDiffMatrix = function(rows1, rows2, cols1, cols2, diff_arrays){
 
       var row_ids = _.union(rows1, rows2);
       console.log("uni", row_ids);
@@ -147,9 +147,8 @@ define(["require", "exports", 'd3', 'underscore'],
         }
       });
 
-      console.log("diff matrix", diff_matrix);
+      //console.log("diff matrix", diff_matrix);
       return diff_matrix.values();
     };
-    exports.createDiffMatrix = createDiffMatrix;
 
   });
