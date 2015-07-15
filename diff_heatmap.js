@@ -4,18 +4,6 @@
 define(["require", "exports", 'd3', 'underscore'],
   function (require, exports, d3, _) {
 
-    function DiffHeatmap(data) {
-      this.h_data = data;
-    }
-    DiffHeatmap.prototype.get_data = function () {
-      return this.h_data;
-    };
-    //if we want to have a function here
-
-    exports.create = function(data){
-      return new DiffHeatmap(data)
-    };
-
     //height of each row in the heatmap
     //width of each column in the heatmap
     var gridSize = 16,
@@ -32,6 +20,18 @@ define(["require", "exports", 'd3', 'underscore'],
     var colorScale = d3.scale.linear()
       .domain([-2, -1, 0, 1, 2])
       .range([colorDeleted, colorLow, colorMed, colorHigh, colorAdded]);
+
+    function DiffHeatmap(data) {
+      this.h_data = data;
+    }
+    DiffHeatmap.prototype.get_data = function () {
+      return this.h_data;
+    };
+    //if we want to have a function here
+
+    exports.create = function(data){
+      return new DiffHeatmap(data)
+    };
 
     DiffHeatmap.prototype.drawDiffHeatmap = function(){
 
@@ -87,64 +87,46 @@ define(["require", "exports", 'd3', 'underscore'],
 
       //console.log('access diff matrix', diffById(diff_matrix, 1,0));
 
-      /*
-      function makeArray(w, h, val) {
-        var arr = [];
-        for(i = 0; i < h; i++) {
-          arr[i] = [];
-          for(j = 0; j < w; j++) {
-            arr[i][j] = val;
-          }
-        }
-        return arr;
-      }
-      */
-/*
-      function makeArray(w, h, val) {
-        var arr = [];
-        for(i = 0; i < h; i++) {
-          //arr[i] = [];
-
-          for(j = 0; j < w; j++) {
-            //arr[i][j] = val;
-            arr.push({score: val, row: i, col:j});
-          }
-        }
-        return arr;
-      }*/
-
       //todo: change the parse int
-      diff_arrays.added_rows.forEach(function(e, i, arr){
-        if (row_ids.indexOf(parseInt(e)) != -1) {
-          console.log("found an added row", parseInt(e));
-          col_ids.forEach(function(col, j, cols){
-            diffById(diff_matrix, parseInt(e),parseInt(col)).score = 2;
-          });
-        }
-      });
-      diff_arrays.deleted_rows.forEach(function(e, i, arr){
-        if (row_ids.indexOf(parseInt(e)) != -1) {
-          console.log("found a deleted row", parseInt(e));
-          col_ids.forEach(function(col, j, cols){
-            diffById(diff_matrix, parseInt(e),parseInt(col)).score = -2;
-          });
-        }
-      });
-      diff_arrays.added_cols.forEach(function(e, i, arr){
-        if (col_ids.indexOf(parseInt(e)) != -1) {
-          console.log("found an added cols", parseInt(e));
-          row_ids.forEach(function(row, j, rows){
-            diffById(diff_matrix, parseInt(row), parseInt(e)).score = 2;
-          });
-        }
-      });
-      diff_arrays.deleted_cols.forEach(function(e, i, arr){
-        if (col_ids.indexOf(parseInt(e)) != -1) {
-          console.log("found a deleted cols", parseInt(e));
-          row_ids.forEach(function(row, j, rows){
-            diffById(diff_matrix,parseInt(row), parseInt(e)).score = -2;
-          });
-        }
+      diff_arrays.then(function(data){
+        console.log("i have no idea", data);
+        data.added_rows.forEach(function(e, i, arr){
+          if (row_ids.indexOf(parseInt(e)) != -1) {
+            console.log("found an added row", parseInt(e));
+            col_ids.forEach(function(col, j, cols){
+              //console.log("diff by id!", diffById(diff_matrix, parseInt(e),parseInt(col)));
+              diffById(diff_matrix, parseInt(e),parseInt(col)).score = 2;
+              //console.log("diff by id2!", diffById(diff_matrix, parseInt(e),parseInt(col)));
+            });
+          }
+        });
+        data.deleted_rows.forEach(function(e, i, arr){
+          if (row_ids.indexOf(parseInt(e)) != -1) {
+            console.log("found a deleted row", parseInt(e));
+            col_ids.forEach(function(col, j, cols){
+              diffById(diff_matrix, parseInt(e),parseInt(col)).score = -2;
+            });
+          }
+        });
+        data.added_cols.forEach(function(e, i, arr){
+          if (col_ids.indexOf(parseInt(e)) != -1) {
+            console.log("found an added cols", parseInt(e));
+            row_ids.forEach(function(row, j, rows){
+              diffById(diff_matrix, parseInt(row), parseInt(e)).score = 2;
+            });
+          }
+        });
+        data.deleted_cols.forEach(function(e, i, arr){
+          if (col_ids.indexOf(parseInt(e)) != -1) {
+            console.log("found a deleted cols", parseInt(e));
+            row_ids.forEach(function(row, j, rows){
+              diffById(diff_matrix,parseInt(row), parseInt(e)).score = -2;
+            });
+          }
+        });
+
+      }).catch(function(e){
+        console.log("seems so");
       });
 
       //console.log("diff matrix", diff_matrix);
