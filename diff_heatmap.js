@@ -28,7 +28,7 @@ define(["require", "exports", 'd3', 'underscore'],
       return this.h_data;
     };
     //if we want to have a function here
-
+    exports.DiffHeatmap = DiffHeatmap;
     exports.create = function(data){
       return new DiffHeatmap(data)
     };
@@ -42,26 +42,29 @@ define(["require", "exports", 'd3', 'underscore'],
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-      var heatMap = svg.selectAll(".board")
-        .data(this.h_data, function (d) {return d.col + ':' + d.row;})
-        .enter()
-        .append("svg:rect")
-        .attr("x", function (d) {return d.col * w;})
-        .attr("y", function (d) {return d.row * h;})
-        .attr("width", function (d) {return w;})
-        .attr("height", function (d) {return h;})
-        .style("fill", function (d) {return colorScale(d.score);})
-        .style("stroke","rgb(0,0,0)");
-    };
+      this.h_data.then(function(data) {
+        var heatMap = svg.selectAll(".board")
+          .data(data, function (d) {return d.col + ':' + d.row;})
+          .enter()
+          .append("svg:rect")
+          //todo think of a better way to show heatmap
+          .attr("x", function (d) {return parseInt(d.col.substring(3)) * w;})
+          .attr("y", function (d) {return parseInt(d.row.substring(3)) * h;})
+          .attr("width", function (d) {return w;})
+          .attr("height", function (d) {return h;})
+          .style("fill", function (d) {return colorScale(d.score);})
+          .style("stroke","rgb(0,0,0)");
+      })
+      };
 
-    exports.createDiffMatrix = function(rows1, rows2, cols1, cols2, diff_arrays){
+    exports.createDiffMatrix = function(rows1, rows2, cols1, cols2){
 
       var row_ids = _.union(rows1, rows2);
       console.log("uni", row_ids);
       var col_ids = _.union(cols1, cols2);
       console.log("uni cols", col_ids);
 
-      console.log("diff arrays ", diff_arrays);
+      //console.log("diff arrays ", diff_arrays);
       //todo: are the ids always a number? how to merge then?
       var default_value = 0;
       var delimiter = ':';
@@ -87,50 +90,44 @@ define(["require", "exports", 'd3', 'underscore'],
 
       //console.log('access diff matrix', diffById(diff_matrix, 1,0));
 
-      //todo: change the parse int
-      diff_arrays.then(function(data){
-        console.log("i have no idea", data);
-        data.added_rows.forEach(function(e, i, arr){
-          if (row_ids.indexOf(parseInt(e)) != -1) {
-            console.log("found an added row", parseInt(e));
-            col_ids.forEach(function(col, j, cols){
-              //console.log("diff by id!", diffById(diff_matrix, parseInt(e),parseInt(col)));
-              diffById(diff_matrix, parseInt(e),parseInt(col)).score = 2;
-              //console.log("diff by id2!", diffById(diff_matrix, parseInt(e),parseInt(col)));
-            });
-          }
-        });
+      function convertData(data) {
         data.deleted_rows.forEach(function(e, i, arr){
-          if (row_ids.indexOf(parseInt(e)) != -1) {
-            console.log("found a deleted row", parseInt(e));
+          if (row_ids.indexOf(e) != -1) {
+            console.log("found a deleted row", e);
             col_ids.forEach(function(col, j, cols){
-              diffById(diff_matrix, parseInt(e),parseInt(col)).score = -2;
-            });
-          }
-        });
-        data.added_cols.forEach(function(e, i, arr){
-          if (col_ids.indexOf(parseInt(e)) != -1) {
-            console.log("found an added cols", parseInt(e));
-            row_ids.forEach(function(row, j, rows){
-              diffById(diff_matrix, parseInt(row), parseInt(e)).score = 2;
+              diffById(diff_matrix, e,col).score = -2;
             });
           }
         });
         data.deleted_cols.forEach(function(e, i, arr){
-          if (col_ids.indexOf(parseInt(e)) != -1) {
-            console.log("found a deleted cols", parseInt(e));
+          if (col_ids.indexOf(e) != -1) {
+            console.log("found a deleted cols", e);
             row_ids.forEach(function(row, j, rows){
-              diffById(diff_matrix,parseInt(row), parseInt(e)).score = -2;
+              diffById(diff_matrix,row, e).score = -2;
+            });
+          }
+        });
+        data.added_rows.forEach(function(e, i, arr){
+          if (row_ids.indexOf(e) != -1) {
+            console.log("found an added row", e);
+            col_ids.forEach(function(col, j, cols){
+              diffById(diff_matrix, e,col).score = 2;
+            });
+          }
+        });
+        data.added_cols.forEach(function(e, i, arr){
+          if (col_ids.indexOf(e) != -1) {
+            console.log("found an added cols", e);
+            row_ids.forEach(function(row, j, rows){
+              diffById(diff_matrix, row, e).score = 2;
             });
           }
         });
 
-      }).catch(function(e){
-        console.log("seems so");
-      });
+        return diff_matrix.values();
+      }
 
-      //console.log("diff matrix", diff_matrix);
-      return diff_matrix.values();
+      return convertData;
     };
 
   });

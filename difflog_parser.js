@@ -38,9 +38,9 @@ define(["require", "exports", 'd3'],
                 that.diff_arrays.deleted_rows.push(d.id);
               }
             }
-            resolve(that.diff_arrays);
-            //reject(err)
           });
+          resolve(that.diff_arrays);
+          //reject(err)
         });
       });
 
