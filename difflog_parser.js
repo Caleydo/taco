@@ -11,7 +11,8 @@ define(["require", "exports", 'd3'],
         added_rows: [],
         deleted_rows: [],
         added_cols: [],
-        deleted_cols: []
+        deleted_cols: [],
+        ch_cells: []
       };
     }
 
@@ -25,18 +26,22 @@ define(["require", "exports", 'd3'],
              type: d.type,
              id: d.id, // TODO: consider that the change operation returns 2 values here
              position: d.position // convert to number use: +d.position*/
-            if (d.operation == "add") {
-              if (d.type == 'column') {
+            if (d.operation === "add") {
+              if (d.type === 'column') {
                 that.diff_arrays.added_cols.push(d.id);
-              } else if (d.type == 'row') {
+              } else if (d.type === 'row') {
                 that.diff_arrays.added_rows.push(d.id);
               }
-            } else if (d.operation == "delete") {
-              if (d.type == 'column') {
+            } else if (d.operation === "delete") {
+              if (d.type === 'column') {
                 that.diff_arrays.deleted_cols.push(d.id);
-              } else if (d.type == 'row') {
+              } else if (d.type === 'row') {
                 that.diff_arrays.deleted_rows.push(d.id);
               }
+            } else if (d.operation === "change" && d.type === 'cell'){
+              //we assume that the id is separated by comma ,
+              var cell = d.id.split(",");
+              that.diff_arrays.ch_cells.push({row: cell[0], col: cell[1]});
             }
           });
           resolve(that.diff_arrays);

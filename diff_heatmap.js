@@ -11,11 +11,11 @@ define(["require", "exports", 'd3', 'underscore'],
       w = gridSize,
       rectPadding = 60;
 
-    var colorDeleted = 'red', colorLow = 'yellow', colorMed = 'white', colorHigh = 'blue', colorAdded = 'green';
-
     var margin = {top: 20, right: 80, bottom: 30, left: 50},
       width = 640 - margin.left - margin.right,
       height = 380 - margin.top - margin.bottom;
+
+    var colorDeleted = 'red', colorLow = 'yellow', colorMed = 'white', colorHigh = 'blue', colorAdded = 'green';
 
     var colorScale = d3.scale.linear()
       .domain([-2, -1, 0, 1, 2])
@@ -29,18 +29,39 @@ define(["require", "exports", 'd3', 'underscore'],
     };
     //if we want to have a function here
     exports.DiffHeatmap = DiffHeatmap;
+
     exports.create = function(data){
       return new DiffHeatmap(data)
     };
 
     DiffHeatmap.prototype.drawDiffHeatmap = function(){
 
+
+      var drag = d3.behavior.drag()
+        .on('dragstart', function() { console.log("start") })
+        .on('drag', dragHandler)
+        .on('dragend', function() { console.log("end") });
+
+      function dragHandler(d) {
+        //d.x += d3.event.dx;
+        //d.y += d3.event.dy;
+        //d3.select(this).attr("transform", "translate(" + d.x + "," + d.y + ")");
+        d3.selectAll(".dheatmap")
+          .attr("transform", "translate(" + d3.event.x + "," + d3.event.y + ")")
+        console.log(d3.event)}
+
       var svg = d3.select("#board")
         .append("svg")
+        //todo create this as the size of the final table at the beginning?
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("class", "dheatmap")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        //.style("stroke", "rgb(0,0,0)")
+        .call(drag);
+
+
 
       this.h_data.then(function(data) {
         var heatMap = svg.selectAll(".board")
@@ -52,8 +73,8 @@ define(["require", "exports", 'd3', 'underscore'],
           .attr("y", function (d) {return parseInt(d.row.substring(3)) * h;})
           .attr("width", function (d) {return w;})
           .attr("height", function (d) {return h;})
-          .style("fill", function (d) {return colorScale(d.score);})
-          .style("stroke","rgb(0,0,0)");
+          .style("fill", function (d) {return colorScale(d.score);});
+          //.style("stroke","rgb(0,0,0)");
       })
       };
 
@@ -123,6 +144,10 @@ define(["require", "exports", 'd3', 'underscore'],
             });
           }
         });
+        data.ch_cells.forEach(function (e, i, arr) {
+            diffById(diff_matrix, e.row, e.col).score = 1; //todo change it after calcualting it
+          }
+        );
 
         return diff_matrix.values();
       }
