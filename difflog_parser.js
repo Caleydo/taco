@@ -41,7 +41,7 @@ define(["require", "exports", 'd3'],
             } else if (d.operation === "change" && d.type === 'cell'){
               //we assume that the id is separated by comma ,
               var cell = d.id.split(",");
-              that.diff_arrays.ch_cells.push({row: cell[0], col: cell[1]});
+              that.diff_arrays.ch_cells.push({row: cell[0], col: cell[1], diff_data: d.data});
             }
           });
           resolve(that.diff_arrays);

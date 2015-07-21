@@ -6,12 +6,11 @@ define(["require", "exports", 'd3', 'underscore'],
 
     //height of each row in the heatmap
     //width of each column in the heatmap
-    var gridSize = 16,
+    var gridSize = 10,
       h = gridSize,
-      w = gridSize,
-      rectPadding = 60;
+      w = gridSize;
 
-    var margin = {top: 20, right: 80, bottom: 30, left: 50},
+    var margin = {top: 10, right: 40, bottom: 10, left: 20},
       width = 640 - margin.left - margin.right,
       height = 380 - margin.top - margin.bottom;
 
@@ -36,7 +35,6 @@ define(["require", "exports", 'd3', 'underscore'],
 
     DiffHeatmap.prototype.drawDiffHeatmap = function(){
 
-
       var drag = d3.behavior.drag()
         .on('dragstart', function() { console.log("start") })
         .on('drag', dragHandler)
@@ -46,25 +44,24 @@ define(["require", "exports", 'd3', 'underscore'],
         //d.x += d3.event.dx;
         //d.y += d3.event.dy;
         //d3.select(this).attr("transform", "translate(" + d.x + "," + d.y + ")");
-        d3.selectAll(".dheatmap")
-          .attr("transform", "translate(" + d3.event.x + "," + d3.event.y + ")")
-        console.log(d3.event)}
+        d3.select(this)
+          .attr("transform", "translate(" + (d3.event.x) + "," + (d3.event.y) + ")");
+        console.log(d3.event, this)}
 
+      //todo create this as the size of the final table at the beginning?
       var svg = d3.select("#board")
         .append("svg")
-        //todo create this as the size of the final table at the beginning?
         .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
+        .attr("height", height + margin.top + margin.bottom);
+
+      var g = svg.append("g")
         .attr("class", "dheatmap")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         //.style("stroke", "rgb(0,0,0)")
         .call(drag);
 
-
-
       this.h_data.then(function(data) {
-        var heatMap = svg.selectAll(".board")
+        var heatMap = g.selectAll(".board")
           .data(data, function (d) {return d.col + ':' + d.row;})
           .enter()
           .append("svg:rect")
@@ -111,10 +108,13 @@ define(["require", "exports", 'd3', 'underscore'],
 
       //console.log('access diff matrix', diffById(diff_matrix, 1,0));
 
+      function normalize(diff_data, max){
+        return diff_data/max
+      }
+
       function convertData(data) {
         data.deleted_rows.forEach(function(e, i, arr){
           if (row_ids.indexOf(e) != -1) {
-            console.log("found a deleted row", e);
             col_ids.forEach(function(col, j, cols){
               diffById(diff_matrix, e,col).score = -2;
             });
@@ -122,7 +122,6 @@ define(["require", "exports", 'd3', 'underscore'],
         });
         data.deleted_cols.forEach(function(e, i, arr){
           if (col_ids.indexOf(e) != -1) {
-            console.log("found a deleted cols", e);
             row_ids.forEach(function(row, j, rows){
               diffById(diff_matrix,row, e).score = -2;
             });
@@ -130,7 +129,6 @@ define(["require", "exports", 'd3', 'underscore'],
         });
         data.added_rows.forEach(function(e, i, arr){
           if (row_ids.indexOf(e) != -1) {
-            console.log("found an added row", e);
             col_ids.forEach(function(col, j, cols){
               diffById(diff_matrix, e,col).score = 2;
             });
@@ -138,14 +136,19 @@ define(["require", "exports", 'd3', 'underscore'],
         });
         data.added_cols.forEach(function(e, i, arr){
           if (col_ids.indexOf(e) != -1) {
-            console.log("found an added cols", e);
             row_ids.forEach(function(row, j, rows){
               diffById(diff_matrix, row, e).score = 2;
             });
           }
         });
+        //todo think of a better way for normalization
+        var diff_max = 0;
         data.ch_cells.forEach(function (e, i, arr) {
-            diffById(diff_matrix, e.row, e.col).score = 1; //todo change it after calcualting it
+          diff_max = (Math.abs(e.diff_data)> diff_max ? Math.abs(e.diff_data) : diff_max);
+          }
+        );
+        data.ch_cells.forEach(function (e, i, arr) {
+            diffById(diff_matrix, e.row, e.col).score = normalize(e.diff_data, diff_max); //todo change it after calcualting it
           }
         );
 
