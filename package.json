@@ -22,8 +22,10 @@
       ]
     },
     "dependencies": {
-      "underscore": ">=1.6",
-      "bootstrap": "~3.3.4"
+	  "web": {
+		"underscore": ">=1.6",
+		"bootstrap": "~3.3.4"
+	  }      
     },
     "requirejs-config": {
       "paths": {
