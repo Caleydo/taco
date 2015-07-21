@@ -1,5 +1,29 @@
 [
   {
+    "name": "Taco tiny1 input",
+    "path": "tiny_table1_in.csv",
+    "type": "matrix",
+    "size": [17, 10],
+    "rowtype": "patient",
+    "coltype": "gene",
+    "value": {
+      "type": "real",
+      "range": [0, 10]
+    }
+  },
+  {
+    "name": "Taco tiny1 output",
+    "path": "tiny_table1_out.csv",
+    "type": "matrix",
+    "size": [16, 8],
+    "rowtype": "patient",
+    "coltype": "gene",
+    "value": {
+      "type": "real",
+      "range": [0, 10]
+    }
+  },
+  {
     "name": "Taco tiny input",
     "path": "tiny_table_in.csv",
     "type": "matrix",
