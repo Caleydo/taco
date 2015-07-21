@@ -113,20 +113,6 @@ define(["require", "exports", 'd3', 'underscore'],
       }
 
       function convertData(data) {
-        data.deleted_rows.forEach(function(e, i, arr){
-          if (row_ids.indexOf(e) != -1) {
-            col_ids.forEach(function(col, j, cols){
-              diffById(diff_matrix, e,col).score = -2;
-            });
-          }
-        });
-        data.deleted_cols.forEach(function(e, i, arr){
-          if (col_ids.indexOf(e) != -1) {
-            row_ids.forEach(function(row, j, rows){
-              diffById(diff_matrix,row, e).score = -2;
-            });
-          }
-        });
         data.added_rows.forEach(function(e, i, arr){
           if (row_ids.indexOf(e) != -1) {
             col_ids.forEach(function(col, j, cols){
@@ -138,6 +124,20 @@ define(["require", "exports", 'd3', 'underscore'],
           if (col_ids.indexOf(e) != -1) {
             row_ids.forEach(function(row, j, rows){
               diffById(diff_matrix, row, e).score = 2;
+            });
+          }
+        });
+        data.deleted_rows.forEach(function(e, i, arr){
+          if (row_ids.indexOf(e) != -1) {
+            col_ids.forEach(function(col, j, cols){
+              diffById(diff_matrix, e,col).score = -2;
+            });
+          }
+        });
+        data.deleted_cols.forEach(function(e, i, arr){
+          if (col_ids.indexOf(e) != -1) {
+            row_ids.forEach(function(row, j, rows){
+              diffById(diff_matrix,row, e).score = -2;
             });
           }
         });
