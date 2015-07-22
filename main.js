@@ -7,6 +7,8 @@
 require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap', 'bootstrap', 'font-awesome'],
   function (data, d3, $, difflog_parser, dHeatmap) {
     'use strict';
+    var server_url = "http://192.168.50.52:9000/api/taco/";
+
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
 
     var rows1 = ["row1", "row2", "row3", "row4", "row5", "row6", "row7", "row8", "row9", "row10", "row11", "row12", "row13", "row14", "row15", "row16", "row17", "row18", "row19", "row20", "row21", "row22", "row23", "row24", "row25", "row26"],
@@ -15,8 +17,10 @@ require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heat
       cols2 = ["col1", "col22", "col25", "col19", "col2", "col3", "col24", "col4", "col23", "col5", "col7", "col8", "col10", "col21", "col20", "col11", "col12", "col13", "col14", "col15", "col18"];
 
     var toDiffMatrix = dHeatmap.createDiffMatrix(rows1, rows2, cols1, cols2);
+    var diff_source = server_url + 'diff_log';
+    //var diff_source = 'data/tiny_table1_diff.log';
 
-    var diff_parser = difflog_parser.create('data/tiny_table1_diff.log');
+    var diff_parser = difflog_parser.create(diff_source);
 
     var h_data = diff_parser.getDiff().then(toDiffMatrix);
     console.log(h_data, "hdata");
@@ -61,5 +65,6 @@ require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heat
         var ev = d3.event;
       });
     });
+
 
   });

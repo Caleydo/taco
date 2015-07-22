@@ -20,7 +20,8 @@ define(["require", "exports", 'd3'],
       var that = this;
 
       var promise = new Promise(function(resolve, reject){
-        d3.tsv(that.filepath, function (data) {
+        d3.tsv(that.filepath, function (error, data) {
+          if (error) reject(error);
           data.forEach(function (d) {
             /*operation: d.operation,
              type: d.type,
@@ -45,7 +46,7 @@ define(["require", "exports", 'd3'],
             }
           });
           resolve(that.diff_arrays);
-          //reject(err)
+          //
         });
       });
 
