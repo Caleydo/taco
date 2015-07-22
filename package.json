@@ -1,9 +1,10 @@
 {
   "name": "taco-vis",
   "version": "0.0.1",
-  "peerDependencies": {
+  "dependencies": {
   },
   "peerDependencies": {
+    "caleydo_web": "*"
   },
   "caleydo": {
     "plugins": {
@@ -22,8 +23,10 @@
       ]
     },
     "dependencies": {
-      "underscore": ">=1.6",
-      "bootstrap": "~3.3.4"
+      "web": {
+        "underscore": ">=1.6",
+        "bootstrap": "~3.3.4"
+      }
     },
     "requirejs-config": {
       "paths": {
