@@ -210,3 +210,17 @@ svg .select-selected {
   fill: $select-color;
   vector-effect: non-scaling-stroke;
 }
+
+
+
+.taco-table-container {
+  overflow: hidden;
+}
+
+.taco-table {
+  position: relative;
+
+  div {
+    position: absolute;
+  }
+}

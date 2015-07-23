@@ -45,32 +45,32 @@ define(["require", "exports", 'd3', 'underscore'],
         //d.y += d3.event.dy;
         //d3.select(this).attr("transform", "translate(" + d.x + "," + d.y + ")");
         d3.select(this)
-          .attr("transform", "translate(" + (d3.event.x) + "," + (d3.event.y) + ")");
+          .style("transform", "translate(" + (d3.event.x) + "px," + (d3.event.y) + "px)");
         console.log(d3.event, this)}
 
       //todo create this as the size of the final table at the beginning?
-      var svg = d3.select("#board")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom);
-
-      var g = svg.append("g")
-        .attr("class", "dheatmap")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      var root = d3.select("#board")
+        .append("div") //svg
+        .classed("taco-table-container", true)
+        .style("width", width + margin.left + margin.right+'px')
+        .style("height", height + margin.top + margin.bottom+'px')
+        .append("div")// g.margin
+        .attr("class", "taco-table")
+        .style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
         //.style("stroke", "rgb(0,0,0)")
         .call(drag);
 
       this.h_data.then(function(data) {
-        var heatMap = g.selectAll(".board")
+        var heatMap = root.selectAll(".board")
           .data(data, function (d) {return d.col + ':' + d.row;})
           .enter()
-          .append("svg:rect")
+          .append("div") //svg:rect
           //todo think of a better way to show heatmap
-          .attr("x", function (d) {return parseInt(d.col.substring(3)) * w;})
-          .attr("y", function (d) {return parseInt(d.row.substring(3)) * h;})
-          .attr("width", function (d) {return w;})
-          .attr("height", function (d) {return h;})
-          .style("fill", function (d) {return colorScale(d.score);});
+          .style("left", function (d) {return (parseInt(d.col.substring(3)) * w) + "px";})
+          .style("top", function (d) {return (parseInt(d.row.substring(3)) * h) + "px";})
+          .style("width", function (d) {return w + "px";})
+          .style("height", function (d) {return h + "px";})
+          .style("background-color", function (d) {return colorScale(d.score);});
           //.style("stroke","rgb(0,0,0)");
       })
       };
