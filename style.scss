@@ -215,10 +215,12 @@ svg .select-selected {
 
 .taco-table-container {
   overflow: hidden;
+  border: 1px solid lightpink;
 }
 
 .taco-table {
   position: relative;
+  border: 1px solid purple;
 
   div {
     position: absolute;

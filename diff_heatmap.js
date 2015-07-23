@@ -22,6 +22,8 @@ define(["require", "exports", 'd3', 'underscore'],
 
     function DiffHeatmap(data) {
       this.h_data = data;
+      this.width = width;
+      this.height = height;
     }
     DiffHeatmap.prototype.get_data = function () {
       return this.h_data;
@@ -48,19 +50,22 @@ define(["require", "exports", 'd3', 'underscore'],
           .style("transform", "translate(" + (d3.event.x) + "px," + (d3.event.y) + "px)");
         console.log(d3.event, this)}
 
-      //todo create this as the size of the final table at the beginning?
-      var root = d3.select("#board")
-        .append("div") //svg
-        .classed("taco-table-container", true)
-        .style("width", width + margin.left + margin.right+'px')
-        .style("height", height + margin.top + margin.bottom+'px')
-        .append("div")// g.margin
-        .attr("class", "taco-table")
-        .style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
-        //.style("stroke", "rgb(0,0,0)")
-        .call(drag);
+      var that = this;
+      that.h_data.then(function(data) {
+        //todo create this as the size of the final table at the beginning?
+        console.log( 'data len', data.length);
+        var root = d3.select("#board")
+          .append("div") //svg
+          .classed("taco-table-container", true)
+          .style("width", that.width + margin.left + margin.right+'px')
+          .style("height", that.height + margin.top + margin.bottom+'px')
+          .append("div")// g.margin
+          .attr("class", "taco-table")
+          .style("width", that.width + margin.left + margin.right- 50 +'px')
+          .style("height", that.height + margin.top + margin.bottom- 50 +'px')
+          .style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
+          .call(drag);
 
-      this.h_data.then(function(data) {
         var heatMap = root.selectAll(".board")
           .data(data, function (d) {return d.col + ':' + d.row;})
           .enter()
@@ -71,9 +76,8 @@ define(["require", "exports", 'd3', 'underscore'],
           .style("width", function (d) {return w + "px";})
           .style("height", function (d) {return h + "px";})
           .style("background-color", function (d) {return colorScale(d.score);});
-          //.style("stroke","rgb(0,0,0)");
       })
-      };
+    };
 
     exports.createDiffMatrix = function(rows1, rows2, cols1, cols2){
 
@@ -82,6 +86,9 @@ define(["require", "exports", 'd3', 'underscore'],
       var col_ids = _.union(cols1, cols2);
       console.log("uni cols", col_ids);
 
+      this.height = row_ids.length;
+      this.width = col_ids.length;
+
       //console.log("diff arrays ", diff_arrays);
       //todo: are the ids always a number? how to merge then?
       var default_value = 0;
@@ -89,7 +96,6 @@ define(["require", "exports", 'd3', 'underscore'],
 
       function makeArray(row_ids, col_ids, val) {
         var list = d3.map();
-
         row_ids.forEach(function(row_e, row_index, row_array){
           col_ids.forEach(function(col_e, col_index, col_array){
             //todo: this will draw later based on int ids
@@ -97,16 +103,13 @@ define(["require", "exports", 'd3', 'underscore'],
           });
         });
         return list;
-        }
-
+      }
 
       function diffById(diffm, row, col) {
         return diffm.get(row+delimiter+col);
       }
 
       var diff_matrix = makeArray( row_ids, col_ids, default_value);
-
-      //console.log('access diff matrix', diffById(diff_matrix, 1,0));
 
       function normalize(diff_data, max){
         return diff_data/max

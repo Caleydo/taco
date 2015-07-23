@@ -4,8 +4,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap', 'bootstrap', 'font-awesome'],
-  function (data, d3, $, difflog_parser, dHeatmap) {
+require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap', './heatmap','bootstrap', 'font-awesome'],
+  function (data, d3, $, difflog_parser, dHeatmap, Heatmap) {
     'use strict';
     var server_url = "http://192.168.50.52:9000/api/taco/";
 
@@ -46,6 +46,8 @@ require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heat
         var cols = values[1];
         var data = values[2];
         console.log("selected", rows, cols, data);
+        var hm = Heatmap.create(data, rows, cols);
+        hm.drawHeatmap();
       })
     }
 
