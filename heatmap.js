@@ -10,9 +10,7 @@ define(["require", "exports", 'd3'],
       h = gridSize,
       w = gridSize;
 
-    var margin = {top: 10, right: 40, bottom: 10, left: 20},
-      width = 640 - margin.left - margin.right,
-      height = 380 - margin.top - margin.bottom;
+    var margin = {top: 10, right: 10, bottom: 10, left: 10};
 
     var colorMin = 'white', colorMax = 'black';
 
@@ -23,16 +21,16 @@ define(["require", "exports", 'd3'],
       this.width = col.length * w;
       this.height = row.length * h;
 
-      var dataMax = 10, dataMin = 0;
+      var dataMax = 100, dataMin = 0;
       this.colorScale = d3.scale.linear()
         .domain([dataMin, dataMax])
         .range([colorMin, colorMax]);
 
-      this.x = d3.scale.linear()
+      this.xScale = d3.scale.linear()
         .range([0, this.width])
         .domain([0,data[0].length]);
 
-      this.y = d3.scale.linear()
+      this.yScale = d3.scale.linear()
         .range([0, this.height])
         .domain([0,data.length]);
     }
@@ -59,12 +57,11 @@ define(["require", "exports", 'd3'],
         });
 
       function dragHandler(d) {
-        //d.x += d3.event.dx;
-        //d.y += d3.event.dy;
-        //d3.select(this).attr("transform", "translate(" + d.x + "," + d.y + ")");
+        //must have position absolute to work like this
+        //otherwise use transfrom css property
         d3.select(this)
-          .style("transform", "translate(" + (d3.event.x) + "px," + (d3.event.y) + "px)");
-        console.log(d3.event, this)
+          .style("left", (this.offsetLeft + d3.event.dx) + "px")
+          .style("top", (this.offsetTop + d3.event.dy) + "px");
       }
 
       var that = this;
@@ -74,18 +71,18 @@ define(["require", "exports", 'd3'],
         .classed("taco-table-container", true)
         .style("width", that.width + margin.left + margin.right + 'px')
         .style("height", that.height + margin.top + margin.bottom + 'px')
+        .call(drag)
         .append("div")// g.margin
         .attr("class", "taco-table")
-        .style("width", that.width + margin.left + margin.right - 50 + 'px')
-        .style("height", that.height + margin.top + margin.bottom - 50 + 'px')
-        .style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
-        .call(drag);
+        .style("width", that.width + 'px')
+        .style("height", that.height + 'px')
+        .style("transform", "translate(" + margin.left + "px," + margin.top + "px)");
 
-      var row = root.selectAll(".row")
+      var row = root.selectAll(".taco-row")
         .data(that.h_data)
         .enter()
         .append("div") //svg:rect
-        .classed( "row", true);
+        .classed( "taco-row", true);
         //todo think of a better way to show heatmap
         /*.style("left", function (d, i) {
           return ((d.length) * w) + "px";} )
@@ -94,15 +91,15 @@ define(["require", "exports", 'd3'],
         .style("height", function (d) {return h + "px";})
         .style("background-color", function (d) {return that.colorScale(d.score);});*/
 
-      var col = row.selectAll(".cell")
+      var col = row.selectAll(".taco-cell")
         .data(function (d,i) { return d.map(function(a) { return {value: a, row: i}; } ) })
         .enter()
         .append("div")
-        .classed("cell", true)
-        .style("left", function(d, i) { return that.x(i) + "px"; })
-        .style("top", function(d, i) { return that.y(d.row) + "px"; })
-        .style("width", that.x(1) + "px")
-        .style("height", that.y(1) + "px")
+        .classed("taco-cell", true)
+        .style("left", function(d, i) { return that.xScale(i) + "px"; })
+        .style("top", function(d, i) { return that.yScale(d.row) + "px"; })
+        .style("width", that.xScale(1) + "px")
+        .style("height", that.yScale(1) + "px")
         .style("background-color", function(d) { return that.colorScale(d.value); });
 
 /*      var heatMap = root.selectAll(".board")

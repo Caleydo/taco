@@ -213,9 +213,14 @@ svg .select-selected {
 
 
 
+#board {
+  position: relative;
+}
+
 .taco-table-container {
   overflow: hidden;
   border: 1px solid lightpink;
+  position: absolute;
 }
 
 .taco-table {
