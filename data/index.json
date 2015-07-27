@@ -94,29 +94,5 @@
       "type": "real",
       "range": [0, 100]
     }
-  },
-  {
-    "name": "Taco big input",
-    "path": "taco_big_table_in.csv",
-    "type": "matrix",
-    "size": [1200, 1000],
-    "rowtype": "patient",
-    "coltype": "gene",
-    "value": {
-      "type": "real",
-      "range": [0, 100]
-    }
-  },
-  {
-    "name": "Taco big output",
-    "path": "taco_big_table_out.csv",
-    "type": "matrix",
-    "size": [1210, 1010],
-    "rowtype": "patient",
-    "coltype": "gene",
-    "value": {
-      "type": "real",
-      "range": [0, 100]
-    }
   }
 ]

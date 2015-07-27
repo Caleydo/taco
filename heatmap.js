@@ -16,12 +16,12 @@ define(["require", "exports", 'd3'],
 
 
     //todo to get the min max data values
-    function Heatmap(data, row, col) {
+    function Heatmap(data, row, col, range) {
       this.h_data = data;
       this.width = col.length * w;
       this.height = row.length * h;
 
-      var dataMax = 100, dataMin = 0;
+      var dataMax = range[1], dataMin = range[0];
       this.colorScale = d3.scale.linear()
         .domain([dataMin, dataMax])
         .range([colorMin, colorMax]);
@@ -41,20 +41,16 @@ define(["require", "exports", 'd3'],
 
     exports.Heatmap = Heatmap;
 
-    exports.create = function(data, row, col){
-      return new Heatmap(data, row, col)
+    exports.create = function(data, row, col, range){
+      return new Heatmap(data, row, col, range)
     };
 
     Heatmap.prototype.drawHeatmap = function() {
 
       var drag = d3.behavior.drag()
-        .on('dragstart', function () {
-          console.log("start")
-        })
-        .on('drag', dragHandler)
-        .on('dragend', function () {
-          console.log("end")
-        });
+        //.on('dragstart', function () {console.log("start")})
+        .on('drag', dragHandler);
+        //.on('dragend', function () {console.log("end")});
 
       function dragHandler(d) {
         //must have position absolute to work like this
