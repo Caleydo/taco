@@ -38,17 +38,18 @@ define(["require", "exports", 'd3', 'underscore'],
     DiffHeatmap.prototype.drawDiffHeatmap = function(){
 
       var drag = d3.behavior.drag()
-        .on('dragstart', function() { console.log("start") })
+        //.on('dragstart', function() { console.log("start") })
         .on('drag', dragHandler)
-        .on('dragend', function() { console.log("end") });
+        //.on('dragend', function() { console.log("end") });
 
+      //todo to use just the one in heatmap
       function dragHandler(d) {
-        //d.x += d3.event.dx;
-        //d.y += d3.event.dy;
-        //d3.select(this).attr("transform", "translate(" + d.x + "," + d.y + ")");
+        //must have position absolute to work like this
+        //otherwise use transfrom css property
         d3.select(this)
-          .style("transform", "translate(" + (d3.event.x) + "px," + (d3.event.y) + "px)");
-        console.log(d3.event, this)}
+          .style("left", (this.offsetLeft + d3.event.dx) + "px")
+          .style("top", (this.offsetTop + d3.event.dy) + "px");
+      }
 
       var that = this;
       that.h_data.then(function(data) {
@@ -59,12 +60,12 @@ define(["require", "exports", 'd3', 'underscore'],
           .classed("taco-table-container", true)
           .style("width", that.width + margin.left + margin.right+'px')
           .style("height", that.height + margin.top + margin.bottom+'px')
+          .call(drag)
           .append("div")// g.margin
           .attr("class", "taco-table")
           .style("width", that.width + margin.left + margin.right- 50 +'px')
           .style("height", that.height + margin.top + margin.bottom- 50 +'px')
-          .style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
-          .call(drag);
+          .style("transform", "translate(" + margin.left + "px," + margin.top + "px)");
 
         var heatMap = root.selectAll(".board")
           .data(data, function (d) {return d.col + ':' + d.row;})
