@@ -1,53 +1,113 @@
 /**
- * Created by Reem on 5/13/2015.
+ * Created by Reem on 7/23/2015.
  */
+define(["require", "exports", 'd3'],
+  function (require, exports, d3) {
 
-/*
- heatmap code from here http://jsfiddle.net/QWLkR/2/
- */
-var h_data = [
-  {score: 0.5, row: 0, col: 0},
-  {score: 0.7, row: 0, col: 1},
-  {score: 0.2, row: 1, col: 0},
-  {score: 0.3, row: 1, col: 1},
-  {score: 0.1, row: 2, col: 0},
-  {score: 0.4, row: 2, col: 1},
-  {score: 0.0, row: 0, col: 2},
-  {score: -0.8, row: 1, col: 2},
-  {score: 0.6, row: 2, col: 2}
-];
+    //height of each row in the heatmap
+    //width of each column in the heatmap
+    var gridSize = 10,
+      h = gridSize,
+      w = gridSize;
+
+    var margin = {top: 10, right: 10, bottom: 10, left: 10};
+
+    var colorMin = 'white', colorMax = 'black';
 
 
-//height of each row in the heatmap
-//width of each column in the heatmap
-var gridSize = 16,
-  h = gridSize,
-  w = gridSize,
-  rectPadding = 60;
+    //todo to get the min max data values
+    function Heatmap(data, row, col, range) {
+      this.h_data = data;
+      this.width = col.length * w;
+      this.height = row.length * h;
 
-var colorDeleted = 'red', colorLow = 'yellow', colorMed = 'white', colorHigh = 'blue', colorAdded = 'green';
+      var dataMax = range[1], dataMin = range[0];
+      this.colorScale = d3.scale.linear()
+        .domain([dataMin, dataMax])
+        .range([colorMin, colorMax]);
 
-var margin = {top: 20, right: 80, bottom: 30, left: 50},
-  width = 640 - margin.left - margin.right,
-  height = 380 - margin.top - margin.bottom;
+      this.xScale = d3.scale.linear()
+        .range([0, this.width])
+        .domain([0,data[0].length]);
 
-var colorScale = d3.scale.linear()
-  .domain([-2, -1, 0, 1, 2])
-  .range([colorDeleted, colorLow, colorMed, colorHigh, colorAdded]);
+      this.yScale = d3.scale.linear()
+        .range([0, this.height])
+        .domain([0,data.length]);
+    }
 
-var svg = d3.select("#board")
-  .append("svg")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    Heatmap.prototype.get_data = function () {
+      return this.h_data;
+    };
 
-var heatMap = svg.selectAll(".board")
-  .data(h_data, function(d) { return d.col + ':' + d.row; })
-  .enter()
-  .append("svg:rect")
-  .attr("x", function(d) { return d.row * w; })
-  .attr("y", function(d) { return d.col * h; })
-  .attr("width", function(d) { return w; })
-  .attr("height", function(d) { return h; })
-  .style("fill", function(d) { return colorScale(d.score); });
+    exports.Heatmap = Heatmap;
+
+    exports.create = function(data, row, col, range){
+      return new Heatmap(data, row, col, range)
+    };
+
+    Heatmap.prototype.drawHeatmap = function() {
+
+      var drag = d3.behavior.drag()
+        //.on('dragstart', function () {console.log("start")})
+        .on('drag', dragHandler);
+        //.on('dragend', function () {console.log("end")});
+
+      function dragHandler(d) {
+        //must have position absolute to work like this
+        //otherwise use transfrom css property
+        d3.select(this)
+          .style("left", (this.offsetLeft + d3.event.dx) + "px")
+          .style("top", (this.offsetTop + d3.event.dy) + "px");
+      }
+
+      var that = this;
+
+      var root = d3.select("#board")
+        .append("div") //svg
+        .classed("taco-table-container", true)
+        .style("width", that.width + margin.left + margin.right + 'px')
+        .style("height", that.height + margin.top + margin.bottom + 'px')
+        .call(drag)
+        .append("div")// g.margin
+        .attr("class", "taco-table")
+        .style("width", that.width + 'px')
+        .style("height", that.height + 'px')
+        .style("transform", "translate(" + margin.left + "px," + margin.top + "px)");
+
+      var row = root.selectAll(".taco-row")
+        .data(that.h_data)
+        .enter()
+        .append("div") //svg:rect
+        .classed( "taco-row", true);
+        //todo think of a better way to show heatmap
+        /*.style("left", function (d, i) {
+          return ((d.length) * w) + "px";} )
+        .style("top", function (d, i) {return ((i+1) * h) + "px";})
+        .style("width", function (d) {return w + "px";})
+        .style("height", function (d) {return h + "px";})
+        .style("background-color", function (d) {return that.colorScale(d.score);});*/
+
+      var col = row.selectAll(".taco-cell")
+        .data(function (d,i) { return d.map(function(a) { return {value: a, row: i}; } ) })
+        .enter()
+        .append("div")
+        .classed("taco-cell", true)
+        .style("left", function(d, i) { return that.xScale(i) + "px"; })
+        .style("top", function(d, i) { return that.yScale(d.row) + "px"; })
+        .style("width", that.xScale(1) + "px")
+        .style("height", that.yScale(1) + "px")
+        .style("background-color", function(d) { return that.colorScale(d.value); });
+
+/*      var heatMap = root.selectAll(".board")
+        .data(that.h_data, function (d) { console.log("data", d); return d.col + ':' + d.row;})
+        .enter()
+        .append("div") //svg:rect
+        //todo think of a better way to show heatmap
+        .style("left", function (d, i) {
+          return ((d.length) * w) + "px";} )
+        .style("top", function (d, i) {return ((i+1) * h) + "px";})
+        .style("width", function (d) {return w + "px";})
+        .style("height", function (d) {return h + "px";})
+        .style("background-color", function (d) {return that.colorScale(d.score);});*/
+    }
+  });
