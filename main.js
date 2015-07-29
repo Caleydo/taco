@@ -10,7 +10,8 @@ require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heat
     var server_url = "http://192.168.50.52:9000/api/taco/";
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
-    var rows1 = null, rows2= null, cols1= null, cols2= null, id1= null, id2= null;
+    var rows1 = null, rows2= null, cols1= null, cols2= null, id1= null, id2= null,
+      hm1= null, hm2 = null, dh = null;
 
     function toType(desc) {
       if (desc.type === 'vector') {
@@ -28,18 +29,25 @@ require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heat
         var cols = values[1];
         var data = values[2];
         var range = selectedDataset.desc.value.range;
-        console.log("selected", selectedDataset.desc.id);
-        //can use selectedDataset.dim instead of calculating the length in the class
-        //todo decide where to draw the table
-        var hm = Heatmap.create(data, rows, cols, range);
-        hm.drawHeatmap();
 
         if (dest){
-          //todo check if there's something before
+          if (hm2 !== null){
+            hm2.remove();
+          }
+          //can use selectedDataset.dim instead of calculating the length in the class
+          //todo decide where to draw the table
+          hm2 = Heatmap.create(data, rows, cols, range);
+          hm2.drawHeatmap();
+
           rows2 = rows;
           cols2 = cols;
           id2 = selectedDataset.desc.id;
         }else{
+          if (hm1 !== null){
+            hm1.remove();
+          }
+          hm1 = Heatmap.create(data, rows, cols, range);
+          hm1.drawHeatmap();
           rows1 = rows;
           cols1 = cols;
           id1 = selectedDataset.desc.id;
@@ -57,9 +65,12 @@ require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heat
           var h_data = diff_parser.getDiff().then(toDiffMatrix);
           console.log(h_data, "hdata");
 
-          var h = dHeatmap.create(h_data);
+          if (dh !== null){
+            dh.remove();
+          }
+          dh = dHeatmap.create(h_data);
 
-          h.drawDiffHeatmap();
+          dh.drawDiffHeatmap();
         }else{
           console.log("no diff!", rows1, cols1, rows2, cols2);
         }

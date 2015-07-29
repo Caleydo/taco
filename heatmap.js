@@ -44,6 +44,11 @@ define(["require", "exports", 'd3'],
     exports.create = function(data, row, col, range){
       return new Heatmap(data, row, col, range)
     };
+    var container;
+
+    Heatmap.prototype.remove = function(){
+      container.remove();
+    };
 
     Heatmap.prototype.drawHeatmap = function() {
 
@@ -62,13 +67,14 @@ define(["require", "exports", 'd3'],
 
       var that = this;
 
-      var root = d3.select("#board")
+      container = d3.select("#board")
         .append("div") //svg
         .classed("taco-table-container", true)
         .style("width", that.width + margin.left + margin.right + 'px')
         .style("height", that.height + margin.top + margin.bottom + 'px')
-        .call(drag)
-        .append("div")// g.margin
+        .call(drag);
+
+       var root = container.append("div")// g.margin
         .attr("class", "taco-table")
         .style("width", that.width + 'px')
         .style("height", that.height + 'px')

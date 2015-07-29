@@ -19,14 +19,20 @@ define(["require", "exports", 'd3', 'underscore'],
     var colorScale = d3.scale.linear()
       .domain([-2, -1, 0, 1, 2])
       .range([colorDeleted, colorLow, colorMed, colorHigh, colorAdded]);
+    var container;
 
     function DiffHeatmap(data) {
       this.h_data = data;
       this.width = width;
       this.height = height;
     }
+
     DiffHeatmap.prototype.get_data = function () {
       return this.h_data;
+    };
+
+    DiffHeatmap.prototype.remove = function(){
+      container.remove();
     };
     //if we want to have a function here
     exports.DiffHeatmap = DiffHeatmap;
@@ -55,13 +61,13 @@ define(["require", "exports", 'd3', 'underscore'],
       that.h_data.then(function(data) {
         //todo create this as the size of the final table at the beginning?
         console.log( 'data len', data.length);
-        var root = d3.select("#board")
+        container = d3.select("#board")
           .append("div") //svg
           .classed("taco-table-container", true)
           .style("width", that.width + margin.left + margin.right+'px')
           .style("height", that.height + margin.top + margin.bottom+'px')
-          .call(drag)
-          .append("div")// g.margin
+          .call(drag);
+        var root = container.append("div")// g.margin
           .attr("class", "taco-table")
           .style("width", that.width +'px')
           .style("height", that.height +'px')
