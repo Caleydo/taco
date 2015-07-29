@@ -6,7 +6,7 @@ define(["require", "exports", 'd3'],
 
     //height of each row in the heatmap
     //width of each column in the heatmap
-    var gridSize = 10,
+    var gridSize = 4,
       h = gridSize,
       w = gridSize;
 
@@ -16,10 +16,10 @@ define(["require", "exports", 'd3'],
 
 
     //todo to get the min max data values
-    function Heatmap(data, row, col, range) {
+    function Heatmap(data, row, col, range, pos) {
       this.h_data = data;
-      this.width = col.length * w;
-      this.height = row.length * h;
+      this.width = col.length * w +2;
+      this.height = row.length * h +2;
 
       var dataMax = range[1], dataMin = range[0];
       this.colorScale = d3.scale.linear()
@@ -27,12 +27,14 @@ define(["require", "exports", 'd3'],
         .range([colorMin, colorMax]);
 
       this.xScale = d3.scale.linear()
-        .range([0, this.width])
+        .range([0, this.width -2])
         .domain([0,data[0].length]);
 
       this.yScale = d3.scale.linear()
-        .range([0, this.height])
+        .range([0, this.height -2])
         .domain([0,data.length]);
+
+      this.position = pos;
     }
 
     Heatmap.prototype.get_data = function () {
@@ -41,8 +43,8 @@ define(["require", "exports", 'd3'],
 
     exports.Heatmap = Heatmap;
 
-    exports.create = function(data, row, col, range){
-      return new Heatmap(data, row, col, range)
+    exports.create = function(data, row, col, range, pos){
+      return new Heatmap(data, row, col, range, pos)
     };
     var container;
 
@@ -67,11 +69,15 @@ define(["require", "exports", 'd3'],
 
       var that = this;
 
+      var width = parseInt(d3.select("#board").style("width"));
+
       container = d3.select("#board")
         .append("div") //svg
         .classed("taco-table-container", true)
         .style("width", that.width + margin.left + margin.right + 'px')
         .style("height", that.height + margin.top + margin.bottom + 'px')
+        //to shift the table to be at the right end
+        .style("transform", "translate(" + (that.position.x>0? that.position.x : width + that.position.x - that.width - margin.right - margin.left) + "px," + that.position.y + "px)")
         .call(drag);
 
        var root = container.append("div")// g.margin

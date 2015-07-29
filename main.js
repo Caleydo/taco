@@ -29,14 +29,16 @@ require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heat
         var cols = values[1];
         var data = values[2];
         var range = selectedDataset.desc.value.range;
+        var x_margin = 10, y_margin = 10;
 
         if (dest){
           if (hm2 !== null){
             hm2.remove();
+            hm2 = null;
           }
           //can use selectedDataset.dim instead of calculating the length in the class
           //todo decide where to draw the table
-          hm2 = Heatmap.create(data, rows, cols, range);
+          hm2 = Heatmap.create(data, rows, cols, range, {x: -x_margin, y: y_margin});
           hm2.drawHeatmap();
 
           rows2 = rows;
@@ -45,8 +47,9 @@ require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heat
         }else{
           if (hm1 !== null){
             hm1.remove();
+            hm1 = null;
           }
-          hm1 = Heatmap.create(data, rows, cols, range);
+          hm1 = Heatmap.create(data, rows, cols, range, {x: x_margin, y:y_margin});
           hm1.drawHeatmap();
           rows1 = rows;
           cols1 = cols;

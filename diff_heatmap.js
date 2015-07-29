@@ -6,7 +6,7 @@ define(["require", "exports", 'd3', 'underscore'],
 
     //height of each row in the heatmap
     //width of each column in the heatmap
-    var gridSize = 10,
+    var gridSize = 4,
       h = gridSize,
       w = gridSize;
 
@@ -25,6 +25,17 @@ define(["require", "exports", 'd3', 'underscore'],
       this.h_data = data;
       this.width = width;
       this.height = height;
+/*
+      this.width = col.length * w;
+      this.height = row.length * h;
+
+      this.xScale = d3.scale.linear()
+        .range([0, this.width])
+        .domain([0,data[0].length]);
+
+      this.yScale = d3.scale.linear()
+        .range([0, this.height])
+        .domain([0,data.length]);*/
     }
 
     DiffHeatmap.prototype.get_data = function () {
@@ -45,7 +56,7 @@ define(["require", "exports", 'd3', 'underscore'],
 
       var drag = d3.behavior.drag()
         //.on('dragstart', function() { console.log("start") })
-        .on('drag', dragHandler)
+        .on('drag', dragHandler);
         //.on('dragend', function() { console.log("end") });
 
       //todo to use just the one in heatmap
@@ -60,12 +71,17 @@ define(["require", "exports", 'd3', 'underscore'],
       var that = this;
       that.h_data.then(function(data) {
         //todo create this as the size of the final table at the beginning?
-        console.log( 'data len', data.length);
+        var position = parseInt( parseInt(d3.select("#board").style("width"))/2)- margin.left - parseInt(that.width/2);
+        console.log("pos", position);
+
+        console.log( 'data len', data);
         container = d3.select("#board")
           .append("div") //svg
           .classed("taco-table-container", true)
           .style("width", that.width + margin.left + margin.right+'px')
           .style("height", that.height + margin.top + margin.bottom+'px')
+          //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
+          .style("transform", "translate(" + position + "px," + margin.top + "px)")
           .call(drag);
         var root = container.append("div")// g.margin
           .attr("class", "taco-table")
@@ -78,8 +94,8 @@ define(["require", "exports", 'd3', 'underscore'],
           .enter()
           .append("div") //svg:rect
           //todo think of a better way to show heatmap
-          .style("left", function (d) {return (parseInt(d.col.substring(3)) * w) + "px";})
-          .style("top", function (d) {return (parseInt(d.row.substring(3)) * h) + "px";})
+          .style("left", function (d) {return ((parseInt(d.col.substring(3))-1) * w) + "px";})
+          .style("top", function (d) {return ((parseInt(d.row.substring(3))-1) * h) + "px";})
           .style("width", function (d) {return w + "px";})
           .style("height", function (d) {return h + "px";})
           .style("background-color", function (d) {return colorScale(d.score);});
@@ -90,11 +106,13 @@ define(["require", "exports", 'd3', 'underscore'],
 
       var row_ids = _.union(rows1, rows2);
       console.log("uni", row_ids);
+      height = (row_ids.length * h) + 2;
       var col_ids = _.union(cols1, cols2);
       console.log("uni cols", col_ids);
+      width = (col_ids.length * w) + 2;
 
-      this.height = row_ids.length;
-      this.width = col_ids.length;
+      console.log("gridsize", w,h, gridSize);
+
 
       //console.log("diff arrays ", diff_arrays);
       //todo: are the ids always a number? how to merge then?
