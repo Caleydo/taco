@@ -10,7 +10,7 @@ define(["require", "exports", 'd3', 'underscore'],
       h = gridSize,
       w = gridSize;
 
-    var margin = {top: 10, right: 40, bottom: 10, left: 20},
+    var margin = {top: 10, right: 10, bottom: 10, left: 10},
       width = 640 - margin.left - margin.right,
       height = 380 - margin.top - margin.bottom;
 
@@ -63,8 +63,8 @@ define(["require", "exports", 'd3', 'underscore'],
           .call(drag)
           .append("div")// g.margin
           .attr("class", "taco-table")
-          .style("width", that.width + margin.left + margin.right- 50 +'px')
-          .style("height", that.height + margin.top + margin.bottom- 50 +'px')
+          .style("width", that.width +'px')
+          .style("height", that.height +'px')
           .style("transform", "translate(" + margin.left + "px," + margin.top + "px)");
 
         var heatMap = root.selectAll(".board")
