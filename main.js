@@ -57,7 +57,6 @@ require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heat
         }
 
         if ( rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null && id1 !== null && id2!==null){
-          var toDiffMatrix = dHeatmap.createDiffMatrix(rows1, rows2, cols1, cols2);
           var diff_source = server_url + 'diff_log/' + id1 +'/' + id2 ;
           //var diff_source = 'data/tiny_table1_diff.log';
 
@@ -65,13 +64,14 @@ require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heat
           //todo get the name of the selected tables
           var diff_parser = difflog_parser.create(diff_source);
 
-          var h_data = diff_parser.getDiff().then(toDiffMatrix);
+          //var toDiffMatrix = dHeatmap.createUnionTable(rows1, rows2, cols1, cols2);
+          var h_data = diff_parser.getDiff();
           console.log(h_data, "hdata");
 
           if (dh !== null){
             dh.remove();
           }
-          dh = dHeatmap.create(h_data);
+          dh = dHeatmap.create(h_data, rows1, rows2, cols1, cols2);
 
           dh.drawDiffHeatmap();
         }else{

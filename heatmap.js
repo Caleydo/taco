@@ -6,7 +6,7 @@ define(["require", "exports", 'd3'],
 
     //height of each row in the heatmap
     //width of each column in the heatmap
-    var gridSize = 4,
+    var gridSize = 6,
       h = gridSize,
       w = gridSize;
 
@@ -35,6 +35,8 @@ define(["require", "exports", 'd3'],
         .domain([0,data.length]);
 
       this.position = pos;
+      //todo should I move the initialization to here?
+      this.container;
     }
 
     Heatmap.prototype.get_data = function () {
@@ -46,10 +48,9 @@ define(["require", "exports", 'd3'],
     exports.create = function(data, row, col, range, pos){
       return new Heatmap(data, row, col, range, pos)
     };
-    var container;
 
     Heatmap.prototype.remove = function(){
-      container.remove();
+      this.container.remove();
     };
 
     Heatmap.prototype.drawHeatmap = function() {
@@ -71,7 +72,7 @@ define(["require", "exports", 'd3'],
 
       var width = parseInt(d3.select("#board").style("width"));
 
-      container = d3.select("#board")
+      that.container = d3.select("#board")
         .append("div") //svg
         .classed("taco-table-container", true)
         .style("width", that.width + margin.left + margin.right + 'px')
@@ -80,7 +81,7 @@ define(["require", "exports", 'd3'],
         .style("transform", "translate(" + (that.position.x>0? that.position.x : width + that.position.x - that.width - margin.right - margin.left) + "px," + that.position.y + "px)")
         .call(drag);
 
-       var root = container.append("div")// g.margin
+       var root = that.container.append("div")// g.margin
         .attr("class", "taco-table")
         .style("width", that.width + 'px')
         .style("height", that.height + 'px')
@@ -91,13 +92,6 @@ define(["require", "exports", 'd3'],
         .enter()
         .append("div") //svg:rect
         .classed( "taco-row", true);
-        //todo think of a better way to show heatmap
-        /*.style("left", function (d, i) {
-          return ((d.length) * w) + "px";} )
-        .style("top", function (d, i) {return ((i+1) * h) + "px";})
-        .style("width", function (d) {return w + "px";})
-        .style("height", function (d) {return h + "px";})
-        .style("background-color", function (d) {return that.colorScale(d.score);});*/
 
       var col = row.selectAll(".taco-cell")
         .data(function (d,i) { return d.map(function(a) { return {value: a, row: i}; } ) })
@@ -109,17 +103,5 @@ define(["require", "exports", 'd3'],
         .style("width", that.xScale(1) + "px")
         .style("height", that.yScale(1) + "px")
         .style("background-color", function(d) { return that.colorScale(d.value); });
-
-/*      var heatMap = root.selectAll(".board")
-        .data(that.h_data, function (d) { console.log("data", d); return d.col + ':' + d.row;})
-        .enter()
-        .append("div") //svg:rect
-        //todo think of a better way to show heatmap
-        .style("left", function (d, i) {
-          return ((d.length) * w) + "px";} )
-        .style("top", function (d, i) {return ((i+1) * h) + "px";})
-        .style("width", function (d) {return w + "px";})
-        .style("height", function (d) {return h + "px";})
-        .style("background-color", function (d) {return that.colorScale(d.score);});*/
     }
   });
