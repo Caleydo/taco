@@ -158,11 +158,11 @@ define(["require", "exports", 'd3', 'underscore'],
           .append("div")
           .attr("class", "taco-ch-cell")
           .style("top",  function (d) {
-            var y = that.col_ids.indexOf(d.col);
+            var y = that.row_ids.indexOf(d.row);
             return (y !== -1? y * h : null) + "px";
           })
           .style("left", function (d) {
-            var x = that.row_ids.indexOf(d.row);
+            var x = that.col_ids.indexOf(d.col);
             return (x !== -1? x * w : null) + "px";
           })
           .style("width", w + "px")
