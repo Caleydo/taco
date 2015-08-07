@@ -4,7 +4,7 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_web/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap', './heatmap','bootstrap', 'font-awesome'],
+require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap', './heatmap','bootstrap', 'font-awesome'],
   function (data, d3, $, difflog_parser, dHeatmap, Heatmap) {
     'use strict';
     var server_url = "http://192.168.50.52:9000/api/taco/";
