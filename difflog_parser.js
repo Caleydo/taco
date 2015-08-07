@@ -45,6 +45,7 @@ define(["require", "exports", 'd3'],
               that.diff_arrays.ch_cells.push({row: cell[0], col: cell[1], diff_data: d.data});
             }
           });
+          console.log(that.diff_arrays);
           resolve(that.diff_arrays);
           //
         });

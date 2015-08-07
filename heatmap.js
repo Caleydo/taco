@@ -6,7 +6,7 @@ define(["require", "exports", 'd3'],
 
     //height of each row in the heatmap
     //width of each column in the heatmap
-    var gridSize = 10,
+    var gridSize = 6,
       h = gridSize,
       w = gridSize;
 
@@ -16,10 +16,10 @@ define(["require", "exports", 'd3'],
 
 
     //todo to get the min max data values
-    function Heatmap(data, row, col, range) {
+    function Heatmap(data, row, col, range, pos) {
       this.h_data = data;
-      this.width = col.length * w;
-      this.height = row.length * h;
+      this.width = col.length * w +2;
+      this.height = row.length * h +2;
 
       var dataMax = range[1], dataMin = range[0];
       this.colorScale = d3.scale.linear()
@@ -27,12 +27,16 @@ define(["require", "exports", 'd3'],
         .range([colorMin, colorMax]);
 
       this.xScale = d3.scale.linear()
-        .range([0, this.width])
+        .range([0, this.width -2])
         .domain([0,data[0].length]);
 
       this.yScale = d3.scale.linear()
-        .range([0, this.height])
+        .range([0, this.height -2])
         .domain([0,data.length]);
+
+      this.position = pos;
+      //todo should I move the initialization to here?
+      this.container;
     }
 
     Heatmap.prototype.get_data = function () {
@@ -41,8 +45,12 @@ define(["require", "exports", 'd3'],
 
     exports.Heatmap = Heatmap;
 
-    exports.create = function(data, row, col, range){
-      return new Heatmap(data, row, col, range)
+    exports.create = function(data, row, col, range, pos){
+      return new Heatmap(data, row, col, range, pos)
+    };
+
+    Heatmap.prototype.remove = function(){
+      this.container.remove();
     };
 
     Heatmap.prototype.drawHeatmap = function() {
@@ -62,13 +70,18 @@ define(["require", "exports", 'd3'],
 
       var that = this;
 
-      var root = d3.select("#board")
+      var width = parseInt(d3.select("#board").style("width"));
+
+      that.container = d3.select("#board")
         .append("div") //svg
         .classed("taco-table-container", true)
         .style("width", that.width + margin.left + margin.right + 'px')
         .style("height", that.height + margin.top + margin.bottom + 'px')
-        .call(drag)
-        .append("div")// g.margin
+        //to shift the table to be at the right end
+        .style("transform", "translate(" + (that.position.x>0? that.position.x : width + that.position.x - that.width - margin.right - margin.left) + "px," + that.position.y + "px)")
+        .call(drag);
+
+       var root = that.container.append("div")// g.margin
         .attr("class", "taco-table")
         .style("width", that.width + 'px')
         .style("height", that.height + 'px')
@@ -79,13 +92,6 @@ define(["require", "exports", 'd3'],
         .enter()
         .append("div") //svg:rect
         .classed( "taco-row", true);
-        //todo think of a better way to show heatmap
-        /*.style("left", function (d, i) {
-          return ((d.length) * w) + "px";} )
-        .style("top", function (d, i) {return ((i+1) * h) + "px";})
-        .style("width", function (d) {return w + "px";})
-        .style("height", function (d) {return h + "px";})
-        .style("background-color", function (d) {return that.colorScale(d.score);});*/
 
       var col = row.selectAll(".taco-cell")
         .data(function (d,i) { return d.map(function(a) { return {value: a, row: i}; } ) })
@@ -97,17 +103,5 @@ define(["require", "exports", 'd3'],
         .style("width", that.xScale(1) + "px")
         .style("height", that.yScale(1) + "px")
         .style("background-color", function(d) { return that.colorScale(d.value); });
-
-/*      var heatMap = root.selectAll(".board")
-        .data(that.h_data, function (d) { console.log("data", d); return d.col + ':' + d.row;})
-        .enter()
-        .append("div") //svg:rect
-        //todo think of a better way to show heatmap
-        .style("left", function (d, i) {
-          return ((d.length) * w) + "px";} )
-        .style("top", function (d, i) {return ((i+1) * h) + "px";})
-        .style("width", function (d) {return w + "px";})
-        .style("height", function (d) {return h + "px";})
-        .style("background-color", function (d) {return that.colorScale(d.score);});*/
     }
   });
