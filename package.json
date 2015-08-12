@@ -26,7 +26,7 @@
     },
     "dependencies": {
       "web": {
-        "underscore": ">=1.6",
+        "underscore": "~1.8",
         "bootstrap": "~3.3.4"
       }
     },
