@@ -4,10 +4,9 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap', './heatmap','bootstrap', 'font-awesome'],
-  function (data, d3, $, difflog_parser, dHeatmap, Heatmap) {
+require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap', './heatmap', '../caleydo_core/vis', '../caleydo_core/main','bootstrap', 'font-awesome'],
+  function (data, d3, $, difflog_parser, dHeatmap, Heatmap, vis, C) {
     'use strict';
-    var server_url = "http://192.168.50.52:9000/api/taco/";
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
     var rows1 = null, rows2= null, cols1= null, cols2= null, id1= null, id2= null,
@@ -24,6 +23,16 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
     //@dest 1 a destination table, 0 a source table
     function addIt(selectedDataset, dest) {
       //selectedDataset.rows for ids
+      var heatmapplugin = vis.list(selectedDataset).filter(function(d) { return d.id.match(/.*heatmap.*/); })[0];
+      //var heatmapplugin = vis.list(selectedDataset).filter(function(d) { return d.id.match(/.*histogram.*/); })[0];
+
+      heatmapplugin.load().then(function(plugin) {
+        var heatmap = plugin.factory(selectedDataset, document.getElementById('test'), {
+          initialScale: 1
+        });
+        console.log(heatmap);
+      })
+
       Promise.all([selectedDataset.rows(), selectedDataset.cols(), selectedDataset.data()]).then(function (values) {
         var rows = values[0];
         var cols = values[1];
@@ -57,7 +66,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
         }
 
         if ( rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null && id1 !== null && id2!==null){
-          var diff_source = server_url + 'diff_log/' + id1 +'/' + id2 ;
+          var diff_source = C.server_url + '/taco/diff_log/' + id1 +'/' + id2 ;
           //var diff_source = 'data/tiny_table1_diff.log';
 
           //call the server for diff
