@@ -96,7 +96,8 @@ define(["require", "exports", 'd3', 'underscore'],
           .attr("class", "taco-added-row")
           .style("left",  0 + "px")
           .style("top", function (d) {
-            var y = that.row_ids.indexOf(d);
+            //var y = that.row_ids.indexOf(d);
+            var y = d.pos;
             return (y !== -1? y * h : null) + "px";
           })
           .style("width", that.width + "px")
@@ -110,7 +111,8 @@ define(["require", "exports", 'd3', 'underscore'],
           .attr("class", "taco-added-col")
           .style("top",  0 + "px")
           .style("left", function (d) {
-            var x = that.col_ids.indexOf(d);
+            //var x = that.col_ids.indexOf(d);
+            var x = d.pos;
             return (x !== -1? x * w : null) + "px";
           })
           .style("width", w + "px")
@@ -124,7 +126,8 @@ define(["require", "exports", 'd3', 'underscore'],
           .attr("class", "taco-del-row")
           .style("left",  0 + "px")
           .style("top", function (d) {
-            var y = that.row_ids.indexOf(d);
+            //var y = that.row_ids.indexOf(d);
+            var y = d.pos;
             return (y !== -1? y * h : null) + "px";
           })
           .style("width", that.width + "px")
@@ -138,7 +141,8 @@ define(["require", "exports", 'd3', 'underscore'],
           .attr("class", "taco-del-col")
           .style("top",  0 + "px")
           .style("left", function (d) {
-            var x = that.col_ids.indexOf(d);
+            //var x = that.col_ids.indexOf(d);
+            var x = d.pos;
             return (x !== -1? x * w : null) + "px";
           })
           .style("width", w + "px")
@@ -158,11 +162,13 @@ define(["require", "exports", 'd3', 'underscore'],
           .append("div")
           .attr("class", "taco-ch-cell")
           .style("top",  function (d) {
-            var y = that.row_ids.indexOf(d.row);
+            //var y = that.row_ids.indexOf(d.row);
+            var y = d.rpos;
             return (y !== -1? y * h : null) + "px";
           })
           .style("left", function (d) {
-            var x = that.col_ids.indexOf(d.col);
+            //var x = that.col_ids.indexOf(d.col);
+            var x = d.cpos;
             return (x !== -1? x * w : null) + "px";
           })
           .style("width", w + "px")

@@ -29,20 +29,21 @@ define(["require", "exports", 'd3'],
              position: d.position // convert to number use: +d.position*/
             if (d.operation === "add") {
               if (d.type === 'column') {
-                that.diff_arrays.added_cols.push(d.id);
+                that.diff_arrays.added_cols.push({id: d.id, pos: +d.position});
               } else if (d.type === 'row') {
-                that.diff_arrays.added_rows.push(d.id);
+                that.diff_arrays.added_rows.push({id: d.id, pos: +d.position});
               }
             } else if (d.operation === "delete") {
               if (d.type === 'column') {
-                that.diff_arrays.deleted_cols.push(d.id);
+                that.diff_arrays.deleted_cols.push({id: d.id, pos: +d.position});
               } else if (d.type === 'row') {
-                that.diff_arrays.deleted_rows.push(d.id);
+                that.diff_arrays.deleted_rows.push({id: d.id, pos: +d.position});
               }
             } else if (d.operation === "change" && d.type === 'cell'){
               //we assume that the id is separated by comma ,
               var cell = d.id.split(",");
-              that.diff_arrays.ch_cells.push({row: cell[0], col: cell[1], diff_data: d.data});
+              var pos = d.position.split(",");
+              that.diff_arrays.ch_cells.push({row: cell[0], col: cell[1], diff_data: d.data, rpos: +pos[0], cpos: +pos[1]});
             }
           });
           console.log(that.diff_arrays);
