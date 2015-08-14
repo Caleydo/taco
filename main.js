@@ -11,6 +11,11 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
     var rows1 = null, rows2= null, cols1= null, cols2= null, id1= null, id2= null,
       hm1= null, hm2 = null, dh = null;
+    var heatmap1 = null, heatmap2 = null;
+
+    var gridSize = 6,
+      h = gridSize,
+      w = gridSize;
 
     function toType(desc) {
       if (desc.type === 'vector') {
@@ -19,36 +24,50 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
       return desc.type;
     }
 
+    //todo move this to a shared file between all those heatmap things!
+    var drag = d3.behavior.drag()
+      //.on('dragstart', function () {console.log("start")})
+      .on('drag', dragHandler);
+    //.on('dragend', function () {console.log("end")});
+
+    function dragHandler(d) {
+      //must have position absolute to work like this
+      //otherwise use transfrom css property
+      d3.select(this)
+        .style("left", (this.offsetLeft + d3.event.dx) + "px")
+        .style("top", (this.offsetTop + d3.event.dy) + "px");
+    }
+
     //from caleydo demo app
     //@dest 1 a destination table, 0 a source table
     function addIt(selectedDataset, dest) {
       //selectedDataset.rows for ids
+
       var heatmapplugin = vis.list(selectedDataset).filter(function(d) { return d.id.match(/.*heatmap.*/); })[0];
       //var heatmapplugin = vis.list(selectedDataset).filter(function(d) { return d.id.match(/.*histogram.*/); })[0];
 
-      heatmapplugin.load().then(function(plugin) {
-        var heatmap = plugin.factory(selectedDataset, document.getElementById('test'), {
-          initialScale: 1
-        });
-        console.log(heatmap);
-      })
-
-      Promise.all([selectedDataset.rows(), selectedDataset.cols(), selectedDataset.data()]).then(function (values) {
+      Promise.all([selectedDataset.rows(), selectedDataset.cols(), selectedDataset.data(), heatmapplugin.load()]).then(function (values) {
         var rows = values[0];
         var cols = values[1];
         var data = values[2];
+        var plugin = values[3];
         var range = selectedDataset.desc.value.range;
         var x_margin = 10, y_margin = 10;
 
         if (dest){
           if (hm2 !== null){
             hm2.remove();
+            heatmap2.node.remove();
             hm2 = null;
           }
           //can use selectedDataset.dim instead of calculating the length in the class
           //todo decide where to draw the table
           hm2 = Heatmap.create(data, rows, cols, range, {x: -x_margin, y: y_margin});
           hm2.drawHeatmap();
+          heatmap2 = plugin.factory(selectedDataset, document.getElementById('test'), {
+            initialScale: gridSize
+          });
+          heatmap2.$node.call(drag);
 
           rows2 = rows;
           cols2 = cols;
@@ -56,10 +75,15 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
         }else{
           if (hm1 !== null){
             hm1.remove();
+            heatmap1.node.remove();
             hm1 = null;
           }
           hm1 = Heatmap.create(data, rows, cols, range, {x: x_margin, y:y_margin});
           hm1.drawHeatmap();
+          heatmap1 = plugin.factory(selectedDataset, document.getElementById('test'), {
+            initialScale: gridSize
+          });
+          heatmap1.$node.call(drag);
           rows1 = rows;
           cols1 = cols;
           id1 = selectedDataset.desc.id;

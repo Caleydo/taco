@@ -217,6 +217,11 @@ svg .select-selected {
   position: relative;
 }
 
+.heatmap {
+  position: absolute;
+  border: 1px solid darkgreen;
+}
+
 .taco-table-container {
   overflow: hidden;
   border: 1px solid lightpink;
