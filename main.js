@@ -67,7 +67,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
           heatmap2 = plugin.factory(selectedDataset, document.getElementById('test'), {
             initialScale: gridSize
           });
-          heatmap2.$node.call(drag);
+          d3.select("#test").call(drag);
 
           rows2 = rows;
           cols2 = cols;
@@ -80,10 +80,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
           }
           hm1 = Heatmap.create(data, rows, cols, range, {x: x_margin, y:y_margin});
           hm1.drawHeatmap();
-          heatmap1 = plugin.factory(selectedDataset, document.getElementById('test'), {
+          heatmap1 = plugin.factory(selectedDataset, document.getElementById('test2'), {
             initialScale: gridSize
           });
-          heatmap1.$node.call(drag);
+          d3.select("#test2").call(drag);
           rows1 = rows;
           cols1 = cols;
           id1 = selectedDataset.desc.id;

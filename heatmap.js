@@ -12,7 +12,7 @@ define(["require", "exports", 'd3'],
 
     var margin = {top: 10, right: 10, bottom: 10, left: 10};
 
-    var colorMin = 'white', colorMax = 'black';
+    var colorMin = 'black', colorMax = 'white';
 
 
     //todo to get the min max data values
