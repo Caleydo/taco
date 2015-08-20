@@ -6,7 +6,8 @@
   "dependencies": {
   },
   "peerDependencies": {
-    "caleydo_core": "*"
+    "caleydo_core": "*",
+    "caleydo_vis": "*"
   },
   "caleydo": {
     "plugins": {
