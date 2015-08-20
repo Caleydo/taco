@@ -43,6 +43,6 @@
     }
   },
   "publishConfig": {
-    "registry": "http://dev.caleydo.org/nexus/content/repositories/caleydo-web/"
+    "registry": "http://registry.caleydo.org/"
   }
 }
