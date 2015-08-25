@@ -1,8 +1,8 @@
 /**
  * Created by Reem on 6/15/2015.
  */
-define(["require", "exports", 'd3', 'underscore'],
-  function (require, exports, d3, _) {
+define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
+  function (require, exports, d3, _, d3utils) {
 
     //height of each row in the heatmap
     //width of each column in the heatmap
@@ -18,17 +18,14 @@ define(["require", "exports", 'd3', 'underscore'],
       .domain([-2, -1, 0, 1, 2])
       .range([colorDeleted, colorLow, colorMed, colorHigh, colorAdded]);
 
-    function DiffHeatmap(data, rows1, rows2, cols1, cols2) {
+    function DiffHeatmap(data, dim) {
       this.h_data = data;
-
-      this.row_ids = _.union(rows1, rows2);
-      this.col_ids = _.union(cols1, cols2);
 
       console.log("uni cols", this.col_ids);
       console.log("uni rows", this.row_ids);
 
-      this.height = this.row_ids.length * h;
-      this.width  = this.col_ids.length * w;
+      this.width  = dim[1] * w;
+      this.height = dim[0] * h;
 
       this.container;
 
@@ -183,8 +180,24 @@ define(["require", "exports", 'd3', 'underscore'],
 
     exports.DiffHeatmap = DiffHeatmap;
 
-    exports.create = function(data, rows1, rows2, cols1, cols2){
-      return new DiffHeatmap(data, rows1, rows2, cols1, cols2)
+    exports.DiffHeatmapVis = d3utils.defineVis('DiffHeatmapVis', {
+
+        }
+        , function (data) {
+          return [data.desc.size[0] *w, data.desc.size[1]*h];
+        }, function ($parent, data, size) { //build the vis
+          var o = this.options;
+          var diff = new DiffHeatmap(data.data(), data.desc.size);
+          diff.drawDiffHeatmap();
+          return d3.select('#board > div');
+        });
+
+    exports.createDiff = function (data, parent, options) {
+      return new exports.DiffHeatmapVis(data, parent, options);
+    };
+
+    exports.create = function(data, size){
+      return new DiffHeatmap(data, size)
     };
 
   });

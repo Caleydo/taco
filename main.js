@@ -94,20 +94,42 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
         }
 
         if (id1 !== null && id2 !== null) {
+          //checking the basic type matches
+          if (ds1.desc.type !== ds2.desc.type) {
+            //bad
+          }
+          //checking matrix idtype matches
+          if (ds1.desc.type === 'matrix' && (ds1.desc.rowtype !== ds2.desc.rowtype || ds1.desc.coltype !== ds2.desc.coltype)) {
+            //bad
+          }
+          if (ds1.desc.type === 'table' && (ds1.desc.idtype !== ds2.desc.idtype)) {
+            //bad
+          }
+          //check value datatype of matrix
+          if (ds1.desc.type === 'matrix' && (ds1.desc.value.type !== ds2.desc.value.type)) {
+            //bad
+          }
+          //TODO check values/columns for table
+
           data_provider.create({
-            type: 'diffmatrix',
-            name: ds1.desc.name+'-'+ds2.desc.name,
-            id1: id1,
-            id2: id2
+              type: 'diffstructure',
+              name: ds1.desc.name+'-'+ds2.desc.name,
+              id1: id1,
+              id2: id2,
+              size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length]
           }).then(function(diffmatrix) {
             //diffmatrix
             if ( rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null){
               if (dh !== null){
                 dh.remove();
               }
-              dh = dHeatmap.create(diffmatrix.data(), rows1, rows2, cols1, cols2);
+              var diffheatmap = vis.list(diffmatrix)[0];
+              diffheatmap.load().then(function(plugin) {
+                plugin.factory(diffmatrix, d3.select('#board').node());
+              });
+              //dh = dHeatmap.create(diffmatrix.data(), rows1, rows2, cols1, cols2);
 
-              dh.drawDiffHeatmap();
+              //dh.drawDiffHeatmap();
             } else{
               console.log("no diff!", rows1, cols1, rows2, cols2);
             }

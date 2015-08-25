@@ -13,21 +13,23 @@
     "plugins": {
       "web": [
         {
-          "type": "vis",
-          "id": "taco-vis",
-          "name": "Taco",
-          "filter": "idk"
-        },
-        {
           "type": "app",
           "id": "taco",
           "name": "Taco"
         },
         {
           "type": "datatype",
-          "id": "diffmatrix",
+          "id": "diffstructure",
           "name": "Diff Matrix",
           "file": "diffmatrix"
+        },
+        {
+          "type": "vis",
+          "id": "diffmatrixvis",
+          "name": "Diff matrix",
+          "filter": "diffstructure",
+          "file": "diff_heatmap",
+          "factory": "createDiff"
         }
       ]
     },
