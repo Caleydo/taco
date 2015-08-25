@@ -62,21 +62,23 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
           .style("left", (this.offsetLeft + d3.event.dx) + "px")
           .style("top", (this.offsetTop + d3.event.dy) + "px");
       }
-
+      //todo create this as the size of the final table at the beginning?
       var that = this;
-      that.h_data.then(function(data) {
-        //todo create this as the size of the final table at the beginning?
-        var position = parseInt( parseInt(d3.select("#board").style("width"))/2)- margin.left - parseInt(that.width/2);
+      var position = parseInt( parseInt(d3.select("#board").style("width"))/2)- margin.left - parseInt(that.width/2);
 
-        //console.log( 'data len', data);
-        that.container = d3.select("#board")
-          .append("div") //svg
-          .classed("taco-table-container", true)
-          .style("width", that.width +2 + margin.left + margin.right+'px')
-          .style("height", that.height +2 + margin.top + margin.bottom+'px')
-          //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
-          .style("transform", "translate(" + position + "px," + margin.top + "px)")
-          .call(drag);
+      //console.log( 'data len', data);
+      this.container = d3.select("#board")
+        .append("div") //svg
+        .classed("taco-table-container", true)
+        .style("width", that.width +2 + margin.left + margin.right+'px')
+        .style("height", that.height +2 + margin.top + margin.bottom+'px')
+        //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
+        .style("transform", "translate(" + position + "px," + margin.top + "px)")
+        .call(drag);
+
+
+      that.h_data.then(function(data) {
+
         var root = that.container.append("div")// g.margin
           .attr("class", "taco-table")
           .style("width", that.width +2 +'px')
@@ -189,7 +191,7 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
           var o = this.options;
           var diff = new DiffHeatmap(data.data(), data.desc.size);
           diff.drawDiffHeatmap();
-          return d3.select('#board > div');
+          return diff.container;
         });
 
     exports.createDiff = function (data, parent, options) {

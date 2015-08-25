@@ -59,7 +59,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
         if (dest){
           if (hm2 !== null){
             hm2.remove();
-            heatmap2.node.remove();
+            heatmap2.destroy();
             hm2 = null;
           }
           //can use selectedDataset.dim instead of calculating the length in the class
@@ -78,7 +78,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
         }else{
           if (hm1 !== null){
             hm1.remove();
-            heatmap1.node.remove();
+            heatmap1.destroy();
             hm1 = null;
           }
           hm1 = Heatmap.create(data, rows, cols, range, {x: x_margin, y:y_margin});
@@ -121,11 +121,11 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
             //diffmatrix
             if ( rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null){
               if (dh !== null){
-                dh.remove();
+                dh.destroy()
               }
               var diffheatmap = vis.list(diffmatrix)[0];
               diffheatmap.load().then(function(plugin) {
-                plugin.factory(diffmatrix, d3.select('#board').node());
+                dh = plugin.factory(diffmatrix, d3.select('#board').node());
               });
               //dh = dHeatmap.create(diffmatrix.data(), rows1, rows2, cols1, cols2);
 
