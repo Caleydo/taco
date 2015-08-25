@@ -9,7 +9,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
     'use strict';
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
+    var data_provider = data;
     var rows1 = null, rows2= null, cols1= null, cols2= null, id1= null, id2= null,
+        ds1 = null, ds2 = null,
       hm1= null, hm2 = null, dh = null;
     var heatmap1 = null, heatmap2 = null;
 
@@ -72,6 +74,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
           rows2 = rows;
           cols2 = cols;
           id2 = selectedDataset.desc.id;
+          ds2 = selectedDataset;
         }else{
           if (hm1 !== null){
             hm1.remove();
@@ -87,28 +90,28 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
           rows1 = rows;
           cols1 = cols;
           id1 = selectedDataset.desc.id;
+          ds1 = selectedDataset;
         }
 
-        if ( rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null && id1 !== null && id2!==null){
-          var diff_source = C.server_url + '/taco/diff_log/' + id1 +'/' + id2 ;
-          //var diff_source = 'data/tiny_table1_diff.log';
+        if (id1 !== null && id2 !== null) {
+          data_provider.create({
+            type: 'diffmatrix',
+            name: ds1.desc.name+'-'+ds2.desc.name,
+            id1: id1,
+            id2: id2
+          }).then(function(diffmatrix) {
+            //diffmatrix
+            if ( rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null){
+              if (dh !== null){
+                dh.remove();
+              }
+              dh = dHeatmap.create(diffmatrix.data(), rows1, rows2, cols1, cols2);
 
-          //call the server for diff
-          //todo get the name of the selected tables
-          var diff_parser = difflog_parser.create(diff_source);
-
-          //var toDiffMatrix = dHeatmap.createUnionTable(rows1, rows2, cols1, cols2);
-          var h_data = diff_parser.getDiff();
-          console.log(h_data, "hdata");
-
-          if (dh !== null){
-            dh.remove();
-          }
-          dh = dHeatmap.create(h_data, rows1, rows2, cols1, cols2);
-
-          dh.drawDiffHeatmap();
-        }else{
-          console.log("no diff!", rows1, cols1, rows2, cols2);
+              dh.drawDiffHeatmap();
+            } else{
+              console.log("no diff!", rows1, cols1, rows2, cols2);
+            }
+          });
         }
       })
     }

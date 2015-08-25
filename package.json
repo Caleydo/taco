@@ -22,6 +22,12 @@
           "type": "app",
           "id": "taco",
           "name": "Taco"
+        },
+        {
+          "type": "datatype",
+          "id": "diffmatrix",
+          "name": "Diff Matrix",
+          "file": "diffmatrix"
         }
       ]
     },
