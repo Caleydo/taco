@@ -157,22 +157,6 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
           }
         );
 
-        var mergedRows = root.selectAll(".taco-mer-row")
-          .data(data.merged_rows)
-          .enter()
-          .append("div")
-          .attr("class", "taco-mer-row")
-            //todo use the merge_id
-          .style("left",  0 + "px")
-          .style("top", function (d) {
-            //var y = that.row_ids.indexOf(d);
-            var y = d.pos;
-            return (y !== -1? y * h : null) + "px";
-          })
-          .style("width", that.width + "px")
-          .style("height", h + "px")
-          .style("background-color",  function(d){return (d.is_merge ? colorMerged : colorSplit)});
-
         var mergedCols = root.selectAll(".taco-mer-col")
           .data(data.merged_cols)
           .enter()
@@ -190,6 +174,56 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
           .style("background-color",  function(d){
             return (d.is_merge ? colorMerged : colorSplit)
           });
+
+        var mergedRows = root.selectAll(".taco-mer-row")
+          .data(data.merged_rows)
+          .enter()
+          .append("div")
+          .attr("class", "taco-mer-row")
+          //todo use the merge_id
+          .style("left",  0 + "px")
+          .style("top", function (d) {
+            //var y = that.row_ids.indexOf(d);
+            var y = d.pos;
+            return (y !== -1? y * h : null) + "px";
+          })
+          .style("width", that.width + "px")
+          .style("height", h + "px")
+          .style("background-color",  function(d){return (d.is_merge ? colorMerged : colorSplit)});
+
+        var splitCols = root.selectAll(".taco-spl-col")
+          .data(data.split_cols)
+          .enter()
+          .append("div")
+          .attr("class", "taco-spl-col")
+          //todo use the merge_id
+          .style("top",  0 + "px")
+          .style("left", function (d) {
+            //var x = that.col_ids.indexOf(d);
+            var x = d.pos;
+            return (x !== -1? x * w : null) + "px";
+          })
+          .style("width", w + "px")
+          .style("height", that.height + "px")
+          .style("background-color",  function(d){
+            return (d.is_split ? colorSplit : colorMerged)
+          });
+
+        var splitRows = root.selectAll(".taco-spl-row")
+          .data(data.split_rows)
+          .enter()
+          .append("div")
+          .attr("class", "taco-spl-row")
+          //todo use the merge_id
+          .style("left",  0 + "px")
+          .style("top", function (d) {
+            //var y = that.row_ids.indexOf(d);
+            var y = d.pos;
+            return (y !== -1? y * h : null) + "px";
+          })
+          .style("width", that.width + "px")
+          .style("height", h + "px")
+          .style("background-color",  function(d){return (d.is_split ? colorSplit : colorMerged)});
 
         console.log("merged cols", data.merged_cols);
         console.log("merged rows", data.merged_rows);
