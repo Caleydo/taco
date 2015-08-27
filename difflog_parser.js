@@ -53,9 +53,9 @@ define(["require", "exports", 'd3'],
               var pos = d.position.split(log_separator).map(Number);
               ids.forEach(function (value,index){
                 if (d.type === 'column') {
-                  that.diff_arrays.merged_cols.push({id: value, pos: pos[index], merge_id: merge_id, is_merge:(index == 0)});
+                  that.diff_arrays.merged_cols.push({id: value, pos: pos[index], merge_id: merge_id, is_added:(index == 0)});
                 } else if (d.type === 'row') {
-                  that.diff_arrays.merged_rows.push({id: value, pos: pos[index], merge_id: merge_id, is_merge:(index == 0)});
+                  that.diff_arrays.merged_rows.push({id: value, pos: pos[index], merge_id: merge_id, is_added:(index == 0)});
                 }
               });
               //increment the merge id
@@ -65,9 +65,9 @@ define(["require", "exports", 'd3'],
               var pos = d.position.split(log_separator).map(Number);
               ids.forEach(function (value,index){
                 if (d.type === 'column') {
-                  that.diff_arrays.split_cols.push({id: value, pos: pos[index], split_id: merge_id, is_split:(index == 0)});
+                  that.diff_arrays.split_cols.push({id: value, pos: pos[index], split_id: merge_id, is_added:(index != 0)});
                 } else if (d.type === 'row') {
-                  that.diff_arrays.split_rows.push({id: value, pos: pos[index], split_id: merge_id, is_split:(index == 0)});
+                  that.diff_arrays.split_rows.push({id: value, pos: pos[index], split_id: merge_id, is_added:(index != 0)});
                 }
               });
               //increment the split id

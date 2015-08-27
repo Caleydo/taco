@@ -158,14 +158,16 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
           .style("width", w + "px")
           .style("height", that.height + "px")
           .style("background-color",  function(d){
-            return (d.is_merge ? colorMerged : colorSplit)
-          });
+            return d.is_added ? colorMerged : colorSplit
+          })
+          .style("z-index", function(d){return d.is_added ? "0" : "1"});
 
         var mergedRows = root.selectAll(".taco-mer-row")
           .data(data.merged_rows)
           .enter()
           .append("div")
           .attr("class", "taco-mer-row")
+          .style("zIndex", function(d){ return d.is_merge ? "0" : "1"})
           //todo use the merge_id
           .style("left",  0 + "px")
           .style("top", function (d) {
@@ -175,13 +177,15 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
           })
           .style("width", that.width + "px")
           .style("height", h + "px")
-          .style("background-color",  function(d){return (d.is_merge ? colorMerged : colorSplit)});
+          .style("background-color",  function(d){return d.is_added ? colorMerged : colorSplit})
+          .style("z-index", function(d){ return d.is_added ? "0" : "1"});
 
         var splitCols = root.selectAll(".taco-spl-col")
           .data(data.split_cols)
           .enter()
           .append("div")
           .attr("class", "taco-spl-col")
+          .style("z-index", function(d){ return d.is_added ? "0" : "1"})
           //todo use the merge_id
           .style("top",  0 + "px")
           .style("left", function (d) {
@@ -192,7 +196,7 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
           .style("width", w + "px")
           .style("height", that.height + "px")
           .style("background-color",  function(d){
-            return (d.is_split ? colorSplit : colorMerged)
+            return (d.is_added ? colorMerged : colorSplit)
           });
 
         var splitRows = root.selectAll(".taco-spl-row")
@@ -200,6 +204,7 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
           .enter()
           .append("div")
           .attr("class", "taco-spl-row")
+          .style("z-index", function(d){ return d.is_added ? "0" : "1"})
           //todo use the merge_id
           .style("left",  0 + "px")
           .style("top", function (d) {
@@ -209,7 +214,7 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
           })
           .style("width", that.width + "px")
           .style("height", h + "px")
-          .style("background-color",  function(d){return (d.is_split ? colorSplit : colorMerged)});
+          .style("background-color",  function(d){return (d.is_added ? colorMerged : colorSplit)});
 
         var chCells = root.selectAll(".taco-ch-cell")
           .data(data.ch_cells)
