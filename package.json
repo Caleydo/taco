@@ -20,13 +20,13 @@
         {
           "type": "datatype",
           "id": "diffstructure",
-          "name": "Diff Matrix",
+          "name": "Diff Structure",
           "file": "diffmatrix"
         },
         {
           "type": "vis",
           "id": "diffmatrixvis",
-          "name": "Diff matrix",
+          "name": "Diff Structure Vis",
           "filter": "diffstructure",
           "file": "diff_heatmap",
           "factory": "createDiff"

@@ -17,28 +17,16 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
       colorSplit = '#FB9A99'; //light red
 
     var colorScale = d3.scale.linear()
-      .domain([-2, -1, 0, 1, 2])
-      .range([colorDeleted, colorLow, colorMed, colorHigh, colorAdded]);
+      .domain([-1, 0, 1])
+      .range([colorLow, colorMed, colorHigh]);
 
     function DiffHeatmap(data, dim) {
       this.h_data = data;
-
-      console.log("uni cols", this.col_ids);
-      console.log("uni rows", this.row_ids);
 
       this.width  = dim[1] * w;
       this.height = dim[0] * h;
 
       this.container;
-
-      /*
-      this.xScale = d3.scale.linear()
-        .range([0, this.width])
-        .domain([0,data[0].length]);
-
-      this.yScale = d3.scale.linear()
-        .range([0, this.height])
-        .domain([0,data.length]);*/
     }
 
     DiffHeatmap.prototype.get_data = function () {
@@ -68,16 +56,14 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
       var that = this;
       var position = parseInt( parseInt(d3.select("#board").style("width"))/2)- margin.left - parseInt(that.width/2);
 
-      //console.log( 'data len', data);
       this.container = d3.select("#board")
-        .append("div") //svg
+        .append("div")
         .classed("taco-table-container", true)
         .style("width", that.width +2 + margin.left + margin.right+'px')
         .style("height", that.height +2 + margin.top + margin.bottom+'px')
         //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
         .style("transform", "translate(" + position + "px," + margin.top + "px)")
         .call(drag);
-
 
       that.h_data.then(function(data) {
 
@@ -225,12 +211,6 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
           .style("height", h + "px")
           .style("background-color",  function(d){return (d.is_split ? colorSplit : colorMerged)});
 
-        console.log("merged cols", data.merged_cols);
-        console.log("merged rows", data.merged_rows);
-        console.log("split cols", data.split_cols);
-        console.log("split rows", data.split_rows);
-        //todo split rows and columns
-
         var chCells = root.selectAll(".taco-ch-cell")
           .data(data.ch_cells)
           .enter()
@@ -252,12 +232,19 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
       })
     };
 
+    //helper function
     function normalize(diff_data, max){
       return diff_data/max
     }
 
     exports.DiffHeatmap = DiffHeatmap;
 
+    exports.create = function(data, size){
+      return new DiffHeatmap(data, size)
+    };
+
+    //data, parent, options
+    // defineVis(name, defaultOptions, initialSize, build, functions)
     exports.DiffHeatmapVis = d3utils.defineVis('DiffHeatmapVis', {
 
         }
@@ -272,10 +259,6 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
 
     exports.createDiff = function (data, parent, options) {
       return new exports.DiffHeatmapVis(data, parent, options);
-    };
-
-    exports.create = function(data, size){
-      return new DiffHeatmap(data, size)
     };
 
   });
