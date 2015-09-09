@@ -4,8 +4,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap', './heatmap', '../caleydo_core/vis', '../caleydo_core/main','bootstrap', 'font-awesome'],
-  function (data, d3, $, difflog_parser, dHeatmap, Heatmap, vis, C) {
+require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', './heatmap', '../caleydo_core/vis', '../caleydo_core/main','bootstrap', 'font-awesome'],
+  function (data, d3, $, dHeatmap, Heatmap, vis, C) {
     'use strict';
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
@@ -116,15 +116,16 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
               name: ds1.desc.name+'-'+ds2.desc.name,
               id1: id1,
               id2: id2,
-              size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length]
+              size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length] //we can use dummy values instead
           }).then(function(diffmatrix) {
             //diffmatrix
             if ( rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null){
               if (dh !== null){
-                dh.destroy()
+                dh.destroy();
               }
               var diffheatmap = vis.list(diffmatrix)[0];
               diffheatmap.load().then(function(plugin) {
+                //here we call my diff_heatmap
                 dh = plugin.factory(diffmatrix, d3.select('#board').node());
               });
               //dh = dHeatmap.create(diffmatrix.data(), rows1, rows2, cols1, cols2);
