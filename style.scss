@@ -55,6 +55,7 @@ svg {
   height: 69%;
   position: relative;
   background-color: white;
+  overflow: hidden;
 
   &.mode-block {
     border: 1px solid #2e6da4;
@@ -209,12 +210,6 @@ svg .select-selected {
   stroke-width: 1px;
   fill: $select-color;
   vector-effect: non-scaling-stroke;
-}
-
-
-
-#board {
-  position: relative;
 }
 
 .taco-table-container {
