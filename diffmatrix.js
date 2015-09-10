@@ -17,7 +17,6 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
 
       //var toDiffMatrix = dHeatmap.createUnionTable(rows1, rows2, cols1, cols2);
       var h_data = diff_parser.getDiff();
-      console.log(h_data, "hdata");
       return h_data;
     }
   });

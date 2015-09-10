@@ -1,8 +1,8 @@
 /**
  * Created by Reem on 6/15/2015.
  */
-define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
-  function (require, exports, d3, _, d3utils) {
+define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3util'],
+  function (require, exports, d3, _, toastr, d3utils) {
 
     //height of each row in the heatmap
     //width of each column in the heatmap
@@ -20,13 +20,12 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
       .domain([-1, 0, 1])
       .range([colorLow, colorMed, colorHigh]);
 
-    function DiffHeatmap(data, dim) {
+    function DiffHeatmap(data) {
       this.h_data = data;
-
-      this.width  = dim[1] * w;
-      this.height = dim[0] * h;
-
-      this.container;
+      //todo check if this is correct or should be removed!
+      this.container = d3.select("#board")
+        .append("div")
+        .classed("taco-table-container", true);
     }
 
     DiffHeatmap.prototype.get_data = function () {
@@ -54,23 +53,23 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
       }
       //todo create this as the size of the final table at the beginning?
       var that = this;
-      var position = parseInt( parseInt(d3.select("#board").style("width"))/2)- margin.left - parseInt(that.width/2);
-
-      this.container = d3.select("#board")
-        .append("div")
-        .classed("taco-table-container", true)
-        .style("width", that.width +2 + margin.left + margin.right+'px')
-        .style("height", that.height +2 + margin.top + margin.bottom+'px')
-        //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
-        .style("transform", "translate(" + position + "px," + margin.top + "px)")
-        .call(drag);
 
       that.h_data.then(function(data) {
+        var height = data.union.ur_ids.length * h;
+        var width = data.union.uc_ids.length * w;
+        var position = parseInt( parseInt(d3.select("#board").style("width"))/2)- margin.left - parseInt(width/2);
+
+        that.container
+          .style("width", width +2 + margin.left + margin.right+'px')
+          .style("height", height +2 + margin.top + margin.bottom+'px')
+          //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
+          .style("transform", "translate(" + position + "px," + margin.top + "px)")
+          .call(drag);
 
         var root = that.container.append("div")// g.margin
           .attr("class", "taco-table")
-          .style("width", that.width +2 +'px')
-          .style("height", that.height +2 +'px')
+          .style("width", width +2 +'px')
+          .style("height", height +2 +'px')
           .style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
           //todo move this to the css
           .style("background-color", "white");
@@ -87,7 +86,7 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
             var y = d.pos;
             return (y !== -1? y * h : null) + "px";
           })
-          .style("width", that.width + "px")
+          .style("width", width + "px")
           .style("height", h + "px")
           .style("background-color",  colorAdded);
 
@@ -103,7 +102,7 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
             return (x !== -1? x * w : null) + "px";
           })
           .style("width", w + "px")
-          .style("height", that.height + "px")
+          .style("height", height + "px")
           .style("background-color",  colorAdded);
 
         var deletedRows = root.selectAll(".taco-del-row")
@@ -117,7 +116,7 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
             var y = d.pos;
             return (y !== -1? y * h : null) + "px";
           })
-          .style("width", that.width + "px")
+          .style("width", width + "px")
           .style("height", h + "px")
           .style("background-color",  colorDeleted);
 
@@ -133,7 +132,7 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
             return (x !== -1? x * w : null) + "px";
           })
           .style("width", w + "px")
-          .style("height", that.height + "px")
+          .style("height", height + "px")
           .style("background-color",  colorDeleted);
 
         //todo think of a better way for normalization
@@ -156,7 +155,7 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
             return (x !== -1? x * w : null) + "px";
           })
           .style("width", w + "px")
-          .style("height", that.height + "px")
+          .style("height", height + "px")
           .style("background-color",  function(d){
             return d.is_added ? colorMerged : colorSplit
           })
@@ -175,7 +174,7 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
             var y = d.pos;
             return (y !== -1? y * h : null) + "px";
           })
-          .style("width", that.width + "px")
+          .style("width", width + "px")
           .style("height", h + "px")
           .style("background-color",  function(d){return d.is_added ? colorMerged : colorSplit})
           .style("z-index", function(d){ return d.is_added ? "0" : "1"});
@@ -194,7 +193,7 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
             return (x !== -1? x * w : null) + "px";
           })
           .style("width", w + "px")
-          .style("height", that.height + "px")
+          .style("height", height + "px")
           .style("background-color",  function(d){
             return (d.is_added ? colorMerged : colorSplit)
           });
@@ -212,7 +211,7 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
             var y = d.pos;
             return (y !== -1? y * h : null) + "px";
           })
-          .style("width", that.width + "px")
+          .style("width", width + "px")
           .style("height", h + "px")
           .style("background-color",  function(d){return (d.is_added ? colorMerged : colorSplit)});
 
@@ -234,6 +233,10 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
           .style("width", w + "px")
           .style("height", h + "px")
           .style("background-color",  function(d){ return colorScale(normalize(d.diff_data, diff_max));} );
+      }, function(reason){
+        //why this was rejected
+        console.log(reason);
+        toastr.warning(reason);
       })
     };
 
@@ -244,23 +247,24 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
 
     exports.DiffHeatmap = DiffHeatmap;
 
-    exports.create = function(data, size){
-      return new DiffHeatmap(data, size)
+    exports.create = function(data){
+      return new DiffHeatmap(data);
     };
 
     //data, parent, options
     // defineVis(name, defaultOptions, initialSize, build, functions)
     exports.DiffHeatmapVis = d3utils.defineVis('DiffHeatmapVis', {
 
-        }
-        , function (data) {
-          return [data.desc.size[0] *w, data.desc.size[1]*h];
-        }, function ($parent, data, size) { //build the vis
+      }, function (data) {
+          return [data.desc.size[0] *w, data.desc.size[1]*h]; //this is not really critical
+      }, function ($parent, data, size) { //build the vis
+          //data.data().then(function(d){console.log("size from data", d.union.uc_ids.length, d.union.ur_ids.length)});
           var o = this.options;
-          var diff = new DiffHeatmap(data.data(), data.desc.size);
+          //var diff = new DiffHeatmap(data.data(), data.desc.size); //use the union size from the server instead of the client
+          var diff = new DiffHeatmap(data.data());
           diff.drawDiffHeatmap();
           return diff.container;
-        });
+    });
 
     exports.createDiff = function (data, parent, options) {
       return new exports.DiffHeatmapVis(data, parent, options);

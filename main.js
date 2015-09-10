@@ -4,8 +4,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_heatmap', './heatmap', '../caleydo_core/vis', '../caleydo_core/main','bootstrap', 'font-awesome'],
-  function (data, d3, $, difflog_parser, dHeatmap, Heatmap, vis, C) {
+require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', './heatmap', '../caleydo_core/vis', '../caleydo_core/main','toastr', 'bootstrap', 'font-awesome'],
+  function (data, d3, $, dHeatmap, Heatmap, vis, C, toastr) {
     'use strict';
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
@@ -97,43 +97,52 @@ require(['../caleydo_core/data', 'd3', 'jquery', './difflog_parser', './diff_hea
           //checking the basic type matches
           if (ds1.desc.type !== ds2.desc.type) {
             //bad
-          }
+            toastr.error("The types are not matching " + ds1.desc.type +" "+ ds2.desc.type, 'Datatype mismatch!');
+          }else
           //checking matrix idtype matches
           if (ds1.desc.type === 'matrix' && (ds1.desc.rowtype !== ds2.desc.rowtype || ds1.desc.coltype !== ds2.desc.coltype)) {
             //bad
-          }
-          if (ds1.desc.type === 'table' && (ds1.desc.idtype !== ds2.desc.idtype)) {
+            toastr.error("The matrices have different row or col type " + ds1.desc.rowtype +" "+ ds2.desc.rowtype +" "+ ds1.desc.coltype +" "+ ds2.desc.coltype,
+              'Row or Column Mismatch!', {closeButton: true});
+          }else if (ds1.desc.type === 'table' && (ds1.desc.idtype !== ds2.desc.idtype)) {
             //bad
-          }
+            toastr.error("Tables have different idtypes");
+          }else
           //check value datatype of matrix
           if (ds1.desc.type === 'matrix' && (ds1.desc.value.type !== ds2.desc.value.type)) {
             //bad
-          }
-          //TODO check values/columns for table
+          }else{
+            //everything is comparable
+            //todo move this to else if
+              //TODO check values/columns for table
 
-          data_provider.create({
-              type: 'diffstructure',
-              name: ds1.desc.name+'-'+ds2.desc.name,
-              id1: id1,
-              id2: id2,
-              size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length]
-          }).then(function(diffmatrix) {
-            //diffmatrix
-            if ( rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null){
-              if (dh !== null){
-                dh.destroy()
-              }
-              var diffheatmap = vis.list(diffmatrix)[0];
-              diffheatmap.load().then(function(plugin) {
-                dh = plugin.factory(diffmatrix, d3.select('#board').node());
+              data_provider.create({
+                type: 'diffstructure',
+                name: ds1.desc.name+'-'+ds2.desc.name,
+                id1: id1,
+                id2: id2,
+                size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length] //we can use dummy values instead
+              }).then(function(diffmatrix) {
+                //diffmatrix
+                if ( rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null){
+                  if (dh !== null){
+                    dh.destroy();
+                  }
+                  var diffheatmap = vis.list(diffmatrix)[0];
+                  diffheatmap.load().then(function(plugin) {
+                    //here we call my diff_heatmap
+                    dh = plugin.factory(diffmatrix, d3.select('#board').node());
+                  });
+                  //dh = dHeatmap.create(diffmatrix.data(), rows1, rows2, cols1, cols2);
+
+                  //dh.drawDiffHeatmap();
+                } else{
+                  console.log("no diff!", rows1, cols1, rows2, cols2);
+                }
               });
-              //dh = dHeatmap.create(diffmatrix.data(), rows1, rows2, cols1, cols2);
-
-              //dh.drawDiffHeatmap();
-            } else{
-              console.log("no diff!", rows1, cols1, rows2, cols2);
-            }
-          });
+          }
+        }else{
+          toastr.info("Please select a second table");
         }
       })
     }

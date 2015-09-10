@@ -37,7 +37,8 @@
     "dependencies": {
       "web": {
         "underscore": "~1.8",
-        "bootstrap": "~3.3.4"
+        "bootstrap": "~3.3.4",
+        "toastr" : ">=2.1.2"
       }
     },
     "requirejs-config": {
@@ -48,6 +49,9 @@
         "bootstrap": [
           "jquery",
           "css!${baseUrl}/bootstrap/dist/css/bootstrap"
+        ],
+        "toastr": [
+          "css!${baseUrl}/toastr/toastr.css"
         ]
       }
     }

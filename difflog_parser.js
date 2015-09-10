@@ -2,8 +2,8 @@
  * Created by Reem on 6/15/2015.
  */
 
-define(["require", "exports", 'd3'],
-  function (require, exports, d3) {
+define(["require", "exports", 'd3', 'jquery'],
+  function (require, exports, d3, $) {
 
     function DifflogParser(diff_file) {
       this.filepath = diff_file;
@@ -16,6 +16,10 @@ define(["require", "exports", 'd3'],
         d3.json(that.filepath, function (error, data) {
           if (error) reject(error);
           //console.log(" new data ", data);
+          if ($.isEmptyObject(data)){
+            console.log(data, "is an empty object");
+            reject("The two tables are not comparable! No common column.");
+          }
           resolve(data);
           //
         });
