@@ -1,7 +1,7 @@
 /**
  * Created by Reem on 6/15/2015.
  */
-define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
+define(["require", "exports", 'd3', 'underscore', '../caleydo_d3/d3util'],
   function (require, exports, d3, _, d3utils) {
 
     //height of each row in the heatmap
