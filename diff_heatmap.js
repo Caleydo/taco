@@ -1,8 +1,8 @@
 /**
  * Created by Reem on 6/15/2015.
  */
-define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
-  function (require, exports, d3, _, d3utils) {
+define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_core/d3util'],
+  function (require, exports, d3, _, toastr, d3utils) {
 
     //height of each row in the heatmap
     //width of each column in the heatmap
@@ -233,6 +233,10 @@ define(["require", "exports", 'd3', 'underscore', '../caleydo_core/d3util'],
           .style("width", w + "px")
           .style("height", h + "px")
           .style("background-color",  function(d){ return colorScale(normalize(d.diff_data, diff_max));} );
+      }, function(reason){
+        //why this was rejected
+        console.log(reason);
+        toastr.warning(reason);
       })
     };
 
