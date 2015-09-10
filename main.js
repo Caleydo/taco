@@ -4,8 +4,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', './heatmap', '../caleydo_core/vis', '../caleydo_core/main','bootstrap', 'font-awesome'],
-  function (data, d3, $, dHeatmap, Heatmap, vis, C) {
+require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', './heatmap', '../caleydo_core/vis', '../caleydo_core/main','toastr', 'bootstrap', 'font-awesome'],
+  function (data, d3, $, dHeatmap, Heatmap, vis, C, toastr) {
     'use strict';
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
@@ -97,10 +97,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', './heatmap', 
           //checking the basic type matches
           if (ds1.desc.type !== ds2.desc.type) {
             //bad
+            console.log("the types are not matching", ds1.desc.type, ds2.desc.type);
           }
           //checking matrix idtype matches
           if (ds1.desc.type === 'matrix' && (ds1.desc.rowtype !== ds2.desc.rowtype || ds1.desc.coltype !== ds2.desc.coltype)) {
             //bad
+            console.log("the matrices have different row or col type", ds1.desc.rowtype, ds2.desc.rowtype, ds1.desc.coltype, ds2.desc.coltype);
           }
           if (ds1.desc.type === 'table' && (ds1.desc.idtype !== ds2.desc.idtype)) {
             //bad
