@@ -44,112 +44,126 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', './heatmap', 
     //@dest 1 a destination table, 0 a source table
     function addIt(selectedDataset, dest) {
       //selectedDataset.rows for ids
+      var heatmapplugin;
+      if (selectedDataset.desc.type  === 'matrix'){
+        heatmapplugin = vis.list(selectedDataset).filter(function(d) { return d.id.match(/.*heatmap.*/); })[0];
+        //heatmapplugin = vis.list(selectedDataset).filter(function(d) { return d.id.match(/.*histogram.*/); })[0];
 
-      var heatmapplugin = vis.list(selectedDataset).filter(function(d) { return d.id.match(/.*heatmap.*/); })[0];
-      //var heatmapplugin = vis.list(selectedDataset).filter(function(d) { return d.id.match(/.*histogram.*/); })[0];
+      } else if (selectedDataset.desc.type === 'table'){
+        heatmapplugin = vis.list(selectedDataset).filter(function(d) { return d.id.match(/.*table.*/); })[0];
+        toastr.warning("Visualization for tables might not perform as expected!!");
+        //todo find the difference between the visualziatoin for tables and martrices and handle this here.
+      }
 
-      Promise.all([selectedDataset.rows(), selectedDataset.cols(), selectedDataset.data(), heatmapplugin.load()]).then(function (values) {
-        var rows = values[0];
-        var cols = values[1];
-        var data = values[2];
-        var plugin = values[3];
-        var range = selectedDataset.desc.value.range;
-        var x_margin = 10, y_margin = 10;
+      if (heatmapplugin !== undefined) {
 
-        if (dest){
-          if (hm2 !== null){
-            hm2.remove();
-            heatmap2.destroy();
-            hm2 = null;
-          }
-          //can use selectedDataset.dim instead of calculating the length in the class
-          //todo decide where to draw the table
-          hm2 = Heatmap.create(data, rows, cols, range, {x: -x_margin, y: y_margin});
-          hm2.drawHeatmap();
-          heatmap2 = plugin.factory(selectedDataset, document.getElementById('test'), {
-            initialScale: gridSize
-          });
-          d3.select("#test").call(drag);
+        Promise.all([selectedDataset.rows(), selectedDataset.cols(), selectedDataset.data(), heatmapplugin.load()])
+          .then(function (values) {
+            var rows = values[0];
+            var cols = values[1];
+            var data = values[2];
+            var plugin = values[3];
+            var range = selectedDataset.desc.value.range;
+            var x_margin = 10, y_margin = 10;
 
-          rows2 = rows;
-          cols2 = cols;
-          id2 = selectedDataset.desc.id;
-          ds2 = selectedDataset;
-        }else{
-          if (hm1 !== null){
-            hm1.remove();
-            heatmap1.destroy();
-            hm1 = null;
-          }
-          hm1 = Heatmap.create(data, rows, cols, range, {x: x_margin, y:y_margin});
-          hm1.drawHeatmap();
-          heatmap1 = plugin.factory(selectedDataset, document.getElementById('test2'), {
-            initialScale: gridSize
-          });
-          d3.select("#test2").call(drag);
-          rows1 = rows;
-          cols1 = cols;
-          id1 = selectedDataset.desc.id;
-          ds1 = selectedDataset;
-        }
-
-        if (id1 !== null && id2 !== null) {
-          //checking the basic type matches
-          if (ds1.desc.type !== ds2.desc.type) {
-            //bad
-            toastr.error("The types are not matching " + ds1.desc.type +" "+ ds2.desc.type, 'Datatype mismatch!');
-          }else
-          //checking matrix idtype matches
-          if (ds1.desc.type === 'matrix' && (ds1.desc.rowtype !== ds2.desc.rowtype || ds1.desc.coltype !== ds2.desc.coltype)) {
-            //bad
-            toastr.error("The matrices have different row or col type " + ds1.desc.rowtype +" "+ ds2.desc.rowtype +" "+ ds1.desc.coltype +" "+ ds2.desc.coltype,
-              'Row or Column Mismatch!', {closeButton: true});
-          }else if (ds1.desc.type === 'table' && (ds1.desc.idtype !== ds2.desc.idtype)) {
-            //bad
-            toastr.error("Tables have different idtypes");
-          }else
-          //check value datatype of matrix
-          if (ds1.desc.type === 'matrix' && (ds1.desc.value.type !== ds2.desc.value.type)) {
-            //bad
-          }else{
-            //everything is comparable
-            //todo move this to else if
-              //TODO check values/columns for table
-
-              data_provider.create({
-                type: 'diffstructure',
-                name: ds1.desc.name+'-'+ds2.desc.name,
-                id1: id1,
-                id2: id2,
-                size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length] //we can use dummy values instead
-              }).then(function(diffmatrix) {
-                //diffmatrix
-                if ( rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null){
-                  if (dh !== null){
-                    dh.destroy();
-                  }
-                  var diffheatmap = vis.list(diffmatrix)[0];
-                  diffheatmap.load().then(function(plugin) {
-                    //here we call my diff_heatmap
-                    dh = plugin.factory(diffmatrix, d3.select('#board').node());
-                  });
-                  //dh = dHeatmap.create(diffmatrix.data(), rows1, rows2, cols1, cols2);
-
-                  //dh.drawDiffHeatmap();
-                } else{
-                  console.log("no diff!", rows1, cols1, rows2, cols2);
-                }
+            if (dest) {
+              if (hm2 !== null) {
+                hm2.remove();
+                heatmap2.destroy();
+                hm2 = null;
+              }
+              //can use selectedDataset.dim instead of calculating the length in the class
+              //todo decide where to draw the table
+              hm2 = Heatmap.create(data, rows, cols, range, {x: -x_margin, y: y_margin});
+              hm2.drawHeatmap();
+              heatmap2 = plugin.factory(selectedDataset, document.getElementById('test'), {
+                initialScale: gridSize
               });
-          }
-        }else{
-          toastr.info("Please select a second table");
-        }
-      })
+              d3.select("#test").call(drag);
+
+              rows2 = rows;
+              cols2 = cols;
+              id2 = selectedDataset.desc.id;
+              ds2 = selectedDataset;
+            } else {
+              if (hm1 !== null) {
+                hm1.remove();
+                heatmap1.destroy();
+                hm1 = null;
+              }
+              hm1 = Heatmap.create(data, rows, cols, range, {x: x_margin, y: y_margin});
+              hm1.drawHeatmap();
+              heatmap1 = plugin.factory(selectedDataset, document.getElementById('test2'), {
+                initialScale: gridSize
+              });
+              d3.select("#test2").call(drag);
+              rows1 = rows;
+              cols1 = cols;
+              id1 = selectedDataset.desc.id;
+              ds1 = selectedDataset;
+            }
+
+            if (id1 !== null && id2 !== null) {
+              //checking the basic type matches
+              if (ds1.desc.type !== ds2.desc.type) {
+                //bad
+                toastr.error("The types are not matching " + ds1.desc.type + " " + ds2.desc.type, 'Datatype mismatch!');
+              } else
+              //checking matrix idtype matches
+              if (ds1.desc.type === 'matrix' && (ds1.desc.rowtype !== ds2.desc.rowtype || ds1.desc.coltype !== ds2.desc.coltype)) {
+                //bad
+                toastr.error("The matrices have different row or col type " + ds1.desc.rowtype + " " + ds2.desc.rowtype + " " + ds1.desc.coltype + " " + ds2.desc.coltype,
+                  'Row or Column Mismatch!', {closeButton: true});
+              } else if (ds1.desc.type === 'table' && (ds1.desc.idtype !== ds2.desc.idtype)) {
+                //bad
+                toastr.error("Tables have different idtypes");
+              } else
+              //check value datatype of matrix
+              if (ds1.desc.type === 'matrix' && (ds1.desc.value.type !== ds2.desc.value.type)) {
+                //bad
+              } else {
+                //everything is comparable
+                //todo move this to else if
+                //TODO check values/columns for table
+
+                data_provider.create({
+                  type: 'diffstructure',
+                  name: ds1.desc.name + '-' + ds2.desc.name,
+                  id1: id1,
+                  id2: id2,
+                  size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length] //we can use dummy values instead
+                }).then(function (diffmatrix) {
+                  //diffmatrix
+                  if (rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null) {
+                    if (dh !== null) {
+                      dh.destroy();
+                    }
+                    var diffheatmap = vis.list(diffmatrix)[0];
+                    diffheatmap.load().then(function (plugin) {
+                      //here we call my diff_heatmap
+                      dh = plugin.factory(diffmatrix, d3.select('#board').node());
+                    });
+                    //dh = dHeatmap.create(diffmatrix.data(), rows1, rows2, cols1, cols2);
+
+                    //dh.drawDiffHeatmap();
+                  } else {
+                    console.log("no diff!", rows1, cols1, rows2, cols2);
+                  }
+                });
+              }
+            } else {
+              toastr.info("Please select a second table");
+            }
+          })
+      }else{
+        toastr.error("heat map plugin is undefined for this dataset!!");
+      }
     }
 
     data.list().then(function (items) {
       items = items.filter(function (d) {
-        return d.desc.type === 'matrix';
+        //return d.desc.type === 'matrix';
+        return d.desc.type  === 'matrix' || d.desc.type === 'table';
       });
       var $base = d3.select('#blockbrowser table tbody');
       var $rows = $base.selectAll('tr').data(items);
