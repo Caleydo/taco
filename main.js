@@ -4,15 +4,14 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', './heatmap', '../caleydo_core/vis', '../caleydo_core/main','toastr', 'bootstrap', 'font-awesome'],
-  function (data, d3, $, dHeatmap, Heatmap, vis, C, toastr) {
+require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_core/vis', '../caleydo_core/main','toastr', 'bootstrap', 'font-awesome'],
+  function (data, d3, $, dHeatmap, vis, C, toastr) {
     'use strict';
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
     var data_provider = data;
     var rows1 = null, rows2= null, cols1= null, cols2= null, id1= null, id2= null,
-        ds1 = null, ds2 = null,
-      hm1= null, hm2 = null, dh = null;
+        ds1 = null, ds2 = null, dh = null;
     var heatmap1 = null, heatmap2 = null;
 
     var gridSize = 6,
@@ -57,25 +56,19 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', './heatmap', 
 
       if (heatmapplugin !== undefined) {
 
-        Promise.all([selectedDataset.rows(), selectedDataset.cols(), selectedDataset.data(), heatmapplugin.load()])
+        // selectedDataset.data() to get the data
+        Promise.all([selectedDataset.rows(), selectedDataset.cols(), heatmapplugin.load()])
           .then(function (values) {
             var rows = values[0];
             var cols = values[1];
-            var data = values[2];
-            var plugin = values[3];
-            var range = selectedDataset.desc.value.range;
-            var x_margin = 10, y_margin = 10;
+            var plugin = values[2];
 
             if (dest) {
-              if (hm2 !== null) {
-                hm2.remove();
+              if (heatmap2 !== null) {
                 heatmap2.destroy();
-                hm2 = null;
               }
               //can use selectedDataset.dim instead of calculating the length in the class
               //todo decide where to draw the table
-              hm2 = Heatmap.create(data, rows, cols, range, {x: -x_margin, y: y_margin});
-              hm2.drawHeatmap();
               heatmap2 = plugin.factory(selectedDataset, document.getElementById('test'), {
                 initialScale: gridSize
               });
@@ -86,13 +79,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', './heatmap', 
               id2 = selectedDataset.desc.id;
               ds2 = selectedDataset;
             } else {
-              if (hm1 !== null) {
-                hm1.remove();
+              if (heatmap1 !== null) {
                 heatmap1.destroy();
-                hm1 = null;
               }
-              hm1 = Heatmap.create(data, rows, cols, range, {x: x_margin, y: y_margin});
-              hm1.drawHeatmap();
               heatmap1 = plugin.factory(selectedDataset, document.getElementById('test2'), {
                 initialScale: gridSize
               });
