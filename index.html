@@ -9,7 +9,6 @@
 
     <link rel="stylesheet" href="style.css">
     <script src="/caleydo_web.js"></script>
-
 </head>
 <body>
 <div id="content">
@@ -33,35 +32,35 @@
                 <div class="navbar-left" style="margin-top:9px;">
                     <div class="btn-group" data-toggle="buttons">
                         <label class="btn btn-default active">
-                            <input type="checkbox" autocomplete="off" checked aria-pressed="true"> Rows
+                            <input type="checkbox" class="dimension-chk" autocomplete="off" name="dimension[]" value="rows" checked> Rows
                         </label>
                         <label class="btn btn-default active">
-                            <input type="checkbox" autocomplete="off" checked aria-pressed="true"> Columns
+                            <input type="checkbox" class="dimension-chk" autocomplete="off" name="dimension[]" value="columns" checked> Columns
                         </label>
                     </div>
                     <div class="btn-group" data-toggle="buttons">
                         <label class="btn btn-default active">
-                            <input type="checkbox" autocomplete="off" checked aria-pressed="true"> Structure
+                            <input type="checkbox" class="change-chk" autocomplete="off" name="change[]" value="structure" checked> Structure
                         </label>
                         <label class="btn btn-default active">
-                            <input type="checkbox" autocomplete="off" checked aria-pressed="true"> Content
+                            <input type="checkbox" class="change-chk" autocomplete="off" name="change[]" value="content" checked> Content
                         </label>
                         <label class="btn btn-default">
-                            <input type="checkbox" autocomplete="off"> Merge
+                            <input type="checkbox" class="change-chk" autocomplete="off" name="change[]" value="merge"> Merge
                         </label>
                         <label class="btn btn-default">
-                            <input type="checkbox" autocomplete="off"> Reorder
+                            <input type="checkbox" class="change-chk" autocomplete="off" name="change[]" value="reorder"> Reorder
                         </label>
                     </div>
                     <div class="btn-group" data-toggle="buttons">
                         <label class="btn btn-default">
-                            <input type="radio" name="options" id="option1" autocomplete="off"> Overview
+                            <input type="radio" class="detail-rb" autocomplete="off" name="detail" value="overview"> Overview
                         </label>
                         <label class="btn btn-default">
-                            <input type="radio" name="options" id="option2" autocomplete="off"> Middle
+                            <input type="radio" class="detail-rb" autocomplete="off" name="detail" value="middle"> Middle
                         </label>
                         <label class="btn btn-default active">
-                            <input type="radio" name="options" id="option3" autocomplete="off" checked aria-pressed="true"> Detail
+                            <input type="radio" class="detail-rb" autocomplete="off" name="detail" value="detail" checked> Detail
                         </label>
                     </div>
                 </div>

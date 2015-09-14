@@ -6,6 +6,7 @@
 define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflog_parser'], function (exports, C, datatypes, difflog_parser) {
   exports.DiffMatrix = datatypes.defineDataType('diffmatrix', {
     init: function (desc) {
+      console.log(desc);
       //init function
       this.diff_source = C.server_url + '/taco/diff_log/' + desc.id1 +'/' + desc.id2;
     },

@@ -115,11 +115,26 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                 //todo move this to else if
                 //TODO check values/columns for table
 
+                var settings_change = [];
+                $("[name='change[]']:checked").each(function() {
+                    settings_change.push(this.value);
+                });
+
+                var settings_dimension = [];
+                $("[name='dimension[]']:checked").each(function() {
+                    settings_dimension.push(this.value);
+                });
+
+                var settings_detail = $("[name='detail']:checked").val();
+
                 data_provider.create({
                   type: 'diffstructure',
                   name: ds1.desc.name + '-' + ds2.desc.name,
                   id1: id1,
                   id2: id2,
+                  change: settings_change,
+                  dimension: settings_dimension,
+                  detail: settings_detail,
                   size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length] //we can use dummy values instead
                 }).then(function (diffmatrix) {
                   //diffmatrix
@@ -151,8 +166,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
 
     data.list().then(function (items) {
       items = items.filter(function (d) {
-        //return d.desc.type === 'matrix';
-        return d.desc.type  === 'matrix' || d.desc.type === 'table';
+        return d.desc.type === 'matrix';
+        //return d.desc.type  === 'matrix' || d.desc.type === 'table';
       });
       var $base = d3.select('#blockbrowser table tbody');
       var $rows = $base.selectAll('tr').data(items);
@@ -174,6 +189,29 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
         addIt(d, 1);
         var ev = d3.event;
       });
+    });
+
+    $("[name='detail']").change(function () {
+        console.log("changed this ", $(this).val());
+    });
+
+    $("[name='change[]']").change(function () {
+      var matches = [];
+      $("[name='change[]']:checked").each(function() {
+          matches.push(this.value);
+      });
+
+      console.log("changed this ", $(this).val(), matches);
+    });
+
+
+    $("[name='dimension[]']").change(function () {
+      var matches = [];
+      $("[name='dimension[]']:checked").each(function() {
+          matches.push(this.value);
+      });
+
+      console.log("changed this ", $(this).val(), matches);
     });
 
 
