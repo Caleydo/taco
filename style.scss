@@ -227,8 +227,9 @@ svg .select-selected {
   }
 }
 
-.taco-logo {
-  display: inline-block;
-  vertical-align: middle;
-  float: none;
+a.taco-logo {
+  //display: inline-block;
+  //vertical-align: middle;
+  //float: none;
+  padding: 5px 15px;
 }
