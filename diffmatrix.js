@@ -8,7 +8,11 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
     init: function (desc) {
       console.log(desc);
       //init function
-      this.diff_source = C.server_url + '/taco/diff_log/' + desc.id1 +'/' + desc.id2;
+      //todo make sure that the settings are not empty
+      //direction_id: 0 rows, 1 cols, 2 rows + cols
+      //if nothing is selected then send 2 //todo handle this in the interface
+      var direction_id = (desc.direction.length == 1? (desc.direction[0] == 'rows'? 0 : 1) : 2);
+      this.diff_source = C.server_url + '/taco/diff_log/' + desc.id1 +'/' + desc.id2 + '/' + desc.detail + "/" + direction_id;
     },
     data: function() {
 

@@ -120,9 +120,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                     settings_change.push(this.value);
                 });
 
-                var settings_dimension = [];
-                $("[name='dimension[]']:checked").each(function() {
-                    settings_dimension.push(this.value);
+                var settings_direction = [];
+                $("[name='direction[]']:checked").each(function() {
+                    settings_direction.push(this.value);
                 });
 
                 var settings_detail = $("[name='detail']:checked").val();
@@ -133,7 +133,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                   id1: id1,
                   id2: id2,
                   change: settings_change,
-                  dimension: settings_dimension,
+                  direction: settings_direction,
                   detail: settings_detail,
                   size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length] //we can use dummy values instead
                 }).then(function (diffmatrix) {
@@ -205,11 +205,14 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
     });
 
 
-    $("[name='dimension[]']").change(function () {
+    $("[name='direction[]']").change(function () {
       var matches = [];
-      $("[name='dimension[]']:checked").each(function() {
+      $("[name='direction[]']:checked").each(function() {
           matches.push(this.value);
       });
+      if ($("[name='direction[]']:checked").length == 0) {
+          toastr.warning("You have to select at least one direction!")
+      }
 
       console.log("changed this ", $(this).val(), matches);
     });
