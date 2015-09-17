@@ -31,6 +31,13 @@
           "filter": "diffstructure",
           "file": "diff_heatmap",
           "factory": "createDiff"
+        },
+        {
+          "type": "vis",
+          "id": "diffplotvis",
+          "name": "Diff Plot Vis",
+          "filter": "diffstructure",
+          "file": "diff_barplot"
         }
       ]
     },

@@ -142,10 +142,16 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                     if (dh !== null) {
                       dh.destroy();
                     }
-                    var diffheatmap = vis.list(diffmatrix)[0];
+                    var visses = vis.list(diffmatrix);
+                    debugger;
+                    var diffheatmap = visses[0];
                     diffheatmap.load().then(function (plugin) {
                       //here we call my diff_heatmap
                       dh = plugin.factory(diffmatrix, d3.select('#board').node());
+                    });
+                    visses[1].load().then(function (plugin) {
+                      //here we call my diff_heatmap
+                      plugin.factory(diffmatrix, d3.select('#board').node());
                     });
                     //dh = dHeatmap.create(diffmatrix.data(), rows1, rows2, cols1, cols2);
 
