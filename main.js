@@ -4,8 +4,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_core/vis', '../caleydo_core/main','toastr', 'bootstrap', 'font-awesome'],
-  function (data, d3, $, dHeatmap, vis, C, toastr) {
+require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/multiform', 'toastr', 'bootstrap', 'font-awesome'],
+  function (data, d3, $, dHeatmap, vis, C, multiform, toastr) {
     'use strict';
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
@@ -142,7 +142,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                     if (dh !== null) {
                       dh.destroy();
                     }
-                    var visses = vis.list(diffmatrix);
+                    dh = multiform.create(diffmatrix, d3.select('#board').node());
+                    multiform.addSelectVisChooser(d3.select('#board').node(), dh);
+                    /*var visses = vis.list(diffmatrix);
                     var diffheatmap = visses[0];
                     diffheatmap.load().then(function (plugin) {
                       //here we call my diff_heatmap
@@ -155,6 +157,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                     //dh = dHeatmap.create(diffmatrix.data(), rows1, rows2, cols1, cols2);
 
                     //dh.drawDiffHeatmap();
+                    */
                   } else {
                     console.log("no diff!", rows1, cols1, rows2, cols2);
                   }
