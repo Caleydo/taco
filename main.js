@@ -143,7 +143,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                       dh.destroy();
                     }
                     var visses = vis.list(diffmatrix);
-                    debugger;
                     var diffheatmap = visses[0];
                     diffheatmap.load().then(function (plugin) {
                       //here we call my diff_heatmap

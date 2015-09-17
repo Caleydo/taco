@@ -9,7 +9,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         var o = this.options;
         var $node = $parent.append('pre');
 
-        data.dimStats(this.option.dim).then(function (stats) {
+        data.dimStats(o.dim).then(function (stats) {
           $node.text(JSON.stringify(stats, null, ' '));
         });
         return $node;

@@ -9,13 +9,13 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
     var hist = {};
     content.forEach(function (e) {
       var sel = selector(e);
-      if (rows[sel.row] === undefined) {
-        rows[sel.row] = {
+      if (hist[sel.row] === undefined) {
+        hist[sel.row] = {
           counter: 1,
           pos: sel.rpos
         };
       } else {
-        rows[sel.row].counter += 1;
+        hist[sel.row].counter += 1;
       }
     });
     return hist;
