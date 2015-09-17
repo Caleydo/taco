@@ -166,7 +166,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
 
     data.list().then(function (items) {
       items = items.filter(function (d) {
-        return d.desc.type === 'matrix';
+        return d.desc.type === 'matrix' && d.desc.fqname.match(/.*taco.*/);
         //return d.desc.type  === 'matrix' || d.desc.type === 'table';
       });
       var $base = d3.select('#blockbrowser table tbody');
