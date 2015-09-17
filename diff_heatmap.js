@@ -273,6 +273,39 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       })
     };
 
+    DiffHeatmap.prototype.drawContentHistogram = function(directions){
+      this.h_data.then(function(data){
+        console.log("in histo", data.content);
+        //var histogramplugin = vis.list(data.content).filter(function(d){ return d.id.match(/.*histogram.*/); })[0];
+        var cols = {};
+        var rows = {};
+        data.content.forEach(function (e, i, arr) {
+              //i'm using it here for now, i might move it somewhere else later
+              if (directions.indexOf('rows') > -1) {
+                //rows
+                if (rows[e.row] === undefined){
+                  rows[e.row] = {"counter": 0, "pos": e.rpos}
+                }
+                rows[e.row]["counter"] += 1;
+              }
+              if (directions.indexOf('columns') > -1){
+                //columns
+                if (cols[e.col] === undefined){
+                  cols[e.col] = {"counter": 0, "pos": e.cpos}
+                }
+                cols[e.col]["counter"] += 1;
+                }
+            }
+          );
+        if (directions.indexOf('rows') > -1) {
+          console.log("rows of content", rows);
+        }
+        if (directions.indexOf('columns') > -1){
+          console.log("cols of content", cols);
+        }
+      });
+    }
+
     //helper function
     function normalize(diff_data, max) {
       return diff_data / max
@@ -294,6 +327,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       //var diff = new DiffHeatmap(data.data(), data.desc.size); //use the union size from the server instead of the client
       var diff = new DiffHeatmap(data.data());
       diff.drawDiffHeatmap(data.desc.change, data.desc.direction);
+      diff.drawContentHistogram(data.desc.direction);
       return diff.container;
     });
 
