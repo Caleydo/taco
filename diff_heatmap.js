@@ -36,7 +36,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       this.container.remove();
     };
 
-    DiffHeatmap.prototype.drawDiffHeatmap = function (operations) {
+    DiffHeatmap.prototype.drawDiffHeatmap = function (operations, directions) {
 
       var drag = d3.behavior.drag()
         //.on('dragstart', function() { console.log("start") })
@@ -77,69 +77,73 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
 
         //visualizing the diff
         if (operations.indexOf('structure') > -1) {
-          //todo check rows, columns thing
-          var addedRows = root.selectAll(".taco-added-row")
-            .data(data.structure.added_rows)
-            .enter()
-            .append("div")
-            .attr("class", "taco-added-row")
-            .style("left", 0 + "px")
-            .style("top", function (d) {
-              //var y = that.row_ids.indexOf(d);
-              var y = d.pos;
-              return (y !== -1 ? y * h : null) + "px";
-            })
-            .style("width", width + "px")
-            .style("height", h + "px")
-            .style("background-color", colorAdded);
+          if (directions.indexOf('rows') > -1) {
+            var addedRows = root.selectAll(".taco-added-row")
+              .data(data.structure.added_rows)
+              .enter()
+              .append("div")
+              .attr("class", "taco-added-row")
+              .style("left", 0 + "px")
+              .style("top", function (d) {
+                //var y = that.row_ids.indexOf(d);
+                var y = d.pos;
+                return (y !== -1 ? y * h : null) + "px";
+              })
+              .style("width", width + "px")
+              .style("height", h + "px")
+              .style("background-color", colorAdded);
+          }
 
-          var addedCols = root.selectAll(".taco-added-col")
-            .data(data.structure.added_cols)
-            .enter()
-            .append("div")
-            .attr("class", "taco-added-col")
-            .style("top", 0 + "px")
-            .style("left", function (d) {
-              //var x = that.col_ids.indexOf(d);
-              var x = d.pos;
-              return (x !== -1 ? x * w : null) + "px";
-            })
-            .style("width", w + "px")
-            .style("height", height + "px")
-            .style("background-color", colorAdded);
+          if (directions.indexOf('columns') > -1) {
+            var addedCols = root.selectAll(".taco-added-col")
+              .data(data.structure.added_cols)
+              .enter()
+              .append("div")
+              .attr("class", "taco-added-col")
+              .style("top", 0 + "px")
+              .style("left", function (d) {
+                //var x = that.col_ids.indexOf(d);
+                var x = d.pos;
+                return (x !== -1 ? x * w : null) + "px";
+              })
+              .style("width", w + "px")
+              .style("height", height + "px")
+              .style("background-color", colorAdded);
+          }
+          if (directions.indexOf('rows') > -1) {
+            var deletedRows = root.selectAll(".taco-del-row")
+              .data(data.structure.deleted_rows)
+              .enter()
+              .append("div")
+              .attr("class", "taco-del-row")
+              .style("left", 0 + "px")
+              .style("top", function (d) {
+                //var y = that.row_ids.indexOf(d);
+                var y = d.pos;
+                return (y !== -1 ? y * h : null) + "px";
+              })
+              .style("width", width + "px")
+              .style("height", h + "px")
+              .style("background-color", colorDeleted);
+          }
+          if (directions.indexOf('columns') > -1) {
+            var deletedCols = root.selectAll(".taco-del-col")
+              .data(data.structure.deleted_cols)
+              .enter()
+              .append("div")
+              .attr("class", "taco-del-col")
+              .style("top", 0 + "px")
+              .style("left", function (d) {
+                //var x = that.col_ids.indexOf(d);
+                var x = d.pos;
+                return (x !== -1 ? x * w : null) + "px";
+              })
+              .style("width", w + "px")
+              .style("height", height + "px")
+              .style("background-color", colorDeleted);
 
-          var deletedRows = root.selectAll(".taco-del-row")
-            .data(data.structure.deleted_rows)
-            .enter()
-            .append("div")
-            .attr("class", "taco-del-row")
-            .style("left", 0 + "px")
-            .style("top", function (d) {
-              //var y = that.row_ids.indexOf(d);
-              var y = d.pos;
-              return (y !== -1 ? y * h : null) + "px";
-            })
-            .style("width", width + "px")
-            .style("height", h + "px")
-            .style("background-color", colorDeleted);
-
-          var deletedCols = root.selectAll(".taco-del-col")
-            .data(data.structure.deleted_cols)
-            .enter()
-            .append("div")
-            .attr("class", "taco-del-col")
-            .style("top", 0 + "px")
-            .style("left", function (d) {
-              //var x = that.col_ids.indexOf(d);
-              var x = d.pos;
-              return (x !== -1 ? x * w : null) + "px";
-            })
-            .style("width", w + "px")
-            .style("height", height + "px")
-            .style("background-color", colorDeleted);
-
+          }
         }
-
         if (operations.indexOf('content') > -1) {
           //todo think of a better way for normalization
           var diff_max = 0;
@@ -170,94 +174,98 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
         }
 
         if (operations.indexOf("merge") > -1) {
-          var mergedCols = root.selectAll(".taco-mer-col")
-            .data(data.merge.merged_cols)
-            .enter()
-            .append("div")
-            .attr("class", "taco-mer-col")
-            //todo use the merge_id
-            .style("top", 0 + "px")
-            .style("left", function (d) {
-              //var x = that.col_ids.indexOf(d);
-              var x = d.pos;
-              return (x !== -1 ? x * w : null) + "px";
-            })
-            .style("width", w + "px")
-            .style("height", height + "px")
-            .style("background-color", function (d) {
-              return d.is_added ? colorMerged : colorSplit
-            })
-            .style("z-index", function (d) {
-              return d.is_added ? "0" : "1"
-            });
-
-          var mergedRows = root.selectAll(".taco-mer-row")
-            .data(data.merge.merged_rows)
-            .enter()
-            .append("div")
-            .attr("class", "taco-mer-row")
-            .style("zIndex", function (d) {
-              return d.is_merge ? "0" : "1"
-            })
-            //todo use the merge_id
-            .style("left", 0 + "px")
-            .style("top", function (d) {
-              //var y = that.row_ids.indexOf(d);
-              var y = d.pos;
-              return (y !== -1 ? y * h : null) + "px";
-            })
-            .style("width", width + "px")
-            .style("height", h + "px")
-            .style("background-color", function (d) {
-              return d.is_added ? colorMerged : colorSplit
-            })
-            .style("z-index", function (d) {
-              return d.is_added ? "0" : "1"
-            });
-
-          var splitCols = root.selectAll(".taco-spl-col")
-            .data(data.merge.split_cols)
-            .enter()
-            .append("div")
-            .attr("class", "taco-spl-col")
-            .style("z-index", function (d) {
-              return d.is_added ? "0" : "1"
-            })
-            //todo use the merge_id
-            .style("top", 0 + "px")
-            .style("left", function (d) {
-              //var x = that.col_ids.indexOf(d);
-              var x = d.pos;
-              return (x !== -1 ? x * w : null) + "px";
-            })
-            .style("width", w + "px")
-            .style("height", height + "px")
-            .style("background-color", function (d) {
-              return (d.is_added ? colorMerged : colorSplit)
-            });
-
-          var splitRows = root.selectAll(".taco-spl-row")
-            .data(data.merge.split_rows)
-            .enter()
-            .append("div")
-            .attr("class", "taco-spl-row")
-            .style("z-index", function (d) {
-              return d.is_added ? "0" : "1"
-            })
-            //todo use the merge_id
-            .style("left", 0 + "px")
-            .style("top", function (d) {
-              //var y = that.row_ids.indexOf(d);
-              var y = d.pos;
-              return (y !== -1 ? y * h : null) + "px";
-            })
-            .style("width", width + "px")
-            .style("height", h + "px")
-            .style("background-color", function (d) {
-              return (d.is_added ? colorMerged : colorSplit)
-            });
+          if (directions.indexOf('columns') > -1) {
+            var mergedCols = root.selectAll(".taco-mer-col")
+              .data(data.merge.merged_cols)
+              .enter()
+              .append("div")
+              .attr("class", "taco-mer-col")
+              //todo use the merge_id
+              .style("top", 0 + "px")
+              .style("left", function (d) {
+                //var x = that.col_ids.indexOf(d);
+                var x = d.pos;
+                return (x !== -1 ? x * w : null) + "px";
+              })
+              .style("width", w + "px")
+              .style("height", height + "px")
+              .style("background-color", function (d) {
+                return d.is_added ? colorMerged : colorSplit
+              })
+              .style("z-index", function (d) {
+                return d.is_added ? "0" : "1"
+              });
+          }
+          if (directions.indexOf('rows') > -1) {
+            var mergedRows = root.selectAll(".taco-mer-row")
+              .data(data.merge.merged_rows)
+              .enter()
+              .append("div")
+              .attr("class", "taco-mer-row")
+              .style("zIndex", function (d) {
+                return d.is_merge ? "0" : "1"
+              })
+              //todo use the merge_id
+              .style("left", 0 + "px")
+              .style("top", function (d) {
+                //var y = that.row_ids.indexOf(d);
+                var y = d.pos;
+                return (y !== -1 ? y * h : null) + "px";
+              })
+              .style("width", width + "px")
+              .style("height", h + "px")
+              .style("background-color", function (d) {
+                return d.is_added ? colorMerged : colorSplit
+              })
+              .style("z-index", function (d) {
+                return d.is_added ? "0" : "1"
+              });
+          }
+          if (directions.indexOf('columns') > -1) {
+            var splitCols = root.selectAll(".taco-spl-col")
+              .data(data.merge.split_cols)
+              .enter()
+              .append("div")
+              .attr("class", "taco-spl-col")
+              .style("z-index", function (d) {
+                return d.is_added ? "0" : "1"
+              })
+              //todo use the merge_id
+              .style("top", 0 + "px")
+              .style("left", function (d) {
+                //var x = that.col_ids.indexOf(d);
+                var x = d.pos;
+                return (x !== -1 ? x * w : null) + "px";
+              })
+              .style("width", w + "px")
+              .style("height", height + "px")
+              .style("background-color", function (d) {
+                return (d.is_added ? colorMerged : colorSplit)
+              });
+          }
+          if (directions.indexOf('rows') > -1) {
+            var splitRows = root.selectAll(".taco-spl-row")
+              .data(data.merge.split_rows)
+              .enter()
+              .append("div")
+              .attr("class", "taco-spl-row")
+              .style("z-index", function (d) {
+                return d.is_added ? "0" : "1"
+              })
+              //todo use the merge_id
+              .style("left", 0 + "px")
+              .style("top", function (d) {
+                //var y = that.row_ids.indexOf(d);
+                var y = d.pos;
+                return (y !== -1 ? y * h : null) + "px";
+              })
+              .style("width", width + "px")
+              .style("height", h + "px")
+              .style("background-color", function (d) {
+                return (d.is_added ? colorMerged : colorSplit)
+              });
+          }
         }
-
       }, function (reason) {
         //why this was rejected
         console.log(reason);
@@ -285,7 +293,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       var o = this.options;
       //var diff = new DiffHeatmap(data.data(), data.desc.size); //use the union size from the server instead of the client
       var diff = new DiffHeatmap(data.data());
-      diff.drawDiffHeatmap(data.desc.change);
+      diff.drawDiffHeatmap(data.desc.change, data.desc.direction);
       return diff.container;
     });
 
