@@ -145,6 +145,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                     }
                     dh = multiform.create(diffmatrix, d3.select('#board').node());
                     multiform.addSelectVisChooser(d3.select('#taco-mf-selector').node(), dh);
+                    d3.select('#taco-mf-selector select').classed('form-control', true)
                     /*var visses = vis.list(diffmatrix);
                     var diffheatmap = visses[0];
                     diffheatmap.load().then(function (plugin) {
