@@ -1,5 +1,5 @@
 /**
- * Created by Reem on 6/15/2015.
+ * Created by Reem and Sam on 9/17/2015.
  */
 define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
   exports.DiffBarPlotVis = d3utils.defineVis('DiffBarPlotVis', {

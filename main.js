@@ -141,9 +141,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                   if (rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null) {
                     if (dh !== null) {
                       dh.destroy();
+                      d3.select('#taco-mf-selector').html('');
                     }
                     dh = multiform.create(diffmatrix, d3.select('#board').node());
-                    multiform.addSelectVisChooser(d3.select('#board').node(), dh);
+                    multiform.addSelectVisChooser(d3.select('#taco-mf-selector').node(), dh);
                     /*var visses = vis.list(diffmatrix);
                     var diffheatmap = visses[0];
                     diffheatmap.load().then(function (plugin) {
