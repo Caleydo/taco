@@ -9,33 +9,49 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
       /*
-      var x = d3.scale.ordinal()
-        .rangeRoundBands([0, width], .1);
+       var x = d3.scale.ordinal()
+       .rangeRoundBands([0, width], .1);
 
-      var y = d3.scale.linear()
-        .rangeRound([height, 0]);
+       var y = d3.scale.linear()
+       .rangeRound([height, 0]);
 
-      var color = d3.scale.ordinal()
-        .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+       var color = d3.scale.ordinal()
+       .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
-      var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient("bottom");
+       var xAxis = d3.svg.axis()
+       .scale(x)
+       .orient("bottom");
 
-      var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient("left")
-        .tickFormat(d3.format(".2s"));
-      */
-
-      /*
-       var container = parent.append("div")
-       .classed("chart", true)
-       .style("width", width + 2 + margin.left + margin.right + 'px')
-       .style("height", height + 2 + margin.top + margin.bottom + 'px')
-       //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
-       .style("transform", "translate(" + 20 + "px," + margin.top + "px)");
+       var yAxis = d3.svg.axis()
+       .scale(y)
+       .orient("left")
+       .tickFormat(d3.format(".2s"));
        */
+
+      //dragging
+      var drag = d3.behavior.drag()
+        //.on('dragstart', function() { console.log("start") })
+        .on('drag', dragHandler);
+        //.on('dragend', function() { console.log("end") });
+
+      //todo to use just the one in heatmap
+      function dragHandler(d) {
+        //must have position absolute to work like this
+        //otherwise use transfrom css property
+        d3.select(this)
+          .style("left", (this.offsetLeft + d3.event.dx) + "px")
+          .style("top", (this.offsetTop + d3.event.dy) + "px");
+      }
+
+
+      var container = parent.append("div")
+        .classed("taco-bp-container", true)
+        .style("width", width + 2 + margin.left + margin.right + 'px')
+        .style("height", height + 2 + margin.top + margin.bottom + 'px')
+        //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
+        .style("transform", "translate(" + 20 + "px," + margin.top + "px)")
+        .call(drag);
+
 
       var x = d3.scale.linear()
         //.domain([0, d3.max(p_data)])
@@ -44,11 +60,14 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
 
       var data_map = d3.map(p_data);
       //var data_map = [1,2,3,4,5,6];
-      var bp = d3.select(".chart").selectAll("div.rows")
-        .data(data_map.values(),function(d,i){console.log(d); return data_map.keys()[i];});
+      var bp = container.selectAll("div.rows")
+        .data(data_map.values(), function (d, i) {
+          console.log(d);
+          return data_map.keys()[i];
+        });
 
       bp.enter().append("div")
-        .classed("rows",true)
+        .classed("rows", true)
         .style("width", function (d) {
           return x(d.count) + "px";
         })

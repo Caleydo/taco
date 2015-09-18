@@ -234,11 +234,16 @@ a.taco-logo {
   padding: 5px 15px;
 }
 
-.chart div {
-  font: 10px sans-serif;
-  background-color: steelblue;
-  text-align: right;
-  padding: 3px;
-  margin: 1px;
-  color: white;
+.taco-bp-container {
+  border: 1px solid lightpink;
+  position: absolute;
+  div {
+    font: 10px sans-serif;
+    background-color: steelblue;
+    text-align: right;
+    padding: 3px;
+    margin: 1px;
+    color: white;
+  }
 }
+
