@@ -277,7 +277,6 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
 
     DiffHeatmap.prototype.drawContentHistogram = function(directions){
       this.h_data.then(function(data){
-        console.log("in histo", data.content);
         //var histogramplugin = vis.list(data.content).filter(function(d){ return d.id.match(/.*histogram.*/); })[0];
         var cols = {};
         var rows = {};
@@ -300,10 +299,10 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
             }
           );
         if (directions.indexOf('rows') > -1) {
-          console.log("rows of content", rows);
+          //console.log("rows of content", rows);
         }
         if (directions.indexOf('columns') > -1){
-          console.log("cols of content", cols);
+          //console.log("cols of content", cols);
         }
       });
     }

@@ -43,6 +43,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           .style("top", (this.offsetTop + d3.event.dy) + "px");
       }
 
+      var w = 10;
 
       var container = parent.append("div")
         .classed("taco-bp-container", true)
@@ -55,15 +56,13 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
 
       var x = d3.scale.linear()
         //.domain([0, d3.max(p_data)])
-        .domain([0, 50])
+        .domain([0, 10])
         .range([0, 420]);
 
-      var data_map = d3.map(p_data);
-      //var data_map = [1,2,3,4,5,6];
       var bp = container.selectAll("div.rows")
-        .data(data_map.values(), function (d, i) {
+        .data(p_data, function (d, i) {
           console.log(d);
-          return data_map.keys()[i];
+          return d.id;
         });
 
       bp.enter().append("div")
@@ -72,8 +71,10 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           return x(d.count) + "px";
         })
         .text(function (d) {
-          return d.pos;
-        });
+          return d.id;
+        })
+        .style("transform", function(d){ return "translate(" + 0 + "px," + d.pos * w + "px)";});
+
 
       /*
        var svg = d3.select("body").append("svg")

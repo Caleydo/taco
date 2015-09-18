@@ -6,16 +6,18 @@
 define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflog_parser'], function (exports, C, datatypes, difflog_parser) {
 
   function dimensionStats(content, selector) {
-    var hist = {};
+    var hist = [];
     content.forEach(function (e) {
       var sel = selector(e);
-      if (hist[sel.row] === undefined) {
-        hist[sel.row] = {
+      var result = $.grep(hist, function(e){ return e.id == sel.row; });
+      if (result.length === 0) {
+        hist.push({
+          id : sel.row,
           count: 1,
           pos: sel.rpos
-        };
+        });
       } else {
-        hist[sel.row].count += 1;
+        result[0].count += 1;
       }
     });
     return hist;
