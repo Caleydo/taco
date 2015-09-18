@@ -20,7 +20,9 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       .domain([-1, 0, 1])
       .range([colorLow, colorMed, colorHigh]);
 
-    function DiffHeatmap(data) {
+    function DiffHeatmap(data, parent) {
+      //todo to use the parent instead of #board
+      console.log("parent", parent);
       this.h_data = data;
       //todo check if this is correct or should be removed!
       this.container = d3.select("#board")
@@ -325,7 +327,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       //data.data().then(function(d){console.log("size from data", d.union.uc_ids.length, d.union.ur_ids.length)});
       var o = this.options;
       //var diff = new DiffHeatmap(data.data(), data.desc.size); //use the union size from the server instead of the client
-      var diff = new DiffHeatmap(data.data());
+      var diff = new DiffHeatmap(data.data(), $parent);
       diff.drawDiffHeatmap(data.desc.change, data.desc.direction);
       diff.drawContentHistogram(data.desc.direction);
       return diff.container;

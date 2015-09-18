@@ -141,11 +141,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                   if (rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null) {
                     if (dh !== null) {
                       dh.destroy();
+                      //remove the old multiform selector
                       d3.select('#taco-mf-selector').html('');
                     }
-                    dh = multiform.create(diffmatrix, d3.select('#board').node());
+                    dh = multiform.create(diffmatrix, d3.select('#board').node(), {dim: settings_direction});
                     multiform.addSelectVisChooser(d3.select('#taco-mf-selector').node(), dh);
-                    d3.select('#taco-mf-selector select').classed('form-control', true)
+                    d3.select('#taco-mf-selector select').classed('form-control', true);
                     /*var visses = vis.list(diffmatrix);
                     var diffheatmap = visses[0];
                     diffheatmap.load().then(function (plugin) {
@@ -153,12 +154,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                       dh = plugin.factory(diffmatrix, d3.select('#board').node());
                     });
                     visses[1].load().then(function (plugin) {
-                      //here we call my diff_heatmap
+                      //here we call my diff_barplot
                       plugin.factory(diffmatrix, d3.select('#board').node());
                     });
-                    //dh = dHeatmap.create(diffmatrix.data(), rows1, rows2, cols1, cols2);
-
-                    //dh.drawDiffHeatmap();
                     */
                   } else {
                     console.log("no diff!", rows1, cols1, rows2, cols2);

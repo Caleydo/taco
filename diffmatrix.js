@@ -11,11 +11,11 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
       var sel = selector(e);
       if (hist[sel.row] === undefined) {
         hist[sel.row] = {
-          counter: 1,
+          count: 1,
           pos: sel.rpos
         };
       } else {
-        hist[sel.row].counter += 1;
+        hist[sel.row].count += 1;
       }
     });
     return hist;
@@ -71,6 +71,7 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
         return dimensionStats(data.content,colSelector);
       });
     },
+    //todo change this so that it consider the case of both rows and cols at the same time
     dimStats : function(dim) {
       return dim[0] === 'c' ? this.colStats() : this.rowStats();
     }
