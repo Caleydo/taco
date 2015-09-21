@@ -3,11 +3,19 @@
  */
 define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
     //draws the barplot based on the projected data
-    function drawDiffBarplot(p_data, usize, parent, dim) {
+    function drawDiffBarplot(p_data, usize, parent, dim, data_promise) {
+      var usize0 = usize[0],
+        usize1 = usize[1];
+      if (dim[0] !== "rows"){
+        usize0 = usize[1];
+        usize1 = usize[0];
+      }
+      var  gridSize = 6,
+        //todo we could use the width of the max value
+        width = (usize1 * gridSize),
+        height = (usize0 * gridSize);
 
-      var margin = {top: 20, right: 20, bottom: 30, left: 40},
-        width = 960 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+
       /*
        var x = d3.scale.ordinal()
        .rangeRoundBands([0, width], .1);
@@ -43,8 +51,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           .style("top", (this.offsetTop + d3.event.dy) + "px");
       }
 
-      var w = 6, h = 1;
-      console.log("usize", usize, "direction", dim);
+      console.log("usize", usize0, "direction", dim, data_promise);
       //to check which direction and which size we need to use
       //if (len(dim) === 1){
 
@@ -52,24 +59,22 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
 
       var container = parent.append("div")
         .classed("taco-bp-container", true)
-        .style("width", width + 2 + margin.left + margin.right + 'px')
-        .style("height", height + 2 + margin.top + margin.bottom + 'px')
+        .style("width", width + 2 + 'px')
+        .style("height", height + 2 + 'px')
         //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
-        .style("transform", "translate(" + 20 + "px," + margin.top + "px)")
+        .style("transform", "translate(" + 20 + "px," + 20 + "px)")
         .call(drag);
 
 
       //http://bost.ocks.org/mike/bar/
       var x = d3.scale.linear()
-        //.domain([0, d3.max(p_data)])
-        .domain([0, 5])
+        .domain([0, usize1])
         .range([0, width]);
 
       var y = d3.scale.linear()
-        //.domain([0, d3.max(p_data)])
-        //todo get this from the data!
-        .domain([0, usize[0]])
+        .domain([0, usize0])
         .range([0, height]);
+
 
       var bp = container.selectAll("div.rows")
         .data(p_data, function (d, i) {
@@ -82,11 +87,10 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         .style("width", function (d) {
           return x(d.count) + "px";
         })
-        .text(function (d) {
-          return d.id;
-        })
+        .style("height", gridSize + "px")
+        //.text(function (d) {return d.id;})
         //todo find out how the width of each bar is selected
-        .style("transform", function(d){ return "translate(" + 0 + "px," + y(d.pos) * h + "px)";});
+        .style("transform", function(d){ return "translate(" + 0 + "px," + y(d.pos) + "px)";});
 
 
       /*
@@ -175,7 +179,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         //todo change this so that it consider the case of both rows and cols at the same time
         data.dimStats(data.desc.direction[0]).then(function (stats) {
           //$node.text(JSON.stringify(stats, null, ' '));
-          $node = drawDiffBarplot(stats, data.desc.size, $parent, data.desc.direction);
+          $node = drawDiffBarplot(stats, data.desc.size, $parent, data.desc.direction, data.data());
         });
         return $node;
       });
