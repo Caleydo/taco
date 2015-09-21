@@ -246,5 +246,10 @@ a.taco-logo {
     margin: 1px;
     color: white;
   }
+  .rotated {
+    /*rotate the entire image
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);*/
+  }
 }
 

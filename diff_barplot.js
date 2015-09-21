@@ -5,10 +5,12 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
     //draws the barplot based on the projected data
     function drawDiffBarplot(p_data, usize, parent, dim, data_promise) {
       var usize0 = usize[0],
-        usize1 = usize[1];
+        usize1 = usize[1],
+        is_cols = false;
       if (dim[0] !== "rows"){
         usize0 = usize[1];
         usize1 = usize[0];
+        is_cols = true;
       }
       var  gridSize = 6,
         //todo we could use the width of the max value
@@ -56,13 +58,17 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       //if (len(dim) === 1){
 
       //}
+      var position = parseInt(parseInt(d3.select("#board").style("width")) / 2) - parseInt(width / 2);
 
       var container = parent.append("div")
         .classed("taco-bp-container", true)
+        .classed("rotated", is_cols)
         .style("width", width + 2 + 'px')
         .style("height", height + 2 + 'px')
         //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
-        .style("transform", "translate(" + 20 + "px," + 20 + "px)")
+        //todo move all the transform functions to the css
+        //note that the transform has to be one sentence otherwise it won't happen
+        .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""))
         .call(drag);
 
 
@@ -89,7 +95,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         })
         .style("height", gridSize + "px")
         //.text(function (d) {return d.id;})
-        //todo find out how the width of each bar is selected
         .style("transform", function(d){ return "translate(" + 0 + "px," + y(d.pos) + "px)";});
 
 
