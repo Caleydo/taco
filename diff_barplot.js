@@ -17,27 +17,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         width = (usize1 * gridSize),
         height = (usize0 * gridSize);
 
-
-      /*
-       var x = d3.scale.ordinal()
-       .rangeRoundBands([0, width], .1);
-
-       var y = d3.scale.linear()
-       .rangeRound([height, 0]);
-
-       var color = d3.scale.ordinal()
-       .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
-       var xAxis = d3.svg.axis()
-       .scale(x)
-       .orient("bottom");
-
-       var yAxis = d3.svg.axis()
-       .scale(y)
-       .orient("left")
-       .tickFormat(d3.format(".2s"));
-       */
-
       //dragging
       var drag = d3.behavior.drag()
         //.on('dragstart', function() { console.log("start") })
@@ -53,16 +32,12 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           .style("top", (this.offsetTop + d3.event.dy) + "px");
       }
 
-      console.log("usize", usize0, "direction", dim, data_promise);
-      //to check which direction and which size we need to use
-      //if (len(dim) === 1){
+      console.log("direction", dim, data_promise);
 
-      //}
+      //find a better way for calculating the position
       var position = parseInt(parseInt(d3.select("#board").style("width")) / 2) - parseInt(width / 2);
 
-      var container = parent.append("div")
-        .classed("taco-bp-container", true)
-        .classed("rotated", is_cols)
+      var container = parent.classed("rotated", is_cols)
         .style("width", width + 2 + 'px')
         .style("height", height + 2 + 'px')
         //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
@@ -178,13 +153,13 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       function ($parent, data, size) {
         var o = this.options;
         //var $node = $parent.append('pre');
-        var $node = $parent;
+        var $node = $parent.append("div")
+        .classed("taco-bp-container", true);
 
-        console.log("o", o, "desc", data.desc);
         //todo change this so that it consider the case of both rows and cols at the same time
         data.dimStats(data.desc.direction[0]).then(function (stats) {
           //$node.text(JSON.stringify(stats, null, ' '));
-          $node = drawDiffBarplot(stats, data.desc.size, $parent, data.desc.direction, data.data());
+          $node = drawDiffBarplot(stats, data.desc.size, $node, data.desc.direction, data.data());
         });
         return $node;
       });

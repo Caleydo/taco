@@ -228,9 +228,6 @@ svg .select-selected {
 }
 
 a.taco-logo {
-  //display: inline-block;
-  //vertical-align: middle;
-  //float: none;
   padding: 5px 15px;
 }
 
@@ -251,5 +248,9 @@ a.taco-logo {
     -webkit-transform: rotate(-90deg);
     transform: rotate(-90deg);*/
   }
+}
+
+.content{
+  border: 1px solid orange;
 }
 

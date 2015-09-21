@@ -21,13 +21,12 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       .range([colorLow, colorMed, colorHigh]);
 
     function DiffHeatmap(data, parent) {
-      //todo to use the parent instead of #board
-      console.log("parent", parent);
       this.h_data = data;
       //todo check if this is correct or should be removed!
-      this.container = d3.select("#board")
+      this.container = parent
         .append("div")
         .classed("taco-table-container", true);
+      this.parent = parent;
     }
 
     DiffHeatmap.prototype.get_data = function () {
@@ -60,7 +59,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       that.h_data.then(function (data) {
         var height = data.union.ur_ids.length * h;
         var width = data.union.uc_ids.length * w;
-        var position = parseInt(parseInt(d3.select("#board").style("width")) / 2) - margin.left - parseInt(width / 2);
+        var position = parseInt(parseInt(that.parent.style("width")) / 2) - margin.left - parseInt(width / 2);
 
         that.container
           .style("width", width + 2 + margin.left + margin.right + 'px')
