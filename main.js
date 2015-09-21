@@ -141,6 +141,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                   if (rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null) {
                     if (dh !== null) {
                       dh.destroy();
+                      dh.node.remove();
                       //remove the old multiform selector
                       d3.select('#taco-mf-selector').html('');
                     }
