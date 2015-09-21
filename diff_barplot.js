@@ -3,7 +3,7 @@
  */
 define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
     //draws the barplot based on the projected data
-    function drawDiffBarplot(p_data, usize, parent, dim, data_promise) {
+    function drawDiffBarplot(p_data, usize, parent, dim, realsize, data_promise) {
       var usize0 = usize[0],
         usize1 = usize[1],
         is_cols = false;
@@ -14,7 +14,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       }
       var  gridSize = 6,
         //todo we could use the width of the max value
-        width = (usize1 * gridSize),
+        width = (realsize ?(usize1 * gridSize) : 20),
         height = (usize0 * gridSize);
 
       //dragging
@@ -46,11 +46,20 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""))
         .call(drag);
 
+      var max_change = Math.max.apply(Math, p_data.map(function(o){return o.count;}))
 
       //http://bost.ocks.org/mike/bar/
-      var x = d3.scale.linear()
+      if (realsize){
+        var x = d3.scale.linear()
         .domain([0, usize1])
+        //.domain([0, max_change])
         .range([0, width]);
+      }else{
+        var x = d3.scale.linear()
+        //.domain([0, usize1])
+        .domain([0, max_change])
+        .range([0, width]);
+      }
 
       var y = d3.scale.linear()
         .domain([0, usize0])
@@ -159,7 +168,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         //todo change this so that it consider the case of both rows and cols at the same time
         data.dimStats(data.desc.direction[0]).then(function (stats) {
           //$node.text(JSON.stringify(stats, null, ' '));
-          $node = drawDiffBarplot(stats, data.desc.size, $node, data.desc.direction, data.data());
+          var realsize = false;
+          $node = drawDiffBarplot(stats, data.desc.size, $node, data.desc.direction, realsize, data.data());
         });
         return $node;
       });
