@@ -3,7 +3,7 @@
  */
 define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
     //draws the barplot based on the projected data
-    function drawDiffBarplot(p_data, parent, dim) {
+    function drawDiffBarplot(p_data, usize, parent, dim) {
 
       var margin = {top: 20, right: 20, bottom: 30, left: 40},
         width = 960 - margin.left - margin.right,
@@ -43,7 +43,12 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           .style("top", (this.offsetTop + d3.event.dy) + "px");
       }
 
-      var w = 10;
+      var w = 6, h = 1;
+      console.log("usize", usize, "direction", dim);
+      //to check which direction and which size we need to use
+      //if (len(dim) === 1){
+
+      //}
 
       var container = parent.append("div")
         .classed("taco-bp-container", true)
@@ -54,10 +59,17 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         .call(drag);
 
 
+      //http://bost.ocks.org/mike/bar/
       var x = d3.scale.linear()
         //.domain([0, d3.max(p_data)])
-        .domain([0, 10])
-        .range([0, 420]);
+        .domain([0, 5])
+        .range([0, width]);
+
+      var y = d3.scale.linear()
+        //.domain([0, d3.max(p_data)])
+        //todo get this from the data!
+        .domain([0, usize[0]])
+        .range([0, height]);
 
       var bp = container.selectAll("div.rows")
         .data(p_data, function (d, i) {
@@ -73,7 +85,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         .text(function (d) {
           return d.id;
         })
-        .style("transform", function(d){ return "translate(" + 0 + "px," + d.pos * w + "px)";});
+        //todo find out how the width of each bar is selected
+        .style("transform", function(d){ return "translate(" + 0 + "px," + y(d.pos) * h + "px)";});
 
 
       /*
@@ -162,7 +175,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         //todo change this so that it consider the case of both rows and cols at the same time
         data.dimStats(data.desc.direction[0]).then(function (stats) {
           //$node.text(JSON.stringify(stats, null, ' '));
-          $node = drawDiffBarplot(stats, $parent);
+          $node = drawDiffBarplot(stats, data.desc.size, $parent, data.desc.direction);
         });
         return $node;
       });
