@@ -145,8 +145,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                       //remove the old multiform selector
                       d3.select('#taco-mf-selector').html('');
                     }
-                    var visses = vis.list(diffmatrix);
-                    debugger;
                     dh = multiform.create(diffmatrix, d3.select('#board').node(), {dim: settings_direction});
                     multiform.addSelectVisChooser(d3.select('#taco-mf-selector').node(), dh);
                     d3.select('#taco-mf-selector select').classed('form-control', true);

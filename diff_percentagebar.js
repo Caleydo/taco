@@ -4,7 +4,59 @@
 define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
     //draws the percentage bar based on content data
     function drawDiffPercentageBar(p_data, usize, parent, dim, data_promise) {
-      return parent;
+      var usize0 = usize[0],
+        usize1 = usize[1],
+        is_cols = false;
+      if (dim[0] !== "rows") {
+        usize0 = usize[1];
+        usize1 = usize[0];
+        is_cols = true;
+      }
+      var width = 120,
+        height = 20;
+
+      //dragging
+      var drag = d3.behavior.drag()
+        //.on('dragstart', function() { console.log("start") })
+        .on('drag', dragHandler);
+      //.on('dragend', function() { console.log("end") });
+
+      //todo to use just the one in heatmap
+      function dragHandler(d) {
+        //must have position absolute to work like this
+        //otherwise use transfrom css property
+        d3.select(this)
+          .style("left", (this.offsetLeft + d3.event.dx) + "px")
+          .style("top", (this.offsetTop + d3.event.dy) + "px");
+      }
+
+      //find a better way for calculating the position
+      var position = parseInt(parseInt(d3.select("#board").style("width")) / 2) - parseInt(width / 2);
+
+      var container = parent.classed("rotated", is_cols)
+        .style("width", width + 2 + 'px')
+        .style("height", height + 2 + 'px')
+        //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
+        //todo move all the transform functions to the css
+        //note that the transform has to be one sentence otherwise it won't happen
+        .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""))
+        .call(drag);
+
+      var x = d3.scale.linear()
+          .domain([0, 1])
+          .range([0, width]);
+
+      var bp = container.selectAll("div.bars")
+        .data(p_data)
+        .enter()
+        .append("div")
+        .classed("bars", true)
+        .style("width", function(d){
+          return x(d.width) + "px";
+        })
+        .style("height", height + "px");
+       // .text( p_data * 100 + "%");
+      return container;
     }
 
     exports.DiffPercentageBarVis = d3utils.defineVis('DiffPercentageBarVis', {
@@ -12,13 +64,17 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       }, [200, 200],
       function ($parent, data, size) {
         var o = this.options;
-        var $node = $parent.append('pre');
+        var $node = $parent.append('div')
+          .classed("taco-bar-container", true);
 
         //todo change this so that it consider the case of both rows and cols at the same time
         data.contentRatio().then(function (ratio) {
-          $node.text(JSON.stringify(ratio, null, ' '));
-          console.log(ratio);
-          //$node = drawDiffPercentageBar(stats, data.desc.size, $node, data.desc.direction, data.data());
+
+          //draws the percentage bar based on content data
+          content = {width: ratio};
+          ratios = [];
+          ratios.push(content);
+          $node = drawDiffPercentageBar(ratios, data.desc.size, $node, data.desc.direction, data.data());
         });
         return $node;
       });
