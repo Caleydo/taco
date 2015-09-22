@@ -76,7 +76,12 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
     //todo change this so that it consider the case of both rows and cols at the same time
     dimStats : function(dim) {
       return dim[0] === 'c' ? this.colStats() : this.rowStats();
-    }
+    },
+    contentRatio: function(){
+    return this.data().then(function(d){
+      return d.content.length / (d.union.uc_ids.length * d.union.ur_ids.length)
+    })
+  }
   });
 
   exports.create = function (desc) {

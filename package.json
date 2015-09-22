@@ -38,6 +38,13 @@
           "name": "Diff Plot Vis",
           "filter": "diffstructure",
           "file": "diff_barplot"
+        },
+        {
+          "type": "vis",
+          "id": "diffpercentagebarvis",
+          "name": "Diff Perc Bar Vis",
+          "filter": "diffstructure",
+          "file": "diff_percentagebar"
         }
       ]
     },
