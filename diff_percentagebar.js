@@ -1,9 +1,10 @@
 /**
  * Created by Reem on 9/22/2015.
  */
-define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
+define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d3, d3utils, drag) {
     //draws the percentage bar based on content data
     function drawDiffPercentageBar(p_data, usize, parent, dim, data_promise) {
+      var myDrag = drag.Drag();
       var usize0 = usize[0],
         usize1 = usize[1],
         is_cols = false;
@@ -15,21 +16,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       var width = 120,
         height = 20;
 
-      //dragging
-      var drag = d3.behavior.drag()
-        //.on('dragstart', function() { console.log("start") })
-        .on('drag', dragHandler);
-      //.on('dragend', function() { console.log("end") });
-
-      //todo to use just the one in heatmap
-      function dragHandler(d) {
-        //must have position absolute to work like this
-        //otherwise use transfrom css property
-        d3.select(this)
-          .style("left", (this.offsetLeft + d3.event.dx) + "px")
-          .style("top", (this.offsetTop + d3.event.dy) + "px");
-      }
-
       //find a better way for calculating the position
       var position = parseInt(parseInt(d3.select("#board").style("width")) / 2) - parseInt(width / 2);
 
@@ -40,7 +26,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         //todo move all the transform functions to the css
         //note that the transform has to be one sentence otherwise it won't happen
         .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""))
-        .call(drag);
+        .call(myDrag);
+      console.log("drag is :", drag.Drag);
 
       var x = d3.scale.linear()
           .domain([0, 1])

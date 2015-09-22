@@ -1,7 +1,7 @@
 /**
  * Created by Reem and Sam on 9/17/2015.
  */
-define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
+define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d3, d3utils, drag) {
     //draws the barplot based on the projected data
     function drawDiffBarplot(p_data, usize, parent, dim, realsize, data_promise) {
       var usize0 = usize[0],
@@ -16,21 +16,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         //todo we could use the width of the max value
         width = (realsize ?(usize1 * gridSize) : 20),
         height = (usize0 * gridSize);
-
-      //dragging
-      var drag = d3.behavior.drag()
-        //.on('dragstart', function() { console.log("start") })
-        .on('drag', dragHandler);
-        //.on('dragend', function() { console.log("end") });
-
-      //todo to use just the one in heatmap
-      function dragHandler(d) {
-        //must have position absolute to work like this
-        //otherwise use transfrom css property
-        d3.select(this)
-          .style("left", (this.offsetLeft + d3.event.dx) + "px")
-          .style("top", (this.offsetTop + d3.event.dy) + "px");
-      }
+      var myDrag = drag.Drag();
 
       console.log("direction", dim, data_promise);
 
@@ -44,7 +30,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         //todo move all the transform functions to the css
         //note that the transform has to be one sentence otherwise it won't happen
         .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""))
-        .call(drag);
+        .call(myDrag);
 
       var max_change = Math.max.apply(Math, p_data.map(function(o){return o.count;}));
 

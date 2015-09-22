@@ -4,8 +4,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/multiform', 'toastr', 'bootstrap', 'font-awesome'],
-  function (data, d3, $, dHeatmap, vis, C, multiform, toastr) {
+require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/multiform', 'underscore', 'toastr', './drag', 'bootstrap', 'font-awesome'],
+  function (data, d3, $, vis, C, multiform, _, toastr, drag) {
     'use strict';
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
@@ -13,6 +13,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
     var rows1 = null, rows2= null, cols1= null, cols2= null, id1= null, id2= null,
         ds1 = null, ds2 = null, dh = null;
     var heatmap1 = null, heatmap2 = null;
+    var myDrag = drag.Drag();
 
     var gridSize = 6,
       h = gridSize,
@@ -23,20 +24,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
         return desc.value.type === 'categorical' ? 'partition' : 'numerical';
       }
       return desc.type;
-    }
-
-    //todo move this to a shared file between all those heatmap things!
-    var drag = d3.behavior.drag()
-      //.on('dragstart', function () {console.log("start")})
-      .on('drag', dragHandler);
-    //.on('dragend', function () {console.log("end")});
-
-    function dragHandler(d) {
-      //must have position absolute to work like this
-      //otherwise use transfrom css property
-      d3.select(this)
-        .style("left", (this.offsetLeft + d3.event.dx) + "px")
-        .style("top", (this.offsetTop + d3.event.dy) + "px");
     }
 
     //from caleydo demo app
@@ -72,7 +59,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
               heatmap2 = plugin.factory(selectedDataset, document.getElementById('test'), {
                 initialScale: gridSize
               });
-              d3.select("#test").call(drag);
+              d3.select("#test").call(myDrag);
 
               rows2 = rows;
               cols2 = cols;
@@ -85,7 +72,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
               heatmap1 = plugin.factory(selectedDataset, document.getElementById('test2'), {
                 initialScale: gridSize
               });
-              d3.select("#test2").call(drag);
+              d3.select("#test2").call(myDrag);
               rows1 = rows;
               cols1 = cols;
               id1 = selectedDataset.desc.id;
