@@ -46,17 +46,16 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""))
         .call(drag);
 
-      var max_change = Math.max.apply(Math, p_data.map(function(o){return o.count;}))
+      var max_change = Math.max.apply(Math, p_data.map(function(o){return o.count;}));
 
       //http://bost.ocks.org/mike/bar/
+      var x;
       if (realsize){
-        var x = d3.scale.linear()
+        x = d3.scale.linear()
         .domain([0, usize1])
-        //.domain([0, max_change])
         .range([0, width]);
       }else{
-        var x = d3.scale.linear()
-        //.domain([0, usize1])
+        x = d3.scale.linear()
         .domain([0, max_change])
         .range([0, width]);
       }
@@ -77,7 +76,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         .style("width", function (d) {
           return x(d.count) + "px";
         })
-        .style("height", gridSize + "px")
+        .style("height", gridSize -1 + "px")
         //.text(function (d) {return d.id;})
         .style("transform", function(d){ return "translate(" + 0 + "px," + y(d.pos) + "px)";});
 
