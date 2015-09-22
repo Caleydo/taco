@@ -232,7 +232,8 @@ a.taco-logo {
 }
 
 .taco-bp-container {
-  border: 1px solid lightpink;
+  //border: 1px solid lightpink;
+  border-left: 1px solid #000000;
   position: absolute;
   div {
     position: absolute;
@@ -240,7 +241,8 @@ a.taco-logo {
     background-color: #456bb4;
     text-align: right;
     padding: 1px;
-    margin: 1px;
+    //margin: 1px;
+    margin-top: 1px;
     color: white;
   }
   .rotated {
