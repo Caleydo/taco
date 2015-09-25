@@ -66,80 +66,58 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .style("height", gridSize -1 + "px")
         //.text(function (d) {return d.id;})
         .style("transform", function(d){ return "translate(" + 0 + "px," + y(d.pos) + "px)";});
-
-
-      /*
-       var svg = d3.select("body").append("svg")
-       .attr("width", width + margin.left + margin.right)
-       .attr("height", height + margin.top + margin.bottom)
-       .append("g")
-       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-       var root = d3.selectAll("idk").data(p_data).enter();
-
-       color.domain(d3.keys(data[0]).filter(function (key) {
-       return key !== "State";
-       }));
-
-       data.forEach(function (d) {
-       var y0 = 0;
-       d.ages = color.domain().map(function (name) {
-       return {name: name, y0: y0, y1: y0 += +d[name]};
-       });
-       d.total = d.ages[d.ages.length - 1].y1;
-       });
-
-       data.sort(function (a, b) {
-       return b.total - a.total;
-       });
-
-       x.domain(data.map(function (d) {
-       return d.State;
-       }));
-       y.domain([0, d3.max(data, function (d) {
-       return d.total;
-       })]);
-
-       svg.append("g")
-       .attr("class", "x axis")
-       .attr("transform", "translate(0," + height + ")")
-       .call(xAxis);
-
-       svg.append("g")
-       .attr("class", "y axis")
-       .call(yAxis)
-       .append("text")
-       .attr("transform", "rotate(-90)")
-       .attr("y", 6)
-       .attr("dy", ".71em")
-       .style("text-anchor", "end")
-       .text("Population");
-
-       var state = svg.selectAll(".state")
-       .data(data)
-       .enter().append("g")
-       .attr("class", "g")
-       .attr("transform", function (d) {
-       return "translate(" + x(d.State) + ",0)";
-       });
-
-       state.selectAll("rect")
-       .data(function (d) {
-       return d.ages;
-       })
-       .enter().append("rect")
-       .attr("width", x.rangeBand())
-       .attr("y", function (d) {
-       return y(d.y1);
-       })
-       .attr("height", function (d) {
-       return y(d.y0) - y(d.y1);
-       })
-       .style("fill", function (d) {
-       return color(d.name);
-       });
-       */
       return container; //?
+    }
+
+    function drawDiffStructPlot (p_data, usize, parent, dim, realsize, data_promise) {
+      var usize0 = usize[0],
+        usize1 = usize[1],
+        is_cols = false;
+      if (dim[0] !== "rows"){
+        usize0 = usize[1];
+        usize1 = usize[0];
+        is_cols = true;
+      }
+      var  gridSize = 6,
+        //todo we could use the width of the max value
+        width = (realsize ?(usize1 * gridSize) : 20),
+        height = (usize0 * gridSize);
+      var myDrag = drag.Drag();
+
+      console.log("direction", dim, data_promise);
+
+      var max_change = Math.max.apply(Math, p_data.map(function(o){return o.count;}));
+
+      //http://bost.ocks.org/mike/bar/
+      var x;
+      if (realsize){
+        x = d3.scale.linear()
+        .domain([0, usize1])
+        .range([0, width]);
+      }else{
+        x = d3.scale.linear()
+        .domain([0, max_change])
+        .range([0, width]);
+      }
+
+      var y = d3.scale.linear()
+        .domain([0, usize0])
+        .range([0, height]);
+
+
+      var container = parent.selectAll("div.struct")
+        .data(p_data, function (d, i) {
+          console.log(d);
+          return d.id;
+        })
+        .enter().append("div")
+        .classed("struct", true)
+        .classed("struct-add-color", true)
+        .style("width", gridSize -1 + "px")
+        .style("height", gridSize -1 + "px")
+        //.text(function (d) {return d.id;})
+        .style("transform", function(d){ return "translate(" + -1 + "px," + y(d.pos) + "px)";});
+      return container;
     }
 
     exports.DiffBarPlotVis = d3utils.defineVis('DiffBarPlotVis', {
