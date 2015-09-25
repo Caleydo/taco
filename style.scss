@@ -238,7 +238,6 @@ a.taco-logo {
   div {
     position: absolute;
     font: 10px sans-serif;
-    background-color: #456bb4;
     text-align: right;
     padding: 1px;
     //margin: 1px;
@@ -258,9 +257,12 @@ a.taco-logo {
     div {
       position: absolute;
       font: 10px sans-serif;
-      background-color: #456bb4;
       text-align: right;
       padding: 1px;
     }
   }
+
+.content-change-color {
+  background-color: #456bb4;
+}
 

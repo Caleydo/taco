@@ -59,6 +59,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
 
       bp.enter().append("div")
         .classed("rows", true)
+        .classed("content-change-color", true)
         .style("width", function (d) {
           return x(d.count) + "px";
         })

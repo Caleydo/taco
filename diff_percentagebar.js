@@ -27,7 +27,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         //note that the transform has to be one sentence otherwise it won't happen
         .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""))
         .call(myDrag);
-      console.log("drag is :", drag.Drag);
 
       var x = d3.scale.linear()
           .domain([0, 1])
@@ -38,6 +37,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .enter()
         .append("div")
         .classed("bars", true)
+        .classed("content-change-color", true)
         .style("width", function(d){
           return x(d.width) + "px";
         })
