@@ -255,7 +255,7 @@ a.taco-logo {
     border: 1px solid darkgray;
     position: absolute;
     div {
-      position: absolute;
+      position: relative;
       font: 10px sans-serif;
       text-align: right;
       padding: 1px;
@@ -266,11 +266,11 @@ a.taco-logo {
   background-color: #456bb4;
 }
 
-.struct-add-color .row-add-color .col-add-color{
+.struct-add-color, .row-add-color, .col-add-color{
   background-color: green;
 }
 
-.struct-del-color .row-del-color .col-del-color{
+.struct-del-color, .row-del-color, .col-del-color{
   background-color: red;
 }
 

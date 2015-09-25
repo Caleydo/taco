@@ -36,8 +36,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .data(p_data)
         .enter()
         .append("div")
-        .classed("bars", true)
-        .classed("content-change-color", true)
+        .attr("class", "bars")
+        .attr("class", function(d){return d.type + "-color";})
         .style("height", function(d){
           return y(d.ratio) + "px";
         })
