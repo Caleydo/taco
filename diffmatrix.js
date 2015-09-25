@@ -78,10 +78,30 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
       return dim[0] === 'c' ? this.colStats() : this.rowStats();
     },
     contentRatio: function(){
-    return this.data().then(function(d){
-      return d.content.length / (d.union.uc_ids.length * d.union.ur_ids.length)
-    })
-  }
+      return this.data().then(function(d){
+        return {ratio: d.content.length / (d.union.uc_ids.length * d.union.ur_ids.length), type: "content-change"};
+      });
+    },
+    rowAddRatio: function () {
+      return this.data().then(function (d) {
+        return {ratio: d.structure.added_rows.length /  d.union.ur_ids.length, type: "row-add"};
+      });
+    },
+    rowDelRatio: function () {
+      return this.data().then(function (d) {
+        return {ratio: d.structure.deleted_rows.length /  d.union.ur_ids.length, type: "row-del"};
+      });
+    },
+    colAddRatio: function () {
+      return this.data().then(function (d) {
+        return {ratio: d.structure.added_cols.length /  d.union.uc_ids.length, type: "col-add"};
+      });
+    },
+    colDelRatio: function () {
+      return this.data().then(function (d) {
+        return {ratio: d.structure.deleted_cols.length /  d.union.uc_ids.length, type: "col-del"};
+      });
+    }
   });
 
   exports.create = function (desc) {

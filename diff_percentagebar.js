@@ -3,7 +3,7 @@
  */
 define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d3, d3utils, drag) {
     //draws the percentage bar based on content data
-    function drawDiffPercentageBar(p_data, usize, parent, dim, data_promise) {
+    function drawDiffPercentageBar(p_data, usize, parent, dim) {
       var myDrag = drag.Drag();
       var usize0 = usize[0],
         usize1 = usize[1],
@@ -39,7 +39,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .classed("bars", true)
         .classed("content-change-color", true)
         .style("height", function(d){
-          return y(d.height) + "px";
+          return y(d.ratio) + "px";
         })
         .style("width", width + "px");
        // .text( p_data * 100 + "%");
@@ -54,14 +54,25 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         var $node = $parent.append('div')
           .classed("taco-bar-container", true);
 
-        //todo change this so that it consider the case of both rows and cols at the same time
-        data.contentRatio().then(function (ratio) {
-
-          //draws the percentage bar based on content data
-          content = {height: ratio};
-          ratios = [];
-          ratios.push(content);
-          $node = drawDiffPercentageBar(ratios, data.desc.size, $node, data.desc.direction, data.data());
+        var myPromises = [];
+        if (data.desc.change.indexOf('structure') > -1){
+          if (data.desc.direction.indexOf('rows') > -1){
+            myPromises.push(data.rowAddRatio());
+            myPromises.push(data.rowDelRatio());
+          }
+          if (data.desc.direction.indexOf('columns') > -1){
+            myPromises.push(data.colAddRatio());
+            myPromises.push(data.colDelRatio());
+          }
+        }
+        if (data.desc.change.indexOf('content') > -1){
+          //todo change this so that it consider the case of both rows and cols at the same time
+          myPromises.push(data.contentRatio());
+          //todo do we want to split it by rows cols percentage???? and use the one above for both rows and cols!
+        }
+        Promise.all(myPromises).then(function(ratios){
+          console.log("my ratios are those", ratios);
+          $node = drawDiffPercentageBar(ratios, data.desc.size, $node, data.desc.direction);
         });
         return $node;
       });

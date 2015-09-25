@@ -291,7 +291,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
           //console.log("cols of content", cols);
         }
       });
-    }
+    };
 
     //helper function
     function normalize(diff_data, max) {
