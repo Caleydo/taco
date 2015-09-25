@@ -13,8 +13,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         usize1 = usize[0];
         is_cols = true;
       }
-      var width = 120,
-        height = 20;
+      var width = 20,
+        height = 120;
 
       //find a better way for calculating the position
       var position = parseInt(parseInt(d3.select("#board").style("width")) / 2) - parseInt(width / 2);
@@ -25,12 +25,12 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
         //todo move all the transform functions to the css
         //note that the transform has to be one sentence otherwise it won't happen
-        .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""))
+        .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(-90deg)" : "scaleY(-1)"))
         .call(myDrag);
 
-      var x = d3.scale.linear()
+      var y = d3.scale.linear()
           .domain([0, 1])
-          .range([0, width]);
+          .range([0, height]);
 
       var bp = container.selectAll("div.bars")
         .data(p_data)
@@ -38,10 +38,10 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .append("div")
         .classed("bars", true)
         .classed("content-change-color", true)
-        .style("width", function(d){
-          return x(d.width) + "px";
+        .style("height", function(d){
+          return y(d.height) + "px";
         })
-        .style("height", height + "px");
+        .style("width", width + "px");
        // .text( p_data * 100 + "%");
       return container;
     }
@@ -58,7 +58,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         data.contentRatio().then(function (ratio) {
 
           //draws the percentage bar based on content data
-          content = {width: ratio};
+          content = {height: ratio};
           ratios = [];
           ratios.push(content);
           $node = drawDiffPercentageBar(ratios, data.desc.size, $node, data.desc.direction, data.data());
