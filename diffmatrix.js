@@ -77,6 +77,32 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
     dimStats : function(dim) {
       return dim[0] === 'c' ? this.colStats() : this.rowStats();
     },
+    structDelStats: function(dim){
+       return this.data().then(function(d){
+         if (dim.length === 1 && dim[0][0] === 'c'){
+           return d.structure.deleted_cols; //todo add the added cols
+         }
+         if (dim.length === 1 && dim[0][0] === 'r'){
+           return d.structure.deleted_rows; //todo add the added rows
+         }
+         //todo to handle the case when it's both rows and columns selected, for now just return rows
+         return d.structure.deleted_rows;
+         //return d.structure; //todo probably call a function that returns a list!
+       });
+    },
+    structAddStats: function(dim){
+       return this.data().then(function(d){
+         if (dim.length === 1 && dim[0][0] === 'c'){
+           return d.structure.added_rows; //todo add the added cols
+         }
+         if (dim.length === 1 && dim[0][0] === 'r'){
+           return d.structure.added_rows; //todo add the added rows
+         }
+         //todo to handle the case when it's both rows and columns selected, for now just return rows
+         return d.structure.added_rows;
+         //return d.structure; //todo probably call a function that returns a list!
+       });
+    },
     contentRatio: function(){
       return this.data().then(function(d){
         return {ratio: d.content.length / (d.union.uc_ids.length * d.union.ur_ids.length), type: "content-change"};

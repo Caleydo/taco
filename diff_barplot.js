@@ -69,7 +69,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       return container; //?
     }
 
-    function drawDiffStructPlot (p_data, usize, parent, dim, realsize, data_promise) {
+    function drawDiffStructPlot (p_data, usize, parent, dim, realsize, isadd) {
       var usize0 = usize[0],
         usize1 = usize[1],
         is_cols = false;
@@ -82,41 +82,25 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         //todo we could use the width of the max value
         width = (realsize ?(usize1 * gridSize) : 20),
         height = (usize0 * gridSize);
-      var myDrag = drag.Drag();
-
-      console.log("direction", dim, data_promise);
-
-      var max_change = Math.max.apply(Math, p_data.map(function(o){return o.count;}));
-
-      //http://bost.ocks.org/mike/bar/
-      var x;
-      if (realsize){
-        x = d3.scale.linear()
-        .domain([0, usize1])
-        .range([0, width]);
-      }else{
-        x = d3.scale.linear()
-        .domain([0, max_change])
-        .range([0, width]);
-      }
 
       var y = d3.scale.linear()
         .domain([0, usize0])
         .range([0, height]);
 
-
       var container = parent.selectAll("div.struct")
         .data(p_data, function (d, i) {
           console.log(d);
           return d.id;
-        })
-        .enter().append("div")
+        });
+
+        container.enter().append("div")
         .classed("struct", true)
-        .classed("struct-add-color", true)
+        .classed("struct-add-color", isadd)
+        .classed("struct-del-color", !isadd)
         .style("width", gridSize -1 + "px")
         .style("height", gridSize -1 + "px")
         //.text(function (d) {return d.id;})
-        .style("transform", function(d){ return "translate(" + -1 + "px," + y(d.pos) + "px)";});
+        .style("transform", function(d){ return "translate(" + -parseInt(gridSize/2) + "px," + y(d.pos) + "px)";});
       return container;
     }
 
@@ -129,11 +113,22 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         var $node = $parent.append("div")
         .classed("taco-bp-container", true);
 
+        var realsize = false;
+
         //todo change this so that it consider the case of both rows and cols at the same time
         data.dimStats(data.desc.direction[0]).then(function (stats) {
           //$node.text(JSON.stringify(stats, null, ' '));
-          var realsize = false;
           $node = drawDiffBarplot(stats, data.desc.size, $node, data.desc.direction, realsize, data.data());
+        });
+        //todo combine it with the one above
+        Promise.all([data.structAddStats(data.desc.direction), data.structDelStats(data.desc.direction)])
+          .then(function(values){
+            console.log("values", values);
+          var a_stats = values[0],
+            d_stats = values[1];
+          $node = drawDiffStructPlot(a_stats, data.desc.size, $node, data.desc.direction, realsize, true);
+            //todo fix the bug with the container
+          $node = drawDiffStructPlot(d_stats, data.desc.size, $node, data.desc.direction, realsize, false);
         });
         return $node;
       });
