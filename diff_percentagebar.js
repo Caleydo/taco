@@ -13,7 +13,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         usize1 = usize[0];
         is_cols = true;
       }
-      var width = 20,
+      var width = 20 * dim.length, //just to make it look a bit wider than the normal one in case both are selected
         height = 120;
 
       //find a better way for calculating the position
@@ -57,7 +57,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         var myPromises = [];
         if (data.desc.change.indexOf('structure') > -1){
           if(data.desc.direction.length > 1){
-            myPromises.push(data.structRatio());
+            myPromises.push(data.structAddRatio());
+            myPromises.push(data.structDelRatio());
           }else{
             //there's only 1 on none direction selected
             if (data.desc.direction.indexOf('rows') > -1){

@@ -129,21 +129,29 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
       });
     },
     //structure changes per cell for both add and remove operations for both rows and columns at the same time
-    structRatio: function() {
+    structAddRatio: function() {
+      return this.data().then(function(d){
+        var width = d.union.uc_ids.length, height = d.union.ur_ids.length, cells = width * height,
+          addc = 0;
+        height -= d.structure.deleted_rows.length;
+        width -= d.structure.deleted_cols.length;
+        addc += d.structure.added_rows.length * width;
+        height -= d.structure.added_rows.length;
+        addc += d.structure.added_cols.length * height;
+        width -= d.structure.added_cols.length; //we might need this later!
+        //the type here should be just add but i'm using row-add for css
+        return {ratio: addc / cells, type: "row-add"};
+      });
+    },
+    structDelRatio: function() {
       return this.data().then(function(d){
         var width = d.union.uc_ids.length, height = d.union.ur_ids.length, cells = width * height,
           addc = 0, delc = 0;
         delc += d.structure.deleted_rows.length * width;
         height -= d.structure.deleted_rows.length;
         delc += d.structure.deleted_cols.length * height;
-        width -= d.structure.deleted_cols.length;
-        addc += d.structure.added_rows.length * width;
-        height -= d.structure.added_rows.length;
-        addc += d.structure.added_cols.length * height;
-        width -= d.structure.added_cols.length; //we might need this later!
         //the type here should be just add and del but i'm using row-add and row-del for css
-        return [{ratio: addc / cells, type: "row-add"},
-          {ratio: delc / cells, type: "row-del"}];
+        return {ratio: delc / cells, type: "row-del"};
       });
     }
   });
