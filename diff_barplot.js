@@ -123,12 +123,11 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       }, [200, 200],
       function ($parent, data, size) {
         var o = this.options;
-        console.log(o.dim);
         var $node = $parent.append("div");
-        if (data.desc.direction.indexOf("rows") > -1) {
+        if (o.dim.indexOf("rows") > -1) {
           drawDiffPlot($node, data, "rows");
         }
-        if (data.desc.direction.indexOf("columns") > -1) {
+        if (o.dim.indexOf("columns") > -1) {
           //call the function for the cols!
           drawDiffPlot($node, data, "columns");
         }
