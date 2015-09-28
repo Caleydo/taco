@@ -254,11 +254,12 @@ a.taco-logo {
 .taco-bar-container {
     border: 1px solid darkgray;
     position: absolute;
+    background-color: #ffffff;
     div {
       position: relative;
       font: 10px sans-serif;
       text-align: right;
-      padding: 1px;
+      //padding: 1px;
     }
   }
 
@@ -274,3 +275,6 @@ a.taco-logo {
   background-color: red;
 }
 
+.struct {
+  border-radius: 25px;
+}
