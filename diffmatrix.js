@@ -93,7 +93,7 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
     structAddStats: function(dim){
        return this.data().then(function(d){
          if (dim.length === 1 && dim[0][0] === 'c'){
-           return d.structure.added_rows; //todo add the added cols
+           return d.structure.added_cols; //todo add the added cols
          }
          if (dim.length === 1 && dim[0][0] === 'r'){
            return d.structure.added_rows; //todo add the added rows

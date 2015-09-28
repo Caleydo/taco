@@ -53,7 +53,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
 
       var bp = container.selectAll("div.rows")
         .data(p_data, function (d, i) {
-          console.log(d);
           return d.id;
         });
 
@@ -87,9 +86,10 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .domain([0, usize0])
         .range([0, height]);
 
+      if (is_cols) console.log("cols", p_data, parent);
       var container = parent.selectAll("div.struct")
         .data(p_data, function (d, i) {
-          console.log(d);
+          console.log("the data is" , d);
           return d.id;
         });
 
@@ -101,7 +101,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .style("height", gridSize -1 + "px")
         //.text(function (d) {return d.id;})
         .style("transform", function(d){ return "translate(" + -parseInt(gridSize/2) + "px," + y(d.pos) + "px)";});
-      return container;
+      return parent;
     }
 
     exports.DiffBarPlotVis = d3utils.defineVis('DiffBarPlotVis', {
