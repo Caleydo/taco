@@ -67,6 +67,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       }, [200, 200],
       function ($parent, data, size) {
         var o = this.options;
+        //todo get this from the promise data (the result from the server)
         var usize0 = data.desc.size[0],
           usize1 = data.desc.size[1],
           is_cols = false;
@@ -88,7 +89,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
           .range([0, height]);
 
         //todo find a better way for calculating the position
-        var position = parseInt(parseInt(d3.select("#board").style("width")) / 2) - parseInt(width / 2);
+        var position = parseInt(parseInt($parent.style("width")) / 2) - parseInt(width / 2);
 
         var $node = $parent.append("div")
           .classed("taco-bp-container", true)
@@ -104,7 +105,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         if (data.desc.change.indexOf('content') > -1) {
           //todo change this so that it consider the case of both rows and cols at the same time
           data.dimStats(data.desc.direction[0]).then(function (stats) {
-            //$node.text(JSON.stringify(stats, null, ' '));
             $node = drawDiffBarplot(stats, usize1, width, gridSize, $node, y, realsize);
           });
         }
@@ -116,7 +116,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
               var a_stats = values[0],
                 d_stats = values[1];
               $node = drawDiffStructPlot(a_stats, gridSize, $node, y, true);
-              //todo fix the bug with the container
               $node = drawDiffStructPlot(d_stats, gridSize, $node, y, false);
             });
         }
