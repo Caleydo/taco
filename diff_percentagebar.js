@@ -56,13 +56,18 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
 
         var myPromises = [];
         if (data.desc.change.indexOf('structure') > -1){
-          if (data.desc.direction.indexOf('rows') > -1){
-            myPromises.push(data.rowAddRatio());
-            myPromises.push(data.rowDelRatio());
-          }
-          if (data.desc.direction.indexOf('columns') > -1){
-            myPromises.push(data.colAddRatio());
-            myPromises.push(data.colDelRatio());
+          if(data.desc.direction.length > 1){
+            myPromises.push(data.structRatio());
+          }else{
+            //there's only 1 on none direction selected
+            if (data.desc.direction.indexOf('rows') > -1){
+              myPromises.push(data.rowAddRatio());
+              myPromises.push(data.rowDelRatio());
+            }
+            if (data.desc.direction.indexOf('columns') > -1){
+              myPromises.push(data.colAddRatio());
+              myPromises.push(data.colDelRatio());
+            }
           }
         }
         if (data.desc.change.indexOf('content') > -1){
