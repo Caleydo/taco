@@ -36,12 +36,12 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .data(p_data)
         .enter()
         .append("div")
-        .attr("class", "bars")
-        .attr("class", function(d){return d.type + "-color";})
+        .attr("class", function(d){return "bars " + d.type + "-color";})
         .style("height", function(d){
           return y(d.ratio) + "px";
         })
-        .style("width", width + "px");
+        .style("width", width + "px")
+        .attr("title", function(d){return d.ratio * 100;});
        // .text( p_data * 100 + "%");
       return container;
     }

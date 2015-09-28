@@ -63,6 +63,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
           return x(d.count) + "px";
         })
         .style("height", gridSize -1 + "px")
+        .attr("title", function (d) {return d.count;})
         //.text(function (d) {return d.id;})
         .style("transform", function(d){ return "translate(" + 0 + "px," + y(d.pos) + "px)";});
       return container; //?
@@ -99,7 +100,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .classed("struct-del-color", !isadd)
         .style("width", gridSize -1 + "px")
         .style("height", gridSize -1 + "px")
-        //.text(function (d) {return d.id;})
+        //.attr("title", function (d) {return d.id;})
         .style("transform", function(d){ return "translate(" + -parseInt(gridSize/2) + "px," + y(d.pos) + "px)";});
       return parent;
     }
