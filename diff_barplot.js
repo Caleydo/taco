@@ -87,8 +87,20 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .domain([0, usize0])
         .range([0, height]);
 
-      if (is_cols) console.log("cols", p_data, parent);
-      var container = parent.selectAll("div.struct")
+      //todo this is only needed if the content is not applied!!!!
+      var myDrag = drag.Drag();
+      //find a better way for calculating the position
+      var position = parseInt(parseInt(d3.select("#board").style("width")) / 2) - parseInt(width / 2);
+      var container = parent.classed("rotated", is_cols)
+        .style("width", width + 2 + 'px')
+        .style("height", height + 2 + 'px')
+        //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
+        //todo move all the transform functions to the css
+        //note that the transform has to be one sentence otherwise it won't happen
+        .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""))
+        .call(myDrag);
+
+      container = parent.selectAll("div.struct")
         .data(p_data, function (d, i) {
           console.log("the data is" , d);
           return d.id;
@@ -117,20 +129,24 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         var realsize = false;
 
         //todo change this so that it consider the case of both rows and cols at the same time
-        data.dimStats(data.desc.direction[0]).then(function (stats) {
-          //$node.text(JSON.stringify(stats, null, ' '));
-          $node = drawDiffBarplot(stats, data.desc.size, $node, data.desc.direction, realsize, data.data());
-        });
+        if (data.desc.change.indexOf('content') > -1) {
+          data.dimStats(data.desc.direction[0]).then(function (stats) {
+            //$node.text(JSON.stringify(stats, null, ' '));
+            $node = drawDiffBarplot(stats, data.desc.size, $node, data.desc.direction, realsize, data.data());
+          });
+        }
         //todo combine it with the one above
-        Promise.all([data.structAddStats(data.desc.direction), data.structDelStats(data.desc.direction)])
-          .then(function(values){
-            console.log("values", values);
-          var a_stats = values[0],
-            d_stats = values[1];
-          $node = drawDiffStructPlot(a_stats, data.desc.size, $node, data.desc.direction, realsize, true);
-            //todo fix the bug with the container
-          $node = drawDiffStructPlot(d_stats, data.desc.size, $node, data.desc.direction, realsize, false);
-        });
+        if (data.desc.change.indexOf('structure') > -1) {
+          Promise.all([data.structAddStats(data.desc.direction), data.structDelStats(data.desc.direction)])
+            .then(function (values) {
+              console.log("values", values);
+              var a_stats = values[0],
+                d_stats = values[1];
+              $node = drawDiffStructPlot(a_stats, data.desc.size, $node, data.desc.direction, realsize, true);
+              //todo fix the bug with the container
+              $node = drawDiffStructPlot(d_stats, data.desc.size, $node, data.desc.direction, realsize, false);
+            });
+        }
         return $node;
       });
 
