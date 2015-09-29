@@ -85,7 +85,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .range([0, height]);
 
       //todo find a better way for calculating the position
-      var position = parseInt(parseInt(parent.style("width")) / 2) - parseInt(width / 2);
+      var position = parseInt(parseInt(parent.style("width")) / 2) + ( is_cols ? height : width);
 
       var $node = parent.append("div")
         .classed("taco-bp-container", true)
