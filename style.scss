@@ -228,8 +228,53 @@ svg .select-selected {
 }
 
 a.taco-logo {
-  //display: inline-block;
-  //vertical-align: middle;
-  //float: none;
   padding: 5px 15px;
+}
+
+.taco-bp-container {
+  //border: 1px solid lightpink;
+  border-left: 1px solid #000000;
+  position: absolute;
+  div {
+    position: absolute;
+    font: 10px sans-serif;
+    text-align: right;
+    padding: 1px;
+    //margin: 1px;
+    margin-top: 1px;
+    color: white;
+  }
+  .rotated {
+    /*rotate the entire image
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);*/
+  }
+}
+
+.taco-bar-container {
+    border: 1px solid darkgray;
+    position: absolute;
+    background-color: #ffffff;
+    div {
+      position: relative;
+      font: 10px sans-serif;
+      text-align: right;
+      //padding: 1px;
+    }
+  }
+
+.content-change-color {
+  background-color: #456bb4;
+}
+
+.struct-add-color, .row-add-color, .col-add-color{
+  background-color: green;
+}
+
+.struct-del-color, .row-del-color, .col-del-color{
+  background-color: red;
+}
+
+.struct {
+  border-radius: 25px;
 }

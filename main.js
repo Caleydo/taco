@@ -4,8 +4,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/multiform', 'toastr', 'bootstrap', 'font-awesome'],
-  function (data, d3, $, dHeatmap, vis, C, multiform, toastr) {
+require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/multiform', 'underscore', 'toastr', './drag', 'bootstrap', 'font-awesome'],
+  function (data, d3, $, vis, C, multiform, _, toastr, drag) {
     'use strict';
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
@@ -13,6 +13,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
     var rows1 = null, rows2= null, cols1= null, cols2= null, id1= null, id2= null,
         ds1 = null, ds2 = null, dh = null;
     var heatmap1 = null, heatmap2 = null;
+    var myDrag = drag.Drag();
 
     var gridSize = 6,
       h = gridSize,
@@ -23,20 +24,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
         return desc.value.type === 'categorical' ? 'partition' : 'numerical';
       }
       return desc.type;
-    }
-
-    //todo move this to a shared file between all those heatmap things!
-    var drag = d3.behavior.drag()
-      //.on('dragstart', function () {console.log("start")})
-      .on('drag', dragHandler);
-    //.on('dragend', function () {console.log("end")});
-
-    function dragHandler(d) {
-      //must have position absolute to work like this
-      //otherwise use transfrom css property
-      d3.select(this)
-        .style("left", (this.offsetLeft + d3.event.dx) + "px")
-        .style("top", (this.offsetTop + d3.event.dy) + "px");
     }
 
     //from caleydo demo app
@@ -72,7 +59,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
               heatmap2 = plugin.factory(selectedDataset, document.getElementById('test'), {
                 initialScale: gridSize
               });
-              d3.select("#test").call(drag);
+              d3.select("#test").call(myDrag);
 
               rows2 = rows;
               cols2 = cols;
@@ -85,7 +72,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
               heatmap1 = plugin.factory(selectedDataset, document.getElementById('test2'), {
                 initialScale: gridSize
               });
-              d3.select("#test2").call(drag);
+              d3.select("#test2").call(myDrag);
               rows1 = rows;
               cols1 = cols;
               id1 = selectedDataset.desc.id;
@@ -141,9 +128,13 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                   if (rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null) {
                     if (dh !== null) {
                       dh.destroy();
+                      dh.node.remove();
+                      //remove the old multiform selector
+                      d3.select('#taco-mf-selector').html('');
                     }
-                    dh = multiform.create(diffmatrix, d3.select('#board').node());
-                    multiform.addSelectVisChooser(d3.select('#board').node(), dh);
+                    dh = multiform.create(diffmatrix, d3.select('#board').node(), {'diffplotvis':{dim: settings_direction}});
+                    multiform.addSelectVisChooser(d3.select('#taco-mf-selector').node(), dh);
+                    d3.select('#taco-mf-selector select').classed('form-control', true);
                     /*var visses = vis.list(diffmatrix);
                     var diffheatmap = visses[0];
                     diffheatmap.load().then(function (plugin) {
@@ -151,12 +142,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
                       dh = plugin.factory(diffmatrix, d3.select('#board').node());
                     });
                     visses[1].load().then(function (plugin) {
-                      //here we call my diff_heatmap
+                      //here we call my diff_barplot
                       plugin.factory(diffmatrix, d3.select('#board').node());
                     });
-                    //dh = dHeatmap.create(diffmatrix.data(), rows1, rows2, cols1, cols2);
-
-                    //dh.drawDiffHeatmap();
                     */
                   } else {
                     console.log("no diff!", rows1, cols1, rows2, cols2);
@@ -208,7 +196,14 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
       $("[name='change[]']:checked").each(function() {
           matches.push(this.value);
       });
-
+      if ($("[name='change[]']:checked").length === 0) {
+        //some sort of validation to make sure that there's at least one change type selected
+        toastr.warning("You have to select at least one change type!", "I will select " + $(this).val() + " for you");
+        matches.push(this.value);
+        console.log("i will select this for you", $(this).val(), matches);
+        $('#' + this.id).prop('checked', true);
+        $('#' + this.id).parents('label').toggleClass('active');
+      }
       console.log("changed this ", $(this).val(), matches);
     });
 
@@ -216,10 +211,15 @@ require(['../caleydo_core/data', 'd3', 'jquery', './diff_heatmap', '../caleydo_c
     $("[name='direction[]']").change(function () {
       var matches = [];
       $("[name='direction[]']:checked").each(function() {
-          matches.push(this.value);
+        matches.push(this.value);
       });
-      if ($("[name='direction[]']:checked").length == 0) {
-          toastr.warning("You have to select at least one direction!")
+      if ($("[name='direction[]']:checked").length === 0) {
+        //some sort of validation to make sure that there's at least one direction selected
+        toastr.warning("You have to select at least one direction!", "I will select " + $(this).val() + " for you");
+        matches.push(this.value);
+        console.log("i will select this for you", $(this).val(), matches);
+        $('#' + this.id).prop('checked', true);
+        $('#' + this.id).parents('label').toggleClass('active');
       }
 
       console.log("changed this ", $(this).val(), matches);

@@ -1,8 +1,8 @@
 /**
  * Created by Reem on 6/15/2015.
  */
-define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3util'],
-  function (require, exports, d3, _, toastr, d3utils) {
+define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3util', './drag'],
+  function (require, exports, d3, _, toastr, d3utils, drag) {
 
     //height of each row in the heatmap
     //width of each column in the heatmap
@@ -20,12 +20,13 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       .domain([-1, 0, 1])
       .range([colorLow, colorMed, colorHigh]);
 
-    function DiffHeatmap(data) {
+    function DiffHeatmap(data, parent) {
       this.h_data = data;
       //todo check if this is correct or should be removed!
-      this.container = d3.select("#board")
+      this.container = parent
         .append("div")
         .classed("taco-table-container", true);
+      this.parent = parent;
     }
 
     DiffHeatmap.prototype.get_data = function () {
@@ -38,34 +39,21 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
 
     DiffHeatmap.prototype.drawDiffHeatmap = function (operations, directions) {
 
-      var drag = d3.behavior.drag()
-        //.on('dragstart', function() { console.log("start") })
-        .on('drag', dragHandler);
-      //.on('dragend', function() { console.log("end") });
-
-      //todo to use just the one in heatmap
-      function dragHandler(d) {
-        //must have position absolute to work like this
-        //otherwise use transfrom css property
-        d3.select(this)
-          .style("left", (this.offsetLeft + d3.event.dx) + "px")
-          .style("top", (this.offsetTop + d3.event.dy) + "px");
-      }
-
       //todo create this as the size of the final table at the beginning?
       var that = this;
+      var myDrag = drag.Drag();
 
       that.h_data.then(function (data) {
         var height = data.union.ur_ids.length * h;
         var width = data.union.uc_ids.length * w;
-        var position = parseInt(parseInt(d3.select("#board").style("width")) / 2) - margin.left - parseInt(width / 2);
+        var position = parseInt(parseInt(that.parent.style("width")) / 2) - margin.left - parseInt(width / 2);
 
         that.container
           .style("width", width + 2 + margin.left + margin.right + 'px')
           .style("height", height + 2 + margin.top + margin.bottom + 'px')
           //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
           .style("transform", "translate(" + position + "px," + margin.top + "px)")
-          .call(drag);
+          .call(myDrag);
 
         var root = that.container.append("div")// g.margin
           .attr("class", "taco-table")
@@ -275,7 +263,6 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
 
     DiffHeatmap.prototype.drawContentHistogram = function(directions){
       this.h_data.then(function(data){
-        console.log("in histo", data.content);
         //var histogramplugin = vis.list(data.content).filter(function(d){ return d.id.match(/.*histogram.*/); })[0];
         var cols = {};
         var rows = {};
@@ -298,13 +285,13 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
             }
           );
         if (directions.indexOf('rows') > -1) {
-          console.log("rows of content", rows);
+          //console.log("rows of content", rows);
         }
         if (directions.indexOf('columns') > -1){
-          console.log("cols of content", cols);
+          //console.log("cols of content", cols);
         }
       });
-    }
+    };
 
     //helper function
     function normalize(diff_data, max) {
@@ -325,7 +312,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       //data.data().then(function(d){console.log("size from data", d.union.uc_ids.length, d.union.ur_ids.length)});
       var o = this.options;
       //var diff = new DiffHeatmap(data.data(), data.desc.size); //use the union size from the server instead of the client
-      var diff = new DiffHeatmap(data.data());
+      var diff = new DiffHeatmap(data.data(), $parent);
       diff.drawDiffHeatmap(data.desc.change, data.desc.direction);
       diff.drawContentHistogram(data.desc.direction);
       return diff.container;

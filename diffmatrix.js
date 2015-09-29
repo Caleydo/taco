@@ -6,16 +6,18 @@
 define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflog_parser'], function (exports, C, datatypes, difflog_parser) {
 
   function dimensionStats(content, selector) {
-    var hist = {};
+    var hist = [];
     content.forEach(function (e) {
       var sel = selector(e);
-      if (hist[sel.row] === undefined) {
-        hist[sel.row] = {
-          counter: 1,
+      var result = $.grep(hist, function(e){ return e.id == sel.row; });
+      if (result.length === 0) {
+        hist.push({
+          id : sel.row,
+          count: 1,
           pos: sel.rpos
-        };
+        });
       } else {
-        hist[sel.row].counter += 1;
+        result[0].count += 1;
       }
     });
     return hist;
@@ -71,8 +73,86 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
         return dimensionStats(data.content,colSelector);
       });
     },
+    //todo change this so that it consider the case of both rows and cols at the same time
     dimStats : function(dim) {
       return dim[0] === 'c' ? this.colStats() : this.rowStats();
+    },
+    structDelStats: function(dim){
+       return this.data().then(function(d){
+         if (dim[0][0] === 'c'){
+           return d.structure.deleted_cols; //todo add the added cols
+         }
+         if (dim[0][0] === 'r'){
+           return d.structure.deleted_rows; //todo add the added rows
+         }
+         //todo to handle the case when it's both rows and columns selected, for now just return rows
+         return d.structure.deleted_rows;
+         //return d.structure; //todo probably call a function that returns a list!
+       });
+    },
+    structAddStats: function(dim){
+       return this.data().then(function(d){
+         if (dim[0][0] === 'c'){
+           return d.structure.added_cols; //todo add the added cols
+         }
+         if (dim[0][0] === 'r'){
+           return d.structure.added_rows; //todo add the added rows
+         }
+         //todo to handle the case when it's both rows and columns selected, for now just return rows
+         return d.structure.added_rows;
+         //return d.structure; //todo probably call a function that returns a list!
+       });
+    },
+    contentRatio: function(){
+      return this.data().then(function(d){
+        return {ratio: d.content.length / (d.union.uc_ids.length * d.union.ur_ids.length), type: "content-change"};
+      });
+    },
+    rowAddRatio: function () {
+      return this.data().then(function (d) {
+        return {ratio: d.structure.added_rows.length /  d.union.ur_ids.length, type: "row-add"};
+      });
+    },
+    rowDelRatio: function () {
+      return this.data().then(function (d) {
+        return {ratio: d.structure.deleted_rows.length /  d.union.ur_ids.length, type: "row-del"};
+      });
+    },
+    colAddRatio: function () {
+      return this.data().then(function (d) {
+        return {ratio: d.structure.added_cols.length /  d.union.uc_ids.length, type: "col-add"};
+      });
+    },
+    colDelRatio: function () {
+      return this.data().then(function (d) {
+        return {ratio: d.structure.deleted_cols.length /  d.union.uc_ids.length, type: "col-del"};
+      });
+    },
+    //structure changes per cell for both add and remove operations for both rows and columns at the same time
+    structAddRatio: function() {
+      return this.data().then(function(d){
+        var width = d.union.uc_ids.length, height = d.union.ur_ids.length, cells = width * height,
+          addc = 0;
+        height -= d.structure.deleted_rows.length;
+        width -= d.structure.deleted_cols.length;
+        addc += d.structure.added_rows.length * width;
+        height -= d.structure.added_rows.length;
+        addc += d.structure.added_cols.length * height;
+        width -= d.structure.added_cols.length; //we might need this later!
+        //the type here should be just add but i'm using row-add for css
+        return {ratio: addc / cells, type: "row-add"};
+      });
+    },
+    structDelRatio: function() {
+      return this.data().then(function(d){
+        var width = d.union.uc_ids.length, height = d.union.ur_ids.length, cells = width * height,
+          addc = 0, delc = 0;
+        delc += d.structure.deleted_rows.length * width;
+        height -= d.structure.deleted_rows.length;
+        delc += d.structure.deleted_cols.length * height;
+        //the type here should be just add and del but i'm using row-add and row-del for css
+        return {ratio: delc / cells, type: "row-del"};
+      });
     }
   });
 
