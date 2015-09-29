@@ -196,7 +196,14 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       $("[name='change[]']:checked").each(function() {
           matches.push(this.value);
       });
-
+      if ($("[name='change[]']:checked").length === 0) {
+        //some sort of validation to make sure that there's at least one change type selected
+        toastr.warning("You have to select at least one change type!", "I will select " + $(this).val() + " for you");
+        matches.push(this.value);
+        console.log("i will select this for you", $(this).val(), matches);
+        $('#' + this.id).prop('checked', true);
+        $('#' + this.id).parents('label').toggleClass('active');
+      }
       console.log("changed this ", $(this).val(), matches);
     });
 
@@ -204,10 +211,15 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     $("[name='direction[]']").change(function () {
       var matches = [];
       $("[name='direction[]']:checked").each(function() {
-          matches.push(this.value);
+        matches.push(this.value);
       });
-      if ($("[name='direction[]']:checked").length == 0) {
-          toastr.warning("You have to select at least one direction!")
+      if ($("[name='direction[]']:checked").length === 0) {
+        //some sort of validation to make sure that there's at least one direction selected
+        toastr.warning("You have to select at least one direction!", "I will select " + $(this).val() + " for you");
+        matches.push(this.value);
+        console.log("i will select this for you", $(this).val(), matches);
+        $('#' + this.id).prop('checked', true);
+        $('#' + this.id).parents('label').toggleClass('active');
       }
 
       console.log("changed this ", $(this).val(), matches);
