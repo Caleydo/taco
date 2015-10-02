@@ -71,9 +71,9 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
               .enter()
               .append("div")
               .attr("class", "taco-added-row")
+              .attr("title", function(d){return d.id;})
               .style("left", 0 + "px")
               .style("top", function (d) {
-                //var y = that.row_ids.indexOf(d);
                 var y = d.pos;
                 return (y !== -1 ? y * h : null) + "px";
               })
@@ -87,10 +87,10 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
               .data(data.structure.added_cols)
               .enter()
               .append("div")
+              .attr("title", function(d){return d.id;})
               .attr("class", "taco-added-col")
               .style("top", 0 + "px")
               .style("left", function (d) {
-                //var x = that.col_ids.indexOf(d);
                 var x = d.pos;
                 return (x !== -1 ? x * w : null) + "px";
               })
@@ -104,9 +104,9 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
               .enter()
               .append("div")
               .attr("class", "taco-del-row")
+              .attr("title", function(d){return d.id})
               .style("left", 0 + "px")
               .style("top", function (d) {
-                //var y = that.row_ids.indexOf(d);
                 var y = d.pos;
                 return (y !== -1 ? y * h : null) + "px";
               })
@@ -120,9 +120,9 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
               .enter()
               .append("div")
               .attr("class", "taco-del-col")
+              .attr("title", function(d){return d.id;})
               .style("top", 0 + "px")
               .style("left", function (d) {
-                //var x = that.col_ids.indexOf(d);
                 var x = d.pos;
                 return (x !== -1 ? x * w : null) + "px";
               })
@@ -144,6 +144,9 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
             .enter()
             .append("div")
             .attr("class", "taco-ch-cell")
+            .attr("title", function(d){
+              return "(" + d.row + "," + d.col + ": " + d.diff_data + ")" ;
+            })
             .style("top", function (d) {
               //var y = that.row_ids.indexOf(d.row);
               var y = d.rpos;
@@ -168,10 +171,12 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
               .enter()
               .append("div")
               .attr("class", "taco-mer-col")
+              .attr("title", function(d){
+                return "(" + d.id + "," + d.merge_id + ")" ;
+              })
               //todo use the merge_id
               .style("top", 0 + "px")
               .style("left", function (d) {
-                //var x = that.col_ids.indexOf(d);
                 var x = d.pos;
                 return (x !== -1 ? x * w : null) + "px";
               })
@@ -190,6 +195,9 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
               .enter()
               .append("div")
               .attr("class", "taco-mer-row")
+              .attr("title", function(d){
+                return "(" + d.id + "," + d.merge_id + ")" ;
+              })
               .style("zIndex", function (d) {
                 return d.is_merge ? "0" : "1"
               })
@@ -215,6 +223,9 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
               .enter()
               .append("div")
               .attr("class", "taco-spl-col")
+              .attr("title", function(d){
+                return "(" + d.id + "," + d.merge_id + ")" ;
+              })
               .style("z-index", function (d) {
                 return d.is_added ? "0" : "1"
               })
@@ -237,6 +248,9 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
               .enter()
               .append("div")
               .attr("class", "taco-spl-row")
+              .attr("title", function(d){
+                return "(" + d.id + "," + d.merge_id + ")" ;
+              })
               .style("z-index", function (d) {
                 return d.is_added ? "0" : "1"
               })
