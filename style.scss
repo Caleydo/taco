@@ -278,3 +278,72 @@ a.taco-logo {
 .struct {
   border-radius: 25px;
 }
+
+/* flexbox */
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch; // use full height
+  height: 100vh; // full viewport height (vh)
+}
+
+.flex-column {
+  transition: flex-grow .5s; // animate width
+  flex-grow: 0.00001; // Setting this to zero breaks the transition (http://stackoverflow.com/a/24976134/940219)
+  width: 30px; // minimum width
+  overflow: hidden;
+
+  display: flex; // flex box itself for .tab-title and .tab-content
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+  height: 100vh; // full viewport height (vh)
+}
+
+.flex-column.expand {
+  flex-grow: 1; // proportion of expanded column
+}
+
+
+.tab-title {
+  flex-grow: 0;
+  width: 30px; // same width as .flex-column
+
+  // rotate .tab-title link by 90°
+  a {
+    text-decoration: none;
+    color: #fff;
+    transform: rotate(-90deg);
+    writing-mode: tb-rl;
+    white-space: nowrap;
+    display: block;
+    margin-top: 50vh; // center at the viewport half
+  }
+}
+
+.tab-content {
+  width: 100%;
+}
+
+
+#overview {
+  background: #ffebee;
+  .tab-title {
+    background: #f44336;
+  }
+}
+
+#medium {
+  background: #f1f8e9;
+  .tab-title {
+    background:  #8bc34a;
+  }
+}
+
+#detail {
+  background: #e3f2fd;
+  .tab-title {
+    background:  #2196f3;
+  }
+}
