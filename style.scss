@@ -52,7 +52,7 @@ svg {
 
 #board {
   width: 100%;
-  height: 69%;
+  height: 85vh;
   position: relative;
   background-color: white;
   overflow: hidden;
@@ -328,22 +328,29 @@ a.taco-logo {
 
 
 #overview {
-  background: #ffebee;
+  background: #fcd3a1;
   .tab-title {
-    background: #f44336;
+    background: #212121;
   }
 }
 
 #medium {
-  background: #f1f8e9;
+  background: #9acfea;
   .tab-title {
-    background:  #8bc34a;
+    background: #312e25;
   }
 }
 
 #detail {
-  background: #e3f2fd;
+  background: #c1e2b3;
   .tab-title {
-    background:  #2196f3;
+    background: #433f38;
   }
+}
+/* end of flexbox */
+
+.taco-navbar {
+  position: relative;
+  min-height: 50px;
+  border: 1px solid
 }
