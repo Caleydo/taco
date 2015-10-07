@@ -285,7 +285,7 @@ a.taco-logo {
   flex-direction: row;
   justify-content: flex-start;
   align-items: stretch; // use full height
-  height: calc(100% - 50px); 
+  height: calc(100% - 50px);
 }
 
 .flex-column {
@@ -353,4 +353,14 @@ a.taco-logo {
 .taco-navbar {
   position: relative;
   min-height: 50px;
+}
+
+#mds-graph {
+  border: solid 1px gray;
+  height: 42vh;
+}
+
+#lineup {
+  border: solid 1px darkgreen;
+  height: 42vh;
 }
