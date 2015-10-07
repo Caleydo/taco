@@ -37,7 +37,7 @@ $hover-color: #ffc46b;
 
 #content {
   display: inline-block;
-  width: 87.5%;
+  width: 99%;
   height: 100%;
 }
 
@@ -328,23 +328,23 @@ a.taco-logo {
 
 
 #overview {
-  background: #fcd3a1;
+  background: white;
   .tab-title {
     background: #212121;
   }
 }
 
 #medium {
-  background: #9acfea;
+  background: #fffeee;
   .tab-title {
-    background: #312e25;
+    background: #333333;
   }
 }
 
 #detail {
-  background: #c1e2b3;
+  background: #ededed;
   .tab-title {
-    background: #433f38;
+    background: #454545;
   }
 }
 /* end of flexbox */
@@ -352,5 +352,4 @@ a.taco-logo {
 .taco-navbar {
   position: relative;
   min-height: 50px;
-  border: 1px solid
 }
