@@ -256,10 +256,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     // slider for bootstrap
     // With JQuery
-    $('#ex1').slider({
-      formatter: function(value) {
-        return 'Current value: ' + value;
-      }
+    $('#detail-slider').slider({
+      min: 0,
+      max: 4,
+      ticks: [0, 1, 2, 3, 4],
+      ticks_labels: ['O', '', 'M', '', 'D'],
+      ticks_snap_bounds: 30
     });
 
   });

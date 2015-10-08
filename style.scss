@@ -365,10 +365,25 @@ a.taco-logo {
   height: 42vh;
 }
 
-#slider {
-  margin: 10px;
+/* bootstrap slider */
+#dsSlider .slider-selection {
+	background: #BABABA;
 }
 
-#ex1Slider .slider-selection {
-	background: #BABABA;
+#dsSlider .slider-handle {
+	background: #fad000;
+}
+
+.slider.slider-horizontal .slider-tick-label-container .slider-tick-label {
+  color: #ededed;
+  padding-top: 0px;
+}
+
+.slider-tick.round.in-selection {
+  background: #a7a7a7;
+}
+
+#detail-slider-group {
+  margin-left: 10px;
+  margin-right: 10px;
 }
