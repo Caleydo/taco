@@ -133,12 +133,6 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
           }
         }
         if (operations.indexOf('content') > -1) {
-          //todo think of a better way for normalization
-          var diff_max = 0;
-          data.content.forEach(function (e, i, arr) {
-              diff_max = (Math.abs(e.diff_data) > diff_max ? Math.abs(e.diff_data) : diff_max);
-            }
-          );
           var chCells = root.selectAll(".taco-ch-cell")
             .data(data.content)
             .enter()
@@ -160,7 +154,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
             .style("width", w + "px")
             .style("height", h + "px")
             .style("background-color", function (d) {
-              return colorScale(normalize(d.diff_data, diff_max));
+              return colorScale(d.diff_data);
             });
         }
 
@@ -306,11 +300,6 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
         }
       });
     };
-
-    //helper function
-    function normalize(diff_data, max) {
-      return diff_data / max
-    }
 
     exports.DiffHeatmap = DiffHeatmap;
 

@@ -37,7 +37,7 @@ $hover-color: #ffc46b;
 
 #content {
   display: inline-block;
-  width: 87.5%;
+  width: 100%;
   height: 100%;
 }
 
@@ -52,7 +52,7 @@ svg {
 
 #board {
   width: 100%;
-  height: 69%;
+  height: 80vh;
   position: relative;
   background-color: white;
   overflow: hidden;
@@ -277,4 +277,90 @@ a.taco-logo {
 
 .struct {
   border-radius: 25px;
+}
+
+/* flexbox */
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch; // use full height
+  height: calc(100% - 50px);
+}
+
+.flex-column {
+  transition: flex-grow .5s; // animate width
+  flex-grow: 0.00001; // Setting this to zero breaks the transition (http://stackoverflow.com/a/24976134/940219)
+  width: 30px; // minimum width
+  overflow: hidden;
+
+  display: flex; // flex box itself for .tab-title and .tab-content
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+  height: 100%;
+}
+
+.flex-column.expand {
+  flex-grow: 1; // proportion of expanded column
+}
+
+
+.tab-title {
+  flex-grow: 0;
+  width: 30px; // same width as .flex-column
+
+  // rotate .tab-title link by 90°
+  a {
+    text-decoration: none;
+    color: #fff;
+    transform: rotate(-90deg);
+    writing-mode: tb-rl;
+    white-space: nowrap;
+    display: block;
+    margin-top: 50vh; // center at the viewport half
+    cursor: pointer;
+  }
+}
+
+.tab-content {
+  width: 100%;
+}
+
+
+#overview {
+  background: white;
+  .tab-title {
+    background: #212121;
+  }
+}
+
+#middle {
+  background: #fffeee;
+  .tab-title {
+    background: #333333;
+  }
+}
+
+#detail {
+  background: #ededed;
+  .tab-title {
+    background: #454545;
+  }
+}
+/* end of flexbox */
+
+.taco-navbar {
+  position: relative;
+  min-height: 50px;
+}
+
+#mds-graph {
+  border: solid 1px gray;
+  height: 42vh;
+}
+
+#lineup {
+  border: solid 1px darkgreen;
+  height: 42vh;
 }
