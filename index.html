@@ -58,15 +58,15 @@
                             <input type="checkbox" class="change-chk" id="reorder" autocomplete="off" name="change[]" value="reorder"> Reorder
                         </label>
                     </div>
-                    <div class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-default">
-                            <input type="radio" class="detail-rb" autocomplete="off" name="detail" value="overview"> Overview
+                    <div class="btn-group expand-column" data-toggle="buttons">
+                        <label class="btn btn-default expand-column active" data-expand-column="#overview" data-expand-only="true">
+                            <input type="radio" class="detail-rb" autocomplete="off" name="detail" value="overview">Overview
                         </label>
-                        <label class="btn btn-default">
-                            <input type="radio" class="detail-rb" autocomplete="off" name="detail" value="middle"> Middle
+                        <label class="btn btn-default expand-column" data-expand-column="#middle" data-expand-only="true">
+                            <input type="radio" class="detail-rb" autocomplete="off" name="detail" value="middle">Middle
                         </label>
-                        <label class="btn btn-default active">
-                            <input type="radio" class="detail-rb" autocomplete="off" name="detail" value="detail" checked> Detail
+                        <label class="btn btn-default expand-column" data-expand-column="#detail" data-expand-only="true">
+                            <input type="radio" class="detail-rb" autocomplete="off" name="detail" value="detail" checked>Detail
                         </label>
                     </div>
                     <div id="taco-mf-selector" class="btn-group" data-toggle="buttons">
@@ -89,7 +89,7 @@
                 <h2>Overview</h2></div>
               <div class="col-xs-12">
                 <p><a data-expand-column="#overview" class="expand-column btn btn-default" data-expand-only="true">Only Overview</a>
-                  <a data-expand-column="#medium" class="expand-column btn btn-default">Split with Medium</a></p>
+                  <a data-expand-column="#middle" class="expand-column btn btn-default">Split with Middle</a></p>
               </div>
             </div>
             <div class="row">
@@ -106,14 +106,14 @@
             </div>
           </div>
         </div>
-        <div class="flex-column" id="medium">
-          <div class="tab-title"><a data-expand-column="#medium" class="expand-column" data-expand-only="true">Medium</a></div>
+        <div class="flex-column" id="middle">
+          <div class="tab-title"><a data-expand-column="#middle" class="expand-column" data-expand-only="true">Middle</a></div>
           <div class="tab-content container-fluid">
             <div class="row">
               <div class="col-xs-12">
-                <h2>Medium</h2></div>
+                <h2>Middle</h2></div>
               <div class="col-xs-12">
-                <p><a data-expand-column="#medium" class="expand-column btn btn-default" data-expand-only="true">Only Medium</a> <a
+                <p><a data-expand-column="#middle" class="expand-column btn btn-default" data-expand-only="true">Only Middle</a> <a
                   data-expand-column="#overview" class="expand-column btn btn-default" data-collapse-column="#detail">Split with
                   Overview</a>
                   <a data-expand-column="#detail" class="expand-column btn btn-default" data-collapse-column="#overview">Split with
@@ -130,7 +130,7 @@
                       <h2>Detail</h2></div>
                     <div class="col-xs-12">
                       <p><a data-expand-column="#detail" class="expand-column btn btn-default" data-expand-only="true">Only Detail</a> <a
-                        data-expand-column="#medium" class="expand-column btn btn-default">Split with Medium</a>
+                        data-expand-column="#middle" class="expand-column btn btn-default">Split with Middle</a>
                       </p>
                     </div>
                 </div>

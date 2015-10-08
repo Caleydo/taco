@@ -187,9 +187,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       });
     });
 
-    $("[name='detail']").change(function () {
-        console.log("changed this ", $(this).val());
-    });
+    //$("[name='detail']").change(function () {
+    //    console.log("changed this ", $(this).val());
+    //});
 
     $("[name='change[]']").change(function () {
       var matches = [];
@@ -197,7 +197,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           matches.push(this.value);
       });
       if ($("[name='change[]']:checked").length === 0) {
-        //some sort of validation to make sure that there's at least one change type selected
+        // some sort of validation to make sure that there's at least one change type selected
         toastr.warning("You have to select at least one change type!", "I will select " + $(this).val() + " for you");
         matches.push(this.value);
         console.log("i will select this for you", $(this).val(), matches);
@@ -214,7 +214,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         matches.push(this.value);
       });
       if ($("[name='direction[]']:checked").length === 0) {
-        //some sort of validation to make sure that there's at least one direction selected
+        // some sort of validation to make sure that there's at least one direction selected
         toastr.warning("You have to select at least one direction!", "I will select " + $(this).val() + " for you");
         matches.push(this.value);
         console.log("i will select this for you", $(this).val(), matches);
@@ -225,7 +225,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       console.log("changed this ", $(this).val(), matches);
     });
 
-    //flexbox part
+    // flexbox part
     // select all DOM nodes (e.g. links) with class="expand-column"
     d3.selectAll('.expand-column').on('click', function() {
       var $this = d3.select(this),
