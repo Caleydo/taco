@@ -238,6 +238,11 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         // remove expand class from all other nodes if this should be the only one
         if (only === 'true') {
           d3.selectAll('.flex-column.expand').classed('expand', false);
+          //$this.prop('checked', true);
+          //$this.parents('label').toggleClass('active');
+          var $bt = $("[name='detail']:checked");
+          $bt.prop('checked', false); //this is not working
+          $bt.parents('label').toggleClass('active');
         }
         d3.select(expand).classed('expand', true);
       }
