@@ -4,10 +4,11 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/multiform', 'underscore', 'toastr', './drag', 'bootstrap', 'font-awesome'],
-  function (data, d3, $, vis, C, multiform, _, toastr, drag) {
+require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/multiform', 'underscore', 'toastr', 'bootstrap-slider', './drag', 'bootstrap', 'font-awesome'],
+  function (data, d3, $, vis, C, multiform, _, toastr, Slider, drag) {
     'use strict';
 
+    console.log(Slider);
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
     var data_provider = data;
     var rows1 = null, rows2= null, cols1= null, cols2= null, id1= null, id2= null,
@@ -251,5 +252,14 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       }
     });
 
+    //$( "#slider" ).slider();
+
+    // slider for bootstrap
+    // With JQuery
+    $('#ex1').slider({
+      formatter: function(value) {
+        return 'Current value: ' + value;
+      }
+    });
 
   });
