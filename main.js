@@ -243,11 +243,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         // remove expand class from all other nodes if this should be the only one
         if (only === 'true') {
           d3.selectAll('.flex-column.expand').classed('expand', false);
-          //$this.prop('checked', true);
-          //$this.parents('label').toggleClass('active');
-          var $bt = $("[name='detail']:checked");
-          $bt.prop('checked', false); //this is not working
-          $bt.parents('label').toggleClass('active');
         }
         d3.select(expand).classed('expand', true);
       }
@@ -259,14 +254,35 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     // slider for bootstrap
     // With JQuery
     $('#detail-slider').slider({
-      ticks: [0, 1, 2, 3, 4],
-      ticks_labels: ['Overview', '', 'Middle', '', 'Detail']
+      ticks: [0, 2, 4],
+      ticks_labels: ['Overview', 'Middle', 'Detail']
     });
 
-     //$('#dsSlider').on('slide', function (ev) {
-     //  console.log("slider", $('#detail-slider').val(), this);
-     //});
-    $('#dsSlider').on('change', function (ev) {
-      console.log("slider", $('#detail-slider').val());
+/*     $('#dsSlider').on('slide', function (ev) {
+       console.log("slider", $('#detail-slider').val(), this);
+     });*/
+    $('#detail-slider').on('change', function (ev) {
+      d3.selectAll('.flex-column.expand').classed('expand', false);
+      switch(ev.value.newValue){
+        case 0:
+          d3.select('#overview').classed('expand', true);
+          break;
+        case 1:
+          d3.select('#overview').classed('expand', true);
+          d3.select('#middle').classed('expand', true);
+          break;
+        case 2:
+          d3.select('#middle').classed('expand', true);
+          break;
+        case 3:
+          d3.select('#middle').classed('expand', true);
+          d3.select('#detail').classed('expand', true);
+          break;
+        case 4:
+          d3.select('#detail').classed('expand', true);
+          break;
+        default:
+          d3.select('#overview').classed('expand', true);
+      }
     });
   });
