@@ -376,7 +376,9 @@ a.taco-logo {
 
 .slider.slider-horizontal .slider-tick-label-container .slider-tick-label {
   color: #ededed;
-  padding-top: 0px;
+  div {
+    padding-top: 0px; //doesn't work
+  }
 }
 
 .slider-tick.round.in-selection {
@@ -384,6 +386,6 @@ a.taco-logo {
 }
 
 #detail-slider-group {
-  margin-left: 10px;
+  margin-left: 20px;
   margin-right: 10px;
 }

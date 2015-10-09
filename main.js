@@ -229,11 +229,15 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     // flexbox part
     // select all DOM nodes (e.g. links) with class="expand-column"
     d3.selectAll('.expand-column').on('click', function() {
-      var $this = d3.select(this),
-        // use data attribute or if does not exists href from link
-        expand = $this.attr('data-expand-column') || $this.attr('href'),
-        collapse = $this.attr('data-collapse-column'),
-        only = $this.attr('data-expand-only');
+      var $this = d3.select(this);
+      expandView($this);
+    });
+
+    var expandView = function(t){
+      // use data attribute or if does not exists href from link
+        var expand = t.attr('data-expand-column') || t.attr('href'),
+        collapse = t.attr('data-collapse-column'),
+        only = t.attr('data-expand-only');
 
       if (expand !== undefined) {
         // remove expand class from all other nodes if this should be the only one
@@ -250,18 +254,19 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       if (collapse !== undefined) {
         d3.select(collapse).classed('expand', false);
       }
-    });
-
-    //$( "#slider" ).slider();
+    };
 
     // slider for bootstrap
     // With JQuery
     $('#detail-slider').slider({
-      min: 0,
-      max: 4,
       ticks: [0, 1, 2, 3, 4],
-      ticks_labels: ['O', '', 'M', '', 'D'],
-      ticks_snap_bounds: 30
+      ticks_labels: ['Overview', '', 'Middle', '', 'Detail']
     });
 
+     //$('#dsSlider').on('slide', function (ev) {
+     //  console.log("slider", $('#detail-slider').val(), this);
+     //});
+    $('#dsSlider').on('change', function (ev) {
+      console.log("slider", $('#detail-slider').val());
+    });
   });
