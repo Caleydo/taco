@@ -113,7 +113,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                     settings_direction.push(this.value);
                 });
 
-                var settings_detail = $("[name='detail']:checked").val();
+                var settings_detail = $('#detail-slider').val();
 
                 data_provider.create({
                   type: 'diffstructure',
