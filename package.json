@@ -53,7 +53,7 @@
         "underscore": "~1.8",
         "bootstrap": "~3.3.4",
         "toastr" : ">=2.1.2",
-        "bootstrap-slider" :"*"
+        "seiyria-bootstrap-slider" :">=5.2.1"
       }
     },
     "requirejs-config": {
