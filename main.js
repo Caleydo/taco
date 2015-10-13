@@ -226,11 +226,19 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       console.log("changed this ", $(this).val(), matches);
     });
 
+    // slider for bootstrap
+    // With JQuery
+    var detail_slider = $('#detail-slider').slider({
+      ticks: [0, 2, 4],
+      ticks_labels: ['Overview', 'Middle', 'Detail']
+    });
+
     // flexbox part
     // select all DOM nodes (e.g. links) with class="expand-column"
     d3.selectAll('.expand-column').on('click', function() {
       var $this = d3.select(this);
       expandView($this);
+      detail_slider.slider('setValue', parseInt($this.attr('data-slider-value')));
     });
 
     var expandView = function(t){
@@ -250,13 +258,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         d3.select(collapse).classed('expand', false);
       }
     };
-
-    // slider for bootstrap
-    // With JQuery
-    $('#detail-slider').slider({
-      ticks: [0, 2, 4],
-      ticks_labels: ['Overview', 'Middle', 'Detail']
-    });
 
 /*     $('#dsSlider').on('slide', function (ev) {
        console.log("slider", $('#detail-slider').val(), this);
