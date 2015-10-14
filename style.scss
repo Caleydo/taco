@@ -336,7 +336,7 @@ a.taco-logo {
 }
 
 #middle {
-  background: #fffeee;
+  background: white;
   .tab-title {
     background: #333333;
   }
@@ -356,13 +356,24 @@ a.taco-logo {
 }
 
 #mds-graph {
-  border: solid 1px gray;
+  border: solid 1px white;
   height: 42vh;
 }
 
 #lineup {
-  border: solid 1px darkgreen;
+  border: solid 1px white;
   height: 42vh;
+}
+
+#ref-table {
+  border: solid 1px white;
+  height: 30vh;
+}
+
+#ref-table {
+  border: solid 1px white;
+  background: white;
+  height: 30vh;
 }
 
 /* bootstrap slider */
@@ -391,6 +402,6 @@ a.taco-logo {
 }
 
 .taco-test-img {
-  width:100%;
+  width:95%;
   height:auto;
 }
