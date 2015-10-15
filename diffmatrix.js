@@ -146,12 +146,25 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
     structDelRatio: function() {
       return this.data().then(function(d){
         var width = d.union.uc_ids.length, height = d.union.ur_ids.length, cells = width * height,
-          addc = 0, delc = 0;
+          delc = 0;
         delc += d.structure.deleted_rows.length * width;
         height -= d.structure.deleted_rows.length;
         delc += d.structure.deleted_cols.length * height;
         //the type here should be just add and del but i'm using row-add and row-del for css
         return {ratio: delc / cells, type: "row-del"};
+      });
+    },
+    nochangeRatio: function() {
+      return this.data().then(function(d){
+        var width = d.union.uc_ids.length, height = d.union.ur_ids.length, cells = width * height,
+          noc = 0;
+        //the height without the removed or added rows
+        height -= d.structure.deleted_rows.length + d.structure.added_rows.length;
+        //the width without the deleted or removed cols
+        width -= d.structure.deleted_cols.length + d.structure.added_cols.length;
+        //the rest cells without the changed ones
+        noc = height * width - d.content.length;
+        return {ratio: noc / cells, type: "no-change"}
       });
     }
   });
