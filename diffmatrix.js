@@ -159,11 +159,21 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
         var width = d.union.uc_ids.length, height = d.union.ur_ids.length, cells = width * height,
           noc = 0;
         //the height without the removed or added rows
-        height -= d.structure.deleted_rows.length + d.structure.added_rows.length;
+        if (d.structure.deleted_rows !== undefined){
+          height -= d.structure.deleted_rows.length;
+        }
+        if (d.structure.added_rows !== undefined){
+          height -= d.structure.added_rows.length;
+        }
         //the width without the deleted or removed cols
-        width -= d.structure.deleted_cols.length + d.structure.added_cols.length;
+        if (d.structure.deleted_cols !== undefined){
+          width -= d.structure.deleted_cols.length;
+        }
+        if (d.structure.added_cols !== undefined){
+          width -= d.structure.added_cols.length;
+        }
         //the rest cells without the changed ones
-        noc = height * width - d.content.length;
+        noc = (height * width) - d.content.length;
         return {ratio: noc / cells, type: "no-change"}
       });
     }

@@ -76,6 +76,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
           myPromises.push(data.contentRatio());
           //todo do we want to split it by rows cols percentage???? and use the one above for both rows and cols!
         }
+        myPromises.push(data.nochangeRatio());
         Promise.all(myPromises).then(function(ratios){
           console.log("my ratios are those", ratios);
           $node = drawDiffPercentageBar(ratios, data.desc.size, $node, data.desc.direction);
