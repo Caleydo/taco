@@ -19,6 +19,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     var gridSize = 6,
       h = gridSize,
       w = gridSize;
+    var lineup_items;
 
     function toType(desc) {
       if (desc.type === 'vector') {
@@ -186,6 +187,29 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         addIt(d, 1);
         var ev = d3.event;
       });
+
+      //preparing a fixed test table for lineup
+      lineup_items = items.filter(function (d) {
+        return d.desc.fqname.match(/.*multiple.*/);
+      });
+      // static test data
+      var lineup_data = [
+        {
+          name: 'Row 1',
+          a : 5,
+          b: 10
+        },
+        {
+          name: 'Row 2',
+          a : 3,
+          b: 5
+        }
+      ];
+      lineup_items.forEach(function(element, index, array) {
+        console.log('index' , index , 'element', element.desc);
+        lineup_data.push({name:element.desc.name, a: 4+index, b: 8.123-index});
+      });
+      showLineup(lineup_data);
     });
 
     //$("[name='detail']").change(function () {
@@ -287,19 +311,13 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       }
     });
 
-    {
-      var lineup_instance = lineup.create([
-        {
-          name: 'Row 1',
-          a : 5,
-          b: 10
-        },
-        {
-          name: 'Row 2',
-          a : 3,
-          b: 5
-        }
-      ],document.querySelector('#lineup'));
+    //Line Up part
+
+    function showLineup(lineup_data) {
+      var lineup_instance = lineup.create(lineup_data, document.querySelector('#lineup'));
+      lineup_instance.then(function(data){
+        console.log("line up instance", data);
+      });
     }
 
   });
