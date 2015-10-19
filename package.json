@@ -8,7 +8,8 @@
   "peerDependencies": {
     "caleydo_core": "*",
     "caleydo_vis": "*",
-    "caleydo_d3": "*"
+    "caleydo_d3": "*",
+    "caleydo_vis_lineup": "*"
   },
   "caleydo": {
     "plugins": {

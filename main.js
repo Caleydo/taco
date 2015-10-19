@@ -4,8 +4,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/multiform', 'underscore', 'toastr', 'bootstrap-slider', './drag', 'bootstrap', 'font-awesome'],
-  function (data, d3, $, vis, C, multiform, _, toastr, Slider, drag) {
+require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/multiform', 'underscore', 'toastr', 'bootstrap-slider', './drag', './lineup', 'bootstrap', 'font-awesome'],
+  function (data, d3, $, vis, C, multiform, _, toastr, Slider, drag, lineup) {
     'use strict';
 
     console.log(Slider);
@@ -286,4 +286,20 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           d3.select('#overview').classed('expand', true);
       }
     });
+
+    {
+      var lineup_instance = lineup.create([
+        {
+          name: 'Row 1',
+          a : 5,
+          b: 10
+        },
+        {
+          name: 'Row 2',
+          a : 3,
+          b: 5
+        }
+      ],document.querySelector('#lineup'));
+    }
+
   });
