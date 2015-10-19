@@ -18,7 +18,11 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     var gridSize = 6,
       h = gridSize,
       w = gridSize;
-    var lineup_items;
+    var lineup_items,
+      settings_change = [],
+      settings_direction = [],
+      settings_detail = 4;
+
 
     function toType(desc) {
       if (desc.type === 'vector') {
@@ -102,18 +106,18 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 //everything is comparable
                 //todo move this to else if
                 //TODO check values/columns for table
-
-                var settings_change = [];
+                settings_change = [];
                 $("[name='change[]']:checked").each(function() {
                     settings_change.push(this.value);
                 });
 
-                var settings_direction = [];
+                settings_direction = [];
                 $("[name='direction[]']:checked").each(function() {
                     settings_direction.push(this.value);
                 });
 
-                var settings_detail = $('#detail-slider').val();
+                console.log("detailll", settings_detail);
+                settings_detail = $('#detail-slider').val()
 
                 data_provider.create({
                   type: 'diffstructure',
@@ -161,7 +165,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       }
     }
 
-    data.list().then(function (items) {
+    data_provider.list().then(function (items) {
       items = items.filter(function (d) {
         return d.desc.type === 'matrix';//&& d.desc.fqname.match(/.*taco.*/);
         //return d.desc.type  === 'matrix' || d.desc.type === 'table';
@@ -192,22 +196,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         return d.desc.fqname.match(/.*multiple.*/);
       });
       // static test data
-      var lineup_data = [
-        {
-          name: 'Row 1',
-          a : 5,
-          b: 10
-        },
-        {
-          name: 'Row 2',
-          a : 3,
-          b: 5
-        }
-      ];
-      lineup_items.forEach(function(element, index, array) {
-        console.log('element', element.desc.id);
-        lineup_data.push({name:element.desc.name, a: 4+index, b: 8.123-index});
-      });
+      var lineup_data = [];
+      lineup_data = calcLineupData(lineup_items[0], lineup_items);
       showLineup(lineup_data);
     });
 
@@ -320,6 +310,45 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           console.log(range.dim(0).asList());
         })
       })
+    }
+
+    // assuming tha the reference table is the full object (not just the ID!)
+    function calcLineupData(ref_table, lineup_items){
+      var lineup_data = [];
+      lineup_items.forEach(function(e, index, arr){
+        if (e.desc.id !== ref_table.desc.id){
+          data_provider.create({
+              type: 'diffstructure',
+              name: ref_table.desc.name + '-' + e.desc.name,
+              id1: ref_table.desc.id,
+              id2: e.desc.id,
+              //change: settings_change,
+              change: "structure,content",
+              direction: settings_direction,
+              //detail: settings_detail,
+              detail: $('#detail-slider').val(),
+              size: e.desc.size //we can use dummy values instead
+            }).then(function (diffmatrix) {
+              //diffmatrix
+              //console.log("diff matrix",diffmatrix);
+              lineup_data.push({
+                name: e.desc.name,
+                //todo find a way to get the values of these promises
+                a: 100 - diffmatrix.nochangeRatio().then(function(d){return d;}),
+                b: diffmatrix.contentRatio().then(function(d){return d;})
+              });
+            });
+        }else{
+          //it's the reference table
+          lineup_data.push({
+            name: e.desc.name,
+            a: 0,
+            b: 0
+          });
+        }
+        console.log(lineup_data);
+        return lineup_data;
+      });
     }
 
   });
