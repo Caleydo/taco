@@ -8,7 +8,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
   function (data, d3, $, vis, C, multiform, _, toastr, Slider, drag, lineup) {
     'use strict';
 
-    console.log(Slider);
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
     var data_provider = data;
     var rows1 = null, rows2= null, cols1= null, cols2= null, id1= null, id2= null,
@@ -206,7 +205,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         }
       ];
       lineup_items.forEach(function(element, index, array) {
-        console.log('index' , index , 'element', element.desc);
+        console.log('element', element.desc.id);
         lineup_data.push({name:element.desc.name, a: 4+index, b: 8.123-index});
       });
       showLineup(lineup_data);
@@ -315,9 +314,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     function showLineup(lineup_data) {
       var lineup_instance = lineup.create(lineup_data, document.querySelector('#lineup'));
-      lineup_instance.then(function(data){
-        console.log("line up instance", data);
-      });
+      lineup_instance.then(function(instance){
+        //console.log("line up instance", instance);
+        instance.data.on('select-selected', function(event, range) {
+          console.log(range.dim(0).asList());
+        })
+      })
     }
 
   });
