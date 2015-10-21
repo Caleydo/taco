@@ -39,7 +39,6 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
 
   exports.DiffMatrix = datatypes.defineDataType('diffmatrix', {
     init: function (desc) {
-      console.log(desc);
       //init function
       //todo make sure that the settings are not empty
       //direction_id: 0 rows, 1 cols, 2 rows + cols

@@ -196,9 +196,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         return d.desc.fqname.match(/.*multiple.*/);
       });
       // static test data
-      var lineup_data = [];
-      lineup_data = calcLineupData(lineup_items[0], lineup_items);
-      showLineup(lineup_data);
+      calcLineupData(lineup_items[0], lineup_items)
+        .then(showLineup);
     });
 
     //$("[name='detail']").change(function () {
@@ -314,10 +313,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     // assuming tha the reference table is the full object (not just the ID!)
     function calcLineupData(ref_table, lineup_items){
-      var lineup_data = [];
-      lineup_items.forEach(function(e, index, arr){
+      return Promise.all(lineup_items.map(function(e, index, arr){
         if (e.desc.id !== ref_table.desc.id){
-          data_provider.create({
+          return data_provider.create({
               type: 'diffstructure',
               name: ref_table.desc.name + '-' + e.desc.name,
               id1: ref_table.desc.id,
@@ -329,26 +327,25 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               detail: $('#detail-slider').val(),
               size: e.desc.size //we can use dummy values instead
             }).then(function (diffmatrix) {
-              //diffmatrix
-              //console.log("diff matrix",diffmatrix);
-              lineup_data.push({
-                name: e.desc.name,
-                //todo find a way to get the values of these promises
-                a: 100 - diffmatrix.nochangeRatio().then(function(d){return d;}),
-                b: diffmatrix.contentRatio().then(function(d){return d;})
+              return Promise.all([diffmatrix.nochangeRatio(), diffmatrix.contentRatio()]).then(function(dm_data){
+                var noch = dm_data[0].ratio;
+                var cont = dm_data[1].ratio;
+                return {
+                  name: e.desc.name,
+                  a: (1 - noch) * 100,
+                  b: cont * 100
+                };
               });
             });
         }else{
           //it's the reference table
-          lineup_data.push({
+          return {
             name: e.desc.name,
             a: 0,
             b: 0
-          });
+          };
         }
-        console.log(lineup_data);
-        return lineup_data;
-      });
+      }));
     }
 
   });
