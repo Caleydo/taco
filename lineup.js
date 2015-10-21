@@ -14,53 +14,83 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
         {
           name: 'Name',
           value: {type: 'string'},
-          getter: function (d) { return d.name; }
+          getter: function (d) {
+            return d.name;
+          }
         }, {
           name: 'Structure Add',
+          color: 'yellow',
           value: {
             type: 'real',
-            range: d3.extent(data, function (d) { return d.stadd; })
+            range: d3.extent(data, function (d) {
+              return d.stadd;
+            })
           },
-          getter: function (d) { return d.stadd; }
+          getter: function (d) {
+            return d.stadd;
+          }
         }, {
           name: 'Structure Del',
           value: {
             type: 'real',
-            range: d3.extent(data, function (d) { return d.stdel; })
+            range: d3.extent(data, function (d) {
+              return d.stdel;
+            })
           },
-          getter: function (d) { return d.stdel; }
+          getter: function (d) {
+            return d.stdel;
+          }
         }, {
           name: 'Content',
           value: {
             type: 'real',
-            range: d3.extent(data, function (d) { return d.cont; })
+            range: d3.extent(data, function (d) {
+              return d.cont;
+            })
           },
-          getter: function (d) { return d.cont; }
+          getter: function (d) {
+            return d.cont;
+          }
         }, {
           name: 'No Change',
           value: {
             type: 'real',
-            range: d3.extent(data, function (d) { return d.noch; })
+            range: d3.extent(data, function (d) {
+              return d.noch;
+            })
           },
-          getter: function (d) { return d.noch; }
+          getter: function (d) {
+            return d.noch;
+          }
         }
       ]
     }, data, 'name');
   }
 
   function col(name, width) {
-    return { column: name,  width: width };
+    return {column: name, width: width};
   }
 
-  exports.create = function(data, parent) {
+  exports.create = function (data, parent) {
     var table = convertToTable(data);
     var v = vis.list(table);
-    v = v.filter(function (v) { return v.id === 'caleydo-vis-lineup';})[0];
+    v = v.filter(function (v) {
+      return v.id === 'caleydo-vis-lineup';
+    })[0];
     return v.load().then(function (plugin) {
       return plugin.factory(table, parent, {
+        lineup: {
+          renderingOptions: {
+            stacked: true
+          }
+        },
         dump: {
           layout: {
-            primary: [{ type: 'rank', width: 40 }, col('Name', 220), col('Structure Add', 100), col('Structure Del', 100), col('Content', 100), col('No Change', 100)]
+            primary: [{type: 'rank', width: 40}, col('Name', 220), {
+              type: 'stacked',
+              width: 400,
+              children: [col('Structure Add', 100), col('Structure Del', 100), col('Content', 100), col('No Change', 100)]
+            }]
           }
         }
       });
