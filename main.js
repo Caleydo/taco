@@ -327,13 +327,17 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               detail: $('#detail-slider').val(),
               size: e.desc.size //we can use dummy values instead
             }).then(function (diffmatrix) {
-              return Promise.all([diffmatrix.nochangeRatio(), diffmatrix.contentRatio()]).then(function(dm_data){
-                var noch = dm_data[0].ratio;
-                var cont = dm_data[1].ratio;
+              return Promise.all([diffmatrix.nochangeRatio(), diffmatrix.contentRatio(), diffmatrix.structAddRatio(), diffmatrix.structDelRatio()]).then(function(dm_data){
+                var noch = dm_data[0].ratio * 100;
+                var cont = dm_data[1].ratio * 100;
+                var stadd = dm_data[2].ratio * 100;
+                var stdel = dm_data[3].ratio * 100;
                 return {
                   name: e.desc.name,
-                  a: (1 - noch) * 100,
-                  b: cont * 100
+                  noch: noch,
+                  cont: cont,
+                  stadd: stadd,
+                  stdel: stdel
                 };
               });
             });
@@ -341,8 +345,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           //it's the reference table
           return {
             name: e.desc.name,
-            a: 0,
-            b: 0
+            noch: 0,
+            cont: 0,
+            stadd: 0,
+            stdel: 0
           };
         }
       }));
