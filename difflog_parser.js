@@ -21,7 +21,6 @@ define(["require", "exports", 'd3', 'jquery'],
             reject("The two tables are not comparable! No common column.");
           }
           resolve(data);
-          //
         });
       });
 

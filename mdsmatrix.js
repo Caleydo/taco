@@ -7,22 +7,26 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype'], function
   exports.MDSMatrix = datatypes.defineDataType('mdsmatrix', {
     init: function (desc) {
       //init function
-      //var direction_id = (desc.direction.length == 1? (desc.direction[0] == 'rows'? 0 : 1) : 2);
-      //this.diff_source = C.server_url + '/taco/diff_log/' + desc.id1 +'/' + desc.id2 + '/' + desc.detail + "/" + direction_id + "/" + desc.change;
+      //this.url = C.server_url + '/taco/mds/';
+      this.url = './data.json';
 
       this._cache = null;
     },
-    data: function() {
+    data: function () {
       if (this._cache != null) {
         return this._cache;
       }
-      //todo call the server for mds matrix?
-      var mds_data = require('./data.json'); //todo change this
-      console.log(mds_data);
-
-      //store result in cache
-      this._cache = mds_data;
-      return mds_data;
+      var that = this;
+      var promise = new Promise(function (resolve, reject) {
+        d3.json(that.url, function (error, mdata) {
+          if (error) reject(error);
+          //todo call the server for mds matrix?
+          //store result in cache
+          that._cache = mdata;
+          resolve(mdata);
+        });
+      });
+      return promise;
     }
   });
 
