@@ -223,7 +223,10 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         var o = this.options;
         var $node = $parent.append("div")
           .classed("d3-scatter-output", true);
-        drawMDSGraph($parent, data, size);
+        data.data().then(function(mdata){
+          console.log(mdata, "mdata");
+          //drawMDSGraph($parent, data, size);
+        });
         return $node;
       });
 

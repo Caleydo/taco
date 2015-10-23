@@ -4,8 +4,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/multiform', 'underscore', 'toastr', 'bootstrap-slider', './drag', './lineup', 'bootstrap', 'font-awesome'],
-  function (data, d3, $, vis, C, multiform, _, toastr, Slider, drag, lineup) {
+require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/multiform', 'underscore', 'toastr', 'bootstrap-slider', './drag', './lineup', './mds', 'bootstrap', 'font-awesome'],
+  function (data, d3, $, vis, C, multiform, _, toastr, Slider, drag, lineup, mds) {
     'use strict';
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
@@ -352,6 +352,24 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           };
         }
       }));
+    }
+
+    //MDS part
+    //creating the data
+    data_provider.create({
+      type: 'mdsstructure',
+      name: 'justname',
+      size: [300,400] //we can use dummy values instead
+    }).then(function (mdsmatrix) {
+      showMDS(mdsmatrix);
+      return mdsmatrix;
+    });
+    //drawing MDS
+    function showMDS(mdata){
+      var mds_instance = mds.create(mdata, document.querySelector('#mds-graph'));
+      mds_instance.then(function(instance){
+        console.log("instance", mds_instance);
+      });
     }
 
   });

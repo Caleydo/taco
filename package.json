@@ -46,6 +46,19 @@
           "name": "Diff Perc Bar Vis",
           "filter": "diffstructure",
           "file": "diff_percentagebar"
+        },
+        {
+          "type": "datatype",
+          "id": "mdsstructure",
+          "name": "MDS Structure",
+          "file": "mdsmatrix"
+        },
+        {
+          "type": "vis",
+          "id": "mdsvis",
+          "name": "MDS Vis",
+          "filter": "mdsstructure",
+          "file": "mds_vis"
         }
       ]
     },
