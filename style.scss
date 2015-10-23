@@ -46,7 +46,7 @@ $hover-color: #ffc46b;
 }
 
 svg {
-  vector-effect : non-scaling-stroke;
+  vector-effect: non-scaling-stroke;
   shape-rendering: geometricPrecision;
 }
 
@@ -252,30 +252,30 @@ a.taco-logo {
 }
 
 .taco-bar-container {
-    border: 1px solid darkgray;
-    position: absolute;
-    background-color: #ffffff;
-    div {
-      position: relative;
-      font: 10px sans-serif;
-      text-align: right;
-      //padding: 1px;
-    }
+  border: 1px solid darkgray;
+  position: absolute;
+  background-color: #ffffff;
+  div {
+    position: relative;
+    font: 10px sans-serif;
+    text-align: right;
+    //padding: 1px;
   }
+}
 
 .content-change-color {
   background-color: #456bb4;
 }
 
-.struct-add-color, .row-add-color, .col-add-color{
+.struct-add-color, .row-add-color, .col-add-color {
   background-color: green;
 }
 
-.struct-del-color, .row-del-color, .col-del-color{
+.struct-del-color, .row-del-color, .col-del-color {
   background-color: red;
 }
 
-.no-change-color{
+.no-change-color {
   background-color: lightgoldenrodyellow;
 }
 
@@ -309,7 +309,6 @@ a.taco-logo {
   flex-grow: 1; // proportion of expanded column
 }
 
-
 .tab-title {
   flex-grow: 0;
   width: 30px; // same width as .flex-column
@@ -331,7 +330,6 @@ a.taco-logo {
   width: 100%;
 }
 
-
 #overview {
   background: white;
   .tab-title {
@@ -352,6 +350,7 @@ a.taco-logo {
     background: #454545;
   }
 }
+
 /* end of flexbox */
 
 .taco-navbar {
@@ -383,11 +382,11 @@ a.taco-logo {
 
 /* bootstrap slider */
 #dsSlider .slider-selection {
-	background: #BABABA;
+  background: #BABABA;
 }
 
 #dsSlider .slider-handle {
-	background: #fad000;
+  background: #fad000;
 }
 
 .slider.slider-horizontal .slider-tick-label-container .slider-tick-label {
@@ -407,6 +406,55 @@ a.taco-logo {
 }
 
 .taco-test-img {
-  width:95%;
-  height:auto;
+  width: 95%;
+  height: auto;
+}
+
+//MDS part
+//from http://bl.ocks.org/dahtah/4482115#index.html
+
+.axis,
+.frame {
+  shape-rendering: crispEdges;
+}
+
+.axis line {
+  stroke: #00F;
+  stroke-width: 2px;
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+.axis path {
+  stroke: #00F;
+  stroke-width: 2px;
+  stroke: black;
+  fill: none;
+}
+
+.axis text {
+  font-family: sans-serif;
+  font-size: 10px;
+}
+
+.ghost {
+  fill: blue;
+  fill-opacity: 0;
+}
+
+.label {
+  font-size: 12px;
+  color: blue;
+}
+
+.datapoint {
+  r: 5;
+  fill: blue;
+  fill-opacity: .5;
+}
+
+#d3plot {
+  width: 500px;
+  height: 500px;
 }

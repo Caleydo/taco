@@ -138,5 +138,4 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       return new exports.DiffBarPlotVis(data, parent, options);
     };
   }
-)
-;
+);
