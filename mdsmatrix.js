@@ -7,8 +7,8 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype'], function
   exports.MDSMatrix = datatypes.defineDataType('mdsmatrix', {
     init: function (desc) {
       //init function
-      //this.url = C.server_url + '/taco/mds/';
-      this.url = './data.json';
+      this.url = C.server_url + '/taco/mds';
+      //this.url = './mdsdata.json';
 
       this._cache = null;
     },
