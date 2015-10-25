@@ -438,11 +438,6 @@ a.taco-logo {
   font-size: 10px;
 }
 
-.ghost {
-  fill: blue;
-  fill-opacity: 0;
-}
-
 .label {
   font-size: 12px;
   color: blue;
@@ -457,4 +452,15 @@ a.taco-logo {
 #d3plot {
   width: 500px;
   height: 500px;
+}
+
+//force directed graph
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
 }
