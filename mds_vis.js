@@ -39,15 +39,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       return s;
     };
 
-
-    Array.prototype.norm = function () {
-      var s = 0;
-      for (var ind = 0; ind < this.length; ind++) {
-        s[ind] = this[ind] + b[ind];
-      }
-      return s;
-    };
-
     Array.prototype.max = function () {
       return Math.max.apply(Math, this);
     };
@@ -55,6 +46,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
     Array.prototype.min = function () {
       return Math.min.apply(Math, this);
     };
+
     Array.prototype.range = function () {
       return [this.min(), this.max()];
     };
@@ -65,7 +57,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
     }
 
     function recompute_positions(ind, X, D) {
-      var d = D[ind], Xc = Array(X.length), x = [X[ind].x, X[ind].y];
+      var d = D[ind], Xc = Array(D.length), x = [X[ind].x, X[ind].y];
       for (i = 0; i < X.length; i++) {
         if (i != ind) {
           var tmp = project([X[i].x, X[i].y], x, d[i]);
@@ -79,15 +71,14 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       return Xc;
     }
 
-
-//Used to expand slightly the plotting window
+    //Used to expand slightly the plotting window
     expand = function (r) {
       var d = r[1] - r[0], alpha = .1;
       return r.add([-alpha * d, alpha * d]);
     };
 
     d3scatterplot = function (svg, X, D, cities) {
-      var nPix = 420, n = X.length, mar = [40, 60, 40, 40];
+      var nPix = 420, n = D.length, mar = [40, 60, 40, 40];
 
       var xv = X.map(function (e) {
         return e.x;
@@ -98,12 +89,10 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       svg.attr("width", nPix + mar[0] + mar[2])
         .attr("height", nPix + mar[1] + mar[3]);
 
-
       var sg = svg.append("g")
         .attr("transform", "translate("
         + mar[0] + ","
         + mar[1] + ")");
-
 
       var xScale = d3.scale.linear()
         .range([0, nPix])
@@ -113,17 +102,10 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .range([nPix, 0])
         .domain(yRange);
 
-
       var labels = sg.selectAll(".labels")
         .data(X).enter()
         .append("text")
         .attr("class", "label")
-        .attr("x", function (d) {
-          return xScale(d.x);
-        })
-        .attr("y", function (d) {
-          return yScale(d.y);
-        })
         .text(function (d, i) {
           return cities[i];
         })
@@ -131,7 +113,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .attr("id", function (d, i) {
           return "label" + i
         });
-
 
       var dots = sg.selectAll(".datapoint")
         .data(X).enter()
@@ -148,21 +129,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         })
         .attr("r", 2);
 
-      var ghosts = sg.selectAll(".ghost")
-        .data(X).enter()
-        .append("circle")
-        .attr("class", "ghost")
-        .attr("cx", function (d) {
-          return xScale(d.x);
-        })
-        .attr("cy", function (d) {
-          return yScale(d.y);
-        })
-        .attr("r", 8);
-
-
-      console.log(labels);
-
       var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(4);
       svg.append("g").call(xAxis)
         .attr("class", "axis")  //Assign "axis" class
@@ -173,34 +139,15 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .attr("class", "axis")  //Assign "axis" class
         .attr("transform", "translate(" + mar[0] + "," + (mar[3]) + ")");
 
-      ghosts.on("mouseover", function (d, i) {
-        var Xn = recompute_positions(i, X, D);
-
-        labels.data(Xn)
-          .transition()
-          .attr("x", function (d) {
-            return xScale(d.x);
-          })
-          .attr("y", function (d) {
-            return yScale(d.y);
-          });
-
-      });
-
-      reset = function (el) {
-        labels.data(X)
-          .attr("x", function (d) {
-            return xScale(d.x);
-          })
-          .attr("y", function (d) {
-            return yScale(d.y);
-          });
-      };
-
-
-      ghosts.on("mouseout", reset);
-      svg.on("mouseout", reset); //Reset also if the mouse leaves the frame, the capture of "mouseout" events being rather unreliable
-
+      var Xn = recompute_positions(0, X, D);
+      labels.data(Xn)
+        .transition()
+        .attr("x", function (d) {
+          return xScale(d.x);
+        })
+        .attr("y", function (d) {
+          return yScale(d.y);
+        });
     };
 
     function drawMDSGraph(parent, data, dim) {
