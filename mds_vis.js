@@ -187,8 +187,17 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
 
       // http://jsdatav.is/visuals.html?id=83515b77c2764837aac2
       // here the value represent the distance -> diff
-      force.linkDistance(function(link) {
-        return link.value;
+      //force.linkDistance(function(link) {
+      //  return link.value;
+      //});
+      force.linkDistance(width/2);
+
+      // http://jsdatav.is/visuals.html?id=774d02a21dc1c714def8
+      // here the value represent the attraction force? but the distance should be static
+      force.linkStrength(function(link){
+        // should return [0,1], 1 is the default which is repulsive
+        //todo we assume that the value we get is [0,100]
+        return link.value/100;
       });
 
       //it's important to start at the end
