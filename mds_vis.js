@@ -176,15 +176,23 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
     }
 
     function drawGraphNodes(svg, graph, width, height){
+      //todo consider the value in the links!!
+      //todo the value should represent the similarity ?
       var force = d3.layout.force()
         .charge(-150)
-        .linkDistance(30)
-        .size([width, height]);
-
-      force
+        .size([width, height])
         .nodes(graph.nodes)
-        .links(graph.links)
-        .start();
+        .links(graph.links);
+        //.start();
+
+      // http://jsdatav.is/visuals.html?id=83515b77c2764837aac2
+      // here the value represent the distance -> diff
+      force.linkDistance(function(link) {
+        return link.value;
+      });
+
+      //it's important to start at the end
+      force.start();
 
       var node = svg.selectAll(".node")
         .data(graph.nodes)
@@ -195,6 +203,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
 
       node.append("title")
         .text(function (d) {
+          //todo we can return only the list of names instead of a list of objects with name as the only attribute
           return d.name;
         });
 
