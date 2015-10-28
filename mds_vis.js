@@ -171,7 +171,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       var svg = parent.append("svg")
         .attr("width", width)
         .attr("height", height);
-      drawGraphNodes(svg, mdata, width, height);
+      svg = drawGraphNodes(svg, mdata, width, height);
       return svg;
     }
 
@@ -211,8 +211,9 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         .attr("class", "node");
         //.call(force.drag);
 
-      node.append("circle")
-        .attr("r", 7);
+      var circles = node.append("circle")
+        .attr("r", 7)
+        .attr("class", "fd-circle");
 
       node.append("text")
         .attr("dx", 10)
@@ -221,9 +222,16 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           return d.name;
         });
 
+      circles.on('click', function(n){
+          d3.selectAll(".fd-circle-selected").classed("fd-circle-selected", false);
+          d3.select(this).classed("fd-circle-selected", true);
+          console.log("selected node", n.name);
+        });
+
       force.on("tick", function () {
         node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
       });
+      return svg;
     }
 
     //end of fd graph
@@ -236,7 +244,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           .classed("d3-scatter-output", true);
         data.data().then(function(mdata){
           //drawMDSGraph($parent, mdata, size);
-          drawFDGraph($parent, mdata, size);
+          return drawFDGraph($parent, mdata, size);
         });
         return $node;
       });

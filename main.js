@@ -369,7 +369,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     function showMDS(mdata){
       var mds_instance = mds.create(mdata, document.querySelector('#mds-graph'));
       mds_instance.then(function(instance){
-        console.log("instance", mds_instance);
+        console.log("instance", instance);
       });
     }
 

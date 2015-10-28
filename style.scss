@@ -455,14 +455,20 @@ a.taco-logo {
 }
 
 //force directed graph
-.node circle{
+.node .fd-circle{
   stroke: #fff;
+  stroke-width: 1.5px;
+  fill: #456bb4;
+}
+
+.node .fd-circle-selected{
+  stroke: $select-color;
   stroke-width: 1.5px;
   fill: #456bb4;
 }
 
 .node text {
   pointer-events: none;
-  font: 10px sans-serif;
+  font: 12px sans-serif;
   fill: dimgrey;
 }
