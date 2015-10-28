@@ -187,42 +187,43 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
 
       // http://jsdatav.is/visuals.html?id=83515b77c2764837aac2
       // here the value represent the distance -> diff
-      //force.linkDistance(function(link) {
-      //  return link.value;
-      //});
-      force.linkDistance(width/2);
+      force.linkDistance(function(link) {
+        return link.value * 3;
+      });
+      //force.linkDistance(width/2);
 
       // http://jsdatav.is/visuals.html?id=774d02a21dc1c714def8
       // here the value represent the attraction force? but the distance should be static
-      force.linkStrength(function(link){
-        // should return [0,1], 1 is the default which is repulsive
+      //force.linkStrength(function(link){
+         //should return [0,1], 1 is the default which is repulsive
         //todo we assume that the value we get is [0,100]
-        return link.value/100;
-      });
+        //todo better to divide it on the largest value -> do some sort of normalization here
+       // return link.value/100;
+      //});
 
       //it's important to start at the end
       force.start();
 
       var node = svg.selectAll(".node")
         .data(graph.nodes)
-        .enter().append("circle")
-        .attr("class", "node")
-        .attr("r", 6);
+        .enter()
+        .append("g")
+        .attr("class", "node");
         //.call(force.drag);
 
-      node.append("title")
-        .text(function (d) {
-          //todo we can return only the list of names instead of a list of objects with name as the only attribute
+      node.append("circle")
+        .attr("r", 7);
+
+      node.append("text")
+        .attr("dx", 12)
+        .attr("dy", ".35em")
+        .text(function (d, i) {
           return d.name;
-        });
+        })
+        .attr("color", "red");
 
       force.on("tick", function () {
-        node.attr("cx", function (d) {
-          return d.x;
-        })
-          .attr("cy", function (d) {
-            return d.y;
-          });
+        node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
       });
     }
 

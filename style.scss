@@ -460,3 +460,9 @@ a.taco-logo {
   stroke-width: 1.5px;
   fill: #456bb4;
 }
+
+.node text {
+  pointer-events: none;
+  font: 10px sans-serif;
+  color: purple;
+}

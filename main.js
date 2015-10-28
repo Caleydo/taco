@@ -324,7 +324,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               change: "structure,content",
               direction: settings_direction,
               //detail: settings_detail,
-              detail: $('#detail-slider').val(),
+              //detail: $('#detail-slider').val(), //todo use this
+              detail: 4, //because we are aggregating in the client for now but we should just get the result from the server
               size: e.desc.size //we can use dummy values instead
             }).then(function (diffmatrix) {
               return Promise.all([diffmatrix.nochangeRatio(), diffmatrix.contentRatio(), diffmatrix.structAddRatio(), diffmatrix.structDelRatio()]).then(function(dm_data){
