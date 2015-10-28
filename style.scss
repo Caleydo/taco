@@ -455,7 +455,7 @@ a.taco-logo {
 }
 
 //force directed graph
-.node {
+.node circle{
   stroke: #fff;
   stroke-width: 1.5px;
   fill: #456bb4;
@@ -464,5 +464,5 @@ a.taco-logo {
 .node text {
   pointer-events: none;
   font: 10px sans-serif;
-  color: purple;
+  fill: dimgrey;
 }

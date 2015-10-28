@@ -215,12 +215,11 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         .attr("r", 7);
 
       node.append("text")
-        .attr("dx", 12)
+        .attr("dx", 10)
         .attr("dy", ".35em")
         .text(function (d, i) {
           return d.name;
-        })
-        .attr("color", "red");
+        });
 
       force.on("tick", function () {
         node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
