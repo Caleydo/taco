@@ -222,14 +222,18 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           return d.name;
         });
 
-      //var onClick = d3utils.selectionUtil(graph.nodes, node, 'fd-circle');
+      //var onClick = d3utils.selectionUtil(nodes, node, 'fd-circle');
 
-      //node.on('click', onClick);
+      circles.on('click', function(n){
+        d3.selectAll(".fd-circle-selected").classed("fd-circle-selected", false);
+        d3.select(this).classed("fd-circle-selected", true);
+        console.log("selected node", n.name);
+      });
 
       force.on("tick", function () {
         node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
       });
-      return svg;
+      return node;
     }
 
     //end of fd graph
@@ -244,7 +248,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           nodes = values[0];
           links = values[1];
           //drawMDSGraph($parent, links, size);
-          drawFDGraph($parent, nodes, links, size);
+          var n = drawFDGraph($parent, nodes, links, size);
+          //var onClick = d3utils.selectionUtil(nodes, n, 'fd-circle');
         });
         return $node;
       });

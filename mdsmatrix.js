@@ -7,7 +7,6 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype'], function
   function get_ids(datalist){
     var ids = [];
     datalist.forEach(function(e, index, arr){
-      console.log(e.desc.id);
       ids.push(e.desc.id);
     });
     return ids
@@ -17,7 +16,6 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype'], function
     init: function (desc) {
       //init function
       this.ids = get_ids(desc.datalist);
-      console.log("desc from mdsmatrix", this.ids);
       this.url = C.server_url + '/taco/mds/' + this.ids;
       //this.url = './mdsdata.json';
 
