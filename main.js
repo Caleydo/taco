@@ -15,9 +15,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     var heatmap1 = null, heatmap2 = null;
     var myDrag = drag.Drag();
 
-    var gridSize = 6,
-      h = gridSize,
-      w = gridSize;
+    var gridSize = 6;
     var lineup_items,
       settings_change = [],
       settings_direction = [],
@@ -370,6 +368,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       var mds_instance = mds.create(mdata, document.querySelector('#mds-graph'));
       mds_instance.then(function(instance){
         console.log("instance", instance);
+        //instance.handlers.on("click", function(d){
+        //  console.log("klsdjaj");
+        //})
       });
     }
 
