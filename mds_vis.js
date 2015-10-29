@@ -222,11 +222,9 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           return d.name;
         });
 
-      circles.on('click', function(n){
-          d3.selectAll(".fd-circle-selected").classed("fd-circle-selected", false);
-          d3.select(this).classed("fd-circle-selected", true);
-          console.log("selected node", n.name);
-        });
+      //var onClick = d3utils.selectionUtil(graph.nodes, node, 'fd-circle');
+
+      //node.on('click', onClick);
 
       force.on("tick", function () {
         node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
@@ -235,7 +233,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
     }
 
     //end of fd graph
-    exports.MDSVis = d3utils.defineVis('DiffBarPlotVis', {
+    exports.MDSVis = d3utils.defineVis('MDSVis', {
         dim: ['column']
       }, [200, 200],
       function ($parent, data, size) {

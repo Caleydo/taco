@@ -16,7 +16,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     var myDrag = drag.Drag();
 
     var gridSize = 6;
-    var lineup_items,
+    var test_items,
       settings_change = [],
       settings_direction = [],
       settings_detail = 4;
@@ -189,12 +189,25 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         var ev = d3.event;
       });
 
-      //preparing a fixed test table for lineup
-      lineup_items = items.filter(function (d) {
+      //preparing a fixed test table for lineup and mds
+      test_items = items.filter(function (d) {
         return d.desc.fqname.match(/.*multiple.*/);
       });
+
+      //MDS part
+      //creating the data
+      data_provider.create({
+        type: 'mdsstructure',
+        name: 'fdgraph',
+        size: [300,400], //we can use dummy values instead
+        datalist: test_items
+      }).then(function (mdsmatrix) {
+        showMDS(mdsmatrix);
+        //return mdsmatrix;
+      });
+
       // static test data
-      calcLineupData(lineup_items[0], lineup_items)
+      calcLineupData(test_items[0], test_items)
         .then(showLineup);
     });
 
@@ -353,24 +366,11 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       }));
     }
 
-    //MDS part
-    //creating the data
-    data_provider.create({
-      type: 'mdsstructure',
-      name: 'justname',
-      size: [300,400] //we can use dummy values instead
-    }).then(function (mdsmatrix) {
-      showMDS(mdsmatrix);
-      return mdsmatrix;
-    });
     //drawing MDS
     function showMDS(mdata){
       var mds_instance = mds.create(mdata, document.querySelector('#mds-graph'));
       mds_instance.then(function(instance){
         console.log("instance", instance);
-        //instance.handlers.on("click", function(d){
-        //  console.log("klsdjaj");
-        //})
       });
     }
 
