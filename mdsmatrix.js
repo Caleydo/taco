@@ -4,16 +4,21 @@
 //noinspection Annotator
 define(['exports', '../caleydo_core/main', '../caleydo_core/datatype'], function (exports, C, datatypes) {
 
+  function get_ids(datalist){
+    var ids = [];
+    datalist.forEach(function(e, index, arr){
+      console.log(e.desc.id);
+      ids.push(e.desc.id);
+    });
+    return ids
+  }
+
   exports.MDSMatrix = datatypes.defineDataType('mdsmatrix', {
     init: function (desc) {
       //init function
-      var ids = [];
-      desc.datalist.forEach(function(e, index, arr){
-        console.log(e.desc.id);
-        ids.push(e.desc.id);
-      });
-      console.log("desc from mdsmatrix", ids);
-      this.url = C.server_url + '/taco/mds/' + ids;
+      this.ids = get_ids(desc.datalist);
+      console.log("desc from mdsmatrix", this.ids);
+      this.url = C.server_url + '/taco/mds/' + this.ids;
       //this.url = './mdsdata.json';
 
       this._cache = null;
@@ -33,6 +38,16 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype'], function
         });
       });
       return promise;
+    },
+    nodes: function() {
+      var that = this;
+      return new Promise(function(resolve, reject){
+        var nodes = [];
+        that.ids.forEach(function(e, i, arr){
+          nodes.push({name:e});
+        });
+        resolve (nodes);
+      });
     }
   });
 

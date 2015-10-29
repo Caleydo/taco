@@ -164,25 +164,25 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
 
     //end of mds part
     //beginning of force directed graph
-    function drawFDGraph(parent, mdata, size){
+    function drawFDGraph(parent, nodes, links, size){
       //todo use size instead
       var width = 500,
         height = 500;
       var svg = parent.append("svg")
         .attr("width", width)
         .attr("height", height);
-      svg = drawGraphNodes(svg, mdata, width, height);
+      svg = drawGraphNodes(svg, nodes, links, width, height);
       return svg;
     }
 
-    function drawGraphNodes(svg, graph, width, height){
+    function drawGraphNodes(svg, nodes, links, width, height){
       //todo consider the value in the links!!
       //todo the value should represent the similarity ?
       var force = d3.layout.force()
         .charge(-150)
         .size([width, height])
-        .nodes(graph.nodes)
-        .links(graph.links);
+        .nodes(nodes)
+        .links(links);
         //.start();
 
       // http://jsdatav.is/visuals.html?id=83515b77c2764837aac2
@@ -205,7 +205,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       force.start();
 
       var node = svg.selectAll(".node")
-        .data(graph.nodes)
+        .data(nodes)
         .enter()
         .append("g")
         .attr("class", "node");
@@ -240,9 +240,11 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         var o = this.options;
         var $node = $parent.append("div")
           .classed("d3-scatter-output", true);
-        data.data().then(function(mdata){
-          //drawMDSGraph($parent, mdata, size);
-          return drawFDGraph($parent, mdata, size);
+        Promise.all([data.nodes(), data.data()]).then(function(values){
+          nodes = values[0];
+          links = values[1];
+          //drawMDSGraph($parent, links, size);
+          drawFDGraph($parent, nodes, links, size);
         });
         return $node;
       });
