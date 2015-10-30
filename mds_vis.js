@@ -3,18 +3,18 @@
  */
 define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
     //force directed graph
-    function drawFDGraph(parent, links, size){
+    function drawFDGraph(parent, nodes, links, size){
       //todo use size instead
       var width = 500,
         height = 500;
       var svg = parent.append("svg")
         .attr("width", width)
         .attr("height", height);
-      svg = drawGraphNodes(svg, links, width, height);
+      svg = drawGraphNodes(svg, nodes, links, width, height);
       return svg;
     }
 
-    function drawGraphNodes(svg, links_arrays, width, height){
+    function drawGraphNodes(svg, nodes_table, links_arrays, width, height){
       //todo consider the value in the links!!
       //todo the value should represent the similarity ?
       var links = links_arrays.map(function (e) {
@@ -24,6 +24,9 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           value: e[2]
         };
       });
+
+      /*
+      //http://bl.ocks.org/d3noob/5141278
       var nodes = {};
 
       // Compute the distinct nodes from the links.
@@ -34,15 +37,16 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
               (nodes[link.target] = {name: link.target});
           link.value = +link.value;
       });
+      */
+
 
       var force = d3.layout.force()
         .charge(-150)
         .size([width, height])
-        .nodes(d3.values(nodes))
+        //.nodes(d3.values(nodes))
+        .nodes(nodes_table)
         .links(links);
         //.start();
-      console.table(links);
-      console.table(d3.values(nodes));
 
       // http://jsdatav.is/visuals.html?id=83515b77c2764837aac2
       // here the value represent the distance -> diff
@@ -70,6 +74,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         .attr("class", "node");
         //.call(force.drag);
 
+      //var onClick = d3utils.selectionUtil(nodes_table, node, 'circle');
+
       var circles = node.append("circle")
         .attr("r", 7)
         .attr("class", "fd-circle");
@@ -78,15 +84,13 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         .attr("dx", 10)
         .attr("dy", ".35em")
         .text(function (d, i) {
-          return d.name;
+          return d.desc.name;
         });
-
-      //var onClick = d3utils.selectionUtil(nodes, node, 'fd-circle');
 
       circles.on('click', function(n){
         d3.selectAll(".fd-circle-selected").classed("fd-circle-selected", false);
         d3.select(this).classed("fd-circle-selected", true);
-        console.log("selected node", n.name);
+        console.log("selected node", n.desc.name);
       });
 
       force.on("tick", function () {
@@ -104,7 +108,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         var $node = $parent.append("div")
           .classed("d3-scatter-output", true);
         data.data().then(function(links){
-          drawFDGraph($parent, links, size);
+          drawFDGraph($parent, o.nodes, links, size);
           //var onClick = d3utils.selectionUtil(nodes, n, 'fd-circle');
         });
         return $node;
