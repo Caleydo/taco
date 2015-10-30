@@ -371,7 +371,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         size: datalist.length //we can use dummy values instead
       }).then(function (diffmatrix) {
         return diffmatrix.data().then(function(dm_data){
-          /*
           var graph_nodes = [];
           datalist.forEach(function(e, i, arr){
             graph_nodes.push({name: e.desc.name});
@@ -380,8 +379,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             links: dm_data,
             nodes: graph_nodes
           };
-          */
-          return dm_data;
+          //return dm_data;
         });
       });
     }

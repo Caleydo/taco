@@ -42,14 +42,15 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
   }
 
   exports.create = function (data, parent) {
-    var mds_table = convertToTable(data);
+    var mds_table = convertToTable(data.links);
     var v = vis.list(mds_table);
     v = v.filter(function (v) {
       return v.id === 'mdsvis';
     })[0];
     return v.load().then(function (plugin) {
       return plugin.factory(mds_table, parent, {
-        dim: [199,200] //this should be the options or so? //todo pass what you need
+        dim: [199,200], //this should be the options or so? //todo pass what you need
+        nodes: data.nodes //how can I draw a FORCE directed graph without nodes?
       });
     });
   };
