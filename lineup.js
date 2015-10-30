@@ -9,7 +9,7 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
       name: 'Taco LineUp Data',
       type: 'table',
       rowtype: '_taco_dataset',
-      size: [data.length, 3],
+      size: [data.length, 5],
       columns: [
         {
           name: 'Name',

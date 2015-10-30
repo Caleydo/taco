@@ -83,12 +83,15 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         var o = this.options;
         var $node = $parent.append("div")
           .classed("d3-scatter-output", true);
-        Promise.all([data.nodes(), data.data()]).then(function(values){
-          var nodes = values[0],
-          links = values[1];
+        data.data().then(function(values){
+          console.log("visssss me", values);
+          /*
+          var nodes = values.nodes,
+          links = values.links;
           //drawMDSGraph($parent, links, size);
           drawFDGraph($parent, nodes, links, size);
           //var onClick = d3utils.selectionUtil(nodes, n, 'fd-circle');
+          */
         });
         return $node;
       });

@@ -51,7 +51,7 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
       // 0 is overview, 4 is detail
       if (desc.detail < 2){
         this.ids = get_ids(desc.datalist);
-        this.url = C.server_url + '/taco/mds/' + this.ids
+        this.diff_source = C.server_url + '/taco/mds/' + this.ids
       }else{
         //todo make sure that the settings are not empty
       //direction_id: 0 rows, 1 cols, 2 rows + cols

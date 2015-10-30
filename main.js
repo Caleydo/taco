@@ -200,8 +200,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         .then(showMDS);
 
       // static test data
-      calcLineupData(test_items[0], test_items)
-        .then(showLineup);
+      //calcLineupData(test_items[0], test_items)
+      //  .then(showLineup);
     });
 
     //$("[name='detail']").change(function () {
@@ -370,18 +370,18 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         detail: 0, //the key point
         size: datalist.length //we can use dummy values instead
       }).then(function (diffmatrix) {
-        return Promise.all([diffmatrix.nochangeRatio(), diffmatrix.contentRatio(), diffmatrix.structAddRatio(), diffmatrix.structDelRatio()]).then(function(dm_data){
-          var noch = dm_data[0].ratio * 100;
-          var cont = dm_data[1].ratio * 100;
-          var stadd = dm_data[2].ratio * 100;
-          var stdel = dm_data[3].ratio * 100;
-          return {
-            name: e.desc.name,
-            noch: noch,
-            cont: cont,
-            stadd: stadd,
-            stdel: stdel
+        return diffmatrix.data().then(function(dm_data){
+          /*
+          var graph_nodes = [];
+          datalist.forEach(function(e, i, arr){
+            graph_nodes.push({name: e.desc.name});
+          });
+          return{
+            links: dm_data,
+            nodes: graph_nodes
           };
+          */
+          return dm_data;
         });
       });
     }
@@ -393,7 +393,5 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         console.log("instance", instance);
       });
     }
-
-
 
   });
