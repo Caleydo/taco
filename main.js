@@ -196,15 +196,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
       //MDS part
       //creating the data
-      data_provider.create({
-        type: 'mdsstructure',
-        name: 'fdgraph',
-        size: [300,400], //we can use dummy values instead
-        datalist: test_items
-      }).then(function (mdsmatrix) {
-        showMDS(mdsmatrix);
-        //return mdsmatrix;
-      });
+      calcGraphData(test_items)
+        .then(showMDS);
 
       // static test data
       calcLineupData(test_items[0], test_items)
@@ -366,6 +359,33 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       }));
     }
 
+    function calcGraphData(datalist){
+      return data_provider.create({
+        type: 'diffstructure',
+        name: datalist[0].desc.name + '-orso',
+        datalist: datalist,
+        change: "structure,content",
+        direction: settings_direction,
+        //detail: $('#detail-slider').val(), //todo use this
+        detail: 0, //the key point
+        size: datalist.length //we can use dummy values instead
+      }).then(function (diffmatrix) {
+        return Promise.all([diffmatrix.nochangeRatio(), diffmatrix.contentRatio(), diffmatrix.structAddRatio(), diffmatrix.structDelRatio()]).then(function(dm_data){
+          var noch = dm_data[0].ratio * 100;
+          var cont = dm_data[1].ratio * 100;
+          var stadd = dm_data[2].ratio * 100;
+          var stdel = dm_data[3].ratio * 100;
+          return {
+            name: e.desc.name,
+            noch: noch,
+            cont: cont,
+            stadd: stadd,
+            stdel: stdel
+          };
+        });
+      });
+    }
+
     //drawing MDS
     function showMDS(mdata){
       var mds_instance = mds.create(mdata, document.querySelector('#mds-graph'));
@@ -373,5 +393,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         console.log("instance", instance);
       });
     }
+
+
 
   });

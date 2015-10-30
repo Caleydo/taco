@@ -48,16 +48,10 @@
           "file": "diff_percentagebar"
         },
         {
-          "type": "datatype",
-          "id": "mdsstructure",
-          "name": "MDS Structure",
-          "file": "mdsmatrix"
-        },
-        {
           "type": "vis",
           "id": "mdsvis",
           "name": "MDS Vis",
-          "filter": "mdsstructure",
+          "filter": "table",
           "file": "mds_vis"
         }
       ]

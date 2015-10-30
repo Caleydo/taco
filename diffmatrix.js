@@ -37,15 +37,29 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
     };
   }
 
+  function get_ids(datalist){
+    var ids = [];
+    datalist.forEach(function(e, index, arr){
+      ids.push(e.desc.id);
+    });
+    return ids;
+  }
+
   exports.DiffMatrix = datatypes.defineDataType('diffmatrix', {
     init: function (desc) {
       //init function
-      //todo make sure that the settings are not empty
+      // 0 is overview, 4 is detail
+      if (desc.detail < 2){
+        this.ids = get_ids(desc.datalist);
+        this.url = C.server_url + '/taco/mds/' + this.ids
+      }else{
+        //todo make sure that the settings are not empty
       //direction_id: 0 rows, 1 cols, 2 rows + cols
       //if nothing is selected then send 2 //todo handle this in the interface
       var direction_id = (desc.direction.length == 1? (desc.direction[0] == 'rows'? 0 : 1) : 2);
-      this.diff_source = C.server_url + '/taco/diff_log/' + desc.id1 +'/' + desc.id2 + '/' + desc.detail + "/" + direction_id + "/" + desc.change;
-
+      this.diff_source = C.server_url + '/taco/diff_log/' + desc.id1 +'/' + desc.id2 + '/' + desc.detail
+        + "/" + direction_id + "/" + desc.change;
+      }
       this._cache = null;
     },
     data: function() {

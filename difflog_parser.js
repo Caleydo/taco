@@ -15,7 +15,6 @@ define(["require", "exports", 'd3', 'jquery'],
       var promise = new Promise(function(resolve, reject){
         d3.json(that.filepath, function (error, data) {
           if (error) reject(error);
-          //console.log(" new data ", data);
           if ($.isEmptyObject(data)){
             console.log(data, "is an empty object");
             reject("The two tables are not comparable! No common column.");
