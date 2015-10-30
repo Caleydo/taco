@@ -13,14 +13,14 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
       columns: [
         {
           name: 'source',
-          value: {type: 'int'},
+          value: {type: 'string'},
           getter: function (d) {
             return d.source;
           }
         },
         {
           name: 'target',
-          value: {type: 'int'},
+          value: {type: 'string'},
           getter: function (d) {
             return d.target;
           }
