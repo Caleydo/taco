@@ -3,26 +3,46 @@
  */
 define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
     //force directed graph
-    function drawFDGraph(parent, nodes, links, size){
+    function drawFDGraph(parent, links, size){
       //todo use size instead
       var width = 500,
         height = 500;
       var svg = parent.append("svg")
         .attr("width", width)
         .attr("height", height);
-      svg = drawGraphNodes(svg, nodes, links, width, height);
+      svg = drawGraphNodes(svg, links, width, height);
       return svg;
     }
 
-    function drawGraphNodes(svg, nodes, links, width, height){
+    function drawGraphNodes(svg, links_arrays, width, height){
       //todo consider the value in the links!!
       //todo the value should represent the similarity ?
+      var links = links_arrays.map(function (e) {
+        return {
+          source: e[0],
+          target: e[1],
+          value: e[2]
+        };
+      });
+      var nodes = {};
+
+      // Compute the distinct nodes from the links.
+      links.forEach(function(link) {
+          link.source = nodes[link.source] ||
+              (nodes[link.source] = {name: link.source});
+          link.target = nodes[link.target] ||
+              (nodes[link.target] = {name: link.target});
+          link.value = +link.value;
+      });
+
       var force = d3.layout.force()
         .charge(-150)
         .size([width, height])
-        .nodes(nodes)
+        .nodes(d3.values(nodes))
         .links(links);
         //.start();
+      console.table(links);
+      console.table(d3.values(nodes));
 
       // http://jsdatav.is/visuals.html?id=83515b77c2764837aac2
       // here the value represent the distance -> diff
@@ -44,7 +64,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       force.start();
 
       var node = svg.selectAll(".node")
-        .data(nodes)
+        .data(force.nodes())
         .enter()
         .append("g")
         .attr("class", "node");
@@ -84,15 +104,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         var $node = $parent.append("div")
           .classed("d3-scatter-output", true);
         data.data().then(function(links){
-          //drawMDSGraph($parent, links, size);
-          var l = links.map(function(e){
-            return {
-              source: e[0],
-              target: e[1],
-              value: e[2]
-            }
-          });
-          drawFDGraph($parent, o.nodes, l, size);
+          drawFDGraph($parent, links, size);
           //var onClick = d3utils.selectionUtil(nodes, n, 'fd-circle');
         });
         return $node;
