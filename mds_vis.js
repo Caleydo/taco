@@ -14,17 +14,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       return svg;
     }
 
-    function drawGraphNodes(svg, nodes_table, links_arrays, width, height){
-      //todo consider the value in the links!!
+    function drawGraphNodes(svg, nodes_table, links, width, height){
       //todo the value should represent the similarity ?
-      var links = links_arrays.map(function (e) {
-        return {
-          source: e[0],
-          target: e[1],
-          value: e[2]
-        };
-      });
-
       /*
       //http://bl.ocks.org/d3noob/5141278
       var nodes = {};
@@ -38,7 +29,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           link.value = +link.value;
       });
       */
-
 
       var force = d3.layout.force()
         .charge(-150)
@@ -84,13 +74,14 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         .attr("dx", 10)
         .attr("dy", ".35em")
         .text(function (d, i) {
-          return d.desc.name;
+          return d[0];
         });
 
       circles.on('click', function(n){
         d3.selectAll(".fd-circle-selected").classed("fd-circle-selected", false);
         d3.select(this).classed("fd-circle-selected", true);
-        console.log("selected node", n.desc.name);
+        //console.log("selected node", n.name);
+        console.log("selected node", n[0], n[1]);
       });
 
       force.on("tick", function () {
@@ -107,9 +98,9 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         var o = this.options;
         var $node = $parent.append("div")
           .classed("d3-scatter-output", true);
-        data.data().then(function(links){
-          drawFDGraph($parent, o.nodes, links, size);
-          //var onClick = d3utils.selectionUtil(nodes, n, 'fd-circle');
+        data.data().then(function(nodes){
+          drawFDGraph($parent, nodes, o.links, size);
+          //var onClick = d3utils.selectionUtil(o.nodes, $parent, 'circle');
         });
         return $node;
       });

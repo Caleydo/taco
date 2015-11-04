@@ -12,29 +12,17 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
       size: [data.length, 3],
       columns: [
         {
-          name: 'source',
+          name: 'name',
           value: {type: 'string'},
           getter: function (d) {
-            return d.source;
+            return d.desc.name;
           }
         },
         {
-          name: 'target',
+          name: 'id',
           value: {type: 'string'},
           getter: function (d) {
-            return d.target;
-          }
-        },
-        {
-          name: 'no change value',
-          value: {
-            type: 'real',
-            range: d3.extent(data, function (d) {
-              return d.value;
-            })
-          },
-          getter: function (d) {
-            return d.value;
+            return d.desc.id;
           }
         }
       ]
@@ -42,15 +30,15 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
   }
 
   exports.create = function (data, parent) {
-    var mds_table = convertToTable(data.links);
-    var v = vis.list(mds_table);
+    var mds_nodes_table = convertToTable(data.nodes);
+    var v = vis.list(mds_nodes_table);
     v = v.filter(function (v) {
       return v.id === 'mdsvis';
     })[0];
     return v.load().then(function (plugin) {
-      return plugin.factory(mds_table, parent, {
+      return plugin.factory(mds_nodes_table, parent, {
         dim: [199,200], //this should be the options or so? //todo pass what you need
-        nodes: data.nodes //how can I draw a FORCE directed graph without nodes?
+        links: data.links //how can I draw a FORCE directed graph without nodes?
       });
     });
   };
