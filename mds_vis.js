@@ -3,18 +3,18 @@
  */
 define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
     //force directed graph
-    function drawFDGraph(parent, nodes, links, size){
+    function drawFDGraph(parent, data, nodes, links, size){
       //todo use size instead
       var width = 500,
         height = 500;
       var svg = parent.append("svg")
         .attr("width", width)
         .attr("height", height);
-      svg = drawGraphNodes(svg, nodes, links, width, height);
+      svg = drawGraphNodes(svg, data, nodes, links, width, height);
       return svg;
     }
 
-    function drawGraphNodes(svg, nodes_table, links, width, height){
+    function drawGraphNodes(svg, data, nodes_table, links, width, height){
       //todo the value should represent the similarity ?
       /*
       //http://bl.ocks.org/d3noob/5141278
@@ -57,6 +57,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       //it's important to start at the end
       force.start();
 
+      var onClick = d3utils.selectionUtil(data, svg, '.node');
+
       var node = svg.selectAll(".node")
         .data(force.nodes())
         .enter()
@@ -64,11 +66,10 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         .attr("class", "node");
         //.call(force.drag);
 
-      //var onClick = d3utils.selectionUtil(nodes_table, node, 'circle');
-
       var circles = node.append("circle")
         .attr("r", 7)
-        .attr("class", "fd-circle");
+        .attr("class", "fd-circle")
+        .on('click', onClick);
 
       node.append("text")
         .attr("dx", 10)
@@ -77,12 +78,13 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           return d[0];
         });
 
-      circles.on('click', function(n){
-        d3.selectAll(".fd-circle-selected").classed("fd-circle-selected", false);
-        d3.select(this).classed("fd-circle-selected", true);
-        //console.log("selected node", n.name);
-        console.log("selected node", n[0], n[1]);
-      });
+      //var onClick = d3utils.selectionUtil(nodes_table, node, 'circle');
+      //circles.on('click', function(n){
+      //  d3.selectAll(".fd-circle-selected").classed("fd-circle-selected", false);
+      //  d3.select(this).classed("fd-circle-selected", true);
+      //  //console.log("selected node", n.name);
+      //  console.log("selected node", n[0], n[1]);
+      //});
 
       force.on("tick", function () {
         node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
@@ -99,8 +101,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         var $node = $parent.append("div")
           .classed("d3-scatter-output", true);
         data.data().then(function(nodes){
-          drawFDGraph($parent, nodes, o.links, size);
-          //var onClick = d3utils.selectionUtil(o.nodes, $parent, 'circle');
+          drawFDGraph($parent, data, nodes, o.links, size);
         });
         return $node;
       });

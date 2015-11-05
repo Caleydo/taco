@@ -4,8 +4,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/multiform', 'underscore', 'toastr', 'bootstrap-slider', './drag', './lineup', './mds', 'bootstrap', 'font-awesome'],
-  function (data, d3, $, vis, C, multiform, _, toastr, Slider, drag, lineup, mds) {
+require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/idtype', '../caleydo_core/multiform', 'underscore', 'toastr', 'bootstrap-slider', '../caleydo_d3/d3util', './drag', './lineup', './mds', 'bootstrap', 'font-awesome'],
+  function (data, d3, $, vis, C, idtypes, multiform, _, toastr, Slider, d3utils, drag, lineup, mds) {
     'use strict';
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
@@ -197,7 +197,13 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       //MDS part
       //creating the data
       calcGraphData(test_items)
-        .then(showMDS);
+        .then(function (mdata) {
+          showMDS(mdata);
+        });
+      idtypes.resolve('_taco_dataset').on('select-selected', function(e, range) {
+          var r = range.dim(0).asList();
+          console.log(r);
+        });
 
       // static test data
       //calcLineupData(test_items[0], test_items)
