@@ -381,18 +381,15 @@ a.taco-logo {
 }
 
 /* bootstrap slider */
-#dsSlider .slider-selection {
-  background: #BABABA;
-}
+#dsSlider {
+  margin-top: 3px;
 
-#dsSlider .slider-handle {
-  background: #fad000;
-}
+  .slider-handle {
+    background: #fad000;
+  }
 
-.slider.slider-horizontal .slider-tick-label-container .slider-tick-label {
-  color: #ededed;
-  div {
-    padding-top: 0px; //doesn't work
+  .slider-selection {
+    background: #BABABA;
   }
 }
 
@@ -401,8 +398,17 @@ a.taco-logo {
 }
 
 #detail-slider-group {
-  margin-left: 20px;
+  margin-left: 40px;
   margin-right: 10px;
+
+  .slider.slider-horizontal .slider-tick-label-container {
+    font-size: 95%;
+
+    .slider-tick-label {
+      color: #ededed;
+      padding-top: 0px;
+    }
+  }
 }
 
 .taco-test-img {
