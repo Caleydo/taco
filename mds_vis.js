@@ -3,11 +3,11 @@
  */
 define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
     //force directed graph
-    function drawFDGraph(parent, data, nodes, links, size){
+    function drawFDGraph($parent, data, nodes, links, size){
       //todo use size instead
-      var width = 500,
-        height = 500;
-      var svg = parent.append("svg")
+      var width = $parent.node().getBoundingClientRect().width,
+        height = $parent.node().getBoundingClientRect().height;
+      var svg = $parent.append("svg")
         .attr("width", width)
         .attr("height", height);
       svg = drawGraphNodes(svg, data, nodes, links, width, height);
@@ -98,12 +98,10 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       }, [200, 200],
       function ($parent, data, size) {
         var o = this.options;
-        var $node = $parent.append("div")
-          .classed("d3-scatter-output", true);
         data.data().then(function(nodes){
           drawFDGraph($parent, data, nodes, o.links, size);
         });
-        return $node;
+        return $parent;
       });
 
     exports.create = function (data, parent, options) {
