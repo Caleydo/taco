@@ -200,10 +200,22 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         .then(function (mdata) {
           showMDS(mdata);
         });
+
+      var lineup_available = false;
       idtypes.resolve('_taco_dataset').on('select-selected', function(e, range) {
-          var r = range.dim(0).asList();
-          console.log(r);
-        });
+        var r = range.dim(0).asList();
+        // get only the first selected item
+        var first_selected = r[0];
+        if (!lineup_available) {
+          var lu_instance = calcLineupData(test_items[first_selected], test_items)
+            .then(showLineup);
+          lineup_available = true;
+          //console.log(lu_instance, "inst");
+        }else{
+
+          //find a way to update it
+        }
+      });
 
       // static test data
       //calcLineupData(test_items[0], test_items)
@@ -318,7 +330,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         instance.data.on('select-selected', function(event, range) {
           console.log(range.dim(0).asList());
         })
-      })
+      });
     }
 
     // assuming tha the reference table is the full object (not just the ID!)
