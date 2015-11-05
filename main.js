@@ -319,6 +319,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         default:
           d3.select('#overview').classed('expand', true);
       }
+      mds_instance.resize();
     });
 
     //Line Up part
@@ -397,10 +398,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       });
     }
 
+    var mds_instance = null;
     //drawing MDS
     function showMDS(mdata){
-      var mds_instance = mds.create(mdata, document.querySelector('#mds-graph'));
-      mds_instance.then(function(instance){
+      var mds_promise = mds.create(mdata, document.querySelector('#mds-graph'));
+      mds_promise.then(function(instance){
+        mds_instance = instance;
         console.log("instance", instance);
       });
     }

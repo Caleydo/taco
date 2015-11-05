@@ -1,7 +1,7 @@
 /**
  * Created by Reem on 10/23/2015.
  */
-define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
+define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util'], function (exports, d3, $, d3utils) {
     //force directed graph
     function drawFDGraph($parent, data, nodes, links, size){
       //todo use size instead
@@ -10,7 +10,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       var svg = $parent.append("svg")
         .attr("width", width)
         .attr("height", height);
-      svg = drawGraphNodes(svg, data, nodes, links, width, height);
+      drawGraphNodes(svg, data, nodes, links, width, height);
       return svg;
     }
 
@@ -92,6 +92,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       return node;
     }
 
+    var $svg = null;
+
     //end of fd graph
     exports.MDSVis = d3utils.defineVis('MDSVis', {
         dim: ['column']
@@ -99,9 +101,37 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
       function ($parent, data, size) {
         var o = this.options;
         data.data().then(function(nodes){
-          drawFDGraph($parent, data, nodes, o.links, size);
+          $svg = drawFDGraph($parent, data, nodes, o.links, size);
         });
         return $parent;
+      },
+      {
+        resize: function() {
+          if($svg === null) {
+            return;
+          }
+          var done = false;
+          var resizeSvg = function() {
+            done = true;
+            var width = $svg.node().parentNode.getBoundingClientRect().width,
+                height = $svg.node().parentNode.getBoundingClientRect().height;
+              console.log("resize mds vis", $svg);
+            $svg.attr("width", width)
+              .attr("height", height);
+          };
+
+          // use jquery instead of d3
+          // see http://stackoverflow.com/questions/2087510/callback-on-css-transition
+          $($svg.node()).parents('.flex-column').one('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', resizeSvg);
+
+          //ensure tidy up if event doesn't fire..
+          setTimeout(function(){
+            if(!done){
+              console.log("timeout needed to call transition ended..");
+              resizeSvg();
+            }
+          }, 800); //note: time required for the CSS animation of .flex-column to complete plus a grace period (e.g. 10ms)
+        }
       });
 
     exports.create = function (data, parent, options) {
