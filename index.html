@@ -1,173 +1,186 @@
 <!doctype html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>TAble COmparison</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>TAble COmparison</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="style.css">
-    <script src="/caleydo_web.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <script src="/caleydo_web.js"></script>
 </head>
 <body>
 <div id="content">
-    <nav class="navbar-inverse taco-navbar">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#taco-navbar-collapse-1" aria-expanded="false">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand taco-logo" href="#">
-                    <img alt="Brand" src="images/taco_grey.png">
-                    <!--<img alt="Brand" src="images/table_multiple.png">-->
-                </a>
-                <a class="navbar-brand" href="#">TaCo</a>
-            </div>
+  <nav class="navbar-inverse taco-navbar">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                data-target="#taco-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand taco-logo" href="#">
+          <img alt="Brand" src="images/taco_grey.png">
+          <!--<img alt="Brand" src="images/table_multiple.png">-->
+        </a>
+        <a class="navbar-brand" href="#">TaCo</a>
+      </div>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="taco-navbar-collapse-1">
-                <!--<ul class="nav navbar-nav">
-                  <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-                  <li><a href="#">Link</a></li>
-                </ul>-->
-                <div class="navbar-left" style="margin-top:9px;">
-                    <div class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-default active">
-                            <input type="checkbox" class="direction-chk" id="rows" autocomplete="off" name="direction[]" value="rows" checked> Rows
-                        </label>
-                        <label class="btn btn-default active">
-                            <input type="checkbox" class="direction-chk" id="columns" autocomplete="off" name="direction[]" value="columns" checked> Columns
-                        </label>
-                    </div>
-                    <div class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-default active">
-                            <input type="checkbox" class="change-chk" id="structure" autocomplete="off" name="change[]" value="structure" checked> Structure
-                        </label>
-                        <label class="btn btn-default active">
-                            <input type="checkbox" class="change-chk" id="content-ch" autocomplete="off" name="change[]" value="content" checked> Content
-                        </label>
-                        <label class="btn btn-default">
-                            <input type="checkbox" class="change-chk" id="merge" autocomplete="off" name="change[]" value="merge"> Merge
-                        </label>
-                        <label class="btn btn-default">
-                            <input type="checkbox" class="change-chk" id="reorder" autocomplete="off" name="change[]" value="reorder"> Reorder
-                        </label>
-                    </div>
-                    <div class="btn-group" id="detail-slider-group">
-                      <input id="detail-slider" data-slider-id='dsSlider' type="text" data-slider-min="0" data-slider-max="4" data-slider-step="1" data-slider-value="0"/>
-                    </div>
-                    <div id="taco-mf-selector" class="btn-group" data-toggle="buttons">
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="taco-navbar-collapse-1">
+        <!--<ul class="nav navbar-nav">
+          <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+          <li><a href="#">Link</a></li>
+        </ul>-->
+        <div class="navbar-left" style="margin-top:9px;">
+          <div class="btn-group" data-toggle="buttons">
+            <label class="btn btn-default active">
+              <input type="checkbox" class="direction-chk" id="rows" autocomplete="off" name="direction[]" value="rows"
+                     checked> Rows
+            </label>
+            <label class="btn btn-default active">
+              <input type="checkbox" class="direction-chk" id="columns" autocomplete="off" name="direction[]"
+                     value="columns" checked> Columns
+            </label>
+          </div>
+          <div class="btn-group" data-toggle="buttons">
+            <label class="btn btn-default active">
+              <input type="checkbox" class="change-chk" id="structure" autocomplete="off" name="change[]"
+                     value="structure" checked> Structure
+            </label>
+            <label class="btn btn-default active">
+              <input type="checkbox" class="change-chk" id="content-ch" autocomplete="off" name="change[]"
+                     value="content" checked> Content
+            </label>
+            <label class="btn btn-default">
+              <input type="checkbox" class="change-chk" id="merge" autocomplete="off" name="change[]" value="merge">
+              Merge
+            </label>
+            <label class="btn btn-default">
+              <input type="checkbox" class="change-chk" id="reorder" autocomplete="off" name="change[]" value="reorder">
+              Reorder
+            </label>
+          </div>
+          <div class="btn-group" id="detail-slider-group">
+            <input id="detail-slider" data-slider-id='dsSlider' type="text" data-slider-min="0" data-slider-max="4"
+                   data-slider-step="1" data-slider-value="0"/>
+          </div>
+          <div id="taco-mf-selector" class="btn-group" data-toggle="buttons">
 
-                    </div>
-                </div>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container-fluid -->
-    </nav>
-    <!--/.navbar -->
-
-    <div class="flex-container">
-        <div class="flex-column expand" id="overview">
-          <div class="tab-title"><a data-expand-column="#overview" class="expand-column" data-expand-only="true" data-slider-value="0">Overview</a></div>
-          <div class="tab-content container-fluid">
-            <div class="row">
-              <div class="col-xs-6">
-                <h2>FD graph</h2>
-                <div id="mds-graph">
-
-                </div>
-              </div>
-              <div class="col-xs-6">
-                <h2>LineUp</h2>
-                <div id="lineup">
-
-                </div>
-              </div>
-            </div>
           </div>
         </div>
-        <div class="flex-column" id="middle">
-          <div class="tab-title"><a data-expand-column="#middle" class="expand-column" data-expand-only="true" data-slider-value="2">Middle</a></div>
-          <div class="tab-content container-fluid">
-            <div class="row">
-              <div class="col-xs-3">
-                <div>
-                  <img src="images/multitable.PNG">
-                </div>
-              </div>
-              <div id="comparable">
-              <div class="col-xs-1">
-                <div>
-                  <img src="images/his0.PNG">
-                </div>
-              </div>
-              <div class="col-xs-1">
-                <div>
-                  <img src="images/his1.PNG">
-                </div>
-              </div>
-              <div class="col-xs-1">
-                <div>
-                  <img src="images/his2.PNG">
-                </div>
-              </div>
-              <div class="col-xs-1">
-                <div>
-                  <img src="images/his3.PNG">
-                </div>
-              </div>
-              <div class="col-xs-1">
-                <div>
-                  <img src="images/his4.PNG">
-                </div>
-              </div>
-              <div class="col-xs-1">
-                <div>
-                  <img src="images/his5.PNG">
-                </div>
-              </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="flex-column" id="detail">
-            <div class="tab-title"><a data-expand-column="#detail" class="expand-column" data-expand-only="true" data-slider-value="4">Detail</a></div>
-            <div class="tab-content container-fluid">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div id="board" class="mode-block">
-                            <div id="test" class="taco-table-container"></div>
-                            <div id="test2" class="taco-table-container"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
+      <!-- /.navbar-collapse -->
     </div>
+    <!-- /.container-fluid -->
+  </nav>
+  <!--/.navbar -->
 
-    <footer id="blockbrowser">
-        <table class="table table-striped table-hover table-condensed">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>ID Types</th>
-                <th>Dim</th>
-                <th>Src</th>
-                <th>Dest</th>
-            </tr>
-            </thead>
-            <tbody>
+  <div class="flex-container">
+    <div class="flex-column expand" id="overview">
+      <div class="tab-title"><a data-expand-column="#overview" class="expand-column" data-expand-only="true"
+                                data-slider-value="0">Overview</a></div>
+      <div class="tab-content container-fluid">
+        <div class="row">
+          <div class="col-xs-6">
+            <h2>FD graph</h2>
 
-            </tbody>
-        </table>
-    </footer>
+            <div id="mds-graph">
+
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <h2>LineUp</h2>
+
+            <div id="lineup">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex-column" id="middle">
+      <div class="tab-title"><a data-expand-column="#middle" class="expand-column" data-expand-only="true"
+                                data-slider-value="2">Middle</a></div>
+      <div class="tab-content container-fluid">
+        <div class="row">
+          <div class="col-xs-3">
+            <div>
+              <img src="images/multitable.PNG">
+            </div>
+          </div>
+          <div id="comparable">
+            <div class="col-xs-1">
+              <div>
+                <img src="images/his0.PNG">
+              </div>
+            </div>
+            <div class="col-xs-1">
+              <div>
+                <img src="images/his1.PNG">
+              </div>
+            </div>
+            <div class="col-xs-1">
+              <div>
+                <img src="images/his2.PNG">
+              </div>
+            </div>
+            <div class="col-xs-1">
+              <div>
+                <img src="images/his3.PNG">
+              </div>
+            </div>
+            <div class="col-xs-1">
+              <div>
+                <img src="images/his4.PNG">
+              </div>
+            </div>
+            <div class="col-xs-1">
+              <div>
+                <img src="images/his5.PNG">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex-column" id="detail">
+      <div class="tab-title"><a data-expand-column="#detail" class="expand-column" data-expand-only="true"
+                                data-slider-value="4">Detail</a></div>
+      <div class="tab-content container-fluid">
+        <div class="row">
+          <div class="col-xs-12">
+            <div id="board" class="mode-block">
+              <div id="test" class="taco-table-container"></div>
+              <div id="test2" class="taco-table-container"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="blockbrowser">
+    <table class="table table-striped table-hover table-condensed">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>ID Types</th>
+        <th>Dim</th>
+        <th>Src</th>
+        <th>Dest</th>
+      </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+  </footer>
 </div>
 </body>
 </html>
