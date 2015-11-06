@@ -332,6 +332,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           lineup_instance = instance;
           instance.data.on('select-selected', function (event, range) {
             console.log(range.dim(0).asList());
+            //get the ranking of lineup
+            //todo call it from a better place but should be when the line up is finished
+            var ranking = instance.lineup.data.getLastRanking().getOrder();
+            console.log("the ranking", ranking);
           });
         });
     }
