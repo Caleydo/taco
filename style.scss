@@ -467,10 +467,9 @@ a.taco-logo {
   fill: #456bb4;
 }
 
-.node .fd-circle-selected{
+.node.select-node-selected .fd-circle{
   stroke: $select-color;
   stroke-width: 1.5px;
-  fill: #456bb4;
 }
 
 .node text {

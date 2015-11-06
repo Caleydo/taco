@@ -1,7 +1,7 @@
 /**
  * Created by Reem on 10/23/2015.
  */
-define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util'], function (exports, d3, $, d3utils) {
+define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idtype'], function (exports, d3, $, d3utils, idtypes) {
     //force directed graph
     function drawFDGraph($parent, data, nodes, links, size){
       //todo use size instead
@@ -57,7 +57,10 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util'], function (exports, d
       //it's important to start at the end
       force.start();
 
-      var onClick = d3utils.selectionUtil(data, svg, '.node');
+      d3utils.selectionUtil(data, svg, '.node');
+      var onClick = function(d,i) {
+        data.select(0, 'node-selected', [i], idtypes.toSelectOperation(d3.event));
+      };
 
       var node = svg.selectAll(".node")
         .data(force.nodes())
@@ -121,7 +124,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util'], function (exports, d
           };
 
           // use jquery instead of d3
-          // see http://stackoverflow.com/questions/2087510/callback-on-css-transition
+          // http://stackoverflow.com/questions/2087510/callback-on-css-transition
           $($svg.node()).parents('.flex-column').one('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', resizeSvg);
 
           //ensure tidy up if event doesn't fire..

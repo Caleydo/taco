@@ -21,6 +21,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       settings_direction = [],
       settings_detail = 4;
 
+    // vis instances
+    var lineup_instance = null,
+      mds_instance = null;
+
 
     function toType(desc) {
       if (desc.type === 'vector') {
@@ -201,19 +205,19 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           showMDS(mdata);
         });
 
-      var lineup_available = false;
-      idtypes.resolve('_taco_dataset').on('select-selected', function(e, range) {
-        var r = range.dim(0).asList();
-        // get only the first selected item
-        var first_selected = r[0];
-        if (!lineup_available) {
-          var lu_instance = calcLineupData(test_items[first_selected], test_items)
+      idtypes.resolve('_taco_dataset').on('select', function (e, type, range) {
+        if (type === 'node-selected'){
+          var r = range.dim(0).asList();
+          // get only the first selected item
+          var first_selected = r[0];
+          if (lineup_instance !== null) {
+            lineup_instance.destroy();
+          }
+          calcLineupData(test_items[first_selected], test_items)
             .then(showLineup);
-          lineup_available = true;
-          //console.log(lu_instance, "inst");
-        }else{
-
-          //find a way to update it
+        }else if (type === 'selected'){
+          //type could be selected or hovered
+          console.log('type', type, range.dim(0).asList());
         }
       });
 
@@ -222,9 +226,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       //  .then(showLineup);
     });
 
-    //$("[name='detail']").change(function () {
-    //    console.log("changed this ", $(this).val());
-    //});
+    /* On change functions */
 
     $("[name='change[]']").change(function () {
       var matches = [];
@@ -325,13 +327,13 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     //Line Up part
 
     function showLineup(lineup_data) {
-      var lineup_instance = lineup.create(lineup_data, document.querySelector('#lineup'));
-      lineup_instance.then(function(instance){
-        //console.log("line up instance", instance);
-        instance.data.on('select-selected', function(event, range) {
-          console.log(range.dim(0).asList());
-        })
-      });
+      lineup.create(lineup_data, document.querySelector('#lineup'))
+        .then(function (instance) {
+          lineup_instance = instance;
+          instance.data.on('select-selected', function (event, range) {
+            console.log(range.dim(0).asList());
+          });
+        });
     }
 
     // assuming tha the reference table is the full object (not just the ID!)
@@ -398,14 +400,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       });
     }
 
-    var mds_instance = null;
     //drawing MDS
-    function showMDS(mdata){
-      var mds_promise = mds.create(mdata, document.querySelector('#mds-graph'));
-      mds_promise.then(function(instance){
-        mds_instance = instance;
-        console.log("instance", instance);
-      });
+    function showMDS(mdata) {
+      mds.create(mdata, document.querySelector('#mds-graph'))
+        .then(function (instance) {
+          mds_instance = instance;
+        });
     }
 
   });
