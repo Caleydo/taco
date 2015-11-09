@@ -104,15 +104,15 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
       var svg = $parent.append("svg")
         .attr("width", width)
         .attr("height", height);
-      var margin = 20;
+      var margin = 40;
 
       var xScale = d3.scale.linear()
         .domain([pos.xmin, pos.xmax])
-        .range([0 + margin, width - margin]);
+        .range([margin, width - margin]);
 
       var yScale = d3.scale.linear()
         .domain([pos.ymin, pos.ymax])
-        .range([0 + margin, height - margin]);
+        .range([margin, height - margin]);
 
 
       d3utils.selectionUtil(data, svg, '.node');
@@ -120,6 +120,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         data.select(0, 'node-selected', [i], idtypes.toSelectOperation(d3.event));
       };
 
+      // combine both the nodes with the position
       var mixed_data = [];
       pos.pos.forEach(function(d,i) {
         d.name = nodes[i][0];
@@ -133,8 +134,9 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         .attr("class", "node");
         //.call(force.drag);
 
+      var radius = 7;
       var circles = node.append("circle")
-        .attr("r", 7)
+        .attr("r", radius)
         .attr("class", "fd-circle")
         .attr("cx", function(d) {
           return xScale(d.x);
@@ -151,10 +153,10 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
           return d.name;
         })
         .attr("x", function(d) {
-          return xScale(d.x) + 5;
+          return xScale(d.x) + radius;
         })
         .attr("y", function (d) {
-          return yScale(d.y);
+          return yScale(d.y) + (radius/2);
         });
 
       //var text = svg.append("g")
