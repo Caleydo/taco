@@ -22,9 +22,10 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
           color: '#4daf4a',
           value: {
             type: 'real',
-            range: d3.extent(data, function (d) {
-              return d.stadd;
-            })
+            //range: d3.extent(data, function (d) {
+            //  return d.stadd;
+            //})
+            range: [0,100]
           },
           getter: function (d) {
             return d.stadd;
@@ -34,9 +35,10 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
           color: '#e41a1c',
           value: {
             type: 'real',
-            range: d3.extent(data, function (d) {
-              return d.stdel;
-            })
+            //range: d3.extent(data, function (d) {
+            //  return d.stdel;
+            //})
+            range: [0,100]
           },
           getter: function (d) {
             return d.stdel;
@@ -46,9 +48,10 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
           color: '#377eb8',
           value: {
             type: 'real',
-            range: d3.extent(data, function (d) {
-              return d.cont;
-            })
+            //range: d3.extent(data, function (d) {
+            //  return d.cont;
+            //})
+            range: [0,100]
           },
           getter: function (d) {
             return d.cont;
@@ -58,9 +61,10 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
           color: '#999999',
           value: {
             type: 'real',
-            range: d3.extent(data, function (d) {
-              return d.noch;
-            })
+            //range: d3.extent(data, function (d) {
+            //  return d.noch;
+            //})
+            range: [0,100]
           },
           getter: function (d) {
             return d.noch;
