@@ -397,7 +397,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       }).then(function (diffmatrix) {
         return diffmatrix.data().then(function(dm_data){
           return{
-            links: dm_data,
+            pos: dm_data,
             nodes: datalist
           };
         });

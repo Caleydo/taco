@@ -38,7 +38,7 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
     return v.load().then(function (plugin) {
       return plugin.factory(mds_nodes_table, parent, {
         dim: [199,200], //this should be the options or so? //todo pass what you need
-        links: data.links //how can I draw a FORCE directed graph without nodes?
+        links: data.pos
       });
     });
   };

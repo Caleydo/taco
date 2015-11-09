@@ -94,17 +94,89 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
       });
       return node;
     }
+    //end of fd graph
+
+    //MDS graph
+    function drawMDSGraph($parent, data, nodes, pos, size){
+      //todo use size instead
+      var width = $parent.node().getBoundingClientRect().width,
+        height = $parent.node().getBoundingClientRect().height;
+      var svg = $parent.append("svg")
+        .attr("width", width)
+        .attr("height", height);
+      var margin = 20;
+
+      var xScale = d3.scale.linear()
+        .domain([pos.xmin, pos.xmax])
+        .range([0 + margin, width - margin]);
+
+      var yScale = d3.scale.linear()
+        .domain([pos.ymin, pos.ymax])
+        .range([0 + margin, height - margin]);
+
+
+      d3utils.selectionUtil(data, svg, '.node');
+      var onClick = function(d,i) {
+        data.select(0, 'node-selected', [i], idtypes.toSelectOperation(d3.event));
+      };
+
+      var node = svg.selectAll(".node")
+        .data(pos.pos)
+        .enter()
+        .append("g")
+        .attr("class", "node");
+        //.call(force.drag);
+
+      var circles = node.append("circle")
+        .attr("r", 7)
+        .attr("class", "fd-circle")
+        .attr("cx", function(d) {
+          return xScale(d.x);
+        })
+        .attr("cy", function (d) {
+          return yScale(d.y);
+        })
+        .on('click', onClick);
+
+      node.append("text")
+       // .attr("dx", 10)
+       // .attr("dy", ".35em")
+        .text(function (d, i) {
+          return i;
+        })
+        .attr("x", function(d) {
+          return xScale(d.x) + 5;
+        })
+        .attr("y", function (d) {
+          return yScale(d.y);
+        });
+
+      //var text = svg.append("g")
+      //  .attr("class", "labels")
+      //  .selectAll("text")
+      //  .data(nodes)
+      //  .enter().append("text")
+      //  .attr("dx", 12)
+      //  .attr("dy", ".35em")
+      //  .text(function (d) {
+      //    return d[0];
+      //  });
+
+      return svg;
+    }
+    //end of MDS graph
+
 
     var $svg = null;
 
-    //end of fd graph
     exports.MDSVis = d3utils.defineVis('MDSVis', {
         dim: ['column']
       }, [200, 200],
       function ($parent, data, size) {
         var o = this.options;
         data.data().then(function(nodes){
-          $svg = drawFDGraph($parent, data, nodes, o.links, size);
+          //$svg = drawFDGraph($parent, data, nodes, o.links, size);
+          $svg = drawMDSGraph($parent, data, nodes, o.links, size);
         });
         return $parent;
       },
