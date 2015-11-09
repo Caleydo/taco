@@ -120,8 +120,14 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         data.select(0, 'node-selected', [i], idtypes.toSelectOperation(d3.event));
       };
 
+      var mixed_data = [];
+      pos.pos.forEach(function(d,i) {
+        d.name = nodes[i][0];
+        mixed_data[i] = d;
+      });
+
       var node = svg.selectAll(".node")
-        .data(pos.pos)
+        .data(mixed_data)
         .enter()
         .append("g")
         .attr("class", "node");
@@ -142,7 +148,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
        // .attr("dx", 10)
        // .attr("dy", ".35em")
         .text(function (d, i) {
-          return i;
+          return d.name;
         })
         .attr("x", function(d) {
           return xScale(d.x) + 5;
