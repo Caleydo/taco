@@ -38,7 +38,7 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
     return v.load().then(function (plugin) {
       return plugin.factory(mds_nodes_table, parent, {
         dim: [199,200], //this should be the options or so? //todo pass what you need
-        links: data.pos
+        links: data.pos //the array of x,y coordinates we get from python
       });
     });
   };

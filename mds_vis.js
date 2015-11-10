@@ -16,19 +16,6 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
 
     function drawGraphNodes(svg, data, nodes_table, links, width, height){
       //todo the value should represent the similarity ?
-      /*
-      //http://bl.ocks.org/d3noob/5141278
-      var nodes = {};
-
-      // Compute the distinct nodes from the links.
-      links.forEach(function(link) {
-          link.source = nodes[link.source] ||
-              (nodes[link.source] = {name: link.source});
-          link.target = nodes[link.target] ||
-              (nodes[link.target] = {name: link.target});
-          link.value = +link.value;
-      });
-      */
 
       var force = d3.layout.force()
         .charge(-150)
@@ -36,7 +23,6 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         //.nodes(d3.values(nodes))
         .nodes(nodes_table)
         .links(links);
-        //.start();
 
       // http://jsdatav.is/visuals.html?id=83515b77c2764837aac2
       // here the value represent the distance -> diff
@@ -67,7 +53,6 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         .enter()
         .append("g")
         .attr("class", "node");
-        //.call(force.drag);
 
       var circles = node.append("circle")
         .attr("r", 7)
@@ -81,14 +66,6 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
           return d[0];
         });
 
-      //var onClick = d3utils.selectionUtil(nodes_table, node, 'circle');
-      //circles.on('click', function(n){
-      //  d3.selectAll(".fd-circle-selected").classed("fd-circle-selected", false);
-      //  d3.select(this).classed("fd-circle-selected", true);
-      //  //console.log("selected node", n.name);
-      //  console.log("selected node", n[0], n[1]);
-      //});
-
       force.on("tick", function () {
         node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
       });
@@ -98,9 +75,8 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
 
     //MDS graph
     function drawMDSGraph($parent, data, nodes, pos, size){
-      //todo use size instead
-      var width = $parent.node().getBoundingClientRect().width,
-        height = $parent.node().getBoundingClientRect().height;
+      var width = size[0],
+        height = size[1];
       var svg = $parent.append("svg")
         .attr("width", width)
         .attr("height", height);
@@ -159,17 +135,6 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
           return yScale(d.y) + (radius/2);
         });
 
-      //var text = svg.append("g")
-      //  .attr("class", "labels")
-      //  .selectAll("text")
-      //  .data(nodes)
-      //  .enter().append("text")
-      //  .attr("dx", 12)
-      //  .attr("dy", ".35em")
-      //  .text(function (d) {
-      //    return d[0];
-      //  });
-
       return svg;
     }
     //end of MDS graph
@@ -183,8 +148,9 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
       function ($parent, data, size) {
         var o = this.options;
         data.data().then(function(nodes){
+          var current_size = [$parent.node().getBoundingClientRect().width, $parent.node().getBoundingClientRect().height];
           //$svg = drawFDGraph($parent, data, nodes, o.links, size);
-          $svg = drawMDSGraph($parent, data, nodes, o.links, size);
+          $svg = drawMDSGraph($parent, data, nodes, o.links, current_size);
         });
         return $parent;
       },
