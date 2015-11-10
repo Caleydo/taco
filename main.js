@@ -129,6 +129,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                   change: settings_change,
                   direction: settings_direction,
                   detail: settings_detail,
+                  tocall: 'diff',
                   size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length] //we can use dummy values instead
                 }).then(function (diffmatrix) {
                   //diffmatrix
@@ -354,14 +355,16 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               direction: settings_direction,
               //detail: settings_detail,
               //detail: $('#detail-slider').val(), //todo use this
-              detail: 4, //because we are aggregating in the client for now but we should just get the result from the server
+              detail: 0, //because we get it from the server
+              tocall: 'diff',
               size: e.desc.size //we can use dummy values instead
             }).then(function (diffmatrix) {
-              return Promise.all([diffmatrix.nochangeRatio(), diffmatrix.contentRatio(), diffmatrix.structAddRatio(), diffmatrix.structDelRatio()]).then(function(dm_data){
-                var noch = dm_data[0].ratio * 100;
-                var cont = dm_data[1].ratio * 100;
-                var stadd = dm_data[2].ratio * 100;
-                var stdel = dm_data[3].ratio * 100;
+              return diffmatrix.data().then(function(dm_data){
+                console.log(dm_data);
+                var noch = dm_data.no_ratio * 100;
+                var cont = dm_data.c_ratio * 100;
+                var stadd = dm_data.a_ratio * 100;
+                var stdel = dm_data.d_ratio * 100;
                 return {
                   name: e.desc.name,
                   noch: noch,
@@ -392,7 +395,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         change: "structure,content",
         direction: settings_direction,
         //detail: $('#detail-slider').val(), //todo use this
-        detail: 0, //the key point
+        detail: 0,
+        tocall: 'mds', //the key point
         size: datalist.length //we can use dummy values instead
       }).then(function (diffmatrix) {
         return diffmatrix.data().then(function(dm_data){
