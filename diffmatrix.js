@@ -45,39 +45,36 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
     return ids;
   }
 
-  function aggregate(content, bins) {
+  function aggregate(content, bins, u_ids) {
     var hist = [],
-      len = content.length,
+      len = u_ids.length,
       mod = len % bins,
       items = Math.floor(len / bins),
       index = 0,
-      temp; //when we count the items to the bin
+      addi = 0, // the number of items that should be added
+      temp, data_temp; //when we count the items to the bin
     for (i = 0; i < bins; i++) {
       if (i < mod) {
-        temp = content.slice(index, index + items + 1);
-        index += items + 1;
-        hist.push({
-          id: temp[0].id + '-' + temp[items].id, //first and last id
-          count: d3.sum(temp, function (d) {
-            return d.count;
-          }), //sum those
-          //content.map(function(o) { return o.id; }).reduce(a, b) { return a + b; }))
-          pos: i //starting from 0 is ok or?
-        });
+        addi = items + 1;
+        temp = u_ids.slice(index, index + addi);
+        index += addi;
       } else {
         //the filling in case of a perfect division
-        temp = content.slice(index, index + items);
+        temp = u_ids.slice(index, index + items);
         index += items;
-        hist.push({
-          id: temp[0].id + '-' + temp[items - 1].id, //first and last id
-          count: d3.sum(temp, function (d) {
-            return d.count;
-          }), //sum those
-          //content.map(function(o) { return o.id; }).reduce(a, b) { return a + b; }))
-          pos: i //starting from 0 is ok or?
-        });
       }
+      data_temp = $.grep(content, function(e){
+        return temp.indexOf(e.id) !== -1 ; // todo return only the objects that are in the temp array
+      });
+      hist.push({
+        id: temp[0] + '-' + temp[addi - 1], //first and last id
+        count: d3.sum(data_temp, function (d) {
+          return d.count;
+        }), //sum those
+        pos: i //starting from 0 is ok or?
+      });
     }
+    console.table("hist", hist);
     return hist;
   }
 
@@ -108,6 +105,9 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
 
       //var toDiffMatrix = dHeatmap.createUnionTable(rows1, rows2, cols1, cols2);
       var h_data = diff_parser.getDiff();
+      //store the dimension of the union table
+      this.width = h_data.union;
+      console.log("this widht" , this.width);
       //store result in cache
       this._cache = h_data;
       return h_data;
@@ -126,21 +126,24 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
       });
     },
     // @param bins the number of bins?
-    rowAggStats: function(bins) {
+    rowAggStats: function(bins, u_ids) {
       return this.rowStats().then(function(data){
-        return aggregate(data, bins);
+        return aggregate(data, bins, u_ids);
       });
     },
-    colAggStats: function(bins) {
+    colAggStats: function(bins, u_ids) {
       return this.colStats().then(function(data){
-        return aggregate(data, bins);
+        return aggregate(data, bins, u_ids);
       });
     },
     //todo change this so that it consider the case of both rows and cols at the same time
     dimStats : function(dim, bins) {
-      console.log(bins, "bins");
       if(bins > 0){
-        return dim[0] === 'c' ? this.colAggStats(bins) : this.rowAggStats(bins);
+        var that = this;
+        return this.data().then(function(data){
+          // we need the union size
+          return dim[0] === 'c' ? that.colAggStats(bins, data.union.uc_ids) : that.rowAggStats(bins, data.union.ur_ids);
+        });
       } else {
         //if it's 0 then do no aggregation
         return dim[0] === 'c' ? this.colStats() : this.rowStats();
