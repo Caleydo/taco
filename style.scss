@@ -52,7 +52,7 @@ svg {
 
 #board {
   width: 100%;
-  height: 80vh;
+  height: 91vh;
   position: relative;
   background-color: white;
   overflow: hidden;
@@ -370,14 +370,9 @@ a.taco-logo {
 }
 
 #ref-table {
-  border: solid 1px white;
-  height: 30vh;
-}
-
-#ref-table {
-  border: solid 1px white;
-  background: white;
-  height: 30vh;
+  border: solid 1px orange;
+  background: #faffcf;
+  height: 60vh;
 }
 
 /* bootstrap slider */
