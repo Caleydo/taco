@@ -14,17 +14,17 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .style("width", function (d) {
           return x(d.count) + "px";
         })
-        .style("height", gridSize -1 + "px")
+        .style("height", gridSize - 1 + "px")
         .attr("title", function (d) {
           return d.count;
         })
         //.text(function (d) {return d.id;})
         .style("transform", function (d) {
-          console.log(y(d.pos));
           return "translate(" + 0 + "px," + y(d.pos) + "px)";
         });
       return parent;
     }
+
     /*
     function drawStructHist(p_data, gridSize, parent, y, isadd) {
       var container = parent.selectAll("div.struct")
@@ -45,22 +45,15 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       return parent;
     }
    */
-    function drawHistogram(parent, data, bins, dim) {
-      //todo get this from the promise data (the result from the server)
-      var usize0 = data.desc.size[0],
-        usize1 = data.desc.size[1],
-        is_cols = false;
+    function drawHistogram(parent, data, bins, dim, size) {
+      var is_cols = false;
       //todo conside the direction in a better way
       if (dim !== "rows") {
-        usize0 = data.desc.size[1];
-        usize1 = data.desc.size[0];
         is_cols = true;
       }
-      var
-        //todo we could use the width of the max value
-        width =  20,
-        //height = usize0, //todo make it flexible based on the original table
-        height = 200,
+      //todo we could use the width of the max value
+      var width = size[0],
+        height = size[1],
         gridSize = Math.floor(height / bins);
       var myDrag = drag.Drag();
 
@@ -93,6 +86,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
           var x = d3.scale.linear()
             .domain([0, max_change]) // todo this is the same issue everywhere should the length of the bar represent 100% or the max value???
             .range([0, width]);
+
           $node = drawContentHist(stats, gridSize, $node, x, y);
         });
       }
@@ -114,17 +108,17 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
 
     exports.DiffHistogram = d3utils.defineVis('DiffHistogram', {
         dim: ['column']
-      }, [200, 200],
+      }, [50, 200],
       function ($parent, data, size) {
         var o = this.options;
         var $node = $parent.append("div");
         var bins = o.bins;
         if (o.dim.indexOf("rows") > -1) {
-          drawHistogram($node, data, bins, "rows");
+          drawHistogram($node, data, bins, "rows", size);
         }
         if (o.dim.indexOf("columns") > -1) {
           //call the function for the cols!
-          drawHistogram($node, data, bins, "columns");
+          drawHistogram($node, data, bins, "columns", size);
         }
         return $node;
       });

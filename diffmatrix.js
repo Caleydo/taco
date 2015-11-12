@@ -74,7 +74,6 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
         pos: i //starting from 0 is ok or?
       });
     }
-    console.table("hist", hist);
     return hist;
   }
 
@@ -105,9 +104,6 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
 
       //var toDiffMatrix = dHeatmap.createUnionTable(rows1, rows2, cols1, cols2);
       var h_data = diff_parser.getDiff();
-      //store the dimension of the union table
-      this.width = h_data.union;
-      console.log("this widht" , this.width);
       //store result in cache
       this._cache = h_data;
       return h_data;
