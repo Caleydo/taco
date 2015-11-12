@@ -49,7 +49,7 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
     var hist = [],
       len = content.length,
       mod = len % bins,
-      items = len / bins,
+      items = Math.floor(len / bins),
       index = 0,
       temp; //when we count the items to the bin
     for (i = 0; i < bins; i++) {
@@ -138,8 +138,9 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
     },
     //todo change this so that it consider the case of both rows and cols at the same time
     dimStats : function(dim, bins) {
+      console.log(bins, "bins");
       if(bins > 0){
-        return dim[0] === 'c' ? this.colAggStats(bins) : this.colAggStats(bins);
+        return dim[0] === 'c' ? this.colAggStats(bins) : this.rowAggStats(bins);
       } else {
         //if it's 0 then do no aggregation
         return dim[0] === 'c' ? this.colStats() : this.rowStats();

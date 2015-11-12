@@ -14,12 +14,13 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .style("width", function (d) {
           return x(d.count) + "px";
         })
-        .style("height", gridSize - 1 + "px")
+        .style("height", gridSize -1 + "px")
         .attr("title", function (d) {
           return d.count;
         })
         //.text(function (d) {return d.id;})
         .style("transform", function (d) {
+          console.log(y(d.pos));
           return "translate(" + 0 + "px," + y(d.pos) + "px)";
         });
       return parent;
@@ -44,7 +45,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       return parent;
     }
    */
-    function drawHistogram(parent, data, dim, bins) {
+    function drawHistogram(parent, data, bins, dim) {
       //todo get this from the promise data (the result from the server)
       var usize0 = data.desc.size[0],
         usize1 = data.desc.size[1],
@@ -63,17 +64,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         gridSize = Math.floor(height / bins);
       var myDrag = drag.Drag();
 
-      var max_change = Math.max.apply(Math, p_data.map(function (o) {
-        return o.count;
-      }));
-
-      //http://bost.ocks.org/mike/bar/
-      var x = d3.scale.linear()
-          .domain([0, max_change])
-          .range([0, width]);
-
       var y = d3.scale.linear()
-        .domain([0, usize0])
+        .domain([0, bins])
         .range([0, height]);
 
       //todo find a better way for calculating the position
@@ -93,7 +85,14 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       if (data.desc.change.indexOf('content') > -1) {
         //todo change this so that it consider the case of both rows and cols at the same time
         // m means that it's aggregated in the level of medium
-        data.(dim, bins).then(function (stats) {
+        data.dimStats(dim, bins).then(function (stats) {
+          var max_change = Math.max.apply(Math, stats.map(function (o) {
+            return o.count;
+          }));
+          //http://bost.ocks.org/mike/bar/
+          var x = d3.scale.linear()
+            .domain([0, max_change]) // todo this is the same issue everywhere should the length of the bar represent 100% or the max value???
+            .range([0, width]);
           $node = drawContentHist(stats, gridSize, $node, x, y);
         });
       }
