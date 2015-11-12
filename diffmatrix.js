@@ -45,6 +45,42 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
     return ids;
   }
 
+  function aggregate(content, bins) {
+    var hist = [],
+      len = content.length,
+      mod = len % bins,
+      items = len / bins,
+      index = 0,
+      temp; //when we count the items to the bin
+    for (i = 0; i < bins; i++) {
+      if (i < mod) {
+        temp = content.slice(index, index + items + 1);
+        index += items + 1;
+        hist.push({
+          id: temp[0].id + '-' + temp[items].id, //first and last id
+          count: d3.sum(temp, function (d) {
+            return d.count;
+          }), //sum those
+          //content.map(function(o) { return o.id; }).reduce(a, b) { return a + b; }))
+          pos: i //starting from 0 is ok or?
+        });
+      } else {
+        //the filling in case of a perfect division
+        temp = content.slice(index, index + items);
+        index += items;
+        hist.push({
+          id: temp[0].id + '-' + temp[items - 1].id, //first and last id
+          count: d3.sum(temp, function (d) {
+            return d.count;
+          }), //sum those
+          //content.map(function(o) { return o.id; }).reduce(a, b) { return a + b; }))
+          pos: i //starting from 0 is ok or?
+        });
+      }
+    }
+    return hist;
+  }
+
   exports.DiffMatrix = datatypes.defineDataType('diffmatrix', {
     init: function (desc) {
       //init function
@@ -76,6 +112,9 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
       this._cache = h_data;
       return h_data;
     },
+    // {id: id,
+    // count: represents the height of the bar or count of appearance,
+    // pos: the position of this r/c in a table}
     rowStats: function() {
       return this.data().then(function(data) {
         return dimensionStats(data.content,rowSelector);
@@ -86,9 +125,25 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
         return dimensionStats(data.content,colSelector);
       });
     },
+    // @param bins the number of bins?
+    rowAggStats: function(bins) {
+      return this.rowStats().then(function(data){
+        return aggregate(data, bins);
+      });
+    },
+    colAggStats: function(bins) {
+      return this.colStats().then(function(data){
+        return aggregate(data, bins);
+      });
+    },
     //todo change this so that it consider the case of both rows and cols at the same time
-    dimStats : function(dim) {
-      return dim[0] === 'c' ? this.colStats() : this.rowStats();
+    dimStats : function(dim, bins) {
+      if(bins > 0){
+        return dim[0] === 'c' ? this.colAggStats(bins) : this.colAggStats(bins);
+      } else {
+        //if it's 0 then do no aggregation
+        return dim[0] === 'c' ? this.colStats() : this.rowStats();
+      }
     },
     structDelStats: function(dim){
        return this.data().then(function(d){

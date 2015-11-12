@@ -22,6 +22,7 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
           color: '#4daf4a',
           value: {
             type: 'real',
+            //todo is it possible to get the max of all the columns?
             //range: d3.extent(data, function (d) {
             //  return d.stadd;
             //})

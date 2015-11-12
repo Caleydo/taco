@@ -118,8 +118,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                     settings_direction.push(this.value);
                 });
 
-                console.log("detailll", settings_detail);
-                settings_detail = $('#detail-slider').val()
+                settings_detail = $('#detail-slider').val();
 
                 data_provider.create({
                   type: 'diffstructure',
@@ -140,7 +139,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                       //remove the old multiform selector
                       d3.select('#taco-mf-selector').html('');
                     }
-                    dh = multiform.create(diffmatrix, d3.select('#board').node(), {'diffplotvis':{dim: settings_direction}});
+                    dh = multiform.create(diffmatrix, d3.select('#board').node(), {
+                      'diffplotvis': {dim: settings_direction},
+                      'diffhistvis': {dim: settings_direction, bins: 5} //todo find a way to specify this
+                    });
                     multiform.addSelectVisChooser(d3.select('#taco-mf-selector').node(), dh);
                     d3.select('#taco-mf-selector select').classed('form-control', true);
                     /*var visses = vis.list(diffmatrix);
@@ -218,7 +220,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             .then(showLineup);
         }else if (type === 'selected'){
           //type could be selected or hovered
-          console.log('type', type, range.dim(0).asList());
+          var selected = range.dim(0).asList();
+          if (selected.length >= 2){
+            console.log("moving to the next view with ", selected);
+          }
         }
       });
 
@@ -323,6 +328,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           d3.select('#overview').classed('expand', true);
       }
       mds_instance.resize();
+      if (lineup_instance !== null){
+        var ranking = lineup_instance.lineup.data.getLastRanking().getOrder();
+        console.log("the ranking from sliding?", ranking);
+      }
     });
 
     //Line Up part
@@ -360,7 +369,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               size: e.desc.size //we can use dummy values instead
             }).then(function (diffmatrix) {
               return diffmatrix.data().then(function(dm_data){
-                console.log(dm_data);
                 var noch = dm_data.no_ratio * 100;
                 var cont = dm_data.c_ratio * 100;
                 var stadd = dm_data.a_ratio * 100;

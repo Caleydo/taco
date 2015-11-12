@@ -1,26 +1,8 @@
 /**
- * Created by Reem and Sam on 9/17/2015.
+ * Created by Reem on 11/12/2015.
  */
 define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d3, d3utils, drag) {
-    //draws the barplot based on the projected data
-    function drawDiffBarplot(p_data, usize1, width, gridSize, parent, y, realsize) {
-
-      var max_change = Math.max.apply(Math, p_data.map(function (o) {
-        return o.count;
-      }));
-
-      //http://bost.ocks.org/mike/bar/
-      var x;
-      if (realsize) {
-        x = d3.scale.linear()
-          .domain([0, usize1])
-          .range([0, width]);
-      } else {
-        x = d3.scale.linear()
-          .domain([0, max_change])
-          .range([0, width]);
-      }
-
+    function drawContentHist(p_data, gridSize, parent, x, y) {
       var bp = parent.selectAll("div.rows")
         .data(p_data, function (d, i) {
           return d.id;
@@ -42,8 +24,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         });
       return parent;
     }
-
-    function drawDiffStructPlot(p_data, gridSize, parent, y, isadd) {
+    /*
+    function drawStructHist(p_data, gridSize, parent, y, isadd) {
       var container = parent.selectAll("div.struct")
         .data(p_data, function (d, i) {
           return d.id;
@@ -61,8 +43,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         });
       return parent;
     }
-
-    function drawDiffPlot(parent, data, dim) {
+   */
+    function drawHistogram(parent, data, dim, bins) {
       //todo get this from the promise data (the result from the server)
       var usize0 = data.desc.size[0],
         usize1 = data.desc.size[1],
@@ -73,12 +55,22 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         usize1 = data.desc.size[0];
         is_cols = true;
       }
-      var realsize = false,
-        gridSize = 6,
+      var
         //todo we could use the width of the max value
-        width = (realsize ? (usize1 * gridSize) : 20),
-        height = (usize0 * gridSize);
+        width =  20,
+        //height = usize0, //todo make it flexible based on the original table
+        height = 200,
+        gridSize = Math.floor(height / bins);
       var myDrag = drag.Drag();
+
+      var max_change = Math.max.apply(Math, p_data.map(function (o) {
+        return o.count;
+      }));
+
+      //http://bost.ocks.org/mike/bar/
+      var x = d3.scale.linear()
+          .domain([0, max_change])
+          .range([0, width]);
 
       var y = d3.scale.linear()
         .domain([0, usize0])
@@ -100,43 +92,46 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
 
       if (data.desc.change.indexOf('content') > -1) {
         //todo change this so that it consider the case of both rows and cols at the same time
-        // 0 then do no aggregation
-        data.dimStats(dim, 0).then(function (stats) {
-          $node = drawDiffBarplot(stats, usize1, width, gridSize, $node, y, realsize);
+        // m means that it's aggregated in the level of medium
+        data.(dim, bins).then(function (stats) {
+          $node = drawContentHist(stats, gridSize, $node, x, y);
         });
       }
       //todo combine it with the one above
-      if (data.desc.change.indexOf('structure') > -1) {
-        Promise.all([data.structAddStats(dim), data.structDelStats(dim)])
-          .then(function (values) {
-            console.log("values", values);
-            var a_stats = values[0],
-              d_stats = values[1];
-            $node = drawDiffStructPlot(a_stats, gridSize, $node, y, true);
-            $node = drawDiffStructPlot(d_stats, gridSize, $node, y, false);
-          });
-      }
+      //if (data.desc.change.indexOf('structure') > -1) {
+      //  Promise.all([data.structAddStats(dim), data.structDelStats(dim)])
+      //    .then(function (values) {
+      //      console.log("values", values);
+      //      var a_stats = values[0],
+      //        d_stats = values[1];
+      //      console.log(values);
+      //      $node = drawStructHist(a_stats, gridSize, $node, y, true);
+      //      $node = drawStructHist(d_stats, gridSize, $node, y, false);
+      //    });
+      //}
       return $node;
     }
 
-    exports.DiffBarPlotVis = d3utils.defineVis('DiffBarPlotVis', {
+
+    exports.DiffHistogram = d3utils.defineVis('DiffHistogram', {
         dim: ['column']
       }, [200, 200],
       function ($parent, data, size) {
         var o = this.options;
         var $node = $parent.append("div");
+        var bins = o.bins;
         if (o.dim.indexOf("rows") > -1) {
-          drawDiffPlot($node, data, "rows");
+          drawHistogram($node, data, bins, "rows");
         }
         if (o.dim.indexOf("columns") > -1) {
           //call the function for the cols!
-          drawDiffPlot($node, data, "columns");
+          drawHistogram($node, data, bins, "columns");
         }
         return $node;
       });
 
     exports.create = function (data, parent, options) {
-      return new exports.DiffBarPlotVis(data, parent, options);
+      return new exports.DiffHistogram(data, parent, options);
     };
   }
 );
