@@ -223,6 +223,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           var selected = range.dim(0).asList();
           if (selected.length >= 2){
             console.log("moving to the next view with ", selected);
+            //1 is the split between middle and overview
+            detail_slider.slider('setValue', 1, true, true);
           }
         }
       });
@@ -304,7 +306,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 /*     $('#dsSlider').on('slide', function (ev) {
        console.log("slider", $('#detail-slider').val(), this);
      });*/
-    $('#detail-slider').on('change', function (ev) {
+    detail_slider.on('change', function (ev) {
       d3.selectAll('.flex-column.expand').classed('expand', false);
       switch(ev.value.newValue){
         case 0:
