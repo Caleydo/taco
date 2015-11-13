@@ -245,14 +245,15 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 name: ref_table.desc.name + '-' + other_table.desc.name,
                 id1: ref_table.desc.id,
                 id2: other_table.desc.id,
-                change: "structure,content",
+                change: ["structure","content"],
                 direction: ["rows", "columns"],
                 //detail: settings_detail,
                 //detail: $('#detail-slider').val(), //todo use this
-                detail: 0, //because we get it from the server
+                detail: 4, //because it's detail and we aggregate it here
                 tocall: 'diff',
                 size: other_table.desc.size //we can use dummy values instead
               }).then(function (diffmatrix) {
+                console.log(diffmatrix, "diffmatrix");
                 var v = vis.list(diffmatrix);
                 console.log(v);
                 //v = v.filter(function (v) {
@@ -266,6 +267,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                   });
                 });
               });
+
             });
           }
         }
