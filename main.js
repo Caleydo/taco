@@ -4,8 +4,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/idtype', '../caleydo_core/multiform', 'underscore', 'toastr', 'bootstrap-slider', '../caleydo_d3/d3util', './drag', './lineup', './mds', 'bootstrap', 'font-awesome'],
-  function (data, d3, $, vis, C, idtypes, multiform, _, toastr, Slider, d3utils, drag, lineup, mds) {
+require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/behavior',  '../caleydo_core/idtype', '../caleydo_core/multiform', 'underscore', 'toastr', 'bootstrap-slider', '../caleydo_d3/d3util', './drag', './lineup', './mds', 'bootstrap', 'font-awesome'],
+  function (data, d3, $, vis, C, behavior, idtypes, multiform, _, toastr, Slider, d3utils, drag, lineup, mds) {
     'use strict';
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
@@ -72,8 +72,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               //can use selectedDataset.dim instead of calculating the length in the class
               //todo decide where to draw the table
               heatmap2 = plugin.factory(selectedDataset, document.getElementById('test'), {
-                initialScale: gridSize
+                initialScale: gridSize,
+                color: ['black', 'white']
               });
+              (new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomTo(100,100);
               d3.select("#test").call(myDrag);
 
               rows2 = rows;
@@ -253,21 +255,19 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 tocall: 'diff',
                 size: other_table.desc.size //we can use dummy values instead
               }).then(function (diffmatrix) {
-                console.log(diffmatrix, "diffmatrix");
                 var v = vis.list(diffmatrix);
-                console.log(v);
-                //v = v.filter(function (v) {
-                //  return v.id === 'diffhistvis';
-                //})[0];
-                v = v[2]; //i knwo
+                v = v.filter(function (v) {
+                  return v.id === 'diffhistvis';
+                })[0];
                 return v.load().then(function (plugin) {
-                  return plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
+                  var r = plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
                     dim: ["rows", "columns"],
                     bins: bins
                   });
+                  (new behavior.ZoomLogic(r, v)).zoomTo(100,200);
+                  return r;
                 });
               });
-
             });
           }
         }
