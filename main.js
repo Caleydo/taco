@@ -10,12 +10,13 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
     var data_provider = data;
-    var rows1 = null, rows2= null, cols1= null, cols2= null, id1= null, id2= null,
-        ds1 = null, ds2 = null, dh = null;
+    var rows1 = null, rows2 = null, cols1 = null, cols2 = null, id1 = null, id2 = null,
+      ds1 = null, ds2 = null, dh = null;
     var heatmap1 = null, heatmap2 = null;
     var myDrag = drag.Drag();
 
-    var gridSize = 6;
+    var gridSize = 6,
+      bins = 5; //todo find a way to specify this
     var test_items,
       settings_change = [],
       settings_direction = [],
@@ -24,6 +25,21 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     // vis instances
     var lineup_instance = null,
       mds_instance = null;
+
+    //todo change it to be the ref table
+    var first_selected = 0;
+
+    // initializing the settings from the buttons in the nav bar
+    $("[name='change[]']:checked").each(function () {
+      settings_change.push(this.value);
+    });
+
+    settings_direction = [];
+    $("[name='direction[]']:checked").each(function () {
+      settings_direction.push(this.value);
+    });
+
+    settings_detail = $('#detail-slider').val();
 
 
     function toType(desc) {
@@ -38,12 +54,16 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     function addIt(selectedDataset, dest) {
       //selectedDataset.rows for ids
       var heatmapplugin;
-      if (selectedDataset.desc.type  === 'matrix'){
-        heatmapplugin = vis.list(selectedDataset).filter(function(d) { return d.id.match(/.*heatmap.*/); })[0];
+      if (selectedDataset.desc.type === 'matrix') {
+        heatmapplugin = vis.list(selectedDataset).filter(function (d) {
+          return d.id.match(/.*heatmap.*/);
+        })[0];
         //heatmapplugin = vis.list(selectedDataset).filter(function(d) { return d.id.match(/.*histogram.*/); })[0];
 
-      } else if (selectedDataset.desc.type === 'table'){
-        heatmapplugin = vis.list(selectedDataset).filter(function(d) { return d.id.match(/.*table.*/); })[0];
+      } else if (selectedDataset.desc.type === 'table') {
+        heatmapplugin = vis.list(selectedDataset).filter(function (d) {
+          return d.id.match(/.*table.*/);
+        })[0];
         toastr.warning("Visualization for tables might not perform as expected!!");
         //todo find the difference between the visualziatoin for tables and martrices and handle this here.
       }
@@ -106,19 +126,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 //bad
               } else {
                 //everything is comparable
-                //todo move this to else if
                 //TODO check values/columns for table
-                settings_change = [];
-                $("[name='change[]']:checked").each(function() {
-                    settings_change.push(this.value);
-                });
-
-                settings_direction = [];
-                $("[name='direction[]']:checked").each(function() {
-                    settings_direction.push(this.value);
-                });
-
-                settings_detail = $('#detail-slider').val();
 
                 data_provider.create({
                   type: 'diffstructure',
@@ -141,21 +149,21 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                     }
                     dh = multiform.create(diffmatrix, d3.select('#board').node(), {
                       'diffplotvis': {dim: settings_direction},
-                      'diffhistvis': {dim: settings_direction, bins: 5} //todo find a way to specify this
+                      'diffhistvis': {dim: settings_direction, bins: bins}
                     });
                     multiform.addSelectVisChooser(d3.select('#taco-mf-selector').node(), dh);
                     d3.select('#taco-mf-selector select').classed('form-control', true);
                     /*var visses = vis.list(diffmatrix);
-                    var diffheatmap = visses[0];
-                    diffheatmap.load().then(function (plugin) {
-                      //here we call my diff_heatmap
-                      dh = plugin.factory(diffmatrix, d3.select('#board').node());
-                    });
-                    visses[1].load().then(function (plugin) {
-                      //here we call my diff_barplot
-                      plugin.factory(diffmatrix, d3.select('#board').node());
-                    });
-                    */
+                     var diffheatmap = visses[0];
+                     diffheatmap.load().then(function (plugin) {
+                     //here we call my diff_heatmap
+                     dh = plugin.factory(diffmatrix, d3.select('#board').node());
+                     });
+                     visses[1].load().then(function (plugin) {
+                     //here we call my diff_barplot
+                     plugin.factory(diffmatrix, d3.select('#board').node());
+                     });
+                     */
                   } else {
                     console.log("no diff!", rows1, cols1, rows2, cols2);
                   }
@@ -165,7 +173,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               toastr.info("Please select a second table");
             }
           })
-      }else{
+      } else {
         toastr.error("heat map plugin is undefined for this dataset!!");
       }
     }
@@ -186,15 +194,15 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       $tr.append('td').append('input').attr('type', 'radio')
         .attr('name', 'src')
         .on('click', function (d) {
-        addIt(d, 0);
-        var ev = d3.event;
-      });
+          addIt(d, 0);
+          var ev = d3.event;
+        });
       $tr.append('td').append('input').attr('type', 'radio')
         .attr('name', 'dest')
         .on('click', function (d) {
-        addIt(d, 1);
-        var ev = d3.event;
-      });
+          addIt(d, 1);
+          var ev = d3.event;
+        });
 
       //preparing a fixed test table for lineup and mds
       test_items = items.filter(function (d) {
@@ -209,22 +217,55 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         });
 
       idtypes.resolve('_taco_dataset').on('select', function (e, type, range) {
-        if (type === 'node-selected'){
+        if (type === 'node-selected') {
           var r = range.dim(0).asList();
           // get only the first selected item
-          var first_selected = r[0];
+          first_selected = r[0];
           if (lineup_instance !== null) {
             lineup_instance.destroy();
           }
           calcLineupData(test_items[first_selected], test_items)
             .then(showLineup);
-        }else if (type === 'selected'){
+        } else if (type === 'selected') {
           //type could be selected or hovered
           var selected = range.dim(0).asList();
-          if (selected.length >= 2){
+          if (selected.length >= 2) {
             console.log("moving to the next view with ", selected);
             //1 is the split between middle and overview
+            //todo check if it's already 1 then don't do anything for the slider
             detail_slider.slider('setValue', 1, true, true);
+            // show the stuff in the middle view
+            //todo do this as a function somewhere
+            var ref_table = test_items[first_selected];
+            selected.forEach(function (e, i) {
+              var other_table = test_items[e];
+              data_provider.create({
+                type: 'diffstructure',
+                name: ref_table.desc.name + '-' + other_table.desc.name,
+                id1: ref_table.desc.id,
+                id2: other_table.desc.id,
+                change: settings_change,
+                direction: settings_direction,
+                //detail: settings_detail,
+                //detail: $('#detail-slider').val(), //todo use this
+                detail: 0, //because we get it from the server
+                tocall: 'diff',
+                size: other_table.desc.size //we can use dummy values instead
+              }).then(function (diffmatrix) {
+                var v = vis.list(diffmatrix);
+                console.log(v);
+                //v = v.filter(function (v) {
+                //  return v.id === 'diffhistvis';
+                //})[0];
+                v = v[2]; //i knwo
+                return v.load().then(function (plugin) {
+                  return plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
+                    dim: settings_direction,
+                    bins: bins
+                  });
+                });
+              });
+            });
           }
         }
       });
@@ -238,8 +279,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     $("[name='change[]']").change(function () {
       var matches = [];
-      $("[name='change[]']:checked").each(function() {
-          matches.push(this.value);
+      $("[name='change[]']:checked").each(function () {
+        matches.push(this.value);
       });
       if ($("[name='change[]']:checked").length === 0) {
         // some sort of validation to make sure that there's at least one change type selected
@@ -255,7 +296,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     $("[name='direction[]']").change(function () {
       var matches = [];
-      $("[name='direction[]']:checked").each(function() {
+      $("[name='direction[]']:checked").each(function () {
         matches.push(this.value);
       });
       if ($("[name='direction[]']:checked").length === 0) {
@@ -279,15 +320,15 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     // flexbox part
     // select all DOM nodes (e.g. links) with class="expand-column"
-    d3.selectAll('.expand-column').on('click', function() {
+    d3.selectAll('.expand-column').on('click', function () {
       var $this = d3.select(this);
       expandView($this);
       detail_slider.slider('setValue', parseInt($this.attr('data-slider-value')));
     });
 
-    var expandView = function(t){
+    var expandView = function (t) {
       // use data attribute or if does not exists href from link
-        var expand = t.attr('data-expand-column') || t.attr('href'),
+      var expand = t.attr('data-expand-column') || t.attr('href'),
         collapse = t.attr('data-collapse-column'),
         only = t.attr('data-expand-only');
 
@@ -303,12 +344,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       }
     };
 
-/*     $('#dsSlider').on('slide', function (ev) {
-       console.log("slider", $('#detail-slider').val(), this);
+    /*     $('#dsSlider').on('slide', function (ev) {
+     console.log("slider", $('#detail-slider').val(), this);
      });*/
     detail_slider.on('change', function (ev) {
       d3.selectAll('.flex-column.expand').classed('expand', false);
-      switch(ev.value.newValue){
+      switch (ev.value.newValue) {
         case 0:
           d3.select('#overview').classed('expand', true);
           break;
@@ -330,7 +371,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           d3.select('#overview').classed('expand', true);
       }
       mds_instance.resize();
-      if (lineup_instance !== null){
+      if (lineup_instance !== null) {
         var ranking = lineup_instance.lineup.data.getLastRanking().getOrder();
         console.log("the ranking from sliding?", ranking);
       }
@@ -353,38 +394,38 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     }
 
     // assuming tha the reference table is the full object (not just the ID!)
-    function calcLineupData(ref_table, lineup_items){
-      return Promise.all(lineup_items.map(function(e, index, arr){
-        if (e.desc.id !== ref_table.desc.id){
+    function calcLineupData(ref_table, lineup_items) {
+      return Promise.all(lineup_items.map(function (e, index, arr) {
+        if (e.desc.id !== ref_table.desc.id) {
           return data_provider.create({
-              type: 'diffstructure',
-              name: ref_table.desc.name + '-' + e.desc.name,
-              id1: ref_table.desc.id,
-              id2: e.desc.id,
-              //change: settings_change,
-              change: "structure,content",
-              direction: settings_direction,
-              //detail: settings_detail,
-              //detail: $('#detail-slider').val(), //todo use this
-              detail: 0, //because we get it from the server
-              tocall: 'diff',
-              size: e.desc.size //we can use dummy values instead
-            }).then(function (diffmatrix) {
-              return diffmatrix.data().then(function(dm_data){
-                var noch = dm_data.no_ratio * 100;
-                var cont = dm_data.c_ratio * 100;
-                var stadd = dm_data.a_ratio * 100;
-                var stdel = dm_data.d_ratio * 100;
-                return {
-                  name: e.desc.name,
-                  noch: noch,
-                  cont: cont,
-                  stadd: stadd,
-                  stdel: stdel
-                };
-              });
+            type: 'diffstructure',
+            name: ref_table.desc.name + '-' + e.desc.name,
+            id1: ref_table.desc.id,
+            id2: e.desc.id,
+            //change: settings_change,
+            change: "structure,content",
+            direction: settings_direction,
+            //detail: settings_detail,
+            //detail: $('#detail-slider').val(), //todo use this
+            detail: 0, //because we get it from the server
+            tocall: 'diff',
+            size: e.desc.size //we can use dummy values instead
+          }).then(function (diffmatrix) {
+            return diffmatrix.data().then(function (dm_data) {
+              var noch = dm_data.no_ratio * 100;
+              var cont = dm_data.c_ratio * 100;
+              var stadd = dm_data.a_ratio * 100;
+              var stdel = dm_data.d_ratio * 100;
+              return {
+                name: e.desc.name,
+                noch: noch,
+                cont: cont,
+                stadd: stadd,
+                stdel: stdel
+              };
             });
-        }else{
+          });
+        } else {
           //it's the reference table
           return {
             name: e.desc.name,
@@ -397,7 +438,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       }));
     }
 
-    function calcGraphData(datalist){
+    function calcGraphData(datalist) {
       return data_provider.create({
         type: 'diffstructure',
         name: datalist[0].desc.name + '-orso',
@@ -409,8 +450,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         tocall: 'mds', //the key point
         size: datalist.length //we can use dummy values instead
       }).then(function (diffmatrix) {
-        return diffmatrix.data().then(function(dm_data){
-          return{
+        return diffmatrix.data().then(function (dm_data) {
+          return {
             pos: dm_data,
             nodes: datalist
           };
