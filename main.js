@@ -29,18 +29,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     //todo change it to be the ref table
     var first_selected = 0;
 
-    // initializing the settings from the buttons in the nav bar
-    $("[name='change[]']:checked").each(function () {
-      settings_change.push(this.value);
-    });
-
-    settings_direction = [];
-    $("[name='direction[]']:checked").each(function () {
-      settings_direction.push(this.value);
-    });
-
-    settings_detail = $('#detail-slider').val();
-
 
     function toType(desc) {
       if (desc.type === 'vector') {
@@ -127,6 +115,19 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               } else {
                 //everything is comparable
                 //TODO check values/columns for table
+
+                // initializing the settings from the buttons in the nav bar
+                $("[name='change[]']:checked").each(function () {
+                  settings_change.push(this.value);
+                });
+
+                settings_direction = [];
+                $("[name='direction[]']:checked").each(function () {
+                  settings_direction.push(this.value);
+                });
+
+                settings_detail = $('#detail-slider').val();
+
 
                 data_provider.create({
                   type: 'diffstructure',
@@ -244,8 +245,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 name: ref_table.desc.name + '-' + other_table.desc.name,
                 id1: ref_table.desc.id,
                 id2: other_table.desc.id,
-                change: settings_change,
-                direction: settings_direction,
+                change: "structure,content",
+                direction: ["rows", "columns"],
                 //detail: settings_detail,
                 //detail: $('#detail-slider').val(), //todo use this
                 detail: 0, //because we get it from the server
@@ -260,7 +261,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 v = v[2]; //i knwo
                 return v.load().then(function (plugin) {
                   return plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
-                    dim: settings_direction,
+                    dim: ["rows", "columns"],
                     bins: bins
                   });
                 });
