@@ -16,7 +16,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     var myDrag = drag.Drag();
 
     var gridSize = 6,
-      bins = 5; //todo find a way to specify this
+      bins = 10; //todo find a way to specify this
     var test_items,
       settings_change = [],
       settings_direction = [],
@@ -240,6 +240,19 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             // show the stuff in the middle view
             //todo do this as a function somewhere
             var ref_table = test_items[first_selected];
+            // drawing the reference as heatmap
+            var heatmapplugin = vis.list(ref_table).filter(function (d) {
+              return d.id.match(/.*heatmap.*/);
+            })[0];
+            var parent_ref = document.getElementById('ref-table');
+            heatmapplugin.load().then(function(plugin){
+              var mid_hm = plugin.factory(ref_table, parent_ref, {
+                initialScale: gridSize,
+                color: ['black', 'white']
+              });
+              (new behavior.ZoomLogic(mid_hm, heatmapplugin)).zoomTo(parent_ref.getBoundingClientRect().width,parent_ref.getBoundingClientRect().height);
+            });
+            // drawing the histograms / middle view diffs
             selected.forEach(function (e, i) {
               var other_table = test_items[e];
               data_provider.create({
