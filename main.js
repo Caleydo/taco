@@ -277,7 +277,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                     dim: ["rows", "columns"],
                     bins: bins
                   });
-                  (new behavior.ZoomLogic(r, v)).zoomTo(100,200);
+                  //(new behavior.ZoomLogic(r, v)).zoomTo(200,100);
                   return r;
                 });
               });
@@ -286,9 +286,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         }
       });
 
-      // static test data
-      //calcLineupData(test_items[0], test_items)
-      //  .then(showLineup);
     });
 
     /* On change functions */

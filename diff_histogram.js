@@ -46,10 +46,14 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
     }
    */
     function drawHistogram(parent, data, bins, dim, size) {
-      var is_cols = false;
+      var is_cols = false,
+        //todo the max change should be the length
+        max_change = data.desc.size[1]; //the union size (all columns in this row are changed)
       //todo conside the direction in a better way
       if (dim !== "rows") {
         is_cols = true;
+        //the union size (all rows in this col are changed)
+        max_change = data.desc.size[0];
       }
       //todo we could use the width of the max value
       var width = size[0],
@@ -57,6 +61,10 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         gridSize = Math.floor(height / bins);
       var myDrag = drag.Drag();
 
+      // linear x and y scales
+      var x = d3.scale.linear()
+        .domain([0, max_change]) // we agreed that this is that all cells are changed
+        .range([0, width]);
       var y = d3.scale.linear()
         .domain([0, bins])
         .range([0, height]);
@@ -79,14 +87,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         //todo change this so that it consider the case of both rows and cols at the same time
         // m means that it's aggregated in the level of medium
         data.dimStats(dim, bins).then(function (stats) {
-          var max_change = Math.max.apply(Math, stats.map(function (o) {
-            return o.count;
-          }));
           //http://bost.ocks.org/mike/bar/
-          var x = d3.scale.linear()
-            .domain([0, max_change]) // todo this is the same issue everywhere should the length of the bar represent 100% or the max value???
-            .range([0, width]);
-
           $node = drawContentHist(stats, gridSize, $node, x, y);
         });
       }
