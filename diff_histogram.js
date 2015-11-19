@@ -73,7 +73,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       var position = parseInt(parseInt(parent.style("width")) / 2) + ( is_cols ? height : width);
 
       var $node = parent.append("div")
-        .classed("taco-bp-container", true)
+        .classed("taco-hist-container", true)
         .classed("rotated", is_cols)
         .style("width", width + 2 + 'px')
         .style("height", height + 2 + 'px')

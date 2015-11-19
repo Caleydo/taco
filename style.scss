@@ -251,6 +251,20 @@ a.taco-logo {
   }
 }
 
+.taco-hist-container {
+  border: 1px solid lightcyan;
+  border-left: 1px solid #000000;
+  position: absolute;
+  div {
+    position: absolute;
+    font: 10px sans-serif;
+    text-align: right;
+    padding: 1px;
+    margin-top: 1px;
+    color: white;
+  }
+}
+
 .taco-bar-container {
   border: 1px solid darkgray;
   position: absolute;
