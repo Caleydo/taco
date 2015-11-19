@@ -47,16 +47,20 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
    */
     function drawHistogram(parent, data, bins, dim, size) {
       var is_cols = false,
-        //todo the max change should be the length
-        max_change = data.desc.size[1]; //the union size (all columns in this row are changed)
+      //todo the max change should be the length
+        clen = data.desc.size[1], //numbers of cells per row
+        rlen = data.desc.size[0]; //the union size (numbers of cells per column)
       //todo conside the direction in a better way
       if (dim !== "rows") {
         is_cols = true;
         //the union size (all rows in this col are changed)
-        max_change = data.desc.size[0];
+        clen = data.desc.size[0];
+        rlen = data.desc.size[1];
       }
-      //todo we could use the width of the max value
-      var width = size[0],
+      // the +1 is only necessary if the rlen/bin is float
+      // it's the max number of rows per bin by the number of cells per row
+      var max_change = (Math.floor(rlen / bins) + (rlen % bins === 0 ? 0 : 1)) * clen,
+        width = size[0],
         height = size[1],
         gridSize = Math.floor(height / bins);
       var myDrag = drag.Drag();
