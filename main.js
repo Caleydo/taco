@@ -75,7 +75,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 initialScale: gridSize,
                 color: ['black', 'white']
               });
-              (new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomTo(100,100);
+              resize_heatmap(heatmap2, heatmapplugin);
+              //(new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomSet(0.5,2);
               d3.select("#test").call(myDrag);
 
               rows2 = rows;
@@ -89,6 +90,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               heatmap1 = plugin.factory(selectedDataset, document.getElementById('test2'), {
                 initialScale: gridSize
               });
+              //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomSet(2,2);
+              resize_heatmap(heatmap1, heatmapplugin);
+              //heatmap1.parent.parentElement.getBoundingClientRect()
               d3.select("#test2").call(myDrag);
               rows1 = rows;
               cols1 = cols;
@@ -478,6 +482,23 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         .then(function (instance) {
           mds_instance = instance;
         });
+    }
+
+    //todo think of applying the same scaling for both heatmaps
+    function resize_heatmap(hm, heatmapplugin) {
+      var pw = hm.parent.parentElement.getBoundingClientRect().width,
+        ph = hm.parent.parentElement.getBoundingClientRect().height,
+        w = hm.parent.getBoundingClientRect().width,
+        h = hm.parent.getBoundingClientRect().height;
+      if (pw < w) {
+        //aspect ratio pw/w
+        console.log("zoomset w to", pw / w);
+        (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(pw, h * pw / w);
+      } //todo think of the else
+      else if (ph < h) {
+        console.log("zoomset h to", ph / h);
+        (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(w * ph / h, ph);
+      }
     }
 
   });

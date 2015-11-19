@@ -113,7 +113,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
 
     exports.DiffHistogram = d3utils.defineVis('DiffHistogram', {
         dim: ['column']
-      }, [50, 200],
+      }, [70, 200],
       function ($parent, data, size) {
         var o = this.options;
         var $node = $parent.append("div");
