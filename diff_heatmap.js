@@ -4,12 +4,6 @@
 define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3util', './drag'],
   function (require, exports, d3, _, toastr, d3utils, drag) {
 
-    //height of each row in the heatmap
-    //width of each column in the heatmap
-    var gridSize = 6,
-      h = gridSize,
-      w = gridSize;
-
     var margin = {top: 10, right: 10, bottom: 10, left: 10};
 
     var colorDeleted = 'red', colorLow = 'yellow', colorMed = 'white', colorHigh = 'blue', colorAdded = 'green',
@@ -37,7 +31,11 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       this.container.remove();
     };
 
-    DiffHeatmap.prototype.drawDiffHeatmap = function (operations, directions) {
+    DiffHeatmap.prototype.drawDiffHeatmap = function (operations, directions, gridSize) {
+      //height of each row in the heatmap
+      //width of each column in the heatmap
+      var h = gridSize,
+        w = gridSize;
 
       //todo create this as the size of the final table at the beginning?
       var that = this;
@@ -310,13 +308,13 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
     //data, parent, options
     // defineVis(name, defaultOptions, initialSize, build, functions)
     exports.DiffHeatmapVis = d3utils.defineVis('DiffHeatmapVis', {}, function (data) {
-      return [data.desc.size[0] * w, data.desc.size[1] * h]; //this is not really critical
+      return [data.desc.size[0], data.desc.size[1]]; //this is not really critical
     }, function ($parent, data, size) { //build the vis
       //data.data().then(function(d){console.log("size from data", d.union.uc_ids.length, d.union.ur_ids.length)});
       var o = this.options;
       //var diff = new DiffHeatmap(data.data(), data.desc.size); //use the union size from the server instead of the client
       var diff = new DiffHeatmap(data.data(), $parent);
-      diff.drawDiffHeatmap(data.desc.change, data.desc.direction);
+      diff.drawDiffHeatmap(data.desc.change, data.desc.direction, o.gridSize);
       diff.drawContentHistogram(data.desc.direction);
       return diff.container;
     });

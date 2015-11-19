@@ -155,6 +155,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                       d3.select('#taco-mf-selector').html('');
                     }
                     dh = multiform.create(diffmatrix, d3.select('#board').node(), {
+                      // optimal would be to find the smallest scaling factor
+                      'diffmatrixvis': {gridSize: heatmap1.size[0]/ heatmap1.rawSize[0]}, //diffheatmap = Scaling
                       'diffplotvis': {dim: settings_direction},
                       'diffhistvis': {dim: settings_direction, bins: bins}
                     });
