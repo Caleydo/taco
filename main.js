@@ -490,14 +490,17 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         ph = hm.parent.parentElement.getBoundingClientRect().height,
         w = hm.parent.getBoundingClientRect().width,
         h = hm.parent.getBoundingClientRect().height;
-      if (pw < w) {
-        //aspect ratio pw/w
-        console.log("zoomset w to", pw / w);
-        (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(pw, h * pw / w);
-      } //todo think of the else
-      else if (ph < h) {
-        console.log("zoomset h to", ph / h);
-        (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(w * ph / h, ph);
+      if (w > h) {
+        if (pw < w) {
+          //aspect ratio pw/w
+          console.log("zoomset w to", pw / w);
+          (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(pw, h * pw / w);
+        }
+      } else {
+        if (ph < h) {
+          console.log("zoomset h to", ph / h);
+          (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(w * ph / h, ph);
+        }
       }
     }
 
