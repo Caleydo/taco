@@ -142,7 +142,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                   id2: id2,
                   change: settings_change,
                   direction: settings_direction,
-                  detail: settings_detail,
+                  //detail: settings_detail,
+                  bins: 0, // this represents detail in this case, no bins
                   tocall: 'diff',
                   size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length] //we can use dummy values instead
                 }).then(function (diffmatrix) {
@@ -268,24 +269,24 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 id2: other_table.desc.id,
                 change: ["structure","content"],
                 direction: ["rows", "columns"],
-                //detail: settings_detail,
-                //detail: $('#detail-slider').val(), //todo use this
-                detail: 4, //because it's detail and we aggregate it here
+                //detail: 2, //because it's middle now
+                bins: 10, // this should be a variable but for now we use this static number -> we want histogram
                 tocall: 'diff',
                 size: other_table.desc.size //we can use dummy values instead
               }).then(function (diffmatrix) {
-                var v = vis.list(diffmatrix);
-                v = v.filter(function (v) {
-                  return v.id === 'diffhistvis';
-                })[0];
-                return v.load().then(function (plugin) {
-                  var r = plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
-                    dim: ["rows", "columns"],
-                    bins: bins
-                  });
-                  //(new behavior.ZoomLogic(r, v)).zoomTo(200,100);
-                  return r;
-                });
+                console.log("diff matrix as middle", diffmatrix);
+                //var v = vis.list(diffmatrix);
+                //v = v.filter(function (v) {
+                //  return v.id === 'diffhistvis';
+                //})[0];
+                //return v.load().then(function (plugin) {
+                //  var r = plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
+                //    dim: ["rows", "columns"],
+                //    bins: bins
+                //  });
+                //  //(new behavior.ZoomLogic(r, v)).zoomTo(200,100);
+                //  return r;
+                //});
               });
             });
           }
@@ -424,9 +425,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             //change: settings_change,
             change: "structure,content",
             direction: settings_direction,
-            //detail: settings_detail,
-            //detail: $('#detail-slider').val(), //todo use this
-            detail: 0, //because we get it from the server
+            bins:  1, //  because we don't want only the ratios
             tocall: 'diff',
             size: e.desc.size //we can use dummy values instead
           }).then(function (diffmatrix) {
@@ -464,8 +463,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         datalist: datalist,
         change: "structure,content",
         direction: settings_direction,
-        //detail: $('#detail-slider').val(), //todo use this
-        detail: 0,
+        bins: 1, // because we only want ratios
+        //detail: 0,
         tocall: 'mds', //the key point
         size: datalist.length //we can use dummy values instead
       }).then(function (diffmatrix) {

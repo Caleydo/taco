@@ -88,8 +88,12 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/datatype', './difflo
         //detail: 0 is overview, 4 is detail
         //direction_id: 0 rows, 1 cols, 2 rows + cols
         //if nothing is selected then send 2 //todo handle this in the interface
+        // bins: 0 is the most detail (diff_heatmap)
+        //       1 is then we get ratios for lineup?
+        //       between 2 and the size of the row/col (so the max value -1) is the case for middle which represents the actual bins count
+        //       the max then this means every col/row has a bin
       var direction_id = (desc.direction.length == 1? (desc.direction[0] == 'rows'? 0 : 1) : 2);
-      this.diff_source = C.server_url + '/taco/diff_log/' + desc.id1 +'/' + desc.id2 + '/' + desc.detail
+      this.diff_source = C.server_url + '/taco/diff_log/' + desc.id1 +'/' + desc.id2 + '/' + desc.bins
         + "/" + direction_id + "/" + desc.change;
       }
       this._cache = null;
