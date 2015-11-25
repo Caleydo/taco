@@ -118,10 +118,12 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         var o = this.options;
         var $node = $parent.append("div");
         var bins = o.bins;
+        //if (o.dim.indexOf("rows") !== -1 && o.dim.indexOf("columns") !== -1){
+        //  console.log(data);
+        //} else
         if (o.dim.indexOf("rows") > -1) {
           drawHistogram($node, data, bins, "rows", size);
-        }
-        if (o.dim.indexOf("columns") > -1) {
+        } else if (o.dim.indexOf("columns") > -1) {
           //call the function for the cols!
           drawHistogram($node, data, bins, "columns", size);
         }
