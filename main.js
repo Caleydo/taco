@@ -435,33 +435,28 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     }
 
     // Middle part
+    // ref_table and selected_list are dataset objects
     function calcHistogram(ref_table, selected_list, bins, direction){
       return Promise.all(selected_list.map(function (e, index, arr) {
         // if (e.desc.id !== ref_table.desc.id) { //do we want this here?
         return data_provider.create({
           type: 'diffstructure',
-          name: ref_table.desc.name + '-' + other_table.desc.name,
+          name: ref_table.desc.name + '-' + e.desc.name,
           id1: ref_table.desc.id,
-          id2: other_table.desc.id,
-          change: ["structure", "content"],
-          direction: ["rows", "columns"],
+          id2: e.desc.id,
+          change: ["structure", "content"], //todo use this as parameter
+          direction: direction,
           //detail: 2, //because it's middle now
           bins: bins, // this should be a variable but for now we use this static number -> we want histogram
           tocall: 'diff',
-          size: other_table.desc.size //we can use dummy values instead
+          size: e.desc.size //we can use dummy values instead
         }).then(function (diffmatrix) {
           console.log("diff matrix as middle", diffmatrix);
-          return diffmatrix.data().then(function (dm_data) {
-            var noch = dm_data.no_ratio * 100;
-            var cont = dm_data.c_ratio * 100;
-            var stadd = dm_data.a_ratio * 100;
-            var stdel = dm_data.d_ratio * 100;
+          return diffmatrix.data().then(function (b_data) {
             return {
               name: e.desc.name,
-              noch: noch,
-              cont: cont,
-              stadd: stadd,
-              stdel: stdel
+              data_list: b_data,
+              bins: bins
             };
           });
         });
@@ -470,18 +465,18 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     function showHistogram(bdata){
       console.log("diffmatrix as bins data", bdata);
-      //var v = vis.list(bdata);
-      //v = v.filter(function (v) {
-      //  return v.id === 'diffhistvis';
-      //})[0];
-      //return v.load().then(function (plugin) {
-      //  var r = plugin.factory(bdata, d3.select('#mid-comparison').node(), {
-      //    dim: ["rows", "columns"],
-      //    bins: bins
-      //  });
-      //  //(new behavior.ZoomLogic(r, v)).zoomTo(200,100);
-      //  return r;
-      //});
+      var v = vis.list(bdata);
+      v = v.filter(function (v) {
+        return v.id === 'diffhistvis';
+      })[0];
+      return v.load().then(function (plugin) {
+        var r = plugin.factory(bdata, d3.select('#mid-comparison').node(), {
+          dim: ["rows", "columns"],
+          bins: bins
+        });
+        //(new behavior.ZoomLogic(r, v)).zoomTo(200,100);
+        return r;
+      });
     }
 
     function calcGraphData(datalist) {
