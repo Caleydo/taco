@@ -4,8 +4,12 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/behavior',  '../caleydo_core/idtype', '../caleydo_core/multiform', 'underscore', 'toastr', 'bootstrap-slider', '../caleydo_d3/d3util', './drag', './lineup', './mds', 'bootstrap', 'font-awesome'],
-  function (data, d3, $, vis, C, behavior, idtypes, multiform, _, toastr, Slider, d3utils, drag, lineup, mds) {
+require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/behavior',
+  '../caleydo_core/idtype', '../caleydo_core/multiform', './diffmatrix', 'underscore', 'toastr', 'bootstrap-slider',
+  '../caleydo_d3/d3util', './drag', './lineup', './mds', 'bootstrap', 'font-awesome'],
+  function (data, d3, $, vis, C, behavior,
+            idtypes, multiform, diffm, _, toastr, Slider,
+            d3utils, drag, lineup, mds) {
     'use strict';
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
@@ -265,8 +269,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             });
             // todo get the direction
             // todo get the bins
-            calcHistogram(ref_table, selected_items, 5, ["rows", "columns"])
-              .then(showHistogram);
+            calcHistogram(ref_table, selected_items, 5, ["rows", "columns"]);
+              //.then(showHistogram);
           }
         }
       });
@@ -451,7 +455,19 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           tocall: 'diff',
           size: e.desc.size //we can use dummy values instead
         }).then(function (diffmatrix) {
-          console.log("diff matrix as middle", diffmatrix);
+          var v = vis.list(diffmatrix);
+          console.log("tje v", v);
+          v = v.filter(function (v) {
+            return v.id === 'diffhistvis';
+          })[0];
+          v.load().then(function (plugin) {
+            console.log("I'm here");
+            var r = plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
+              dim: ["rows", "columns"],
+              bins: bins,
+              name: e.desc.name
+            });
+          });
           return diffmatrix.data().then(function (b_data) {
             return {
               name: e.desc.name,
@@ -466,17 +482,16 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     function showHistogram(bdata){
       console.log("diffmatrix as bins data", bdata);
       var v = vis.list(bdata);
-      v = v.filter(function (v) {
-        return v.id === 'diffhistvis';
-      })[0];
-      return v.load().then(function (plugin) {
-        var r = plugin.factory(bdata, d3.select('#mid-comparison').node(), {
-          dim: ["rows", "columns"],
-          bins: bins
+        v = v.filter(function (v) {
+          return v.id === 'diffhistvis';
+        })[0];
+        v.load().then(function (plugin) {
+          console.log("I'm here");
+          var r = plugin.factory(bdata, d3.select('#mid-comparison').node(), {
+            dim: ["rows", "columns"],
+            bins: bins
+          });
         });
-        //(new behavior.ZoomLogic(r, v)).zoomTo(200,100);
-        return r;
-      });
     }
 
     function calcGraphData(datalist) {
