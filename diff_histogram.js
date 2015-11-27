@@ -12,11 +12,11 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .classed("rows", true)
         .classed("content-change-color", true)
         .style("width", function (d) {
-          return x(d.count) + "px";
+          return x(d.ratio.c_ratio) + "px";
         })
         .style("height", gridSize - 1 + "px")
         .attr("title", function (d) {
-          return d.count;
+          return d.ratio.c_ratio;
         })
         //.text(function (d) {return d.id;})
         .style("transform", function (d) {
@@ -59,7 +59,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       }
       // the +1 is only necessary if the rlen/bin is float
       // it's the max number of rows per bin by the number of cells per row
-      var max_change = (Math.floor(rlen / bins) + (rlen % bins === 0 ? 0 : 1)) * clen,
+      //var max_change = (Math.floor(rlen / bins) + (rlen % bins === 0 ? 0 : 1)) * clen,
+      var max_change = 1, //since we get the values from the server
         width = size[0],
         height = size[1],
         gridSize = Math.floor(height / bins);
@@ -90,7 +91,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       if (data.desc.change.indexOf('content') > -1) {
         //todo change this so that it consider the case of both rows and cols at the same time
         // m means that it's aggregated in the level of medium
-        data.dimStats(dim, bins).then(function (stats) {
+        data.data().then(function (stats) {
+          console.log("data from histogram", stats);
           //http://bost.ocks.org/mike/bar/
           $node = drawContentHist(stats, gridSize, $node, x, y);
         });
@@ -123,10 +125,11 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         //} else
         if (o.dim.indexOf("rows") > -1) {
           drawHistogram($node, data, bins, "rows", size);
-        } else if (o.dim.indexOf("columns") > -1) {
-          //call the function for the cols!
-          drawHistogram($node, data, bins, "columns", size);
         }
+        //else if (o.dim.indexOf("columns") > -1) {
+          //call the function for the cols!
+          //drawHistogram($node, data, bins, "columns", size);
+        //}
         return $node;
       });
 
