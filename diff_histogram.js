@@ -2,7 +2,9 @@
  * Created by Reem on 11/12/2015.
  */
 define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d3, d3utils, drag) {
-    function drawContentHist(p_data, gridSize, parent, x, y) {
+    function drawBins(p_data, gridSize, parent, x, y, changes) {
+      var has_content = (changes.indexOf("content") !== -1),
+        has_struct = (changes.indexOf("structure") !== -1);
       var bp = parent.selectAll("div.bin-container")
         .data(p_data, function (d, i) {
           return d.id;
@@ -10,68 +12,55 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
 
       bp.enter().append("div")
         .classed("bin-container", true)
-        .append("div")
-        .classed("content-change-color", true)
-        .style("width", function (d) {
-          return x(d.ratio.c_ratio) + "px";
-        })
-        .style("height", gridSize - 1 + "px")
-        .attr("title", function (d) {
-          return d.ratio.c_ratio;
-        })
-        .style("transform", function (d) {
-          return "translate(" + 0 + "px," + y(d.pos) + "px)";
-        });
-      // added structure
-      bp.append("div")
-        .classed("struct-del-color", true)
-        .style("width", function (d) {
-          return x(d.ratio.d_ratio) + "px";
-        })
-        .style("height", gridSize - 1 + "px")
-        .attr("title", function (d) {
-          return d.ratio.d_ratio;
-        })
-        .style("transform", function (d) {
-          return "translate(" + x(d.ratio.c_ratio) + "px," + y(d.pos) + "px)";
-        });
-      // content
-      bp.append("div")
-        .classed("struct-add-color", true)
-        .style("width", function (d) {
-          return x(d.ratio.a_ratio) + "px";
-        })
-        .style("height", gridSize - 1 + "px")
-        .attr("title", function (d) {
-          return d.ratio.a_ratio;
-        })
-        .style("transform", function (d) {
-          return "translate(" + x(d.ratio.d_ratio + d.ratio.c_ratio) + "px," + y(d.pos) + "px)";
-        });
-        //.text(function (d) {return d.id;})
+        .attr("title", function(d){ return d.id; });
+        //content
+      if(has_content){
+        bp.append("div")
+          .classed("content-change-color", true)
+          .style("width", function (d) {
+            return x(d.ratio.c_ratio) + "px";
+          })
+          .style("height", gridSize - 1 + "px")
+          .attr("title", function (d) {
+            return d.ratio.c_ratio;
+          })
+          .style("transform", function (d) {
+            return "translate(" + 0 + "px," + y(d.pos) + "px)";
+          });
+      }
+      // deleted structure
+      if(has_struct) {
+        bp.append("div")
+          .classed("struct-del-color", true)
+          .style("width", function (d) {
+            return x(d.ratio.d_ratio) + "px";
+          })
+          .style("height", gridSize - 1 + "px")
+          .attr("title", function (d) {
+            return d.ratio.d_ratio;
+          })
+          .style("transform", function (d) {
+            var acc = (has_content ? d.ratio.c_ratio: 0);
+            return "translate(" + x(acc) + "px," + y(d.pos) + "px)";
+          });
+        // added
+        bp.append("div")
+          .classed("struct-add-color", true)
+          .style("width", function (d) {
+            return x(d.ratio.a_ratio) + "px";
+          })
+          .style("height", gridSize - 1 + "px")
+          .attr("title", function (d) {
+            return d.ratio.a_ratio;
+          })
+          .style("transform", function (d) {
+            var acc = (has_content ? d.ratio.c_ratio: 0) + d.ratio.d_ratio;
+            return "translate(" + x(d.ratio.d_ratio + d.ratio.c_ratio) + "px," + y(d.pos) + "px)";
+          });
+      }
       return parent;
     }
 
-    /*
-    function drawStructHist(p_data, gridSize, parent, y, isadd) {
-      var container = parent.selectAll("div.struct")
-        .data(p_data, function (d, i) {
-          return d.id;
-        });
-
-      container.enter().append("div")
-        .classed("struct", true)
-        .classed("struct-add-color", isadd)
-        .classed("struct-del-color", !isadd)
-        .style("width", gridSize - 1 + "px")
-        .style("height", gridSize - 1 + "px")
-        //.attr("title", function (d) {return d.id;})
-        .style("transform", function (d) {
-          return "translate(" + -parseInt(gridSize / 2) + "px," + y(d.pos) + "px)";
-        });
-      return parent;
-    }
-   */
     function drawHistogram(parent, data, bins, dim, size) {
       var is_cols = false,
       //todo the max change should be the length
@@ -115,27 +104,10 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""))
         .call(myDrag);
 
-      if (data.desc.change.indexOf('content') > -1) {
-        //todo change this so that it consider the case of both rows and cols at the same time
-        // m means that it's aggregated in the level of medium
         data.data().then(function (stats) {
-          console.log("data from histogram", stats);
           //http://bost.ocks.org/mike/bar/
-          $node = drawContentHist(stats, gridSize, $node, x, y);
+          $node = drawBins(stats, gridSize, $node, x, y, data.desc.change);
         });
-      }
-      //todo combine it with the one above
-      //if (data.desc.change.indexOf('structure') > -1) {
-      //  Promise.all([data.structAddStats(dim), data.structDelStats(dim)])
-      //    .then(function (values) {
-      //      console.log("values", values);
-      //      var a_stats = values[0],
-      //        d_stats = values[1];
-      //      console.log(values);
-      //      $node = drawStructHist(a_stats, gridSize, $node, y, true);
-      //      $node = drawStructHist(d_stats, gridSize, $node, y, false);
-      //    });
-      //}
       return $node;
     }
 
