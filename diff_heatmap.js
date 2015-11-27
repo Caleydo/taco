@@ -6,7 +6,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
 
     var margin = {top: 10, right: 10, bottom: 10, left: 10};
 
-    var colorDeleted = 'red', colorLow = 'yellow', colorMed = 'white', colorHigh = 'blue', colorAdded = 'green',
+    var colorLow = 'yellow', colorMed = 'white', colorHigh = '#8da0cb',
       colorMerged = '#B2DF8A',//light green
       colorSplit = '#FB9A99'; //light red
 
@@ -69,6 +69,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
               .enter()
               .append("div")
               .attr("class", "taco-added-row")
+              .attr("class", "struct-add-color")
               .attr("title", function(d){return d.id;})
               .style("left", 0 + "px")
               .style("top", function (d) {
@@ -76,8 +77,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
                 return (y !== -1 ? y * h : null) + "px";
               })
               .style("width", width + "px")
-              .style("height", h + "px")
-              .style("background-color", colorAdded);
+              .style("height", h + "px");
           }
 
           if (directions.indexOf('columns') > -1) {
@@ -87,14 +87,14 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
               .append("div")
               .attr("title", function(d){return d.id;})
               .attr("class", "taco-added-col")
+              .attr("class", "struct-add-color")
               .style("top", 0 + "px")
               .style("left", function (d) {
                 var x = d.pos;
                 return (x !== -1 ? x * w : null) + "px";
               })
               .style("width", w + "px")
-              .style("height", height + "px")
-              .style("background-color", colorAdded);
+              .style("height", height + "px");
           }
           if (directions.indexOf('rows') > -1) {
             var deletedRows = root.selectAll(".taco-del-row")
@@ -102,6 +102,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
               .enter()
               .append("div")
               .attr("class", "taco-del-row")
+              .attr("class", "struct-del-color")
               .attr("title", function(d){return d.id})
               .style("left", 0 + "px")
               .style("top", function (d) {
@@ -109,8 +110,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
                 return (y !== -1 ? y * h : null) + "px";
               })
               .style("width", width + "px")
-              .style("height", h + "px")
-              .style("background-color", colorDeleted);
+              .style("height", h + "px");
           }
           if (directions.indexOf('columns') > -1) {
             var deletedCols = root.selectAll(".taco-del-col")
@@ -118,6 +118,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
               .enter()
               .append("div")
               .attr("class", "taco-del-col")
+              .attr("class", "struct-del-color")
               .attr("title", function(d){return d.id;})
               .style("top", 0 + "px")
               .style("left", function (d) {
@@ -125,8 +126,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
                 return (x !== -1 ? x * w : null) + "px";
               })
               .style("width", w + "px")
-              .style("height", height + "px")
-              .style("background-color", colorDeleted);
+              .style("height", height + "px");
 
           }
         }

@@ -278,15 +278,18 @@ a.taco-logo {
 }
 
 .content-change-color {
-  background-color: #456bb4;
+  //background-color: #456bb4;
+  background-color: #8da0cb;
 }
 
 .struct-add-color, .row-add-color, .col-add-color {
-  background-color: #4daf4a;
+  //background-color: #4daf4a;
+  background-color: #66c2a5; //colorblind friendly
 }
 
 .struct-del-color, .row-del-color, .col-del-color {
-  background-color: #e41a1c;
+  //background-color: #e41a1c;
+  background-color: #fc8d62; //colorblind friendly
 }
 
 .no-change-color {
