@@ -3,13 +3,14 @@
  */
 define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d3, d3utils, drag) {
     function drawContentHist(p_data, gridSize, parent, x, y) {
-      var bp = parent.selectAll("div.rows")
+      var bp = parent.selectAll("div.bin-container")
         .data(p_data, function (d, i) {
           return d.id;
         });
 
       bp.enter().append("div")
-        .classed("rows", true)
+        .classed("bin-container", true)
+        .append("div")
         .classed("content-change-color", true)
         .style("width", function (d) {
           return x(d.ratio.c_ratio) + "px";
@@ -18,10 +19,36 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .attr("title", function (d) {
           return d.ratio.c_ratio;
         })
-        //.text(function (d) {return d.id;})
         .style("transform", function (d) {
           return "translate(" + 0 + "px," + y(d.pos) + "px)";
         });
+      // added structure
+      bp.append("div")
+        .classed("struct-del-color", true)
+        .style("width", function (d) {
+          return x(d.ratio.d_ratio) + "px";
+        })
+        .style("height", gridSize - 1 + "px")
+        .attr("title", function (d) {
+          return d.ratio.d_ratio;
+        })
+        .style("transform", function (d) {
+          return "translate(" + x(d.ratio.c_ratio) + "px," + y(d.pos) + "px)";
+        });
+      // content
+      bp.append("div")
+        .classed("struct-add-color", true)
+        .style("width", function (d) {
+          return x(d.ratio.a_ratio) + "px";
+        })
+        .style("height", gridSize - 1 + "px")
+        .attr("title", function (d) {
+          return d.ratio.a_ratio;
+        })
+        .style("transform", function (d) {
+          return "translate(" + x(d.ratio.d_ratio + d.ratio.c_ratio) + "px," + y(d.pos) + "px)";
+        });
+        //.text(function (d) {return d.id;})
       return parent;
     }
 

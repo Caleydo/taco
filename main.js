@@ -269,7 +269,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             });
             // todo get the direction
             // todo get the bins
-            calcHistogram(ref_table, selected_items, 5, ["rows", "columns"]);
+            calcHistogram(ref_table, selected_items, 6, ["rows", "columns"]);
               //.then(showHistogram);
           }
         }
