@@ -26,6 +26,18 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       settings_direction = [],
       settings_detail = 4;
 
+    // initializing the settings from the buttons in the nav bar
+    $("[name='change[]']:checked").each(function () {
+      settings_change.push(this.value);
+    });
+
+    settings_direction = [];
+    $("[name='direction[]']:checked").each(function () {
+      settings_direction.push(this.value);
+    });
+
+    settings_detail = $('#detail-slider').val();
+
     // vis instances
     var lineup_instance = null,
       mds_instance = null;
@@ -125,19 +137,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               } else {
                 //everything is comparable
                 //TODO check values/columns for table
-
-                // initializing the settings from the buttons in the nav bar
-                $("[name='change[]']:checked").each(function () {
-                  settings_change.push(this.value);
-                });
-
-                settings_direction = [];
-                $("[name='direction[]']:checked").each(function () {
-                  settings_direction.push(this.value);
-                });
-
-                settings_detail = $('#detail-slider').val();
-
 
                 data_provider.create({
                   type: 'diffstructure',
@@ -280,19 +279,19 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     /* On change functions */
 
     $("[name='change[]']").change(function () {
-      var matches = [];
+      settings_change = [];
       $("[name='change[]']:checked").each(function () {
-        matches.push(this.value);
+        settings_change.push(this.value);
       });
       if ($("[name='change[]']:checked").length === 0) {
         // some sort of validation to make sure that there's at least one change type selected
         toastr.warning("You have to select at least one change type!", "I will select " + $(this).val() + " for you");
-        matches.push(this.value);
-        console.log("i will select this for you", $(this).val(), matches);
+        settings_change.push(this.value);
+        console.log("i will select this for you", $(this).val(), settings_change);
         $('#' + this.id).prop('checked', true);
         $('#' + this.id).parents('label').toggleClass('active');
       }
-      console.log("changed this ", $(this).val(), matches);
+      console.log("changed this ", $(this).val(), settings_change);
     });
 
 
@@ -448,6 +447,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           name: ref_table.desc.name + '-' + e.desc.name,
           id1: ref_table.desc.id,
           id2: e.desc.id,
+          //todo remove this and let the server always calculate everything?
           change: ["structure", "content"], //todo use this as parameter
           direction: direction,
           //detail: 2, //because it's middle now
@@ -464,6 +464,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             console.log("I'm here");
             var r = plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
               dim: ["rows", "columns"],
+              change: settings_change, //because i want to handle this only on the client for now
               bins: bins,
               name: e.desc.name
             });

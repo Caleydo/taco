@@ -55,13 +55,13 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
           })
           .style("transform", function (d) {
             var acc = (has_content ? d.ratio.c_ratio: 0) + d.ratio.d_ratio;
-            return "translate(" + x(d.ratio.d_ratio + d.ratio.c_ratio) + "px," + y(d.pos) + "px)";
+            return "translate(" + x(acc) + "px," + y(d.pos) + "px)";
           });
       }
       return parent;
     }
 
-    function drawHistogram(parent, data, bins, dim, size) {
+    function drawHistogram(parent, data, bins, changes, dim, size) {
       var is_cols = false,
       //todo the max change should be the length
         clen = data.desc.size[1], //numbers of cells per row
@@ -91,7 +91,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .range([0, height]);
 
       //todo find a better way for calculating the position
-      var position = parseInt(parseInt(parent.style("width")) / 2) + ( is_cols ? height : width);
+      var position = parseInt(parseInt(parent.style("width")) / 2) + (is_cols ? height : width);
 
       var $node = parent.append("div")
         .classed("taco-hist-container", true)
@@ -106,7 +106,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
 
         data.data().then(function (stats) {
           //http://bost.ocks.org/mike/bar/
-          $node = drawBins(stats, gridSize, $node, x, y, data.desc.change);
+          $node = drawBins(stats, gridSize, $node, x, y, changes);
         });
       return $node;
     }
@@ -118,12 +118,13 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       function ($parent, data, size) {
         var o = this.options;
         var $node = $parent.append("div");
-        var bins = o.bins;
+        var bins = o.bins,
+          changes = o.change;
         //if (o.dim.indexOf("rows") !== -1 && o.dim.indexOf("columns") !== -1){
         //  console.log(data);
         //} else
         if (o.dim.indexOf("rows") > -1) {
-          drawHistogram($node, data, bins, "rows", size);
+          drawHistogram($node, data, bins, changes, "rows", size);
         }
         //else if (o.dim.indexOf("columns") > -1) {
           //call the function for the cols!
