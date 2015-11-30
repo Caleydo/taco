@@ -19,7 +19,7 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
           }
         }, {
           name: 'Structure Add',
-          color: '#4daf4a',
+          cssClass: 'struct-add-color',
           value: {
             type: 'real',
             //todo is it possible to get the max of all the columns?
@@ -33,7 +33,7 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
           }
         }, {
           name: 'Structure Del',
-          color: '#e41a1c',
+          cssClass: 'struct-del-color',
           value: {
             type: 'real',
             //range: d3.extent(data, function (d) {
@@ -46,7 +46,7 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
           }
         }, {
           name: 'Content',
-          color: '#377eb8',
+          cssClass: 'content-change-color',
           value: {
             type: 'real',
             //range: d3.extent(data, function (d) {
