@@ -126,10 +126,10 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         if (o.dim.indexOf("rows") > -1) {
           drawHistogram($node, data, bins, changes, "rows", size);
         }
-        //else if (o.dim.indexOf("columns") > -1) {
+        else if (o.dim.indexOf("columns") > -1) {
           //call the function for the cols!
-          //drawHistogram($node, data, bins, "columns", size);
-        //}
+          drawHistogram($node, data, bins, changes, "columns", size);
+        }
         return $node;
       });
 

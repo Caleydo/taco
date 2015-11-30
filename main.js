@@ -257,7 +257,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             var parent_ref = document.getElementById('ref-table');
             heatmapplugin.load().then(function(plugin){
               if (mid_hm !== null) {
-                console.log("mid hm is ", mid_hm);
                 mid_hm.destroy();
               }
               mid_hm = plugin.factory(ref_table, parent_ref, {
@@ -272,7 +271,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             });
             // todo get the direction
             // todo get the bins
-            calcHistogram(ref_table, selected_items, 6, ["rows", "columns"]);
+            calcHistogram(ref_table, selected_items, 6, settings_direction);
               //.then(showHistogram);
           }
         }
@@ -460,14 +459,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           size: e.desc.size //we can use dummy values instead
         }).then(function (diffmatrix) {
           var v = vis.list(diffmatrix);
-          console.log("tje v", v);
           v = v.filter(function (v) {
             return v.id === 'diffhistvis';
           })[0];
           v.load().then(function (plugin) {
-            console.log("I'm here");
             var r = plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
-              dim: ["rows", "columns"],
+              dim: settings_direction,
               change: settings_change, //because i want to handle this only on the client for now
               bins: bins,
               name: e.desc.name
