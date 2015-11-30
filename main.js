@@ -31,7 +31,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       settings_change.push(this.value);
     });
 
-    settings_direction = [];
     $("[name='direction[]']:checked").each(function () {
       settings_direction.push(this.value);
     });
@@ -40,7 +39,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     // vis instances
     var lineup_instance = null,
-      mds_instance = null;
+      mds_instance = null,
+      mid_hm = null; // the heatmap in the middle view
 
     //todo change it to be the ref table
     var first_selected = 0;
@@ -256,11 +256,15 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             })[0];
             var parent_ref = document.getElementById('ref-table');
             heatmapplugin.load().then(function(plugin){
-              var mid_hm = plugin.factory(ref_table, parent_ref, {
+              if (mid_hm !== null) {
+                console.log("mid hm is ", mid_hm);
+                mid_hm.destroy();
+              }
+              mid_hm = plugin.factory(ref_table, parent_ref, {
                 initialScale: gridSize,
                 color: ['black', 'white']
               });
-              (new behavior.ZoomLogic(mid_hm, heatmapplugin)).zoomTo(parent_ref.getBoundingClientRect().width,parent_ref.getBoundingClientRect().height);
+              (new behavior.ZoomLogic(mid_hm, heatmapplugin)).zoomTo(parent_ref.getBoundingClientRect().width, parent_ref.getBoundingClientRect().height);
             });
             // drawing the histograms / middle view diffs
             var selected_items = selected.map(function(index) {
@@ -296,20 +300,20 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
 
     $("[name='direction[]']").change(function () {
-      var matches = [];
+      settings_direction = [];
       $("[name='direction[]']:checked").each(function () {
-        matches.push(this.value);
+        settings_direction.push(this.value);
       });
       if ($("[name='direction[]']:checked").length === 0) {
         // some sort of validation to make sure that there's at least one direction selected
         toastr.warning("You have to select at least one direction!", "I will select " + $(this).val() + " for you");
-        matches.push(this.value);
-        console.log("i will select this for you", $(this).val(), matches);
+        settings_direction.push(this.value);
+        console.log("i will select this for you", $(this).val(), settings_direction);
         $('#' + this.id).prop('checked', true);
         $('#' + this.id).parents('label').toggleClass('active');
       }
 
-      console.log("changed this ", $(this).val(), matches);
+      console.log("changed this ", $(this).val(), settings_direction);
     });
 
     // slider for bootstrap
