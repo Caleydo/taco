@@ -272,6 +272,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             // todo get the direction
             // todo get the bins
             calcHistogram(ref_table, selected_items, 6, settings_direction);
+              //.then(function(viss){
+              ////these are just 2 since every histogram is both rows and columns
+              //  console.log("hist vises", viss);
+              //});
               //.then(showHistogram);
           }
         }
@@ -443,6 +447,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     // Middle part
     // ref_table and selected_list are dataset objects
     function calcHistogram(ref_table, selected_list, bins, direction){
+      //first remove all the old histograms containers
+      d3.selectAll(".taco-hist-container").remove();
+      //calculate the new ones
       return Promise.all(selected_list.map(function (e, index, arr) {
         // if (e.desc.id !== ref_table.desc.id) { //do we want this here?
         return data_provider.create({
@@ -462,21 +469,22 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           v = v.filter(function (v) {
             return v.id === 'diffhistvis';
           })[0];
-          v.load().then(function (plugin) {
+          return v.load().then(function (plugin) {
             var r = plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
               dim: settings_direction,
               change: settings_change, //because i want to handle this only on the client for now
               bins: bins,
               name: e.desc.name
             });
+            return r;
           });
-          return diffmatrix.data().then(function (b_data) {
-            return {
-              name: e.desc.name,
-              data_list: b_data,
-              bins: bins
-            };
-          });
+          //return diffmatrix.data().then(function (b_data) {
+          //  return {
+          //    name: e.desc.name,
+          //    data_list: b_data,
+          //    bins: bins
+          //  };
+          //});
         });
       }));
     }
