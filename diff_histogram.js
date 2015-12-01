@@ -61,7 +61,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       return parent;
     }
 
-    function drawHistogram(parent, data, bins, changes, dim, size) {
+    function drawHistogram(parent, data, bins, changes, dim, size, name) {
       var is_cols = false,
       //todo the max change should be the length
         clen = data.desc.size[1], //numbers of cells per row
@@ -96,6 +96,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       var $node = parent.append("div")
         .classed("taco-hist-container", true)
         .classed("rotated", is_cols)
+        //.attr("title", data.desc.id)
+        .attr("title", name + " " + dim)
         .style("width", width + 2 + 'px')
         .style("height", height + 2 + 'px')
         //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
@@ -107,7 +109,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         data.data().then(function (stats) {
           //http://bost.ocks.org/mike/bar/
           // the data per dimension
-          d_dim = (dim === "rows"? stats.rows: stats.cols);
+          var d_dim = (dim === "rows"? stats.rows: stats.cols);
           $node = drawBins(d_dim, gridSize, $node, x, y, changes);
         });
       return $node;
@@ -126,11 +128,11 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         //  console.log(data);
         //} else
         if (o.dim.indexOf("rows") > -1) {
-          drawHistogram($node, data, bins, changes, "rows", size);
+          drawHistogram($node, data, bins, changes, "rows", size, o.name);
         }
         if (o.dim.indexOf("columns") > -1) {
           //call the function for the cols!
-          drawHistogram($node, data, bins, changes, "columns", size);
+          drawHistogram($node, data, bins, changes, "columns", size, o.name);
         }
         return $node;
       });
