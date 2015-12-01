@@ -277,6 +277,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               //  console.log("hist vises", viss);
               //});
               //.then(showHistogram);
+            calc2DHistogram(ref_table, selected_items, 6, settings_direction)
           }
         }
       });
@@ -466,10 +467,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           size: e.desc.size //we can use dummy values instead
         }).then(function (diffmatrix) {
           var v = vis.list(diffmatrix);
-          v = v.filter(function (v) {
+          var v2 = v.filter(function (v) {
             return v.id === 'diffhistvis';
           })[0];
-          return v.load().then(function (plugin) {
+          return v2.load().then(function (plugin) {
             var r = plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
               dim: settings_direction,
               change: settings_change, //because i want to handle this only on the client for now
@@ -485,6 +486,47 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           //    bins: bins
           //  };
           //});
+        });
+      }));
+    }
+
+    function calc2DHistogram(ref_table, selected_list, direction){
+      //first remove all the old histograms containers
+      d3.selectAll(".taco-hist-container").remove();
+      //calculate the new ones
+      return Promise.all(selected_list.map(function (e, index, arr) {
+        // if (e.desc.id !== ref_table.desc.id) { //do we want this here?
+        return data_provider.create({
+          type: 'diffstructure',
+          name: ref_table.desc.name + '-' + e.desc.name,
+          id1: ref_table.desc.id,
+          id2: e.desc.id,
+          //todo remove this and let the server always calculate everything?
+          change: ["structure", "content"], //todo use this as parameter
+          direction: direction,
+          //detail: 2, //because it's middle now
+          bins: 1, // this should be a variable but for now we use this static number -> we want histogram
+          tocall: 'diff',
+          size: e.desc.size //we can use dummy values instead
+        }).then(function (diffmatrix) {
+          var v = vis.list(diffmatrix);
+          console.log(diffmatrix);
+          if (direction.length > 1) {
+            // draw the 2d heatmap now here
+            var v1 = v.filter(function (v) {
+              return v.id === 'diff2dhistvis';
+            })[0];
+            v1.load().then(function (plugin) {
+              var r = plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
+                dim: settings_direction,
+                change: settings_change, //because i want to handle this only on the client for now
+                bins: bins,
+                name: e.desc.name
+              });
+            });
+          } else {
+            toastr.warning("2D heatmap cannot be shown when only 1D is selected");
+          }
         });
       }));
     }
