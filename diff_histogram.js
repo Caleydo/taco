@@ -106,7 +106,9 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
 
         data.data().then(function (stats) {
           //http://bost.ocks.org/mike/bar/
-          $node = drawBins(stats, gridSize, $node, x, y, changes);
+          // the data per dimension
+          d_dim = (dim === "rows"? stats.rows: stats.cols);
+          $node = drawBins(d_dim, gridSize, $node, x, y, changes);
         });
       return $node;
     }
@@ -126,7 +128,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         if (o.dim.indexOf("rows") > -1) {
           drawHistogram($node, data, bins, changes, "rows", size);
         }
-        else if (o.dim.indexOf("columns") > -1) {
+        if (o.dim.indexOf("columns") > -1) {
           //call the function for the cols!
           drawHistogram($node, data, bins, changes, "columns", size);
         }
