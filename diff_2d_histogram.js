@@ -35,12 +35,14 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         .data(p_data)
         .enter()
         .append("div")
-        .attr("class", function(d){return "bars " + d.type + "-color";})
+        .attr("class", function(d){return "bars " + "content-change-color";}) //todo change this
         .style("height", function(d){
-          return y(d.ratio) + "px";
+          return y(d.no_ratio) + "px";
         })
-        .style("width", width + "px")
-        .attr("title", function(d){return d.ratio * 100;});
+        .style("width", function(d){
+          return x(d.no_ratio) + "px";
+        })
+        .attr("title", function(d){return d.no_ratio * 100;});
        // .text( p_data * 100 + "%");
       return container;
     }
@@ -49,51 +51,15 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       function ($parent, data, size) {
         var o = this.options;
         var $node = $parent.append('div')
-          .classed("taco-bar-container", true);
-
-        var myPromises = [];
-        var two_d = false;
-        if (data.desc.change.indexOf('structure') > -1){
-          if(data.desc.direction.length > 1){
-            //myPromises.push(data.structAddRatio());
-            //myPromises.push(data.structDelRatio());
-              myPromises.push(data.rowAddRatio());
-              myPromises.push(data.rowDelRatio());
-              myPromises.push(data.colAddRatio());
-              myPromises.push(data.colDelRatio());
-            two_d = true;
-          }else{
-            //there's only 1 on none direction selected
-            if (data.desc.direction.indexOf('rows') > -1){
-              myPromises.push(data.rowAddRatio());
-              myPromises.push(data.rowDelRatio());
-            }
-            if (data.desc.direction.indexOf('columns') > -1){
-              myPromises.push(data.colAddRatio());
-              myPromises.push(data.colDelRatio());
-            }
-          }
-        }
-        if (data.desc.change.indexOf('content') > -1){
-          //todo change this so that it consider the case of both rows and cols at the same time
-          myPromises.push(data.contentRatio());
-          //todo do we want to split it by rows cols percentage???? and use the one above for both rows and cols!
-        }
-        myPromises.push(data.nochangeRatio());
-        Promise.all(myPromises).then(function(ratios){
-          console.log("my ratios are those", ratios);
-          if (two_d) {
-            $node = draw2dDiffPercentageBar(ratios, data.desc.size, $node);
-          }else{
-            $node = drawDiffPercentageBar(ratios, data.desc.size, $node, data.desc.direction);
-          }
-
+          .classed("taco-2d-container", true);
+        data.data().then(function(ratios){
+          $node = draw2dHistogram(ratios, data.desc.size, $node);
         });
         return $node;
       });
 
     exports.create = function (data, parent, options) {
-      return new exports.DiffPercentageBarVis(data, parent, options);
+      return new exports.Diff2DHistogramVis(data, parent, options);
     };
   }
 )

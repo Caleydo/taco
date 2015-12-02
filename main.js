@@ -277,7 +277,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               //  console.log("hist vises", viss);
               //});
               //.then(showHistogram);
-            calc2DHistogram(ref_table, selected_items, 6, settings_direction)
+            calc2DHistogram(ref_table, selected_items, settings_direction)
           }
         }
       });
@@ -492,7 +492,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     function calc2DHistogram(ref_table, selected_list, direction){
       //first remove all the old histograms containers
-      d3.selectAll(".taco-hist-container").remove();
+      d3.selectAll(".taco-2d-container").remove();
       //calculate the new ones
       return Promise.all(selected_list.map(function (e, index, arr) {
         // if (e.desc.id !== ref_table.desc.id) { //do we want this here?
@@ -505,7 +505,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           change: ["structure", "content"], //todo use this as parameter
           direction: direction,
           //detail: 2, //because it's middle now
-          bins: 1, // this should be a variable but for now we use this static number -> we want histogram
+          bins: 1, // we want the result as summary but divided :| idk how
           tocall: 'diff',
           size: e.desc.size //we can use dummy values instead
         }).then(function (diffmatrix) {
@@ -525,7 +525,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               });
             });
           } else {
-            toastr.warning("2D heatmap cannot be shown when only 1D is selected");
+            toastr.warning("2D heatmap cannot be shown when only 1D is selected", direction);
           }
         });
       }));

@@ -49,6 +49,13 @@
         },
         {
           "type": "vis",
+          "id": "diff2dhistvis",
+          "name": "Diff 2D Histogram Vis",
+          "filter": "diffstructure",
+          "file": "diff_2d_histogram"
+        },
+        {
+          "type": "vis",
           "id": "diffpercentagebarvis",
           "name": "Diff Perc Bar Vis",
           "filter": "diffstructure",
