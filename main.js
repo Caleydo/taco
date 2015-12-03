@@ -20,7 +20,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     var myDrag = drag.Drag();
 
     var gridSize = 6,
-      bins = 10; //todo find a way to specify this
+      setting_bins = 12; //todo find a way to specify this
     var test_items,
       settings_change = [],
       settings_direction = [],
@@ -162,7 +162,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                       // optimal would be to find the smallest scaling factor
                       'diffmatrixvis': {gridSize: heatmap1.size[0]/ heatmap1.rawSize[0]}, //diffheatmap = Scaling
                       'diffplotvis': {dim: settings_direction},
-                      'diffhistvis': {dim: settings_direction, bins: bins}
+                      'diffhistvis': {dim: settings_direction, bins: setting_bins}
                     });
                     multiform.addSelectVisChooser(d3.select('#taco-mf-selector').node(), dh);
                     d3.select('#taco-mf-selector select').classed('form-control', true);
@@ -271,7 +271,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             });
             // todo get the direction
             // todo get the bins
-            calcHistogram(ref_table, selected_items, 6, settings_direction);
+            calcHistogram(ref_table, selected_items, setting_bins, settings_direction);
               //.then(function(viss){
               ////these are just 2 since every histogram is both rows and columns
               //  console.log("hist vises", viss);
@@ -520,7 +520,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               var r = plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
                 dim: settings_direction,
                 change: settings_change, //because i want to handle this only on the client for now
-                bins: bins,
+                bins: setting_bins,
                 name: e.desc.name
               });
             });
@@ -541,7 +541,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           console.log("I'm here");
           var r = plugin.factory(bdata, d3.select('#mid-comparison').node(), {
             dim: ["rows", "columns"],
-            bins: bins
+            bins: setting_bins
           });
         });
     }

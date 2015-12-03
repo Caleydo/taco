@@ -7,8 +7,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       var myDrag = drag.Drag();
       var usize0 = usize[0],
         usize1 = usize[1];
-      var width = 250, //just to make it look a bit wider than the normal one in case both are selected
-        height = 250;
+      var width = 200, //just to make it look a bit wider than the normal one in case both are selected
+        height = 200;
 
       //find a better way for calculating the position
       var position = parseInt(parseInt(parent.style("width")) / 2) - parseInt(width / 2);
