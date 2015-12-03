@@ -505,7 +505,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           change: ["structure", "content"], //todo use this as parameter
           direction: direction,
           //detail: 2, //because it's middle now
-          bins: 1, // we want the result as summary but divided :| idk how
+          bins: -1, // we want the result as summary but divided into rows and columns
           tocall: 'diff',
           size: e.desc.size //we can use dummy values instead
         }).then(function (diffmatrix) {

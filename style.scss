@@ -265,6 +265,17 @@ a.taco-logo {
   }
 }
 
+.taco-2d-container {
+  border: 1px solid darkslategray;
+  position: absolute;
+  color: #fc8d62; //colorblind friendly
+  div {
+    position: absolute;
+    padding: 1px;
+
+  }
+}
+
 .taco-bar-container {
   border: 1px solid darkgray;
   position: absolute;
