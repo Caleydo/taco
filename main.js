@@ -219,7 +219,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
       //preparing a fixed test table for lineup and mds
       test_items = items.filter(function (d) {
-        return d.desc.fqname.match(/.*multiple.*/);
+        //return d.desc.fqname.match(/.*multiple.*|.*tiny.*|.*Large.*/);
+        //return d.desc.fqname.match(/.*microRNA.*/);
+        // all except the merge because it causes errors
+        return d.desc.fqname.match(/.*Taco (?!merge).*/);
       });
 
       //MDS part
