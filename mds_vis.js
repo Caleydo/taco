@@ -1,7 +1,7 @@
 /**
  * Created by Reem on 10/23/2015.
  */
-define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idtype'], function (exports, d3, $, d3utils, idtypes) {
+define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idtype', 'caleydo_tooltip/main'], function (exports, d3, $, d3utils, idtypes, tooltip) {
     //force directed graph
     function drawFDGraph($parent, data, nodes, links, size){
       //todo use size instead
@@ -57,7 +57,8 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
       var circles = node.append("circle")
         .attr("r", 7)
         .attr("class", "fd-circle")
-        .on('click', onClick);
+        .on('click', onClick)
+        .call(tooltip.bind("Here is a tooltip!"));
 
       node.append("text")
         .attr("dx", 10)

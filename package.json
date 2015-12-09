@@ -75,7 +75,8 @@
         "underscore": "~1.8",
         "bootstrap": "~3.3.4",
         "toastr" : ">=2.1.2",
-        "seiyria-bootstrap-slider" :">=5.2.1"
+        "seiyria-bootstrap-slider" :">=5.2.1",
+        "caleydo_tooltip" : ">=0.0.1-alpha"
       }
     },
     "requirejs-config": {
@@ -93,6 +94,9 @@
         ],
         "bootstrap-slider": [
           "css!${baseUrl}/seiyria-bootstrap-slider/dist/css/bootstrap-slider.css"
+        ],
+        "caleydo_tooltip": [
+          "css!${baseUrl}/caleydo_tooltip/style.scss"
         ]
       }
     }
