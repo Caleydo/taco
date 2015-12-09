@@ -584,6 +584,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       mds.create(mdata, document.querySelector('#mds-graph'))
         .then(function (instance) {
           mds_instance = instance;
+          d3.select('.loader').style('display', 'none');
         });
     }
 

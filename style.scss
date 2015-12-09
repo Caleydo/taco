@@ -529,6 +529,9 @@ rect.bar.struct-del-color {
 .loader {
 	height: 42px;
 	left: 50%;
+  margin-left: -21px;
+  top: 50%;
+  margin-top: -21 px;
 	position: absolute;
 	transform: translateX(-50%) translateY(-50%);
 		-o-transform: translateX(-50%) translateY(-50%);
