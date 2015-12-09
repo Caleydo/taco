@@ -220,9 +220,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       //preparing a fixed test table for lineup and mds
       test_items = items.filter(function (d) {
         //return d.desc.fqname.match(/.*multiple.*|.*tiny.*|.*Large.*/);
-        //return d.desc.fqname.match(/.*microRNA.*/);
+        return d.desc.fqname.match(/.*microRNA.*/);
+        //return d.desc.fqname.match(/.*Methylation.*/);
         // all except the merge because it causes errors
-        return d.desc.fqname.match(/.*Taco (?!merge).*/);
+        //return d.desc.fqname.match(/.*Taco (?!merge).*/);
       });
 
       //MDS part
