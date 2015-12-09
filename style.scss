@@ -516,6 +516,15 @@ rect.bar.struct-del-color {
   fill: dimgrey;
 }
 
+#bin-text {
+  display: inline-block;
+}
+
+#bin-number-div{
+  float: right;
+}
+
+
 /* loader */
 .loader {
 	height: 42px;

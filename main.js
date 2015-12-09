@@ -20,7 +20,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     var myDrag = drag.Drag();
 
     var gridSize = 6,
-      setting_bins = 12; //todo find a way to specify this
+      setting_bins = 12; //just a default value
     var test_items,
       settings_change = [],
       settings_direction = [],
@@ -324,6 +324,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       console.log("changed this ", $(this).val(), settings_direction);
     });
 
+    $("#bin-number").change(function () {
+      var bins_input = parseInt(document.getElementById('bin-number').value);
+      // make sure no negative numbers
+      setting_bins = (bins_input > 1? bins_input: 2);
+    });
+
     // slider for bootstrap
     // With JQuery
     var detail_slider = $('#detail-slider').slider({
@@ -383,7 +389,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         default:
           d3.select('#overview').classed('expand', true);
       }
-      mds_instance.resize();
+      if (mds_instance !== null){
+        mds_instance.resize();
+      }
       if (lineup_instance !== null) {
         var ranking = lineup_instance.lineup.data.getLastRanking().getOrder();
         console.log("the ranking from sliding?", ranking);

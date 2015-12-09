@@ -1,7 +1,7 @@
 /**
  * Created by Reem on 10/23/2015.
  */
-define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idtype', 'caleydo_tooltip/main'], function (exports, d3, $, d3utils, idtypes, tooltip) {
+define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idtype'], function (exports, d3, $, d3utils, idtypes) {
     //force directed graph
     function drawFDGraph($parent, data, nodes, links, size){
       //todo use size instead
