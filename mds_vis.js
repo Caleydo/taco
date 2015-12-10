@@ -12,7 +12,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         //.attr("width", width)
         //.attr("height", height);
         //responsive SVG needs these 2 attributes and no width and height attr
-       //.attr("preserveAspectRatio", "xMinYMin meet")
+       .attr("preserveAspectRatio", "xMaxYMax meet")
        //.attr("viewBox",  left + " "+ top + " " + width + " " + height)
          .attr("viewBox",  "0 0 " + width + " " + height)
        //class to make it responsive
@@ -88,7 +88,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
           .classed("svg-container", true); //container class to make it responsive
         data.data().then(function(nodes){
           var current_size = [$parent.node().getBoundingClientRect().width, $parent.node().getBoundingClientRect().height];
-          $svg = drawMDSGraph($parent, data, nodes, o.links, current_size);
+          $svg = drawMDSGraph($node, data, nodes, o.links, current_size);
         });
         return $node;
       },
@@ -103,8 +103,9 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
             var width = $svg.node().parentNode.getBoundingClientRect().width,
                 height = $svg.node().parentNode.getBoundingClientRect().height;
               console.log("resize mds vis", $svg);
-            $svg.attr("width", width)
-              .attr("height", height);
+            //$svg.attr("width", width)
+            //  .attr("height", height);
+            $svg.attr("viewBox",  "0 0 " + width + " " + height);
           };
 
           // use jquery instead of d3
