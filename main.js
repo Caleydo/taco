@@ -391,7 +391,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           d3.select('#overview').classed('expand', true);
       }
       if (mds_instance !== null){
-        mds_instance.resize();
+        //mds_instance.resize();
       }
       if (lineup_instance !== null) {
         var ranking = lineup_instance.lineup.data.getLastRanking().getOrder();

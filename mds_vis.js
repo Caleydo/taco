@@ -6,9 +6,17 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
     function drawMDSGraph($parent, data, nodes, pos, size){
       var width = size[0],
         height = size[1];
+      var top = $parent.node().getBoundingClientRect().top;
+      var left = $parent.node().getBoundingClientRect().left;
       var svg = $parent.append("svg")
-        .attr("width", width)
-        .attr("height", height);
+        //.attr("width", width)
+        //.attr("height", height);
+        //responsive SVG needs these 2 attributes and no width and height attr
+       //.attr("preserveAspectRatio", "xMinYMin meet")
+       //.attr("viewBox",  left + " "+ top + " " + width + " " + height)
+         .attr("viewBox",  "0 0 " + width + " " + height)
+       //class to make it responsive
+       .classed("svg-content-responsive", true);
       var margin = 40;
 
       var xScale = d3.scale.linear()
