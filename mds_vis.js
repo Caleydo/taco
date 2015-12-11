@@ -1,8 +1,8 @@
 /**
  * Created by Reem on 10/23/2015.
  */
-define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idtype', '../caleydo_core/vis'],
-  function (exports, d3, $, d3utils, idtypes, vis) {
+define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idtype', '../caleydo_core/vis', '../caleydo_core/behavior',],
+  function (exports, d3, $, d3utils, idtypes, vis, behavior) {
     //MDS graph
     function drawMDSGraph($parent, data, nodes, pos, size){
       var width = size[0],
@@ -61,25 +61,24 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
       //  .on('click', onClick);
 
       /*trying to show heatmap instead of a circle */
-      var circles = node.append("rect")
-        .attr("class", "fd-circle")
+      var circles = node.append("foreignObject")
+        .style("transform", function(d) {
+          return "translate(" + xScale(d.x) + "px," + yScale(d.y) + "px)";
+        })
+        .style("width", '20px')
+        .style("height", '20px')
+        .append("body")
+        .append("div")
+        .classed("fd-circle", true)
         .attr("id", function(d, i){
           return "table" + i;
         })
-        .attr("x", function(d) {
-          return xScale(d.x);
-        })
-        .attr("y", function (d) {
-          return yScale(d.y);
-        })
-        .attr("width", 10)
-        .attr("height", 10)
         .on('click', onClick);
 
       var heatmapplugin;
       var nodes_data;
       data.data().then(function(nd){
-        nd.map(function(node_row){
+        nd.map(function(node_row, i){
           nodes_data = node_row[2];
           debugger;
           if (nodes_data.desc.type === 'matrix') {
@@ -90,10 +89,10 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
           if (heatmapplugin !== undefined){
             heatmapplugin.load()
               .then(function (plugin) {
-                var heatmap1 = plugin.factory(nodes_data, document.getElementById('table1'), { // find an element
+                var heatmap1 = plugin.factory(nodes_data, document.getElementById('table'+i), { // find an element
                   initialScale: 6 //grid size from before (i can remove it)
                 });
-                (new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomTo(100,90);
+                //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomTo(100,90);
                 //id1 = selectedDataset.desc.id;
               });
           }

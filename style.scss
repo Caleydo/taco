@@ -502,7 +502,9 @@ rect.bar.struct-del-color {
 .node .fd-circle{
   stroke: #fff;
   stroke-width: 1.5px;
-  fill: #456bb4;
+  //fill: #456bb4;
+  background-color: #456bb4;
+  position: absolute;
 }
 
 .node.select-node-selected .fd-circle{
