@@ -9,7 +9,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         height = size[1];
       var top = $parent.node().getBoundingClientRect().top;
       var left = $parent.node().getBoundingClientRect().left;
-      var svg = $parent.append("div")
+      var svg = $parent;
         //.attr("width", width)
         //.attr("height", height);
         //responsive SVG needs these 2 attributes and no width and height attr
@@ -17,7 +17,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
        //.attr("viewBox",  left + " "+ top + " " + width + " " + height)
        //.attr("viewBox",  "0 0 " + width + " " + height)
        //class to make it responsive
-       .classed("svg-content-responsive", true);
+       //.classed("svg-content-responsive", true);
       var margin = 40;
 
       var xScale = d3.scale.linear()
@@ -78,7 +78,6 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
       data.data().then(function(nd){
         nd.map(function(node_row, i){
           nodes_data = node_row[2];
-          debugger;
           if (nodes_data.desc.type === 'matrix') {
             heatmapplugin = vis.list(nodes_data).filter(function (d) {
               return d.id.match(/.*heatmap.*/);
@@ -90,7 +89,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
                 var heatmap1 = plugin.factory(nodes_data, document.getElementById('table'+i), { // find an element
                   initialScale: 6 //grid size from before (i can remove it)
                 });
-                (new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomTo(100,90);
+                (new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomTo(80,90);
                 //id1 = selectedDataset.desc.id;
               });
           }
@@ -125,7 +124,8 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         var o = this.options;
         var current_size = [$parent.node().getBoundingClientRect().width, $parent.node().getBoundingClientRect().height];
         var $node = $parent.append("div")
-          .classed("svg-container", true) //container class to make it responsive
+          //.classed("svg-container", true) //container class to make it responsive
+          .classed("mds-container", true)
           .attr("width", current_size[0])
           .attr("height", current_size[1]);
         data.data().then(function(nodes){
