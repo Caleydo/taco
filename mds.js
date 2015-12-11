@@ -24,6 +24,13 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
           getter: function (d) {
             return d.desc.id;
           }
+        },
+        {
+          name: 'node',
+          value: {type: 'matrix'},
+          getter: function (d) {
+            return d;
+          }
         }
       ]
     }, data, 'name');
