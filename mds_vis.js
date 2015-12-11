@@ -1,7 +1,7 @@
 /**
  * Created by Reem on 10/23/2015.
  */
-define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idtype', '../caleydo_core/vis', '../caleydo_core/behavior',],
+define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idtype', '../caleydo_core/vis', '../caleydo_core/behavior'],
   function (exports, d3, $, d3utils, idtypes, vis, behavior) {
     //MDS graph
     function drawMDSGraph($parent, data, nodes, pos, size){
@@ -9,13 +9,13 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         height = size[1];
       var top = $parent.node().getBoundingClientRect().top;
       var left = $parent.node().getBoundingClientRect().left;
-      var svg = $parent.append("svg")
+      var svg = $parent.append("div")
         //.attr("width", width)
         //.attr("height", height);
         //responsive SVG needs these 2 attributes and no width and height attr
-       .attr("preserveAspectRatio", "xMaxYMax meet")
+       //.attr("preserveAspectRatio", "xMaxYMax meet")
        //.attr("viewBox",  left + " "+ top + " " + width + " " + height)
-         .attr("viewBox",  "0 0 " + width + " " + height)
+       //.attr("viewBox",  "0 0 " + width + " " + height)
        //class to make it responsive
        .classed("svg-content-responsive", true);
       var margin = 40;
@@ -44,7 +44,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
       var node = svg.selectAll(".node")
         .data(mixed_data)
         .enter()
-        .append("g")
+        .append("div")
         .attr("class", "node");
         //.call(force.drag);
 
@@ -61,14 +61,12 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
       //  .on('click', onClick);
 
       /*trying to show heatmap instead of a circle */
-      var circles = node.append("foreignObject")
+      var circles = node.append("div")
         .style("transform", function(d) {
           return "translate(" + xScale(d.x) + "px," + yScale(d.y) + "px)";
         })
         .style("width", '20px')
         .style("height", '20px')
-        .append("body")
-        .append("div")
         .classed("fd-circle", true)
         .attr("id", function(d, i){
           return "table" + i;
@@ -92,7 +90,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
                 var heatmap1 = plugin.factory(nodes_data, document.getElementById('table'+i), { // find an element
                   initialScale: 6 //grid size from before (i can remove it)
                 });
-                //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomTo(100,90);
+                (new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomTo(100,90);
                 //id1 = selectedDataset.desc.id;
               });
           }
@@ -125,10 +123,12 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
       }, [200, 200],
       function ($parent, data, size) {
         var o = this.options;
+        var current_size = [$parent.node().getBoundingClientRect().width, $parent.node().getBoundingClientRect().height];
         var $node = $parent.append("div")
-          .classed("svg-container", true); //container class to make it responsive
+          .classed("svg-container", true) //container class to make it responsive
+          .attr("width", current_size[0])
+          .attr("height", current_size[1]);
         data.data().then(function(nodes){
-          var current_size = [$parent.node().getBoundingClientRect().width, $parent.node().getBoundingClientRect().height];
           $svg = drawMDSGraph($node, data, nodes, o.links, current_size);
         });
         return $node;

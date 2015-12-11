@@ -500,11 +500,11 @@ rect.bar.struct-del-color {
 
 //force directed graph
 .node .fd-circle{
-  stroke: #fff;
-  stroke-width: 1.5px;
+  //stroke: #fff;
+  //stroke-width: 1.5px;
   //fill: #456bb4;
   background-color: #456bb4;
-  position: absolute;
+  //position: absolute;
 }
 
 .node.select-node-selected .fd-circle{
