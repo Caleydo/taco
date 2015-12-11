@@ -9,7 +9,8 @@
     "caleydo_core": "*",
     "caleydo_vis": "*",
     "caleydo_d3": "*",
-    "caleydo_vis_lineup": "*"
+    "caleydo_vis_lineup": "*",
+    "caleydo_tooltip": "*"
   },
   "caleydo": {
     "plugins": {
@@ -75,8 +76,7 @@
         "underscore": "~1.8",
         "bootstrap": "~3.3.4",
         "toastr" : ">=2.1.2",
-        "seiyria-bootstrap-slider" :">=5.2.1",
-        "caleydo_tooltip" : ">=0.0.1-alpha"
+        "seiyria-bootstrap-slider" :">=5.2.1"
       }
     },
     "requirejs-config": {
