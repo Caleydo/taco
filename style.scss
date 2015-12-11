@@ -406,6 +406,10 @@ rect.bar.struct-del-color {
   height: 41vh;
 }
 
+.mds-container {
+  position: absolute;
+}
+
 #lineup {
   border: solid 1px dimgrey;
   height: 41vh;
@@ -504,7 +508,11 @@ rect.bar.struct-del-color {
   //stroke-width: 1.5px;
   //fill: #456bb4;
   background-color: #456bb4;
-  //position: absolute;
+  position: absolute;
+}
+
+.node {
+  position: absolute;
 }
 
 .node.select-node-selected .fd-circle{

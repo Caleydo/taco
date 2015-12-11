@@ -45,26 +45,20 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         .data(mixed_data)
         .enter()
         .append("div")
-        .attr("class", "node");
+        .attr("class", "node")
+        .style("transform", function(d) {
+          return "translate(" + xScale(d.x) + "px," + yScale(d.y) + "px)";
+        });
         //.call(force.drag);
-
-      var radius = 7;
-      //var circles = node.append("circle")
-      //  .attr("r", radius)
-      //  .attr("class", "fd-circle")
-      //  .attr("cx", function(d) {
-      //    return xScale(d.x);
-      //  })
-      //  .attr("cy", function (d) {
-      //    return yScale(d.y);
-      //  })
-      //  .on('click', onClick);
+      node.append("text")
+       // .attr("dx", 10)
+       // .attr("dy", ".35em")
+        .text(function (d, i) {
+          return d.name;
+        });
 
       /*trying to show heatmap instead of a circle */
       var circles = node.append("div")
-        .style("transform", function(d) {
-          return "translate(" + xScale(d.x) + "px," + yScale(d.y) + "px)";
-        })
         .style("width", '20px')
         .style("height", '20px')
         .classed("fd-circle", true)
@@ -96,19 +90,13 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         });
       });
 
-
-      node.append("text")
-       // .attr("dx", 10)
-       // .attr("dy", ".35em")
-        .text(function (d, i) {
-          return d.name;
-        })
-        .attr("x", function(d) {
-          return xScale(d.x) + radius;
-        })
-        .attr("y", function (d) {
-          return yScale(d.y) + (radius/2);
-        });
+    var radius = 7;
+      //.attr("x", function(d) {
+      //  return xScale(d.x) + radius;
+      //})
+      //.attr("y", function (d) {
+      //  return yScale(d.y) - (radius*10);
+      //});
 
       return svg;
     }
@@ -126,8 +114,8 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         var $node = $parent.append("div")
           //.classed("svg-container", true) //container class to make it responsive
           .classed("mds-container", true)
-          .attr("width", current_size[0])
-          .attr("height", current_size[1]);
+          .style("width", current_size[0] + "px")
+          .style("height", current_size[1] + "px");
         data.data().then(function(nodes){
           $svg = drawMDSGraph($node, data, nodes, o.links, current_size);
         });
