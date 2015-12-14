@@ -496,6 +496,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               dim: settings_direction,
               change: settings_change, //because i want to handle this only on the client for now
               bins: bins,
+              bins_col: bins_col,
               name: e.desc.name
             });
             return r;

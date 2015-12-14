@@ -123,6 +123,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         var o = this.options;
         var $node = $parent.append("div");
         var bins = o.bins,
+          bins_col = o.bins_col,
           changes = o.change;
         //if (o.dim.indexOf("rows") !== -1 && o.dim.indexOf("columns") !== -1){
         //  console.log(data);
@@ -132,7 +133,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         }
         if (o.dim.indexOf("columns") > -1) {
           //call the function for the cols!
-          drawHistogram($node, data, bins, changes, "columns", size, o.name);
+          drawHistogram($node, data, bins_col, changes, "columns", size, o.name);
         }
         return $node;
       });
