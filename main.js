@@ -20,7 +20,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     var myDrag = drag.Drag();
 
     var gridSize = 6,
-      setting_bins = 12; //just a default value
+      setting_bins = 12,
+      setting_bins_col = 12; //just a default value
     var test_items,
       settings_change = [],
       settings_direction = [],
@@ -276,7 +277,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             });
             // todo get the direction
             // todo get the bins
-            calcHistogram(ref_table, selected_items, setting_bins, settings_direction);
+            calcHistogram(ref_table, selected_items, setting_bins, setting_bins_col, settings_direction);
               //.then(function(viss){
               ////these are just 2 since every histogram is both rows and columns
               //  console.log("hist vises", viss);
@@ -329,6 +330,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       var bins_input = parseInt(document.getElementById('bin-number').value);
       // make sure no negative numbers
       setting_bins = (bins_input > 1? bins_input: 2);
+    });
+
+    $("#bin-col-number").change(function () {
+      var bins_c_input = parseInt(document.getElementById('bin-col-number').value);
+      // make sure no negative numbers
+      setting_bins_col = (bins_c_input > 1? bins_c_input: 2);
     });
 
     // slider for bootstrap
@@ -460,7 +467,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     // Middle part
     // ref_table and selected_list are dataset objects
-    function calcHistogram(ref_table, selected_list, bins, direction){
+    function calcHistogram(ref_table, selected_list, bins, bins_col, direction){
       //first remove all the old histograms containers
       d3.selectAll(".taco-hist-container").remove();
       //calculate the new ones
@@ -476,6 +483,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           direction: direction,
           //detail: 2, //because it's middle now
           bins: bins, // this should be a variable but for now we use this static number -> we want histogram
+          bins_col: bins_col, //bins per columns (the default one is per row)
           tocall: 'diff',
           size: e.desc.size //we can use dummy values instead
         }).then(function (diffmatrix) {

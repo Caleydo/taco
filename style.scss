@@ -526,11 +526,11 @@ rect.bar.struct-del-color {
   fill: dimgrey;
 }
 
-#bin-text {
+#bin-text, #bin-col-text {
   display: inline-block;
 }
 
-#bin-number-div{
+#bin-number-div, #bin-col-number-div{
   float: right;
 }
 
