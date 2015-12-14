@@ -18,15 +18,16 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
        //.attr("viewBox",  "0 0 " + width + " " + height)
        //class to make it responsive
        //.classed("svg-content-responsive", true);
-      var margin = 40;
+      var margin = 60,
+        min_margin = 10;
 
       var xScale = d3.scale.linear()
         .domain([pos.xmin, pos.xmax])
-        .range([margin, width - margin]);
+        .range([min_margin, width - margin]);
 
       var yScale = d3.scale.linear()
         .domain([pos.ymin, pos.ymax])
-        .range([margin, height - margin]);
+        .range([min_margin, height - margin]);
 
 
       d3utils.selectionUtil(data, svg, '.node');
@@ -83,7 +84,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
                 var heatmap1 = plugin.factory(nodes_data, document.getElementById('table'+i), { // find an element
                   initialScale: 6 //grid size from before (i can remove it)
                 });
-                (new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomTo(80,90);
+                (new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomTo(60,70);
                 //id1 = selectedDataset.desc.id;
               });
           }
