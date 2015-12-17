@@ -1,8 +1,8 @@
 /**
  * Created by Reem on 10/23/2015.
  */
-define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idtype', '../caleydo_core/vis', '../caleydo_core/behavior'],
-  function (exports, d3, $, d3utils, idtypes, vis, behavior) {
+define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idtype'],
+  function (exports, d3, $, d3utils, idtypes) {
     //MDS graph
     function drawMDSGraph($parent, data, nodes, pos, size){
       var width = size[0],
@@ -18,17 +18,15 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
        //.attr("viewBox",  "0 0 " + width + " " + height)
        //class to make it responsive
        //.classed("svg-content-responsive", true);
-      var margin = 60,
-        min_margin = 10;
+      var margin = 40;
 
       var xScale = d3.scale.linear()
         .domain([pos.xmin, pos.xmax])
-        .range([min_margin, width - margin]);
+        .range([margin, width - margin]);
 
       var yScale = d3.scale.linear()
         .domain([pos.ymin, pos.ymax])
-        .range([min_margin, height - margin]);
-
+        .range([margin, height - margin]);
 
       d3utils.selectionUtil(data, svg, '.node');
       var onClick = function(d,i) {
@@ -50,7 +48,6 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         .style("transform", function(d) {
           return "translate(" + xScale(d.x) + "px," + yScale(d.y) + "px)";
         });
-        //.call(force.drag);
       node.append("text")
        // .attr("dx", 10)
        // .attr("dy", ".35em")
@@ -58,7 +55,6 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
           return d.name;
         });
 
-      /*trying to show heatmap instead of a circle */
       var circles = node.append("div")
         .style("width", '20px')
         .style("height", '20px')
@@ -67,37 +63,6 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
           return "table" + i;
         })
         .on('click', onClick);
-
-      var heatmapplugin;
-      var nodes_data;
-      data.data().then(function(nd){
-        nd.map(function(node_row, i){
-          nodes_data = node_row[2];
-          if (nodes_data.desc.type === 'matrix') {
-            heatmapplugin = vis.list(nodes_data).filter(function (d) {
-              return d.id.match(/.*heatmap.*/);
-            })[0];
-          }
-          if (heatmapplugin !== undefined){
-            heatmapplugin.load()
-              .then(function (plugin) {
-                var heatmap1 = plugin.factory(nodes_data, document.getElementById('table'+i), { // find an element
-                  initialScale: 6 //grid size from before (i can remove it)
-                });
-                (new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomTo(60,70);
-                //id1 = selectedDataset.desc.id;
-              });
-          }
-        });
-      });
-
-    var radius = 7;
-      //.attr("x", function(d) {
-      //  return xScale(d.x) + radius;
-      //})
-      //.attr("y", function (d) {
-      //  return yScale(d.y) - (radius*10);
-      //});
 
       return svg;
     }
