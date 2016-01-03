@@ -1,14 +1,67 @@
 /**
  * Created by Reem on 12/1/2015.
  */
-define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d3, d3utils, drag) {
+define(['exports', 'd3', '../caleydo_d3/d3util', './drag', '../caleydo_core/table_impl', '../caleydo_core/idtype'],
+  function (exports, d3, d3utils, drag, tables, idtypes) {
 
-    function draw2dHistogram(p_data, usize, parent) {
+    function convertToTable(data) {
+      return tables.wrapObjects({
+        id: '_taco_list',
+        name: 'Taco 2D Histogram Data',
+        type: 'table',
+        rowtype: '_taco_dataset',
+        size: [data.length, 5],
+        columns: [
+          {
+            name: 'name',
+            value: {type: 'string'},
+            getter: function (d) {
+              return d.desc.name;
+            }
+          },
+          {
+            name: 'id1',
+            value: {type: 'string'},
+            getter: function (d) {
+              return d.desc.id1;
+            }
+          },
+          {
+            name: 'id2',
+            value: {type: 'string'},
+            getter: function (d) {
+              return d.desc.id2;
+            }
+          },
+          {
+            name: 'change',
+            value: {type: 'matrix'},
+            getter: function (d) {
+              return d.desc.change;
+            }
+          },
+          {
+            name: 'direction',
+            value: {type: 'matrix'},
+            getter: function (d) {
+              return d.desc.direction;
+            }
+          }
+        ]
+      }, data, 'name');
+    }
+
+    function draw2dHistogram(p_data, id_table, usize, parent) {
       var myDrag = drag.Drag();
       var usize0 = usize[0],
         usize1 = usize[1];
       var width = 160, //just to make it look a bit wider than the normal one in case both are selected
         height = 160;
+
+      //d3utils.selectionUtil(id_table, parent, '.taco-2d-container');
+      var onClick = function(d,i) {
+        id_table.select(0, 'middle-selected', [i], idtypes.toSelectOperation(d3.event));
+      };
 
       //find a better way for calculating the position
       var position = parseInt(parseInt(parent.style("width")) / 2) - parseInt(width / 2);
@@ -20,7 +73,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         //todo move all the transform functions to the css
         //note that the transform has to be one sentence otherwise it won't happen
         .style("transform", "translate(" + position + "px," + 20 + "px)")
-        .call(myDrag);
+        .call(myDrag)
+        .on('click', onClick);
 
       var x = d3.scale.linear()
         .domain([0,1])
@@ -70,7 +124,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         var $node = $parent.append('div')
           .classed("taco-2d-container", true);
         data.data().then(function(ratios){
-          $node = draw2dHistogram(ratios, data.desc.size, $node);
+          $node = draw2dHistogram(ratios, convertToTable(ratios), data.desc.size, $node);
         });
         return $node;
       });

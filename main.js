@@ -236,7 +236,11 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         });
 
       idtypes.resolve('_taco_dataset').on('select', function (e, type, range) {
-        if (type === 'node-selected') {
+        if(type === 'middle-selected') {
+          var r = range.dim(0).asList();
+          console.log('middle-selected',  type, range, r);
+
+        } else if (type === 'node-selected') {
           var r = range.dim(0).asList();
           // get only the first selected item
           first_selected = r[0];
