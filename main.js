@@ -238,7 +238,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       idtypes.resolve('_taco_dataset').on('select', function (e, type, range) {
         if(type === 'middle-selected') {
           var r = range.dim(0).asList();
-          console.log('middle-selected',  type, range, r);
+          console.log('middle-selected', type, range, r);
 
         } else if (type === 'node-selected') {
           var r = range.dim(0).asList();
@@ -547,7 +547,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 dim: settings_direction,
                 change: settings_change, //because i want to handle this only on the client for now
                 bins: setting_bins,
-                name: e.desc.name
+                name: e.desc.name,
+                selected_list: selected_list,
+                index: index
               });
             });
           } else {

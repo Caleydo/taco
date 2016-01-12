@@ -4,63 +4,17 @@
 define(['exports', 'd3', '../caleydo_d3/d3util', './drag', '../caleydo_core/table_impl', '../caleydo_core/idtype'],
   function (exports, d3, d3utils, drag, tables, idtypes) {
 
-    function convertToTable(data) {
-      return tables.wrapObjects({
-        id: '_taco_list',
-        name: 'Taco 2D Histogram Data',
-        type: 'table',
-        rowtype: '_taco_dataset',
-        size: [data.length, 5],
-        columns: [
-          {
-            name: 'name',
-            value: {type: 'string'},
-            getter: function (d) {
-              return d.desc.name;
-            }
-          },
-          {
-            name: 'id1',
-            value: {type: 'string'},
-            getter: function (d) {
-              return d.desc.id1;
-            }
-          },
-          {
-            name: 'id2',
-            value: {type: 'string'},
-            getter: function (d) {
-              return d.desc.id2;
-            }
-          },
-          {
-            name: 'change',
-            value: {type: 'matrix'},
-            getter: function (d) {
-              return d.desc.change;
-            }
-          },
-          {
-            name: 'direction',
-            value: {type: 'matrix'},
-            getter: function (d) {
-              return d.desc.direction;
-            }
-          }
-        ]
-      }, data, 'name');
-    }
-
-    function draw2dHistogram(p_data, id_table, usize, parent) {
+    function draw2dHistogram(p_data, id_type, index, usize, parent) {
       var myDrag = drag.Drag();
       var usize0 = usize[0],
         usize1 = usize[1];
       var width = 160, //just to make it look a bit wider than the normal one in case both are selected
         height = 160;
 
-      //d3utils.selectionUtil(id_table, parent, '.taco-2d-container');
+      //d3utils.selectionUtil(i data type, parent, '.taco-2d-container');
       var onClick = function(d,i) {
-        id_table.select(0, 'middle-selected', [i], idtypes.toSelectOperation(d3.event));
+        id_type.select(0, 'middle-selected', [i], idtypes.toSelectOperation(d3.event));
+        //id_type.select(0, 'middle-selected', index, idtypes.toSelectOperation(d3.event));
       };
 
       //find a better way for calculating the position
@@ -123,8 +77,10 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag', '../caleydo_core/tabl
         var o = this.options;
         var $node = $parent.append('div')
           .classed("taco-2d-container", true);
+        console.log("selected", o.selected_list[o.index]);
+        var some_idtype = idtypes.resolve('_taco_dataset');
         data.data().then(function(ratios){
-          $node = draw2dHistogram(ratios, convertToTable(ratios), data.desc.size, $node);
+          $node = draw2dHistogram(ratios, some_idtype, o.index, data.desc.size, $node);
         });
         return $node;
       });
