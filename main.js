@@ -213,7 +213,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           .filter(function (v, i, a) { return a.indexOf (v) == i }); // make array unique
       */
 
-      var $select  = d3.select("#dataset-selector").append("select").on("change", change),
+      var $select  = d3.select("#dataset-selector").on("change", change),
           $options = $select.selectAll('option').data(dataset_categories); // Data join
 
       $options.enter().append("option").text(function(d) { return d.title; });
