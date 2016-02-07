@@ -82,7 +82,7 @@
     "requirejs-config": {
       "paths": {
         "bootstrap": "${baseUrl}/bootstrap/dist/js/bootstrap",
-        "bootstrap-slider": "${baseUrl}/seiyria-bootstrap-slider/js/bootstrap-slider"
+        "bootstrap-slider": "${baseUrl}/seiyria-bootstrap-slider/src/js/bootstrap-slider"
       },
       "shim": {
         "bootstrap": [
