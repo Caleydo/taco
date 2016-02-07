@@ -192,11 +192,65 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       }
     }
 
-    data_provider.list().then(function (items) {
-      items = items.filter(function (d) {
-        return d.desc.type === 'matrix';//&& d.desc.fqname.match(/.*taco.*/);
-        //return d.desc.type  === 'matrix' || d.desc.type === 'table';
-      });
+    function filter_list(d) {
+      return d.desc.type === 'matrix';//&& d.desc.fqname.match(/.*taco.*/);
+      //return d.desc.type  === 'matrix' || d.desc.type === 'table';
+    }
+
+    // create dataset directory list
+    data_provider.list(filter_list).then(function (items) {
+      var dataset_categories = [
+        {title: 'microRNA', regexp:/.*microRNA.*/},
+        {title: 'Methylation', regexp:/.*Methylation.*/},
+        {title: 'Taco (All)', regexp:/.*Taco (?!merge).*/},
+        {title: 'Taco (Multiple + Tiny + Large)', regexp:/.*multiple.*|.*tiny.*|.*Large.*/}
+      ];
+
+      // select by dataset directory name
+      /*var datasets = items.map(function(d) {
+            return d.desc.fqname.split('/')[0]; // get directory name
+          })
+          .filter(function (v, i, a) { return a.indexOf (v) == i }); // make array unique
+      */
+
+      var $select  = d3.select("#dataset-selector").append("select").on("change", change),
+          $options = $select.selectAll('option').data(dataset_categories); // Data join
+
+      $options.enter().append("option").text(function(d) { return d.title; });
+
+      function change() {
+        var si   = $select.property('selectedIndex'),
+            s    = $options.filter(function (d, i) { return i === si }),
+            dataset = s.datum();
+
+        //preparing a fixed test table for lineup and mds
+        test_items = items.filter(function (d) {
+          return d.desc.fqname.match(dataset.regexp);
+        });
+        console.log(dataset, items, test_items);
+
+        if(test_items.length === 0) {
+          toastr.warning("No items for this dataset category found! Select a different one.");
+          return;
+        }
+        //MDS part
+        //creating the data
+        calcGraphData(test_items)
+          .then(function (mdata) {
+            // remove already available DOM nodes
+            d3.select('#mds-graph *').remove();
+            showMDS(mdata);
+          }, function (error) {
+            console.error('error loading mds items', error);
+            toastr.error("Couldn't load the selected dataset directory!<br>Error: " + error.responseText);
+          });
+      }
+
+      // initialize the first directory selection
+      change();
+    });
+
+    data_provider.list(filter_list).then(function (items) {
       var $base = d3.select('#blockbrowser table tbody');
       var $rows = $base.selectAll('tr').data(items);
       var $tr = $rows.enter().append('tr').html(function (d) {
@@ -222,18 +276,18 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       test_items = items.filter(function (d) {
         //return d.desc.fqname.match(/.*multiple.*|.*tiny.*|.*Large.*/);
         //return d.desc.fqname.match(/.*multiple.*|.*tiny.*/);
-        return d.desc.fqname.match(/.*microRNA.*/);
+        //return d.desc.fqname.match(/.*microRNA.*/);
         //return d.desc.fqname.match(/.*Methylation.*/);
         // all except the merge because it causes errors
-        //return d.desc.fqname.match(/.*Taco (?!merge).*/);
+        return d.desc.fqname.match(/.*Taco (?!merge).*/);
       });
 
       //MDS part
       //creating the data
-      calcGraphData(test_items)
+      /*calcGraphData(test_items)
         .then(function (mdata) {
           showMDS(mdata);
-        });
+        });*/
 
       idtypes.resolve('_taco_dataset').on('select', function (e, type, range) {
         if(type === 'middle-selected') {
