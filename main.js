@@ -501,8 +501,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               var cont = dm_data.c_ratio * 100;
               var stadd = dm_data.a_ratio * 100;
               var stdel = dm_data.d_ratio * 100;
+              console.log(e.desc, "date");
               return {
                 name: e.desc.name,
+                date: e.desc.fqname.substring(0,10),
                 noch: noch,
                 cont: cont,
                 stadd: stadd,
