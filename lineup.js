@@ -94,11 +94,23 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
         },
         dump: {
           layout: {
-            primary: [{type: 'rank', width: 40}, col('Name', 220), {
-              type: 'stacked',
-              width: 400,
-              children: [col('Structure Add', 100), col('Structure Del', 100), col('Content', 100)]
-            }, col('No Change', 100)]
+            primary: [
+              {
+                type: 'selection',
+                label: 'S'
+              },
+              {
+                type: 'rank',
+                width: 40
+              },
+              col('Name', 220),
+              {
+                type: 'stacked',
+                width: 400,
+                children: [col('Structure Add', 100), col('Structure Del', 100), col('Content', 100)]
+              },
+              col('No Change', 100)
+            ]
           }
         }
       });
