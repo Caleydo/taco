@@ -6,10 +6,10 @@
 
 require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/behavior',
   '../caleydo_core/idtype', '../caleydo_core/multiform', './diffmatrix', 'underscore', 'toastr', 'bootstrap-slider',
-  '../caleydo_d3/d3util', './drag', './lineup', './mds', './middle',  'bootstrap', 'font-awesome'],
+  '../caleydo_d3/d3util', './drag', './lineup', './mds', 'bootstrap', 'font-awesome'],
   function (data, d3, $, vis, C, behavior,
             idtypes, multiform, diffm, _, toastr, Slider,
-            d3utils, drag, lineup, mds, middle) {
+            d3utils, drag, lineup, mds) {
     'use strict';
 
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
@@ -41,7 +41,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     // vis instances
     var lineup_instance = null,
       mds_instance = null,
-      middle_instance = null,
       mid_hm = null; // the heatmap in the middle view
 
     //todo change it to be the ref table
@@ -158,16 +157,27 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                       dh.destroy();
                       dh.node.remove();
                       //remove the old multiform selector
+                      d3.select('#taco-mf-selector').html('');
                     }
-                    var diffheatmap = vis.list(diffmatrix).filter(function (d) {
-                      return d.id.match(/.*diffmatrixvis.*/);
-                    })[0];
-                    diffheatmap.load().then(function (plugin) {
-                      //here we call my diff_heatmap
-                      dh = plugin.factory(diffmatrix, d3.select('#board').node(),
-                        // optimal would be to find the smallest scaling factor
-                        {gridSize: heatmap1.size[0]/ heatmap1.rawSize[0]});
+                    dh = multiform.create(diffmatrix, d3.select('#board').node(), {
+                      // optimal would be to find the smallest scaling factor
+                      'diffmatrixvis': {gridSize: heatmap1.size[0]/ heatmap1.rawSize[0]}, //diffheatmap = Scaling
+                      'diffplotvis': {dim: settings_direction},
+                      'diffhistvis': {dim: settings_direction, bins: setting_bins}
                     });
+                    multiform.addSelectVisChooser(d3.select('#taco-mf-selector').node(), dh);
+                    d3.select('#taco-mf-selector select').classed('form-control', true);
+                    /*var visses = vis.list(diffmatrix);
+                     var diffheatmap = visses[0];
+                     diffheatmap.load().then(function (plugin) {
+                     //here we call my diff_heatmap
+                     dh = plugin.factory(diffmatrix, d3.select('#board').node());
+                     });
+                     visses[1].load().then(function (plugin) {
+                     //here we call my diff_barplot
+                     plugin.factory(diffmatrix, d3.select('#board').node());
+                     });
+                     */
                   } else {
                     console.log("no diff!", rows1, cols1, rows2, cols2);
                   }
@@ -190,8 +200,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     // create dataset directory list
     data_provider.list(filter_list).then(function (items) {
       var dataset_categories = [
-        //{title: 'microRNA', regexp:/.*microRNA.*/},
-        //{title: 'Methylation', regexp:/.*Methylation.*/},
+        {title: 'microRNA', regexp:/.*microRNA.*/},
+        {title: 'Methylation', regexp:/.*Methylation.*/},
         {title: 'Taco (All)', regexp:/.*Taco (?!merge).*/},
         {title: 'Taco (Multiple + Tiny + Large)', regexp:/.*multiple.*|.*tiny.*|.*Large.*/}
       ];
@@ -331,9 +341,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               //  console.log("hist vises", viss);
               //});
               //.then(showHistogram);
-            selected_items.forEach(function(item){
-              calc2DHistogram(ref_table, item, test_items, settings_direction)
-              .then(show2DHistogram);});
+            calc2DHistogram(ref_table, selected_items, settings_direction)
           }
         }
       });
@@ -564,34 +572,34 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       }));
     }
 
-    function calc2DHistogram(ref_table, selected_item, all_items, direction){
+    function calc2DHistogram(ref_table, selected_list, direction){
       //first remove all the old histograms containers
       d3.selectAll(".taco-2d-container").remove();
       //calculate the new ones
+      return Promise.all(selected_list.map(function (e, index, arr) {
         // if (e.desc.id !== ref_table.desc.id) { //do we want this here?
         return data_provider.create({
           type: 'diffstructure',
-          name: ref_table.desc.name + '-' + selected_item.desc.name,
+          name: ref_table.desc.name + '-' + e.desc.name,
           id1: ref_table.desc.id,
-          id2: selected_item.desc.id,
+          id2: e.desc.id,
           //todo remove this and let the server always calculate everything?
           change: ["structure", "content"], //todo use this as parameter
           direction: direction,
           //detail: 2, //because it's middle now
           bins: -1, // we want the result as summary but divided into rows and columns
           tocall: 'diff',
-          size: selected_item.desc.size //we can use dummy values instead
+          size: e.desc.size //we can use dummy values instead
         }).then(function (diffmatrix) {
-          //var v = vis.list(diffmatrix);
-          console.log('calc2DHistogram diffmatrix', diffmatrix);
+          var v = vis.list(diffmatrix);
+          console.log(diffmatrix);
           if (direction.length > 1) {
-            /*// draw the 2d heatmap now here
+            // draw the 2d heatmap now here
             var v1 = v.filter(function (v) {
               return v.id === 'diff2dhistvis';
             })[0];
             v1.load().then(function (plugin) {
               var r = plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
-                dataset: e,
                 dim: settings_direction,
                 change: settings_change, //because i want to handle this only on the client for now
                 bins: setting_bins,
@@ -599,29 +607,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 selected_list: selected_list,
                 index: index
               });
-            });*/
-
-            return diffmatrix.data().then(function (dm_data) {
-              return {
-                items: all_items,
-                dataset: dm_data,
-                settings_direction: settings_direction,
-                settings_change: settings_change,
-                setting_bins: setting_bins,
-                name: selected_item.desc.name
-              };
             });
           } else {
             toastr.warning("2D heatmap cannot be shown when only 1D is selected", direction);
           }
-      });
-    }
-
-    function show2DHistogram(mdata) {
-      middle.create(mdata, document.querySelector('#mid-comparison'))
-        .then(function (instance) {
-          middle_instance = instance;
         });
+      }));
     }
 
     function showHistogram(bdata){

@@ -4,7 +4,7 @@
 define(['exports', 'd3', '../caleydo_d3/d3util', './drag', '../caleydo_core/table_impl', '../caleydo_core/idtype'],
   function (exports, d3, d3utils, drag, tables, idtypes) {
 
-    function draw2dHistogram(p_data, dataset, index, usize, parent) {
+    function draw2dHistogram(p_data, id_type, index, usize, parent) {
       var myDrag = drag.Drag();
       var usize0 = usize[0],
         usize1 = usize[1];
@@ -13,7 +13,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag', '../caleydo_core/tabl
 
       //d3utils.selectionUtil(i data type, parent, '.taco-2d-container');
       var onClick = function(d,i) {
-        dataset.select(0, 'middle-selected', [i], idtypes.toSelectOperation(d3.event));
+        id_type.select(0, 'middle-selected', [i], idtypes.toSelectOperation(d3.event));
         //id_type.select(0, 'middle-selected', index, idtypes.toSelectOperation(d3.event));
       };
 
@@ -77,9 +77,11 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag', '../caleydo_core/tabl
         var o = this.options;
         var $node = $parent.append('div')
           .classed("taco-2d-container", true);
+        console.log("selected", o.selected_list[o.index]);
+        var some_idtype = idtypes.resolve('_taco_dataset');
         data.data().then(function(ratios){
           console.log(ratios, "from ratios?");
-          $node = draw2dHistogram(o.dataset, o.index, data.desc.size, $node);
+          $node = draw2dHistogram(ratios, some_idtype, o.index, data.desc.size, $node);
         });
         return $node;
       });
