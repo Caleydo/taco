@@ -157,27 +157,16 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                       dh.destroy();
                       dh.node.remove();
                       //remove the old multiform selector
-                      d3.select('#taco-mf-selector').html('');
                     }
-                    dh = multiform.create(diffmatrix, d3.select('#board').node(), {
-                      // optimal would be to find the smallest scaling factor
-                      'diffmatrixvis': {gridSize: heatmap1.size[0]/ heatmap1.rawSize[0]}, //diffheatmap = Scaling
-                      'diffplotvis': {dim: settings_direction},
-                      'diffhistvis': {dim: settings_direction, bins: setting_bins}
+                    var diffheatmap = vis.list(diffmatrix).filter(function (d) {
+                      return d.id.match(/.*diffmatrixvis.*/);
+                    })[0];
+                    diffheatmap.load().then(function (plugin) {
+                      //here we call my diff_heatmap
+                      dh = plugin.factory(diffmatrix, d3.select('#board').node(),
+                        // optimal would be to find the smallest scaling factor
+                        {gridSize: heatmap1.size[0]/ heatmap1.rawSize[0]});
                     });
-                    multiform.addSelectVisChooser(d3.select('#taco-mf-selector').node(), dh);
-                    d3.select('#taco-mf-selector select').classed('form-control', true);
-                    /*var visses = vis.list(diffmatrix);
-                     var diffheatmap = visses[0];
-                     diffheatmap.load().then(function (plugin) {
-                     //here we call my diff_heatmap
-                     dh = plugin.factory(diffmatrix, d3.select('#board').node());
-                     });
-                     visses[1].load().then(function (plugin) {
-                     //here we call my diff_barplot
-                     plugin.factory(diffmatrix, d3.select('#board').node());
-                     });
-                     */
                   } else {
                     console.log("no diff!", rows1, cols1, rows2, cols2);
                   }
