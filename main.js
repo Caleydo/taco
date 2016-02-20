@@ -12,6 +12,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             d3utils, drag, lineup, mds) {
     'use strict';
 
+    var taco_dispatcher = d3.dispatch('show_detail');
+
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
     var data_provider = data;
     var rows1 = null, rows2 = null, cols1 = null, cols2 = null, id1 = null, id2 = null,
@@ -289,12 +291,19 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           showMDS(mdata);
         });*/
 
-      idtypes.resolve('_taco_dataset').on('select', function (e, type, range) {
-        if(type === 'middle-selected') {
-          var r = range.dim(0).asList();
-          console.log('middle-selected', type, range, r);
+      taco_dispatcher.on('show_detail', function(ref_table, dest_table) {
+        console.log("moving to detail view");
+        //1 is the split between middle and overview
+        //todo check if it's already 1 then don't do anything for the slider
+        detail_slider.slider('setValue', 3, true, true);
 
-        } else if (type === 'node-selected') {
+        console.log('show_detail for:', 'ref_table =', ref_table, 'and dest_table =', dest_table);
+        addIt(ref_table, 0);
+        addIt(dest_table, 1);
+      });
+
+      idtypes.resolve('_taco_dataset').on('select', function (e, type, range) {
+        if (type === 'node-selected') {
           var r = range.dim(0).asList();
           // get only the first selected item
           first_selected = r[0];
@@ -604,8 +613,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 change: settings_change, //because i want to handle this only on the client for now
                 bins: setting_bins,
                 name: e.desc.name,
-                selected_list: selected_list,
-                index: index
+                ref_table: ref_table,
+                dest_table: e,
+                taco_dispatcher: taco_dispatcher
               });
             });
           } else {
