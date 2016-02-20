@@ -12,6 +12,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             d3utils, drag, lineup, mds) {
     'use strict';
 
+    var taco_dispatcher = d3.dispatch('show_detail');
+
     var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
     var data_provider = data;
     var rows1 = null, rows2 = null, cols1 = null, cols2 = null, id1 = null, id2 = null,
@@ -285,12 +287,138 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           showMDS(mdata);
         });*/
 
-      idtypes.resolve('_taco_dataset').on('select', function (e, type, range) {
-        if(type === 'middle-selected') {
-          var r = range.dim(0).asList();
-          console.log('middle-selected', type, range, r);
+      taco_dispatcher.on('show_detail', function(ref_table, dest_table) {
+        console.log("moving to detail view");
+        //1 is the split between middle and overview
+        //todo check if it's already 1 then don't do anything for the slider
+        detail_slider.slider('setValue', 3, true, true);
 
-        } else if (type === 'node-selected') {
+        console.log('show_detail for:', 'ref_table =', ref_table, 'and dest_table =', dest_table);
+
+        // visualize ref_table and dest_table
+        [ref_table, dest_table].forEach(function(dataset) {
+          var heatmapplugin;
+          if (dataset.desc.type === 'matrix') {
+            heatmapplugin = vis.list(dataset).filter(function (d) {
+              return d.id.match(/.*heatmap.*/);
+            })[0];
+            //heatmapplugin = vis.list(selectedDataset).filter(function(d) { return d.id.match(/.*histogram.*/); })[0];
+
+          } else if (dataset.desc.type === 'table') {
+            heatmapplugin = vis.list(dataset).filter(function (d) {
+              return d.id.match(/.*table.*/);
+            })[0];
+            toastr.warning("Visualization for tables might not perform as expected!!");
+            //todo find the difference between the visualziatoin for tables and martrices and handle this here.
+          }
+
+          if (heatmapplugin !== undefined) {
+            // selectedDataset.data() to get the data
+            Promise.all([dataset.rows(), dataset.cols(), heatmapplugin.load()])
+              .then(function (values) {
+                var rows = values[0];
+                var cols = values[1];
+                var plugin = values[2];
+
+                if (dataset === dest_table) {
+                  if (heatmap2 !== null) {
+                    heatmap2.destroy();
+                  }
+                  //can use selectedDataset.dim instead of calculating the length in the class
+                  //todo decide where to draw the table
+                  heatmap2 = plugin.factory(dataset, document.getElementById('test'), {
+                    initialScale: gridSize,
+                    color: ['black', 'white']
+                  });
+                  resize_heatmap(heatmap2, heatmapplugin);
+                  //(new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomSet(0.5,2);
+                  d3.select("#test").call(myDrag);
+
+                  rows2 = rows;
+                  cols2 = cols;
+                  id2 = dataset.desc.id;
+                  ds2 = dataset;
+
+                } else if(dataset === ref_table) {
+                  if (heatmap1 !== null) {
+                    heatmap1.destroy();
+                  }
+                  heatmap1 = plugin.factory(dataset, document.getElementById('test2'), {
+                    initialScale: gridSize
+                  });
+                  //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomSet(2,2);
+                  resize_heatmap(heatmap1, heatmapplugin);
+                  //heatmap1.parent.parentElement.getBoundingClientRect()
+                  d3.select("#test2").call(myDrag);
+                  rows1 = rows;
+                  cols1 = cols;
+                  id1 = dataset.desc.id;
+                  ds1 = dataset;
+                }
+              });
+          }
+        });
+
+        // visualize diff heatmap
+        // checking the basic type matches
+        if (ds1.desc.type !== ds2.desc.type) {
+          //bad
+          toastr.error("The types are not matching " + ds1.desc.type + " " + ds2.desc.type, 'Datatype mismatch!');
+        } else
+        //checking matrix idtype matches
+        if (ds1.desc.type === 'matrix' && (ds1.desc.rowtype !== ds2.desc.rowtype || ds1.desc.coltype !== ds2.desc.coltype)) {
+          //bad
+          toastr.error("The matrices have different row or col type " + ds1.desc.rowtype + " " + ds2.desc.rowtype + " " + ds1.desc.coltype + " " + ds2.desc.coltype,
+            'Row or Column Mismatch!', {closeButton: true});
+        } else if (ds1.desc.type === 'table' && (ds1.desc.idtype !== ds2.desc.idtype)) {
+          //bad
+          toastr.error("Tables have different idtypes");
+        } else
+        //check value datatype of matrix
+        if (ds1.desc.type === 'matrix' && (ds1.desc.value.type !== ds2.desc.value.type)) {
+          //bad
+        } else {
+          //everything is comparable
+          //TODO check values/columns for table
+
+          data_provider.create({
+            type: 'diffstructure',
+            name: ds1.desc.name + '-' + ds2.desc.name,
+            id1: id1,
+            id2: id2,
+            change: settings_change,
+            direction: settings_direction,
+            //detail: settings_detail,
+            bins: 0, // this represents detail in this case, no bins
+            tocall: 'diff',
+            size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length] //we can use dummy values instead
+          }).then(function (diffmatrix) {
+            //diffmatrix
+            if (rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null) {
+              if (dh !== null) {
+                dh.destroy();
+                dh.node.remove();
+                //remove the old multiform selector
+                d3.select('#taco-mf-selector').html('');
+              }
+              dh = multiform.create(diffmatrix, d3.select('#board').node(), {
+                // optimal would be to find the smallest scaling factor
+                'diffmatrixvis': {gridSize: heatmap1.size[0]/ heatmap1.rawSize[0]}, //diffheatmap = Scaling
+                'diffplotvis': {dim: settings_direction},
+                'diffhistvis': {dim: settings_direction, bins: setting_bins}
+              });
+              multiform.addSelectVisChooser(d3.select('#taco-mf-selector').node(), dh);
+              d3.select('#taco-mf-selector select').classed('form-control', true);
+            } else {
+              console.log("no diff!", rows1, cols1, rows2, cols2);
+            }
+          });
+        }
+
+      });
+
+      idtypes.resolve('_taco_dataset').on('select', function (e, type, range) {
+        if (type === 'node-selected') {
           var r = range.dim(0).asList();
           // get only the first selected item
           first_selected = r[0];
@@ -600,8 +728,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 change: settings_change, //because i want to handle this only on the client for now
                 bins: setting_bins,
                 name: e.desc.name,
-                selected_list: selected_list,
-                index: index
+                ref_table: ref_table,
+                dest_table: e,
+                taco_dispatcher: taco_dispatcher
               });
             });
           } else {
