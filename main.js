@@ -457,15 +457,26 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             var selected_items = selected.map(function(index) {
               return test_items[index];
             });
-            // todo get the direction
-            // todo get the bins
-            calcHistogram(ref_table, selected_items, setting_bins, setting_bins_col, settings_direction);
-              //.then(function(viss){
-              ////these are just 2 since every histogram is both rows and columns
-              //  console.log("hist vises", viss);
-              //});
-              //.then(showHistogram);
-            calc2DHistogram(ref_table, selected_items, settings_direction)
+
+            var $wrapper = d3.select('#mid-comparison')
+              .selectAll(".wrapper").data(selected_items);
+
+            $wrapper.enter().append('div')
+              .classed('wrapper', true)
+              .each(function(selected_item) {
+                var dom_node = this;
+                // todo get the direction
+                // todo get the bins
+                calcHistogram(dom_node, ref_table, selected_item, setting_bins, setting_bins_col, settings_direction);
+                  //.then(function(viss){
+                  ////these are just 2 since every histogram is both rows and columns
+                  //  console.log("hist vises", viss);
+                  //});
+                  //.then(showHistogram);
+                calc2DHistogram(dom_node, ref_table, selected_item, settings_direction)
+              });
+
+            $wrapper.exit().remove();
           }
         }
       });
@@ -651,93 +662,89 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     // Middle part
     // ref_table and selected_list are dataset objects
-    function calcHistogram(ref_table, selected_list, bins, bins_col, direction){
+    function calcHistogram(parent_node, ref_table, selected_item, bins, bins_col, direction){
       //first remove all the old histograms containers
-      d3.selectAll(".taco-hist-container").remove();
+      d3.select(parent_node).selectAll(".taco-hist-container").remove();
       //calculate the new ones
-      return Promise.all(selected_list.map(function (e, index, arr) {
-        // if (e.desc.id !== ref_table.desc.id) { //do we want this here?
-        return data_provider.create({
-          type: 'diffstructure',
-          name: ref_table.desc.name + '-' + e.desc.name,
-          id1: ref_table.desc.id,
-          id2: e.desc.id,
-          //todo remove this and let the server always calculate everything?
-          change: ["structure", "content"], //todo use this as parameter
-          direction: direction,
-          //detail: 2, //because it's middle now
-          bins: bins, // this should be a variable but for now we use this static number -> we want histogram
-          bins_col: bins_col, //bins per columns (the default one is per row)
-          tocall: 'diff',
-          size: e.desc.size //we can use dummy values instead
-        }).then(function (diffmatrix) {
-          var v = vis.list(diffmatrix);
-          var v2 = v.filter(function (v) {
-            return v.id === 'diffhistvis';
-          })[0];
-          return v2.load().then(function (plugin) {
-            var r = plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
-              dim: settings_direction,
-              change: settings_change, //because i want to handle this only on the client for now
-              bins: bins,
-              bins_col: bins_col,
-              name: e.desc.name
-            });
-            return r;
+      // if (selected_item.desc.id !== ref_table.desc.id) { //do we want this here?
+      return data_provider.create({
+        type: 'diffstructure',
+        name: ref_table.desc.name + '-' + selected_item.desc.name,
+        id1: ref_table.desc.id,
+        id2: selected_item.desc.id,
+        //todo remove this and let the server always calculate everything?
+        change: ["structure", "content"], //todo use this as parameter
+        direction: direction,
+        //detail: 2, //because it's middle now
+        bins: bins, // this should be a variable but for now we use this static number -> we want histogram
+        bins_col: bins_col, //bins per columns (the default one is per row)
+        tocall: 'diff',
+        size: selected_item.desc.size //we can use dummy values instead
+      }).then(function (diffmatrix) {
+        var v = vis.list(diffmatrix);
+        var v2 = v.filter(function (v) {
+          return v.id === 'diffhistvis';
+        })[0];
+        return v2.load().then(function (plugin) {
+          var r = plugin.factory(diffmatrix, parent_node, {
+            dim: settings_direction,
+            change: settings_change, //because i want to handle this only on the client for now
+            bins: bins,
+            bins_col: bins_col,
+            name: selected_item.desc.name
           });
-          //return diffmatrix.data().then(function (b_data) {
-          //  return {
-          //    name: e.desc.name,
-          //    data_list: b_data,
-          //    bins: bins
-          //  };
-          //});
+          return r;
         });
-      }));
+        //return diffmatrix.data().then(function (b_data) {
+        //  return {
+        //    name: e.desc.name,
+        //    data_list: b_data,
+        //    bins: bins
+        //  };
+        //});
+      });
     }
 
-    function calc2DHistogram(ref_table, selected_list, direction){
+    function calc2DHistogram(parent_node, ref_table, selected_item, direction){
       //first remove all the old histograms containers
-      d3.selectAll(".taco-2d-container").remove();
+      d3.select(parent_node).selectAll(".taco-2d-container").remove();
       //calculate the new ones
-      return Promise.all(selected_list.map(function (e, index, arr) {
-        // if (e.desc.id !== ref_table.desc.id) { //do we want this here?
-        return data_provider.create({
-          type: 'diffstructure',
-          name: ref_table.desc.name + '-' + e.desc.name,
-          id1: ref_table.desc.id,
-          id2: e.desc.id,
-          //todo remove this and let the server always calculate everything?
-          change: ["structure", "content"], //todo use this as parameter
-          direction: direction,
-          //detail: 2, //because it's middle now
-          bins: -1, // we want the result as summary but divided into rows and columns
-          tocall: 'diff',
-          size: e.desc.size //we can use dummy values instead
-        }).then(function (diffmatrix) {
-          var v = vis.list(diffmatrix);
-          console.log(diffmatrix);
-          if (direction.length > 1) {
-            // draw the 2d heatmap now here
-            var v1 = v.filter(function (v) {
-              return v.id === 'diff2dhistvis';
-            })[0];
-            v1.load().then(function (plugin) {
-              var r = plugin.factory(diffmatrix, d3.select('#mid-comparison').node(), {
-                dim: settings_direction,
-                change: settings_change, //because i want to handle this only on the client for now
-                bins: setting_bins,
-                name: e.desc.name,
-                ref_table: ref_table,
-                dest_table: e,
-                taco_dispatcher: taco_dispatcher
-              });
+      // if (selected_item.desc.id !== ref_table.desc.id) { //do we want this here?
+      return data_provider.create({
+        type: 'diffstructure',
+        name: ref_table.desc.name + '-' + selected_item.desc.name,
+        id1: ref_table.desc.id,
+        id2: selected_item.desc.id,
+        //todo remove this and let the server always calculate everything?
+        change: ["structure", "content"], //todo use this as parameter
+        direction: direction,
+        //detail: 2, //because it's middle now
+        bins: -1, // we want the result as summary but divided into rows and columns
+        tocall: 'diff',
+        size: selected_item.desc.size //we can use dummy values instead
+      }).then(function (diffmatrix) {
+        var v = vis.list(diffmatrix);
+        console.log(diffmatrix);
+        if (direction.length > 1) {
+          // draw the 2d heatmap now here
+          var v1 = v.filter(function (v) {
+            return v.id === 'diff2dhistvis';
+          })[0];
+          v1.load().then(function (plugin) {
+            var r = plugin.factory(diffmatrix, parent_node, {
+              dim: settings_direction,
+              change: settings_change, //because i want to handle this only on the client for now
+              bins: setting_bins,
+              name: selected_item.desc.name,
+              ref_table: ref_table,
+              dest_table: selected_item,
+              taco_dispatcher: taco_dispatcher
             });
-          } else {
-            toastr.warning("2D heatmap cannot be shown when only 1D is selected", direction);
-          }
-        });
-      }));
+          });
+        } else {
+          toastr.warning("2D heatmap cannot be shown when only 1D is selected", direction);
+        }
+      });
     }
 
     function showHistogram(bdata){
