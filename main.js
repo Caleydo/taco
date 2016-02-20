@@ -157,27 +157,23 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                       dh.destroy();
                       dh.node.remove();
                       //remove the old multiform selector
-                      d3.select('#taco-mf-selector').html('');
                     }
-                    dh = multiform.create(diffmatrix, d3.select('#board').node(), {
-                      // optimal would be to find the smallest scaling factor
-                      'diffmatrixvis': {gridSize: heatmap1.size[0]/ heatmap1.rawSize[0]}, //diffheatmap = Scaling
-                      'diffplotvis': {dim: settings_direction},
-                      'diffhistvis': {dim: settings_direction, bins: setting_bins}
+                    var diffheatmap = vis.list(diffmatrix).filter(function (d) {
+                      return d.id.match(/.*diffmatrixvis.*/);
+                    })[0];
+                    var diff_parent = d3.select('#board').node();
+                    diffheatmap.load().then(function (plugin) {
+                      //here we call my diff_heatmap
+                      // heatmap1 and 2 have the same size as we scaled them to be the 1/3 of the view
+                      var w_margin = 20,
+                        h_margin = 30,
+                        grid_height = diff_parent.getBoundingClientRect().height - h_margin,
+                        grid_width = (diff_parent.getBoundingClientRect().width / 3) - w_margin;
+                      dh = plugin.factory(diffmatrix, diff_parent,
+                        // optimal would be to find the smallest scaling factor
+                        {gridSize: [grid_width, grid_height]}
+                      );
                     });
-                    multiform.addSelectVisChooser(d3.select('#taco-mf-selector').node(), dh);
-                    d3.select('#taco-mf-selector select').classed('form-control', true);
-                    /*var visses = vis.list(diffmatrix);
-                     var diffheatmap = visses[0];
-                     diffheatmap.load().then(function (plugin) {
-                     //here we call my diff_heatmap
-                     dh = plugin.factory(diffmatrix, d3.select('#board').node());
-                     });
-                     visses[1].load().then(function (plugin) {
-                     //here we call my diff_barplot
-                     plugin.factory(diffmatrix, d3.select('#board').node());
-                     });
-                     */
                   } else {
                     console.log("no diff!", rows1, cols1, rows2, cols2);
                   }

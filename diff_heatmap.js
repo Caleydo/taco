@@ -32,18 +32,16 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
     };
 
     DiffHeatmap.prototype.drawDiffHeatmap = function (operations, directions, gridSize) {
-      //height of each row in the heatmap
-      //width of each column in the heatmap
-      var h = gridSize,
-        w = gridSize;
-
-      //todo create this as the size of the final table at the beginning?
       var that = this;
       var myDrag = drag.Drag();
 
       that.h_data.then(function (data) {
-        var height = data.union.ur_ids.length * h;
-        var width = data.union.uc_ids.length * w;
+        var height = gridSize[1];
+        var width = gridSize[0];
+        //height of each row in the heatmap
+        var h = height / data.union.ur_ids.length,
+        //width of each column in the heatmap
+        w = width / data.union.uc_ids.length;
         var position = parseInt(parseInt(that.parent.style("width")) / 2) - margin.left - parseInt(width / 2);
 
         that.container
