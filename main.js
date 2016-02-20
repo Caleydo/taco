@@ -296,7 +296,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         console.log('show_detail for:', 'ref_table =', ref_table, 'and dest_table =', dest_table);
 
         // visualize ref_table and dest_table
-        [ref_table, dest_table].forEach(function(dataset) {
+        var table_heatmap_promises = [ref_table, dest_table].map(function(dataset) {
           var heatmapplugin;
           if (dataset.desc.type === 'matrix') {
             heatmapplugin = vis.list(dataset).filter(function (d) {
@@ -314,7 +314,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
           if (heatmapplugin !== undefined) {
             // selectedDataset.data() to get the data
-            Promise.all([dataset.rows(), dataset.cols(), heatmapplugin.load()])
+            return Promise.all([dataset.rows(), dataset.cols(), heatmapplugin.load()])
               .then(function (values) {
                 var rows = values[0];
                 var cols = values[1];
@@ -357,64 +357,73 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 }
               });
           }
+          return undefined;
         });
 
-        // visualize diff heatmap
-        // checking the basic type matches
-        if (ds1.desc.type !== ds2.desc.type) {
-          //bad
-          toastr.error("The types are not matching " + ds1.desc.type + " " + ds2.desc.type, 'Datatype mismatch!');
-        } else
-        //checking matrix idtype matches
-        if (ds1.desc.type === 'matrix' && (ds1.desc.rowtype !== ds2.desc.rowtype || ds1.desc.coltype !== ds2.desc.coltype)) {
-          //bad
-          toastr.error("The matrices have different row or col type " + ds1.desc.rowtype + " " + ds2.desc.rowtype + " " + ds1.desc.coltype + " " + ds2.desc.coltype,
-            'Row or Column Mismatch!', {closeButton: true});
-        } else if (ds1.desc.type === 'table' && (ds1.desc.idtype !== ds2.desc.idtype)) {
-          //bad
-          toastr.error("Tables have different idtypes");
-        } else
-        //check value datatype of matrix
-        if (ds1.desc.type === 'matrix' && (ds1.desc.value.type !== ds2.desc.value.type)) {
-          //bad
-        } else {
-          //everything is comparable
-          //TODO check values/columns for table
+        Promise.all(table_heatmap_promises).then(function() {
+          // visualize diff heatmap
+          // checking the basic type matches
+          if (ds1.desc.type !== ds2.desc.type) {
+            //bad
+            toastr.error("The types are not matching " + ds1.desc.type + " " + ds2.desc.type, 'Datatype mismatch!');
+          } else
+          //checking matrix idtype matches
+          if (ds1.desc.type === 'matrix' && (ds1.desc.rowtype !== ds2.desc.rowtype || ds1.desc.coltype !== ds2.desc.coltype)) {
+            //bad
+            toastr.error("The matrices have different row or col type " + ds1.desc.rowtype + " " + ds2.desc.rowtype + " " + ds1.desc.coltype + " " + ds2.desc.coltype,
+              'Row or Column Mismatch!', {closeButton: true});
+          } else if (ds1.desc.type === 'table' && (ds1.desc.idtype !== ds2.desc.idtype)) {
+            //bad
+            toastr.error("Tables have different idtypes");
+          } else
+          //check value datatype of matrix
+          if (ds1.desc.type === 'matrix' && (ds1.desc.value.type !== ds2.desc.value.type)) {
+            //bad
+          } else {
+            //everything is comparable
+            //TODO check values/columns for table
 
-          data_provider.create({
-            type: 'diffstructure',
-            name: ds1.desc.name + '-' + ds2.desc.name,
-            id1: id1,
-            id2: id2,
-            change: settings_change,
-            direction: settings_direction,
-            //detail: settings_detail,
-            bins: 0, // this represents detail in this case, no bins
-            tocall: 'diff',
-            size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length] //we can use dummy values instead
-          }).then(function (diffmatrix) {
-            //diffmatrix
-            if (rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null) {
-              if (dh !== null) {
-                dh.destroy();
-                dh.node.remove();
-                //remove the old multiform selector
-                d3.select('#taco-mf-selector').html('');
+            data_provider.create({
+              type: 'diffstructure',
+              name: ds1.desc.name + '-' + ds2.desc.name,
+              id1: id1,
+              id2: id2,
+              change: settings_change,
+              direction: settings_direction,
+              //detail: settings_detail,
+              bins: 0, // this represents detail in this case, no bins
+              tocall: 'diff',
+              size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length] //we can use dummy values instead
+            }).then(function (diffmatrix) {
+              //diffmatrix
+              if (rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null) {
+                if (dh !== null) {
+                  dh.destroy();
+                  dh.node.remove();
+                  //remove the old multiform selector
+                }
+                var diffheatmap = vis.list(diffmatrix).filter(function (d) {
+                  return d.id.match(/.*diffmatrixvis.*/);
+                })[0];
+                var diff_parent = d3.select('#board').node();
+                diffheatmap.load().then(function (plugin) {
+                  //here we call my diff_heatmap
+                  // heatmap1 and 2 have the same size as we scaled them to be the 1/3 of the view
+                  var w_margin = 20,
+                    h_margin = 30,
+                    grid_height = diff_parent.getBoundingClientRect().height - h_margin,
+                    grid_width = (diff_parent.getBoundingClientRect().width / 3) - w_margin;
+                  dh = plugin.factory(diffmatrix, diff_parent,
+                    // optimal would be to find the smallest scaling factor
+                    {gridSize: [grid_width, grid_height]}
+                  );
+                });
+              } else {
+                console.log("no diff!", rows1, cols1, rows2, cols2);
               }
-              dh = multiform.create(diffmatrix, d3.select('#board').node(), {
-                // optimal would be to find the smallest scaling factor
-                'diffmatrixvis': {gridSize: heatmap1.size[0]/ heatmap1.rawSize[0]}, //diffheatmap = Scaling
-                'diffplotvis': {dim: settings_direction},
-                'diffhistvis': {dim: settings_direction, bins: setting_bins}
-              });
-              multiform.addSelectVisChooser(d3.select('#taco-mf-selector').node(), dh);
-              d3.select('#taco-mf-selector select').classed('form-control', true);
-            } else {
-              console.log("no diff!", rows1, cols1, rows2, cols2);
-            }
-          });
-        }
-
+            });
+          }
+        });
       });
 
       idtypes.resolve('_taco_dataset').on('select', function (e, type, range) {
@@ -459,21 +468,22 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             });
 
             var $wrapper = d3.select('#mid-comparison')
-              .selectAll(".wrapper").data(selected_items);
+              .selectAll(".mid-vis-wrapper").data(selected_items);
 
             $wrapper.enter().append('div')
-              .classed('wrapper', true)
-              .each(function(selected_item) {
-                var dom_node = this;
+              .classed('mid-vis-wrapper', true);
+
+            $wrapper.each(function(selected_item) {
+                var wrapper_node = this;
+                calc2DHistogram(wrapper_node, ref_table, selected_item, settings_direction);
                 // todo get the direction
                 // todo get the bins
-                calcHistogram(dom_node, ref_table, selected_item, setting_bins, setting_bins_col, settings_direction);
+                calcHistogram(wrapper_node, ref_table, selected_item, setting_bins, setting_bins_col, settings_direction);
                   //.then(function(viss){
                   ////these are just 2 since every histogram is both rows and columns
                   //  console.log("hist vises", viss);
                   //});
                   //.then(showHistogram);
-                calc2DHistogram(dom_node, ref_table, selected_item, settings_direction)
               });
 
             $wrapper.exit().remove();
