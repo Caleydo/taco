@@ -52,7 +52,7 @@
           "type": "vis",
           "id": "diff2dhistvis",
           "name": "Diff 2D Histogram Vis",
-          "filter": "diffstructure",
+          "filter": "table",
           "file": "diff_2d_histogram"
         },
         {
