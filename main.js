@@ -665,19 +665,23 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       var pw = hm.parent.parentElement.getBoundingClientRect().width,
         ph = hm.parent.parentElement.getBoundingClientRect().height,
         w = hm.parent.getBoundingClientRect().width,
-        h = hm.parent.getBoundingClientRect().height;
-      if (w > h) {
-        if (pw < w) {
-          //aspect ratio pw/w
-          console.log("zoomset w to", pw / w);
-          (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(pw, h * pw / w);
-        }
-      } else {
-        if (ph < h) {
-          console.log("zoomset h to", ph / h);
-          (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(w * ph / h, ph);
-        }
-      }
+        h = hm.parent.getBoundingClientRect().height,
+        w_margin = 30,
+        h_margin = 30;
+      (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo((pw / 3) - w_margin, ph - h_margin);
+      // the old method when caring about the aspect ratio
+      //if (w > h) {
+      //  if (pw < w) {
+      //    //aspect ratio pw/w
+      //    console.log("zoomset w to", pw / w);
+      //    (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(pw, h * pw / w);
+      //  }
+      //} else {
+      //  if (ph < h) {
+      //    console.log("zoomset h to", ph / h);
+      //    (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(w * ph / h, ph);
+      //  }
+      //}
     }
 
   });
