@@ -12,9 +12,41 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             d3utils, drag, lineup, mds) {
     'use strict';
 
-    var taco_dispatcher = d3.dispatch('show_detail');
+    var taco_dispatcher = d3.dispatch('show_detail', 'resized_flex_column');
 
-    var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
+    // @see http://stackoverflow.com/a/9090128/940219
+    function transitionEndEventName () {
+      var i,
+        undefined,
+        el = document.createElement('div'),
+        transitions = {
+          'transition':'transitionend',
+          'OTransition':'otransitionend',  // oTransitionEnd in very old Opera
+          'MozTransition':'transitionend',
+          'WebkitTransition':'webkitTransitionEnd'
+        };
+
+      for (i in transitions) {
+        if (transitions.hasOwnProperty(i) && el.style[i] !== undefined) {
+          return transitions[i];
+        }
+      }
+      //TODO: throw 'TransitionEnd event is not supported in this browser';
+    }
+
+    var transitionEnd = transitionEndEventName();
+    d3.selectAll('.flex-column').on(transitionEnd, function() {
+      // caution: this listener is only triggered for .flex-columns where an .expand class was added/removed
+      // other columns might change the width at the same time, but do not trigger this listener
+      var $column = d3.select(this);
+      taco_dispatcher.resized_flex_column($column.attr('id'), parseInt($column.style('width')), $column);
+    });
+
+    taco_dispatcher.on('resized_flex_column', function(col_id, width, $column) {
+      console.log(col_id, width, $column);
+    });
+
+    //var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
     var data_provider = data;
     var rows1 = null, rows2 = null, cols1 = null, cols2 = null, id1 = null, id2 = null,
       ds1 = null, ds2 = null, dh = null;
