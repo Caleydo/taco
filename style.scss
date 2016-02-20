@@ -355,6 +355,8 @@ rect.bar.struct-del-color {
 .tab-title {
   flex-grow: 0;
   width: 30px; // same width as .flex-column
+  min-width: 30px;
+  max-width: 30px;
 
   // rotate .tab-title link by 90°
   a {
@@ -365,7 +367,15 @@ rect.bar.struct-del-color {
     white-space: nowrap;
     display: block;
     margin-top: 50vh; // center at the viewport half
+    margin-left: 15%;
     cursor: pointer;
+  }
+
+  a:hover,
+  a:focus,
+  a:visited {
+    color: #fff;
+    text-decoration: none;
   }
 }
 
