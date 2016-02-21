@@ -122,13 +122,13 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               }
               //can use selectedDataset.dim instead of calculating the length in the class
               //todo decide where to draw the table
-              heatmap2 = plugin.factory(selectedDataset, document.getElementById('test'), {
+              heatmap2 = plugin.factory(selectedDataset, document.getElementById('dest-heatmap'), {
                 initialScale: gridSize,
                 color: ['black', 'white']
               });
               resize_heatmap(heatmap2, heatmapplugin);
               //(new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomSet(0.5,2);
-              d3.select("#test").call(myDrag);
+              d3.select("#dest-heatmap").call(myDrag);
 
               rows2 = rows;
               cols2 = cols;
@@ -138,13 +138,13 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               if (heatmap1 !== null) {
                 heatmap1.destroy();
               }
-              heatmap1 = plugin.factory(selectedDataset, document.getElementById('test2'), {
+              heatmap1 = plugin.factory(selectedDataset, document.getElementById('src-heatmap'), {
                 initialScale: gridSize
               });
               //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomSet(2,2);
               resize_heatmap(heatmap1, heatmapplugin);
               //heatmap1.parent.parentElement.getBoundingClientRect()
-              d3.select("#test2").call(myDrag);
+              d3.select("#src-heatmap").call(myDrag);
               rows1 = rows;
               cols1 = cols;
               id1 = selectedDataset.desc.id;
@@ -195,14 +195,14 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                     var diffheatmap = vis.list(diffmatrix).filter(function (d) {
                       return d.id.match(/.*diffmatrixvis.*/);
                     })[0];
-                    var diff_parent = d3.select('#board').node();
+                    var diff_parent = d3.select('#diff-heatmap').node();
                     diffheatmap.load().then(function (plugin) {
                       //here we call my diff_heatmap
                       // heatmap1 and 2 have the same size as we scaled them to be the 1/3 of the view
-                      var w_margin = 20,
-                        h_margin = 30,
+                      var w_margin = 10,
+                        h_margin = 10,
                         grid_height = diff_parent.getBoundingClientRect().height - h_margin,
-                        grid_width = (diff_parent.getBoundingClientRect().width / 3) - w_margin;
+                        grid_width = diff_parent.getBoundingClientRect().width - w_margin;
                       dh = plugin.factory(diffmatrix, diff_parent,
                         // optimal would be to find the smallest scaling factor
                         {gridSize: [grid_width, grid_height]}
@@ -358,13 +358,13 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                   }
                   //can use selectedDataset.dim instead of calculating the length in the class
                   //todo decide where to draw the table
-                  heatmap2 = plugin.factory(dataset, document.getElementById('test'), {
+                  heatmap2 = plugin.factory(dataset, document.getElementById('dest-heatmap'), {
                     initialScale: gridSize,
                     color: ['black', 'white']
                   });
                   resize_heatmap(heatmap2, heatmapplugin);
                   //(new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomSet(0.5,2);
-                  d3.select("#test").call(myDrag);
+                  d3.select("#dest-heatmap").call(myDrag);
 
                   rows2 = rows;
                   cols2 = cols;
@@ -375,13 +375,13 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                   if (heatmap1 !== null) {
                     heatmap1.destroy();
                   }
-                  heatmap1 = plugin.factory(dataset, document.getElementById('test2'), {
+                  heatmap1 = plugin.factory(dataset, document.getElementById('src-heatmap'), {
                     initialScale: gridSize
                   });
                   //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomSet(2,2);
                   resize_heatmap(heatmap1, heatmapplugin);
                   //heatmap1.parent.parentElement.getBoundingClientRect()
-                  d3.select("#test2").call(myDrag);
+                  d3.select("#src-heatmap").call(myDrag);
                   rows1 = rows;
                   cols1 = cols;
                   id1 = dataset.desc.id;
@@ -441,8 +441,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 diffheatmap.load().then(function (plugin) {
                   //here we call my diff_heatmap
                   // heatmap1 and 2 have the same size as we scaled them to be the 1/3 of the view
-                  var w_margin = 20,
-                    h_margin = 30,
+                  var w_margin = 10,
+                    h_margin = 10,
                     grid_height = diff_parent.getBoundingClientRect().height - h_margin,
                     grid_width = (diff_parent.getBoundingClientRect().width / 3) - w_margin;
                   dh = plugin.factory(diffmatrix, diff_parent,
@@ -858,13 +858,11 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     //todo think of applying the same scaling for both heatmaps
     function resize_heatmap(hm, heatmapplugin) {
-      var pw = hm.parent.parentElement.getBoundingClientRect().width,
-        ph = hm.parent.parentElement.getBoundingClientRect().height,
-        w = hm.parent.getBoundingClientRect().width,
-        h = hm.parent.getBoundingClientRect().height,
-        w_margin = 30,
-        h_margin = 30;
-      (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo((pw / 3) - w_margin, ph - h_margin);
+      var pw = hm.parent.getBoundingClientRect().width,
+        ph = hm.parent.getBoundingClientRect().height,
+        w_margin = 10,
+        h_margin = 10;
+      (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(pw  - w_margin, ph - h_margin);
       // the old method when caring about the aspect ratio
       //if (w > h) {
       //  if (pw < w) {

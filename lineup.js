@@ -110,7 +110,7 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
                 width: 40
               },
               col('Name', 220),
-              col('Version', 220),
+              col('Version', 100),
               {
                 type: 'stacked',
                 width: 400,

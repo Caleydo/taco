@@ -50,12 +50,19 @@ svg {
   shape-rendering: geometricPrecision;
 }
 
+#detail-titles {
+  display: flex;
+  flex-flow: row;
+}
+
 #board {
   width: 100%;
   height: 91vh;
   position: relative;
   background-color: white;
   overflow: hidden;
+  display: flex;
+  flex-flow: row;
 
   &.mode-block {
     border: 1px solid #2e6da4;
@@ -215,7 +222,10 @@ svg .select-selected {
 .taco-table-container {
   overflow: hidden;
   border: 1px solid lightpink;
-  position: absolute;
+  //position: absolute;
+  flex-grow: 1; //to distribute the tables equally
+  //flex-basis: 33%;
+  width: 33%;
 }
 
 .taco-table {

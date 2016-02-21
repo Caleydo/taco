@@ -4,8 +4,6 @@
 define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3util', './drag'],
   function (require, exports, d3, _, toastr, d3utils, drag) {
 
-    var margin = {top: 10, right: 10, bottom: 10, left: 10};
-
     var colorLow = 'yellow', colorMed = 'white', colorHigh = '#8da0cb',
       colorMerged = '#B2DF8A',//light green
       colorSplit = '#FB9A99'; //light red
@@ -18,8 +16,8 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       this.h_data = data;
       //todo check if this is correct or should be removed!
       this.container = parent
-        .append("div")
-        .classed("taco-table-container", true);
+        .append("div");
+        //.classed("taco-table-container", true);
       this.parent = parent;
     }
 
@@ -42,20 +40,12 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
         var h = height / data.union.ur_ids.length,
         //width of each column in the heatmap
         w = width / data.union.uc_ids.length;
-        var position = parseInt(parseInt(that.parent.style("width")) / 2) - margin.left - parseInt(width / 2);
-
-        that.container
-          .style("width", width + 2 + margin.left + margin.right + 'px')
-          .style("height", height + 2 + margin.top + margin.bottom + 'px')
-          //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
-          .style("transform", "translate(" + position + "px," + margin.top + "px)")
-          .call(myDrag);
 
         var root = that.container.append("div")// g.margin
           .attr("class", "taco-table")
           .style("width", width + 2 + 'px')
           .style("height", height + 2 + 'px')
-          .style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
+          //.style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
           //todo move this to the css
           .style("background-color", "white");
 
