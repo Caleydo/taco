@@ -128,7 +128,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               });
               resize_heatmap(heatmap2, heatmapplugin);
               //(new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomSet(0.5,2);
-              d3.select('#dest-title-name').text(selectedDataset.desc.name +" "+ getVersion(selectedDataset));
+              d3.select('#dest-title-name').text(selectedDataset.desc.name +" ("+ getVersion(selectedDataset) + ")");
 
               rows2 = rows;
               cols2 = cols;
@@ -144,7 +144,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomSet(2,2);
               resize_heatmap(heatmap1, heatmapplugin);
               //heatmap1.parent.parentElement.getBoundingClientRect()
-              d3.select('#src-title-name').text(selectedDataset.desc.name +" "+ getVersion(selectedDataset));
+              d3.select('#src-title-name').text(selectedDataset.desc.name +" ("+ getVersion(selectedDataset) + ")");
               rows1 = rows;
               cols1 = cols;
               id1 = selectedDataset.desc.id;
@@ -364,7 +364,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                   });
                   resize_heatmap(heatmap2, heatmapplugin);
                   //(new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomSet(0.5,2);
-                  d3.select('#dest-title-name').text(dataset.desc.name +" "+ getVersion(dataset));
+                  d3.select('#dest-title-name').text(dataset.desc.name +" ("+ getVersion(dataset) + ")");
 
                   rows2 = rows;
                   cols2 = cols;
@@ -380,7 +380,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                   //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomSet(2,2);
                   resize_heatmap(heatmap1, heatmapplugin);
                   //heatmap1.parent.parentElement.getBoundingClientRect()
-                  d3.select('#src-title-name').text(dataset.desc.name +" "+ getVersion(dataset));
+                  d3.select('#src-title-name').text(dataset.desc.name +" ("+ getVersion(dataset) +")");
                   rows1 = rows;
                   cols1 = cols;
                   id1 = dataset.desc.id;
@@ -494,7 +494,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               (new behavior.ZoomLogic(mid_hm, heatmapplugin)).zoomTo(parent_ref.getBoundingClientRect().width, parent_ref.getBoundingClientRect().height);
             });
             //adding the name of the reference table
-            d3.select('#ref-table-name').text(ref_table.desc.name +" "+ getVersion(ref_table));
+            d3.select('#ref-table-name').text(ref_table.desc.name +" ("+ getVersion(ref_table) +")");
             // drawing the histograms / middle view diffs
             var selected_items = selected.map(function(index) {
               return test_items[index];
@@ -520,7 +520,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 .classed('title', true)
                 .classed('taco-tooltip', true)
                 .attr('href', '#')
-                .text(selected_item.desc.name)
+                .text(selected_item.desc.name + " (" + getVersion(selected_item) +")")
                 .on('click', function() {
                   taco_dispatcher.show_detail(ref_table, selected_item);
                   d3.event.stopPropagation();
