@@ -128,7 +128,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               });
               resize_heatmap(heatmap2, heatmapplugin);
               //(new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomSet(0.5,2);
-              d3.select("#dest-heatmap").call(myDrag);
+              d3.select('#dest-title-name').text(dest_name);
 
               rows2 = rows;
               cols2 = cols;
@@ -144,7 +144,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomSet(2,2);
               resize_heatmap(heatmap1, heatmapplugin);
               //heatmap1.parent.parentElement.getBoundingClientRect()
-              d3.select("#src-heatmap").call(myDrag);
+              d3.select('#src-title-name').text(dataset.desc.name);
               rows1 = rows;
               cols1 = cols;
               id1 = selectedDataset.desc.id;
@@ -318,6 +318,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           showMDS(mdata);
         });*/
 
+      // addThem
       taco_dispatcher.on('show_detail', function(ref_table, dest_table) {
         console.log("moving to detail view");
         //1 is the split between middle and overview
@@ -363,13 +364,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                   });
                   resize_heatmap(heatmap2, heatmapplugin);
                   //(new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomSet(0.5,2);
-                  d3.select("#dest-heatmap").call(myDrag);
+                  d3.select('#dest-title-name').text(dataset.desc.name);
 
                   rows2 = rows;
                   cols2 = cols;
                   id2 = dataset.desc.id;
                   ds2 = dataset;
-
                 } else if(dataset === ref_table) {
                   if (heatmap1 !== null) {
                     heatmap1.destroy();
@@ -380,7 +380,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                   //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomSet(2,2);
                   resize_heatmap(heatmap1, heatmapplugin);
                   //heatmap1.parent.parentElement.getBoundingClientRect()
-                  d3.select("#src-heatmap").call(myDrag);
+                  d3.select('#src-title-name').text(dataset.desc.name);
                   rows1 = rows;
                   cols1 = cols;
                   id1 = dataset.desc.id;
