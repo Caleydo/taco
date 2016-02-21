@@ -99,12 +99,12 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         //.attr("title", data.desc.id)
         .attr("title", name + " " + dim)
         .style("width", width + 2 + 'px')
-        .style("height", height + 2 + 'px')
+        .style("height", height + 2 + 'px');
         //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
         //todo move all the transform functions to the css
         //note that the transform has to be one sentence otherwise it won't happen
-        .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""))
-        .call(myDrag);
+        //.style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""))
+        //.call(myDrag);
 
         data.data().then(function (stats) {
           //http://bost.ocks.org/mike/bar/
@@ -121,7 +121,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
       }, [60, 160],
       function ($parent, data, size) {
         var o = this.options;
-        var $node = $parent.append("div");
         var bins = o.bins,
           bins_col = o.bins_col,
           changes = o.change;
@@ -129,13 +128,13 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         //  console.log(data);
         //} else
         if (o.dim.indexOf("rows") > -1) {
-          drawHistogram($node, data, bins, changes, "rows", size, o.name);
+          drawHistogram($parent, data, bins, changes, "rows", size, o.name);
         }
         if (o.dim.indexOf("columns") > -1) {
           //call the function for the cols!
-          drawHistogram($node, data, bins_col, changes, "columns", size, o.name);
+          drawHistogram($parent, data, bins_col, changes, "columns", size, o.name);
         }
-        return $node;
+        return $parent;
       });
 
     exports.create = function (data, parent, options) {

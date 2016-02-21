@@ -499,8 +499,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               return test_items[index];
             });
 
-            var $wrapper = d3.select('#mid-comparison')
-              .selectAll(".mid-vis-wrapper").data(selected_items);
+            var $mid_comparison = d3.select('#mid-comparison');
+            $mid_comparison.classed('only-columns', (settings_direction.length === 1 && settings_direction[0] === 'columns'));
+
+            var $wrapper = $mid_comparison.selectAll(".mid-vis-wrapper").data(selected_items);
 
             $wrapper.enter().append('div')
               .classed('mid-vis-wrapper', true);

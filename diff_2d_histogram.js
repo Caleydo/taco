@@ -24,8 +24,8 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag', '../caleydo_core/tabl
         //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
         //todo move all the transform functions to the css
         //note that the transform has to be one sentence otherwise it won't happen
-        .style("transform", "translate(" + position + "px," + 20 + "px)")
-        .call(myDrag)
+        //.style("transform", "translate(" + position + "px," + 20 + "px)")
+        //.call(myDrag)
         .on('click', onClick);
 
       var x = d3.scale.linear()
@@ -73,7 +73,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag', '../caleydo_core/tabl
     exports.Diff2DHistogramVis = d3utils.defineVis('Diff2DHistogramVis', {}, [200, 200],
       function ($parent, data, size) {
         var o = this.options;
-        var $node = $parent.append('div')
+        var $node = $parent.insert('div', ':first-child')
           .classed("taco-2d-container", true);
         data.data().then(function(ratios){
           console.log(ratios, "from ratios?");
