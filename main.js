@@ -437,14 +437,14 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 var diffheatmap = vis.list(diffmatrix).filter(function (d) {
                   return d.id.match(/.*diffmatrixvis.*/);
                 })[0];
-                var diff_parent = d3.select('#board').node();
+                var diff_parent = d3.select('#diff-heatmap').node();
                 diffheatmap.load().then(function (plugin) {
                   //here we call my diff_heatmap
                   // heatmap1 and 2 have the same size as we scaled them to be the 1/3 of the view
                   var w_margin = 10,
                     h_margin = 10,
                     grid_height = diff_parent.getBoundingClientRect().height - h_margin,
-                    grid_width = (diff_parent.getBoundingClientRect().width / 3) - w_margin;
+                    grid_width = diff_parent.getBoundingClientRect().width - w_margin;
                   dh = plugin.factory(diffmatrix, diff_parent,
                     // optimal would be to find the smallest scaling factor
                     {gridSize: [grid_width, grid_height]}
