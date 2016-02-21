@@ -493,6 +493,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               });
               (new behavior.ZoomLogic(mid_hm, heatmapplugin)).zoomTo(parent_ref.getBoundingClientRect().width, parent_ref.getBoundingClientRect().height);
             });
+            //adding the name of the reference table
+            d3.select('#ref-table-name').text(ref_table.desc.name);
             // drawing the histograms / middle view diffs
             var selected_items = selected.map(function(index) {
               return test_items[index];
