@@ -64,9 +64,6 @@ svg {
   display: flex;
   flex-flow: row;
 
-  &.mode-block {
-    border: 1px solid #2e6da4;
-  }
   &.mode-select {
     border: 1px solid #4cae4c;
   }
@@ -221,7 +218,7 @@ svg .select-selected {
 
 .taco-table-container {
   overflow: hidden;
-  border: 1px solid lightpink;
+  //border: 1px solid lightpink;
   //position: absolute;
   flex-grow: 1; //to distribute the tables equally
   //flex-basis: 33%;
@@ -230,7 +227,7 @@ svg .select-selected {
 
 .taco-table {
   position: relative;
-  border: 1px solid purple;
+  border: 1px solid black;
 
   div {
     position: absolute;
@@ -456,6 +453,10 @@ rect.bar.struct-del-color {
   border: solid 1px orange;
   background: #faffcf;
   height: 89vh;
+}
+
+#detail-titles .taco-table-container{
+  text-align: center;
 }
 
 /* bootstrap slider */
@@ -995,4 +996,9 @@ rect.bar.struct-del-color {
     position: absolute;
     top: 0;
     left: 0;
+}
+
+/* heatmaps */
+svg.heatmap, .heatmap canvas {
+  border: 1px black solid;
 }
