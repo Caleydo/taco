@@ -505,20 +505,44 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             var $wrapper = $mid_comparison.selectAll(".mid-vis-wrapper").data(selected_items);
 
             $wrapper.enter().append('div')
-              .classed('mid-vis-wrapper', true);
+              .classed('mid-vis-wrapper', true)
+              .classed('taco-tooltip', true);
 
             $wrapper.each(function(selected_item) {
-                var wrapper_node = this;
-                calc2DHistogram(wrapper_node, ref_table, selected_item, settings_direction);
-                // todo get the direction
-                // todo get the bins
-                calcHistogram(wrapper_node, ref_table, selected_item, setting_bins, setting_bins_col, settings_direction);
-                  //.then(function(viss){
-                  ////these are just 2 since every histogram is both rows and columns
-                  //  console.log("hist vises", viss);
-                  //});
-                  //.then(showHistogram);
-              });
+              var $wrapper_node = d3.select(this);
+
+              //first remove all the old content
+              $wrapper_node.selectAll('*').remove();
+
+              // add table name
+              var $title = $wrapper_node.append('a')
+                .classed('title', true)
+                .classed('taco-tooltip', true)
+                .attr('href', '#')
+                .text(selected_item.desc.name)
+                .on('click', function() {
+                  taco_dispatcher.show_detail(ref_table, selected_item);
+                  d3.event.stopPropagation();
+                  return false;
+                });
+
+              $title.append('span')
+                .attr('class', 'tooltiptext tooltip-top')
+                .text('Select to compare in detail');
+
+              // add body for histogram
+              var $wrapper_body = $wrapper_node.append('div').classed('body', true);
+
+              calc2DHistogram($wrapper_body, ref_table, selected_item, settings_direction);
+              // todo get the direction
+              // todo get the bins
+              calcHistogram($wrapper_body, ref_table, selected_item, setting_bins, setting_bins_col, settings_direction);
+                //.then(function(viss){
+                ////these are just 2 since every histogram is both rows and columns
+                //  console.log("hist vises", viss);
+                //});
+                //.then(showHistogram);
+            });
 
             $wrapper.exit().remove();
           }
@@ -706,9 +730,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     // Middle part
     // ref_table and selected_list are dataset objects
-    function calcHistogram(parent_node, ref_table, selected_item, bins, bins_col, direction){
-      //first remove all the old histograms containers
-      d3.select(parent_node).selectAll(".taco-hist-container").remove();
+    function calcHistogram($parent_node, ref_table, selected_item, bins, bins_col, direction){
       //calculate the new ones
       // if (selected_item.desc.id !== ref_table.desc.id) { //do we want this here?
       return data_provider.create({
@@ -730,7 +752,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           return v.id === 'diffhistvis';
         })[0];
         return v2.load().then(function (plugin) {
-          var r = plugin.factory(diffmatrix, parent_node, {
+          var r = plugin.factory(diffmatrix, $parent_node.node(), {
             dim: settings_direction,
             change: settings_change, //because i want to handle this only on the client for now
             bins: bins,
@@ -749,9 +771,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       });
     }
 
-    function calc2DHistogram(parent_node, ref_table, selected_item, direction){
-      //first remove all the old histograms containers
-      d3.select(parent_node).selectAll(".taco-2d-container").remove();
+    function calc2DHistogram($parent_node, ref_table, selected_item, direction){
       //calculate the new ones
       // if (selected_item.desc.id !== ref_table.desc.id) { //do we want this here?
       return data_provider.create({
@@ -775,7 +795,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             return v.id === 'diff2dhistvis';
           })[0];
           v1.load().then(function (plugin) {
-            var r = plugin.factory(diffmatrix, parent_node, {
+            var r = plugin.factory(diffmatrix, $parent_node.node(), {
               dim: settings_direction,
               change: settings_change, //because i want to handle this only on the client for now
               bins: setting_bins,

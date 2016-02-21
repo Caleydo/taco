@@ -583,16 +583,79 @@ rect.bar.struct-del-color {
   align-content: flex-start;
   overflow-y: auto;
   height: 89vh;
+
+  .mid-vis-wrapper {
+    flex-basis: auto; //250px;
+    margin-top: 30px;
+    margin-right: 30px;
+
+    .title {
+      display: inline-block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  }
 }
 
 #mid-comparison.only-columns {
   flex-flow: column wrap;
 }
 
-#mid-comparison .mid-vis-wrapper {
-  flex-basis: auto; //250px;
-  margin-top: 30px;
-  margin-right: 30px;
+
+
+/* Tooltip container */
+/* @see http://www.w3schools.com/css/css_tooltip.asp */
+.taco-tooltip {
+  position: relative;
+}
+
+/* Tooltip text */
+.taco-tooltip .tooltiptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: black;
+  color: #fff;
+  font-size: 80%;
+  font-weight: normal;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+.taco-tooltip .tooltip-top {
+  width: 160px;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -80px; /* Use half of the width (120/2 = 60), to center the tooltip */
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.taco-tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.taco-tooltip .tooltiptext::after {
+  content: " ";
+  position: absolute;
+  top: 100%; /* At the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+.taco-tooltip .tooltiptext {
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.taco-tooltip:hover .tooltiptext {
+  opacity: 1;
 }
 
 

@@ -11,22 +11,22 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag', '../caleydo_core/tabl
       var width = 160, //just to make it look a bit wider than the normal one in case both are selected
         height = 160;
 
-      var onClick = function(d,i) {
-        taco_dispatcher.show_detail(ref_table, dest_table);
-      };
+      //var onClick = function(d,i) {
+      //  taco_dispatcher.show_detail(ref_table, dest_table);
+      //};
 
       //find a better way for calculating the position
       var position = parseInt(parseInt(parent.style("width")) / 2) - parseInt(width / 2);
 
       var container = parent
         .style("width", width + 2 + 'px')
-        .style("height", height + 2 + 'px')
+        .style("height", height + 2 + 'px');
         //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
         //todo move all the transform functions to the css
         //note that the transform has to be one sentence otherwise it won't happen
         //.style("transform", "translate(" + position + "px," + 20 + "px)")
         //.call(myDrag)
-        .on('click', onClick);
+        //.on('click', onClick);
 
       var x = d3.scale.linear()
         .domain([0,1])
