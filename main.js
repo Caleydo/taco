@@ -257,7 +257,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         test_items = items.filter(function (d) {
           return d.desc.fqname.match(dataset.regexp);
         });
-        console.log(dataset, items, test_items);
 
         if(test_items.length === 0) {
           toastr.warning("No items for this dataset category found! Select a different one.");
