@@ -36,7 +36,7 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
     }, data, 'name');
   }
 
-  exports.create = function (data, parent) {
+  exports.create = function (data, parent, options) {
     var mds_nodes_table = convertToTable(data.nodes);
     var v = vis.list(mds_nodes_table);
     v = v.filter(function (v) {
@@ -45,7 +45,8 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
     return v.load().then(function (plugin) {
       return plugin.factory(mds_nodes_table, parent, {
         dim: [199,200], //this should be the options or so? //todo pass what you need
-        links: data.pos //the array of x,y coordinates we get from python
+        links: data.pos, //the array of x,y coordinates we get from python
+        dispatcher: options.dispatcher
       });
     });
   };

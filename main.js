@@ -42,9 +42,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       taco_dispatcher.resized_flex_column($column.attr('id'), parseInt($column.style('width')), $column);
     });
 
-    taco_dispatcher.on('resized_flex_column', function(col_id, width, $column) {
-      console.log(col_id, width, $column);
-    });
+    //taco_dispatcher.on('resized_flex_column', function(col_id, width, $column) {
+    //  console.log(col_id, width, $column);
+    //});
 
     //var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
     var data_provider = data;
@@ -62,7 +62,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       settings_detail = 4;
 
     //session storage
-    var storage = window.sessionStorage;
+    var storage = {};
 
     // initializing the settings from the buttons in the nav bar
     $("[name='change[]']:checked").each(function () {
@@ -262,7 +262,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
         //store the selected index of the dataset group (from the select)
         if (!storage.selected_group){
-          storage.selected_group = JSON.stringify(dataset);
+          storage.selected_group =  dataset;
         }
 
         //preparing a fixed test table for lineup and mds
@@ -280,13 +280,14 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           .then(function (mdata) {
             // remove already available DOM nodes
             d3.select('#mds-graph *').remove();
+            console.log("mds result", storage.mds);
             showMDS(mdata);
           }, function (error) {
             console.error('error loading mds items', error);
             toastr.error("Couldn't load the selected dataset directory!<br>Error: " + error.responseText);
           });
 
-        //clearing lineup
+        //clearing lineup so that I don't get the ranking from old datasets
         if (lineup_instance !== null) {
           lineup_instance.destroy();
         }
@@ -723,7 +724,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               var cont = dm_data.c_ratio * 100;
               var stadd = dm_data.a_ratio * 100;
               var stdel = dm_data.d_ratio * 100;
-              console.log(e.desc, "date");
               return {
                 name: e.desc.name,
                 date: getVersion(e),
@@ -807,7 +807,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         size: selected_item.desc.size //we can use dummy values instead
       }).then(function (diffmatrix) {
         var v = vis.list(diffmatrix);
-        console.log(diffmatrix);
         if (direction.length > 1) {
           // draw the 2d heatmap now here
           var v1 = v.filter(function (v) {
@@ -858,17 +857,19 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         size: datalist.length //we can use dummy values instead
       }).then(function (diffmatrix) {
         return diffmatrix.data().then(function (dm_data) {
-          return {
+          var mds_result = {
             pos: dm_data,
             nodes: datalist
           };
+          storage.mds = mds_result;
+          return mds_result;
         });
       });
     }
 
     //drawing MDS
     function showMDS(mdata) {
-      mds.create(mdata, document.querySelector('#mds-graph'))
+      mds.create(mdata, document.querySelector('#mds-graph'), {dispatcher: taco_dispatcher})
         .then(function (instance) {
           mds_instance = instance;
           d3.select('.loader').style('display', 'none');

@@ -404,7 +404,15 @@ rect.bar.struct-del-color {
 
 .tab-content {
   width: 100%;
+  //min-width: 200px;
+  //display: none;
 }
+
+//.flex-column.expand {
+//  .tab-content {
+//  display: block;
+//}
+//}
 
 #overview {
   background: white;
@@ -441,6 +449,10 @@ rect.bar.struct-del-color {
 
 .mds-container {
   position: absolute;
+
+  .node {
+    transition: transform 0.1s;
+  }
 }
 
 #lineup {

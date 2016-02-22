@@ -28,6 +28,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         .domain([pos.ymin, pos.ymax])
         .range([margin, height - margin]);
 
+      //node selection from Caleydo
       d3utils.selectionUtil(data, svg, '.node');
       var onClick = function(d,i) {
         data.select(0, 'node-selected', [i], idtypes.toSelectOperation(d3.event));
@@ -40,14 +41,11 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         mixed_data[i] = d;
       });
 
-      var node = svg.selectAll(".node")
-        .data(mixed_data)
-        .enter()
+      var selection = svg.selectAll(".node").data(mixed_data);
+      // d3 enter -> create dom elements once
+      var node =  selection.enter()
         .append("div")
-        .attr("class", "node")
-        .style("transform", function(d) {
-          return "translate(" + xScale(d.x) + "px," + yScale(d.y) + "px)";
-        });
+        .attr("class", "node");
       node.append("text")
        // .attr("dx", 10)
        // .attr("dy", ".35em")
@@ -63,6 +61,15 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
           return "table" + i;
         })
         .on('click', onClick);
+
+      // d3 update
+      svg.selectAll(".node")
+        .style("transform", function(d) {
+          return "translate(" + xScale(d.x) + "px," + yScale(d.y) + "px)";
+        });
+
+      // d3 remove
+      selection.exit().remove();
 
       return svg;
     }
@@ -83,7 +90,15 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
           .style("width", current_size[0] + "px")
           .style("height", current_size[1] + "px");
         data.data().then(function(nodes){
+          console.log(nodes);
           $svg = drawMDSGraph($node, data, nodes, o.links, current_size);
+
+          //to resize MDS
+          o.dispatcher.on('resized_flex_column', function(col_id, width, $column) {
+            current_size = [$parent.node().getBoundingClientRect().width, $parent.node().getBoundingClientRect().height];
+            drawMDSGraph($node, data, nodes, o.links, current_size);
+            console.log(col_id, width, $column);
+          });
         });
         return $node;
       },
