@@ -46,9 +46,18 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       taco_dispatcher.resized_flex_column($column.attr('id'), parseInt($column.style('width')), $column);
     });
 
-    //taco_dispatcher.on('resized_flex_column', function(col_id, width, $column) {
-    //  console.log(col_id, width, $column);
-    //});
+    taco_dispatcher.on('resized_flex_column.2', function(col_id, width, $column) {
+      //if (width > 30){
+        console.log('resizing heatmaps?', col_id, width, $column);
+        var ref = document.getElementById('ref-table').getBoundingClientRect();
+        (new behavior.ZoomLogic(mid_hm, heatmapplugin)).zoomTo(ref.width, ref.height);
+        var src = document.getElementById('src-heatmap').getBoundingClientRect();
+        (new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomTo(src.width, src.height);
+        var dest = document.getElementById('dest-heatmap').getBoundingClientRect();
+        (new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomTo(dest.width, dest.height);
+      //}
+      console.log("main", col_id, width, $column);
+    });
 
     //var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
     var data_provider = data;
@@ -67,6 +76,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     //session storage
     var storage = {};
+
+    var heatmapplugin;
 
     // initializing the settings from the buttons in the nav bar
     $("[name='change[]']:checked").each(function () {
@@ -99,7 +110,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     //@param: dest 1 a destination table, 0 a source table
     function addIt(selectedDataset, dest) {
       //selectedDataset.rows for ids
-      var heatmapplugin;
       if (selectedDataset.desc.type === 'matrix') {
         heatmapplugin = vis.list(selectedDataset).filter(function (d) {
           return d.id.match(/.*heatmap.*/);
@@ -351,7 +361,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
         // visualize ref_table and dest_table
         var table_heatmap_promises = [ref_table, dest_table].map(function(dataset) {
-          var heatmapplugin;
           if (dataset.desc.type === 'matrix') {
             heatmapplugin = vis.list(dataset).filter(function (d) {
               return d.id.match(/.*heatmap.*/);
@@ -502,7 +511,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             //todo do this as a function somewhere
             var ref_table = test_items[first_selected];
             // drawing the reference as heatmap
-            var heatmapplugin = vis.list(ref_table).filter(function (d) {
+            heatmapplugin = vis.list(ref_table).filter(function (d) {
               return d.id.match(/.*heatmap.*/);
             })[0];
             var parent_ref = document.getElementById('ref-table');
