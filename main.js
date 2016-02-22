@@ -139,7 +139,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 heatmap1.destroy();
               }
               heatmap1 = plugin.factory(selectedDataset, document.getElementById('src-heatmap'), {
-                initialScale: gridSize
+                initialScale: gridSize,
+                color: ['black', 'white']
               });
               //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomSet(2,2);
               resize_heatmap(heatmap1, heatmapplugin);
@@ -375,7 +376,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                     heatmap1.destroy();
                   }
                   heatmap1 = plugin.factory(dataset, document.getElementById('src-heatmap'), {
-                    initialScale: gridSize
+                    initialScale: gridSize,
+                    color: ['black', 'white']
                   });
                   //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomSet(2,2);
                   resize_heatmap(heatmap1, heatmapplugin);
