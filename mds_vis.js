@@ -96,8 +96,10 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
           //to resize MDS
           o.dispatcher.on('resized_flex_column', function(col_id, width, $column) {
             current_size = [$parent.node().getBoundingClientRect().width, $parent.node().getBoundingClientRect().height];
-            drawMDSGraph($node, data, nodes, o.links, current_size);
-            console.log(col_id, width, $column);
+            if (current_size[0] > 100){
+              drawMDSGraph($node, data, nodes, o.links, current_size);
+              console.log(col_id, width, $column);
+            }
           });
         });
         return $node;
