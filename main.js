@@ -36,6 +36,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     var transitionEnd = transitionEndEventName();
     d3.selectAll('.flex-column').on(transitionEnd, function() {
+      d3.event.stopPropagation();
+      if(d3.event.target !== d3.event.currentTarget) {
+        return false;
+      }
       // caution: this listener is only triggered for .flex-columns where an .expand class was added/removed
       // other columns might change the width at the same time, but do not trigger this listener
       var $column = d3.select(this);
