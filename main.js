@@ -61,6 +61,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       settings_direction = [],
       settings_detail = 4;
 
+    //session storage
+    var storage = window.sessionStorage;
+
     // initializing the settings from the buttons in the nav bar
     $("[name='change[]']:checked").each(function () {
       settings_change.push(this.value);
@@ -223,6 +226,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       }
     }
 
+    /******************************************************************************************/
+    /********************************* Dataset selection **************************************/
+    /******************************************************************************************/
     function filter_list(d) {
       return d.desc.type === 'matrix';//&& d.desc.fqname.match(/.*taco.*/);
       //return d.desc.type  === 'matrix' || d.desc.type === 'table';
@@ -254,6 +260,11 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             s    = $options.filter(function (d, i) { return i === si }),
             dataset = s.datum();
 
+        //store the selected index of the dataset group (from the select)
+        if (!storage.selected_group){
+          storage.selected_group = JSON.stringify(dataset);
+        }
+
         //preparing a fixed test table for lineup and mds
         test_items = items.filter(function (d) {
           return d.desc.fqname.match(dataset.regexp);
@@ -263,7 +274,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           toastr.warning("No items for this dataset category found! Select a different one.");
           return;
         }
-        //MDS part
+        /*********************************** MDS part ****************************************/
         //creating the data
         calcGraphData(test_items)
           .then(function (mdata) {
@@ -274,6 +285,11 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             console.error('error loading mds items', error);
             toastr.error("Couldn't load the selected dataset directory!<br>Error: " + error.responseText);
           });
+
+        //clearing lineup
+        if (lineup_instance !== null) {
+          lineup_instance.destroy();
+        }
       }
 
       // initialize the first directory selection
