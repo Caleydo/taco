@@ -239,46 +239,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                 //everything is comparable
                 //TODO check values/columns for table
 
-                data_provider.create({
-                  type: 'diffstructure',
-                  name: ds1.desc.name + '-' + ds2.desc.name,
-                  id1: id1,
-                  id2: id2,
-                  change: settings_change,
-                  direction: settings_direction,
-                  //detail: settings_detail,
-                  bins: 0, // this represents detail in this case, no bins
-                  tocall: 'diff',
-                  size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length] //we can use dummy values instead
-                }).then(function (diffmatrix) {
-                  //diffmatrix
-                  if (rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null) {
-                    if (dh !== null) {
-                      dh.destroy();
-                      dh.node.remove();
-                      //remove the old multiform selector
-                    }
-                    var diffheatmap = vis.list(diffmatrix).filter(function (d) {
-                      return d.id.match(/.*diffmatrixvis.*/);
-                    })[0];
-                    var diff_parent = d3.select('#diff-heatmap').node();
-                    diffheatmap.load().then(function (plugin) {
-                      //here we call my diff_heatmap
-                      // heatmap1 and 2 have the same size as we scaled them to be the 1/3 of the view
-                      var w_margin = 10,
-                        h_margin = 10,
-                        grid_height = diff_parent.getBoundingClientRect().height - h_margin,
-                        grid_width = diff_parent.getBoundingClientRect().width - w_margin;
-                      storage.diff_heatmap = {diffmatrix: diffmatrix, diffparent: diff_parent, plugin: plugin};
-                      dh = plugin.factory(diffmatrix, diff_parent,
-                        // optimal would be to find the smallest scaling factor
-                        {gridSize: [grid_width, grid_height]}
-                      );
-                    });
-                  } else {
-                    console.log("no diff!", rows1, cols1, rows2, cols2);
-                  }
-                });
+                create_diff_heatmap(ds1,ds2);
               }
             } else {
               toastr.info("Please select a second table");
@@ -495,46 +456,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             //everything is comparable
             //TODO check values/columns for table
 
-            data_provider.create({
-              type: 'diffstructure',
-              name: ds1.desc.name + '-' + ds2.desc.name,
-              id1: id1,
-              id2: id2,
-              change: settings_change,
-              direction: settings_direction,
-              //detail: settings_detail,
-              bins: 0, // this represents detail in this case, no bins
-              tocall: 'diff',
-              size: [_.union(rows1, rows2).length, _.union(cols1, cols2).length] //we can use dummy values instead
-            }).then(function (diffmatrix) {
-              //diffmatrix
-              if (rows1 !== null && cols1 !== null && rows2 !== null && cols2 !== null) {
-                if (dh !== null) {
-                  dh.destroy();
-                  dh.node.remove();
-                  //remove the old multiform selector
-                }
-                var diffheatmap = vis.list(diffmatrix).filter(function (d) {
-                  return d.id.match(/.*diffmatrixvis.*/);
-                })[0];
-                var diff_parent = d3.select('#diff-heatmap').node();
-                diffheatmap.load().then(function (plugin) {
-                  //here we call my diff_heatmap
-                  // heatmap1 and 2 have the same size as we scaled them to be the 1/3 of the view
-                  var w_margin = 10,
-                    h_margin = 10,
-                    grid_height = diff_parent.getBoundingClientRect().height - h_margin,
-                    grid_width = diff_parent.getBoundingClientRect().width - w_margin;
-                  storage.diff_heatmap = {diffmatrix: diffmatrix, diffparent: diff_parent, plugin: plugin};
-                  dh = plugin.factory(diffmatrix, diff_parent,
-                    // optimal would be to find the smallest scaling factor
-                    {gridSize: [grid_width, grid_height]}
-                  );
-                });
-              } else {
-                console.log("no diff!", rows1, cols1, rows2, cols2);
-              }
-            });
+          create_diff_heatmap(ds1, ds2);
           }
         });
       });
@@ -976,6 +898,45 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
     function getVersion(dataset){
       return dataset.desc.fqname.substring(0,10)
+    }
+
+    function create_diff_heatmap(src, dest) {
+      data_provider.create({
+        type: 'diffstructure',
+        name: src.desc.name + '-' + dest.desc.name,
+        id1: src.desc.id,
+        id2: dest.desc.id,
+        change: settings_change,
+        direction: settings_direction,
+        //detail: settings_detail,
+        bins: 0, // this represents detail in this case, no bins
+        tocall: 'diff',
+        size: [10, 10] //we can use dummy values instead
+      }).then(function (diffmatrix) {
+        //diffmatrix
+        if (dh !== null) {
+          dh.destroy();
+          dh.node.remove();
+          //remove the old multiform selector
+        }
+        var diffheatmap = vis.list(diffmatrix).filter(function (d) {
+          return d.id.match(/.*diffmatrixvis.*/);
+        })[0];
+        var diff_parent = d3.select('#diff-heatmap').node();
+        diffheatmap.load().then(function (plugin) {
+          //here we call my diff_heatmap
+          // heatmap1 and 2 have the same size as we scaled them to be the 1/3 of the view
+          var w_margin = 10,
+            h_margin = 10,
+            grid_height = diff_parent.getBoundingClientRect().height - h_margin,
+            grid_width = diff_parent.getBoundingClientRect().width - w_margin;
+          storage.diff_heatmap = {diffmatrix: diffmatrix, diffparent: diff_parent, plugin: plugin};
+          dh = plugin.factory(diffmatrix, diff_parent,
+            // optimal would be to find the smallest scaling factor
+            {gridSize: [grid_width, grid_height]}
+          );
+        });
+      });
     }
 
   });
