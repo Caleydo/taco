@@ -62,8 +62,23 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
       if (dh){
         var scaleX = (dh.$node.node().getBoundingClientRect().width - 10) / dh.options.gridSize[0];
+        var new_width = dh.$node.node().getBoundingClientRect().width - 10;
+        var new_height = dh.$node.node().getBoundingClientRect().height;
         console.log("diff heatmap:", scaleX);
-        d3.select(".taco-table").style("transform-origin", "0 0").style("transform", "scaleX(" + scaleX + ")");
+        if (scaleX > 2){
+          dh.destroy();
+          dh.node.remove();
+          var plugin = storage.diff_heatmap.plugin;
+          dh = plugin.factory(storage.diff_heatmap.diffmatrix, storage.diff_heatmap.diffparent,
+            // optimal would be to find the smallest scaling factor
+            {gridSize: [new_width, new_height]}
+          );
+        }else if (scaleX > 0){
+          d3.select(".taco-table").style("transform-origin", "0 0").style("transform", "scaleX(" + scaleX + ")");
+        } else{
+          console.log(" no scaling is needed");
+        }
+
         //dh.$node.style("transform-origin", "0 0").style("transform", "scaleX(" + scaleX + ")"); //too wide!
       }
     });
@@ -230,10 +245,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                         h_margin = 10,
                         grid_height = diff_parent.getBoundingClientRect().height - h_margin,
                         grid_width = diff_parent.getBoundingClientRect().width - w_margin;
+                      storage.diff_heatmap = {diffmatrix: diffmatrix, diffparent: diff_parent, plugin: plugin};
                       dh = plugin.factory(diffmatrix, diff_parent,
                         // optimal would be to find the smallest scaling factor
-                        {gridSize: [grid_width, grid_height],
-                        dispatcher: taco_dispatcher}
+                        {gridSize: [grid_width, grid_height]}
                       );
                     });
                   } else {
@@ -486,10 +501,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                     h_margin = 10,
                     grid_height = diff_parent.getBoundingClientRect().height - h_margin,
                     grid_width = diff_parent.getBoundingClientRect().width - w_margin;
+                  storage.diff_heatmap = {diffmatrix: diffmatrix, diffparent: diff_parent, plugin: plugin};
                   dh = plugin.factory(diffmatrix, diff_parent,
                     // optimal would be to find the smallest scaling factor
-                    {gridSize: [grid_width, grid_height],
-                    dispatcher: taco_dispatcher}
+                    {gridSize: [grid_width, grid_height]}
                   );
                 });
               } else {
