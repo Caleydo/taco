@@ -12,7 +12,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             d3utils, drag, lineup, mds) {
     'use strict';
 
-    var taco_dispatcher = d3.dispatch('show_detail', 'resized_flex_column');
+    var taco_dispatcher = d3.dispatch('show_detail', 'resized_flex_column', 'change_type_removed', 'change_type_added', 'modify_direction');
 
     // @see http://stackoverflow.com/a/9090128/940219
     function transitionEndEventName () {
@@ -66,6 +66,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         var new_height = dh.$node.node().getBoundingClientRect().height;
         console.log("diff heatmap:", scaleX);
         if (scaleX > 2){
+          //todo remove this part if u want good performance but not good quality
+          // this is only good for taking screenshots without a thick border or stretched items :|
+          /*
           dh.destroy();
           dh.node.remove();
           var plugin = storage.diff_heatmap.plugin;
@@ -73,14 +76,35 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             // optimal would be to find the smallest scaling factor
             {gridSize: [new_width, new_height]}
           );
+          */
+          d3.select(".taco-table").style("transform-origin", "0 0").style("transform", "scaleX(" + scaleX + ")");
         }else if (scaleX > 0){
           d3.select(".taco-table").style("transform-origin", "0 0").style("transform", "scaleX(" + scaleX + ")");
         } else{
           console.log(" no scaling is needed");
         }
+        //storage.diff_heatmap.diffmatrix.data().then(function(data){
+        //    var w = new_width / data.union.uc_ids.length;
+        //    dh.$node.select('.taco-table').selectAll('div').each(function(d) {
+        //      var $cell = d3.select(this);
+        //      $cell.style('width', w + 'px');
+        //    });
+        //  });
 
         //dh.$node.style("transform-origin", "0 0").style("transform", "scaleX(" + scaleX + ")"); //too wide!
       }
+    });
+
+    taco_dispatcher.on('modify_direction.2', function(d_s_list) {
+      console.log('direction settings list', d_s_list);
+    });
+
+    taco_dispatcher.on('change_type_removed.2', function(unselected) {
+      console.log('change_type_removed', unselected);
+    });
+
+    taco_dispatcher.on('change_type_added.2', function(selected) {
+      console.log('change_type_added', selected);
     });
 
     //var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
@@ -613,6 +637,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     /* On change functions */
 
     $("[name='change[]']").change(function () {
+      var old_sc = settings_change;
       settings_change = [];
       $("[name='change[]']:checked").each(function () {
         settings_change.push(this.value);
@@ -625,11 +650,20 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         $('#' + this.id).prop('checked', true);
         $('#' + this.id).parents('label').toggleClass('active');
       }
-      console.log("changed this ", $(this).val(), settings_change);
+      var unselected_diff = _.difference(old_sc, settings_direction),
+        selected_diff = _.difference(settings_direction, old_sc);
+      console.log("changed this ", $(this).val(), settings_change , "unselected diff", unselected_diff, "selected diff", selected_diff);
+      if (unselected_diff.length > 0){
+        taco_dispatcher.change_type_removed(unselected_diff);
+      }
+      if (selected_diff > 0){
+        taco_dispatcher.change_type_added(selected_diff);
+      }
     });
 
 
     $("[name='direction[]']").change(function () {
+      var old_sd = settings_direction;
       settings_direction = [];
       $("[name='direction[]']:checked").each(function () {
         settings_direction.push(this.value);
@@ -643,7 +677,10 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         $('#' + this.id).parents('label').toggleClass('active');
       }
 
-      console.log("changed this ", $(this).val(), settings_direction);
+      var unselected_diff = _.difference(old_sd, settings_direction),
+        selected_diff = _.difference(settings_direction, old_sd);
+      console.log("changed this ", $(this).val(), settings_direction, "unselected diff", unselected_diff, "selected diff", selected_diff);
+      taco_dispatcher.modify_direction(settings_direction);
     });
 
     $("#bin-number").change(function () {

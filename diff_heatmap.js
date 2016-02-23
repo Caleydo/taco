@@ -56,6 +56,10 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
         //  //root.style("transform", "scaleX(" + ((root.node().getBoundingClientRect().width -2) / width) + ")");
         //});
 
+        //create canvas -> getContext('2d')
+        // data.structure.added_rows.foreach
+        //    canvas.paintRect(w,h,t,l, color)
+
         //visualizing the diff
         if (operations.indexOf('structure') > -1) {
           if (directions.indexOf('rows') > -1) {
