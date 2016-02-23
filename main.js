@@ -47,16 +47,25 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     });
 
     taco_dispatcher.on('resized_flex_column.2', function(col_id, width, $column) {
-      //if (width > 30){
-        console.log('resizing heatmaps?', col_id, width, $column);
-        var ref = document.getElementById('ref-table').getBoundingClientRect();
-        (new behavior.ZoomLogic(mid_hm, heatmapplugin)).zoomTo(ref.width, ref.height);
-        var src = document.getElementById('src-heatmap').getBoundingClientRect();
-        (new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomTo(src.width, src.height);
-        var dest = document.getElementById('dest-heatmap').getBoundingClientRect();
-        (new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomTo(dest.width, dest.height);
-      //}
-      console.log("main", col_id, width, $column);
+      console.log('resizing heatmaps?', col_id, width, $column);
+      // TODO apply this only on opening or changing but not on closing
+      // middle reference table
+      if (mid_hm)
+        resize_heatmap(mid_hm, heatmapplugin);
+      // src heatmap
+      if (heatmap1)
+        resize_heatmap(heatmap1, heatmapplugin);
+      // dest heatmap
+      if (heatmap2)
+        resize_heatmap(heatmap2, heatmapplugin);
+      // TODO diff heatmap
+
+      if (dh){
+        var scaleX = (dh.$node.node().getBoundingClientRect().width - 10) / dh.options.gridSize[0];
+        console.log("diff heatmap:", scaleX);
+        d3.select(".taco-table").style("transform-origin", "0 0").style("transform", "scaleX(" + scaleX + ")");
+        //dh.$node.style("transform-origin", "0 0").style("transform", "scaleX(" + scaleX + ")"); //too wide!
+      }
     });
 
     //var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
@@ -67,8 +76,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     var myDrag = drag.Drag();
 
     var gridSize = 6,
-      setting_bins = 12,
-      setting_bins_col = 12; //just a default value
+      setting_bins = 20,
+      setting_bins_col = 20; //just a default value
     var test_items,
       settings_change = [],
       settings_direction = [],
@@ -223,7 +232,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                         grid_width = diff_parent.getBoundingClientRect().width - w_margin;
                       dh = plugin.factory(diffmatrix, diff_parent,
                         // optimal would be to find the smallest scaling factor
-                        {gridSize: [grid_width, grid_height]}
+                        {gridSize: [grid_width, grid_height],
+                        dispatcher: taco_dispatcher}
                       );
                     });
                   } else {
@@ -478,7 +488,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                     grid_width = diff_parent.getBoundingClientRect().width - w_margin;
                   dh = plugin.factory(diffmatrix, diff_parent,
                     // optimal would be to find the smallest scaling factor
-                    {gridSize: [grid_width, grid_height]}
+                    {gridSize: [grid_width, grid_height],
+                    dispatcher: taco_dispatcher}
                   );
                 });
               } else {

@@ -47,7 +47,14 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
           .style("height", height + 2 + 'px')
           //.style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
           //todo move this to the css
-          .style("background-color", "white");
+          .style("background-color", "white")
+          .style("transform-origin", "0 0");
+          //.style("transform", "scaleX(" + (that.container.node().getBoundingClientRect().width / width) + ")");
+
+        //taco_dispatcher.on('resized_flex_column.diff', function(col_id, w, $column) {
+        //  root.style("transform", "scaleX(" + (that.container.node().getBoundingClientRect().width / width) + ")");
+        //  //root.style("transform", "scaleX(" + ((root.node().getBoundingClientRect().width -2) / width) + ")");
+        //});
 
         //visualizing the diff
         if (operations.indexOf('structure') > -1) {
