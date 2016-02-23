@@ -1,6 +1,6 @@
 /**
  * Created by Samuel Gratzl on 15.12.2014.
- * copied by Reem Hourieh on 13.5.2015.
+ * copied and modified by Reem Hourieh on 13.5.2015.
  */
 
 body, html {
@@ -217,7 +217,7 @@ svg .select-selected {
 }
 
 .taco-table-container {
-  overflow: hidden;
+  //overflow: hidden;
   //border: 1px solid lightpink;
   //position: absolute;
   flex-grow: 1; //to distribute the tables equally
@@ -342,7 +342,7 @@ rect.bar.struct-del-color {
 }
 
 .no-change-color {
-  background-color: lightgoldenrodyellow;
+  background-color: white;
 }
 
 .struct {
@@ -462,9 +462,10 @@ rect.bar.struct-del-color {
 }
 
 #ref-table {
-  border: solid 1px orange;
-  background: #faffcf;
+  //border: solid 1px orange;
+  //background: #faffcf;
   height: 89vh;
+  padding-left: 1px;
 }
 
 #detail-titles .taco-table-container{
@@ -556,7 +557,8 @@ rect.bar.struct-del-color {
   //stroke: #fff;
   //stroke-width: 1.5px;
   //fill: #456bb4;
-  background-color: #456bb4;
+  border: 1px solid whitesmoke;
+  background-color: dimgrey;
   position: absolute;
 }
 
@@ -565,8 +567,9 @@ rect.bar.struct-del-color {
 }
 
 .node.select-node-selected .fd-circle{
-  stroke: $select-color;
-  stroke-width: 1.5px;
+  //stroke: $select-color;
+  //stroke-width: 1.5px;
+  border: 3px solid $select-color;
 }
 
 .node text {

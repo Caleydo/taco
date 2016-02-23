@@ -19,6 +19,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
        //class to make it responsive
        //.classed("svg-content-responsive", true);
       var margin = 40;
+      var circle_width = 16;
 
       var xScale = d3.scale.linear()
         .domain([pos.xmin, pos.xmax])
@@ -54,8 +55,8 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
         });
 
       var circles = node.append("div")
-        .style("width", '20px')
-        .style("height", '20px')
+        .style("width", circle_width  + 'px')
+        .style("height", circle_width  + 'px')
         .classed("fd-circle", true)
         .attr("id", function(d, i){
           return "table" + i;
