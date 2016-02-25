@@ -283,6 +283,9 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       var diff = new DiffHeatmap(data.data(), $parent);
       diff.drawDiffHeatmap(data.desc.change, data.desc.direction, o.gridSize);
 
+      //o.dispatcher.on('modify_direction', function(new_direction) {
+      //  diff.drawDiffHeatmap(data.desc.change, new_direction, o.gridSize);
+      //});
       return diff.container;
     });
 

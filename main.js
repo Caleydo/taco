@@ -821,9 +821,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               taco_dispatcher: taco_dispatcher
             });
           });
-        } else {
-          toastr.warning("2D heatmap cannot be shown when only 1D is selected", direction);
-        }
+        }// else {
+        //  toastr.warning("2D heatmap cannot be shown when only 1D is selected", direction);
+        //}
       });
     }
 
