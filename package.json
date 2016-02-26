@@ -9,8 +9,7 @@
     "caleydo_core": "*",
     "caleydo_vis": "*",
     "caleydo_d3": "*",
-    "caleydo_vis_lineup": "*",
-    "caleydo_tooltip": "*"
+    "caleydo_vis_lineup": "*"
   },
   "caleydo": {
     "plugins": {
@@ -94,9 +93,6 @@
         ],
         "bootstrap-slider": [
           "css!${baseUrl}/seiyria-bootstrap-slider/dist/css/bootstrap-slider.css"
-        ],
-        "caleydo_tooltip": [
-          "css!${baseUrl}/caleydo_tooltip/style.scss"
         ]
       }
     }
