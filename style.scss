@@ -76,11 +76,11 @@ svg {
     width: auto;
     height: auto;
 
-    &.select-selected {
+    &.caleydo-select-selected {
       border: 1px solid $select-color;
       background: none;
     }
-    &.select-hovered {
+    &.caleydo-select-hovered {
       border: 1px solid $hover-color;
       background: none;
     }
@@ -115,10 +115,10 @@ svg {
         stroke-width: 1;
         stroke-opacity: 0.9;
 
-        &.select-selected {
+        &.caleydo-select-selected {
           stroke: $select-color;
         }
-        &.select-hovered {
+        &.caleydo-select-hovered {
           stroke: $hover-color;
         }
       }
@@ -130,10 +130,10 @@ svg {
         fill: black;
         opacity: 0.2;
 
-        &.select-selected {
+        &.caleydo-select-selected {
           fill: $select-color;
         }
-        &.select-hovered {
+        &.caleydo-select-hovered {
           fill: $hover-color;
         }
       }
@@ -202,13 +202,13 @@ svg {
   }
 }
 
-.select-selected {
+.caleydo-select-selected {
   //html variant
   border: 1px solid $select-color;
   background-color: $select-color;
 }
 
-svg .select-selected {
+svg .caleydo-select-selected {
   //svg variant
   stroke: $select-color;
   stroke-width: 1px;
