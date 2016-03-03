@@ -37,7 +37,7 @@
           <li><a href="#">Link</a></li>
         </ul>-->
         <div class="navbar-left" style="margin-top:9px;">
-          <div class="btn-group" data-toggle="buttons">
+          <div class="btn-group" id="direction-group" data-toggle="buttons">
             <label class="btn btn-default active">
               <input type="checkbox" class="direction-chk" id="rows" autocomplete="off" name="direction[]" value="rows"
                      checked><i class="fa fa-bars"></i> Rows
@@ -47,7 +47,7 @@
                      value="columns" checked><i class="fa fa-columns"></i> Columns
             </label>
           </div>
-          <div class="btn-group" data-toggle="buttons">
+          <div class="btn-group" id="change-group" data-toggle="buttons">
             <label class="btn btn-default active">
               <input type="checkbox" class="change-chk" id="structure" autocomplete="off" name="change[]"
                      value="structure" checked><i class="fa fa-map-signs"></i> Structure
@@ -69,9 +69,9 @@
             <input id="detail-slider" data-slider-id='dsSlider' type="text" data-slider-min="0" data-slider-max="4"
                    data-slider-step="1" data-slider-value="0"/>
           </div>
-          <div id="taco-color-slider-group" class="btn-group">
+          <div id="taco-color-slider-group" class="btn-group hidden">
             <!-- Range slider, low and high tracks, and selection: -->
-            <input id="ex12c" type="text" data-slider-step="0.05"/><br/>
+            <input id="taco-color-slider-input" type="text" data-slider-step="0.05"/><br/>
           </div>
         </div>
         <ul class="nav navbar-nav navbar-right" data-header="rightmenu">

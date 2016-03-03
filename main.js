@@ -629,12 +629,14 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     });
 
     // color slider
-    var color_slider = $("#ex12c").slider({
+    var color_slider = $("#taco-color-slider-input").slider({
       id: "taco-color-slider",
       min: -1,
       max: 1,
       range: true,
-      value: [-1, 1]
+      value: [-1, 1],
+      tooltip_position: 'bottom',
+      tooltip_split: 'true'
     });
     var min_color = -1, max_color = 1;
 
@@ -669,6 +671,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
      });*/
     detail_slider.on('change', function (ev) {
       d3.selectAll('.flex-column.expand').classed('expand', false);
+      d3.select('#taco-color-slider-group').classed('hidden', (ev.value.newValue < 3));
       switch (ev.value.newValue) {
         case 0:
           d3.select('#overview').classed('expand', true);
@@ -700,12 +703,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     });
 
     color_slider.on('change', function (ev) {
-      console.log("color slider", ev.value.newValue);
       if (ds1 !== null && ds2 !== null && detail_slider.val() > 3){
-        console.log("I'll create a heatmap");
         min_color = ev.value.newValue[0];
         max_color = ev.value.newValue[1];
-        //create_diff_heatmap(ds1,ds2);
         taco_dispatcher.update_color(min_color, max_color);
       }
     });

@@ -14,6 +14,10 @@ h1 {
 
 }
 
+.hidden {
+  display: none;
+}
+
 #sidebar {
   display: inline-block;
   width: 12%;
@@ -441,6 +445,16 @@ rect.bar.struct-del-color {
   position: relative;
   min-height: 50px;
 }
+
+.navbar-left {
+  display: flex;
+  flex-direction: row;
+
+  > .btn-group {
+    margin-right: 10px;
+  }
+}
+
 
 #mds-graph {
   border: solid 1px grey;
@@ -1019,18 +1033,27 @@ svg.heatmap, .heatmap canvas {
 }
 
 /* color slider */
-#taco-color-slider .slider-track-low {
-	background: #d8b365;
+#taco-color-slider-group {
+  margin-left: 40px;
+  margin-right: 10px;
 }
 
-#taco-color-slider .slider-selection {
-	background: white;
-}
+#taco-color-slider {
+  .slider-track-low,
+  .min-slider-handle {
+    background: #d8b365;
+  }
 
-#taco-color-slider .slider-track-high {
-	background: #8da0cb;
-}
+  .slider-selection {
+    background: transparent;
+  }
 
-#taco-color-slider  .slider-handle {
-	background: #8da0cb;
+  .slider-track {
+    background: linear-gradient(90deg, #d8b365, white, #8da0cb);
+  }
+
+  .slider-track-high,
+  .max-slider-handle {
+    background: #8da0cb;
+  }
 }
