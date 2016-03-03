@@ -23,6 +23,12 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
           getter: function (d) {
             return d.date;
           }
+        },{
+          name: 'Size',
+          value: {type: 'string'},
+          getter: function (d) {
+            return d.size;
+          }
         }, {
           name: 'Structure Add',
           cssClass: 'struct-add-color',
@@ -109,8 +115,9 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
                 type: 'rank',
                 width: 40
               },
-              col('Name', 220),
+              col('Name', 200),
               col('Version', 100),
+              col('Size', 100),
               {
                 type: 'stacked',
                 width: 400,

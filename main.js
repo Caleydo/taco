@@ -729,6 +729,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               return {
                 name: e.desc.name,
                 date: getVersion(e),
+                size: e.desc.size[0] + " x " + e.desc.size[1],
                 noch: noch,
                 cont: cont,
                 stadd: stadd,
