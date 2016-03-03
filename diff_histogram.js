@@ -26,6 +26,9 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
           })
           .style("transform", function (d) {
             return "translate(" + 0 + "px," + y(d.pos) + "px)";
+          })
+          .style("display", function (d) {
+            return (d.ratio.c_ratio === 0) ? 'none' : null;
           });
       }
       // deleted structure
@@ -42,6 +45,9 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
           .style("transform", function (d) {
             var acc = (has_content ? d.ratio.c_ratio: 0);
             return "translate(" + x(acc) + "px," + y(d.pos) + "px)";
+          })
+          .style("display", function (d) {
+            return (d.ratio.d_ratio === 0) ? 'none' : null;
           });
         // added
         bp.append("div")
@@ -56,6 +62,9 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
           .style("transform", function (d) {
             var acc = (has_content ? d.ratio.c_ratio: 0) + d.ratio.d_ratio;
             return "translate(" + x(acc) + "px," + y(d.pos) + "px)";
+          })
+          .style("display", function (d) {
+            return (d.ratio.a_ratio === 0) ? 'none' : null;
           });
       }
       return parent;
