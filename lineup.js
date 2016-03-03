@@ -121,11 +121,16 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
               {
                 type: 'stacked',
                 width: 400,
+                label: 'Changes',
                 children: [col('Structure Add', 100), col('Structure Del', 100), col('Content', 100)]
               },
               col('No Change', 100)
             ]
           }
+        },
+        sortCriteria: {
+          column: 'Changes',
+          asc: true
         }
       });
     });
