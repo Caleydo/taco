@@ -12,7 +12,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             d3utils, drag, lineup, mds) {
     'use strict';
 
-    var taco_dispatcher = d3.dispatch('show_detail', 'resized_flex_column', 'change_type_removed', 'change_type_added', 'modify_direction');
+    var taco_dispatcher = d3.dispatch('show_detail', 'resized_flex_column', 'change_type_removed', 'change_type_added', 'modify_direction', 'update_color');
 
     // @see http://stackoverflow.com/a/9090128/940219
     function transitionEndEventName () {
@@ -628,6 +628,16 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       ticks_labels: ['Overview', 'Middle', 'Detail']
     });
 
+    // color slider
+    var color_slider = $("#ex12c").slider({
+      id: "taco-color-slider",
+      min: -1,
+      max: 1,
+      range: true,
+      value: [-1, 1]
+    });
+    var min_color = -1, max_color = 1;
+
     // flexbox part
     // select all DOM nodes (e.g. links) with class="expand-column"
     d3.selectAll('.expand-column').on('click', function () {
@@ -686,6 +696,17 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       if (lineup_instance !== null) {
         var ranking = lineup_instance.lineup.data.getLastRanking().getOrder();
         console.log("the ranking from sliding?", ranking);
+      }
+    });
+
+    color_slider.on('change', function (ev) {
+      console.log("color slider", ev.value.newValue);
+      if (ds1 !== null && ds2 !== null && detail_slider.val() > 3){
+        console.log("I'll create a heatmap");
+        min_color = ev.value.newValue[0];
+        max_color = ev.value.newValue[1];
+        //create_diff_heatmap(ds1,ds2);
+        taco_dispatcher.update_color(min_color, max_color);
       }
     });
 
@@ -927,7 +948,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         var diffheatmap = vis.list(diffmatrix).filter(function (d) {
           return d.id.match(/.*diffmatrixvis.*/);
         })[0];
-        var diff_parent = d3.select('#diff-heatmap').node();
+        var diff_parent = d3.select('#diff-heatmap');
+        diff_parent.selectAll('div').remove();
+        diff_parent = diff_parent.node();
         diffheatmap.load().then(function (plugin) {
           //here we call my diff_heatmap
           // heatmap1 and 2 have the same size as we scaled them to be the 1/3 of the view
@@ -938,7 +961,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           storage.diff_heatmap = {diffmatrix: diffmatrix, diffparent: diff_parent, plugin: plugin};
           dh = plugin.factory(diffmatrix, diff_parent,
             // optimal would be to find the smallest scaling factor
-            {gridSize: [grid_width, grid_height]}
+            {gridSize: [grid_width, grid_height],
+            colorDomain: [min_color, max_color],
+            taco_dispatcher: taco_dispatcher}
           );
         });
       });

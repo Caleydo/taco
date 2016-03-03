@@ -1017,3 +1017,20 @@ rect.bar.struct-del-color {
 svg.heatmap, .heatmap canvas {
   border: 1px black solid;
 }
+
+/* color slider */
+#taco-color-slider .slider-track-low {
+	background: #d8b365;
+}
+
+#taco-color-slider .slider-selection {
+	background: white;
+}
+
+#taco-color-slider .slider-track-high {
+	background: #8da0cb;
+}
+
+#taco-color-slider  .slider-handle {
+	background: #8da0cb;
+}

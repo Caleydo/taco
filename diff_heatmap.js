@@ -4,13 +4,9 @@
 define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3util', './drag'],
   function (require, exports, d3, _, toastr, d3utils, drag) {
 
-    var colorLow = 'yellow', colorMed = 'white', colorHigh = '#8da0cb',
+    var colorLow = '#d8b365', colorMed = 'white', colorHigh = '#8da0cb',
       colorMerged = '#B2DF8A',//light green
       colorSplit = '#FB9A99'; //light red
-
-    var colorScale = d3.scale.linear()
-      .domain([-1, 0, 1])
-      .range([colorLow, colorMed, colorHigh]);
 
     function DiffHeatmap(data, parent) {
       this.h_data = data;
@@ -29,9 +25,13 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       this.container.remove();
     };
 
-    DiffHeatmap.prototype.drawDiffHeatmap = function (operations, directions, gridSize) {
+    DiffHeatmap.prototype.drawDiffHeatmap = function (operations, directions, gridSize, colorDomain, taco_dispatcher) {
       var that = this;
-      var myDrag = drag.Drag();
+      var colorScale = d3.scale.linear()
+        //.domain([-1, 0, 1])
+        .domain([colorDomain[0], 0, colorDomain[1]]) // these are from main
+        .clamp(true)
+        .range([colorLow, colorMed, colorHigh]);
 
       that.h_data.then(function (data) {
         var height = gridSize[1];
@@ -130,9 +130,8 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
           }
         }
         if (operations.indexOf('content') > -1) {
-          var chCells = root.selectAll(".taco-ch-cell")
-            .data(data.content)
-            .enter()
+          var chCells = root.selectAll(".taco-ch-cell").data(data.content);
+          chCells.enter()
             .append("div")
             .attr("class", "taco-ch-cell")
             .attr("title", function(d){
@@ -153,6 +152,16 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
             .style("background-color", function (d) {
               return colorScale(d.diff_data);
             });
+
+          taco_dispatcher.on('update_color', function(min_color, max_color) {
+            colorScale.domain([min_color, 0, max_color]); // these are from main
+            chCells.each(function() {
+              d3.select(this)
+                .style("background-color", function (d) {
+                  return colorScale(d.diff_data);
+                });
+            });
+          });
         }
 
         if (operations.indexOf("merge") > -1) {
@@ -281,7 +290,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       var o = this.options;
       //var diff = new DiffHeatmap(data.data(), data.desc.size); //use the union size from the server instead of the client
       var diff = new DiffHeatmap(data.data(), $parent);
-      diff.drawDiffHeatmap(data.desc.change, data.desc.direction, o.gridSize);
+      diff.drawDiffHeatmap(data.desc.change, data.desc.direction, o.gridSize, o.colorDomain, o.taco_dispatcher);
 
       //o.dispatcher.on('modify_direction', function(new_direction) {
       //  diff.drawDiffHeatmap(data.desc.change, new_direction, o.gridSize);
