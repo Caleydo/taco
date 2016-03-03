@@ -263,12 +263,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       var dataset_categories = [
         {title: 'Taco (Multiple + Tiny + Large)', dimension: '401 x 192', regexp:/.*multiple.*|.*tiny.*|.*Large.*/},
         {title: 'Taco (All)', dimension: '401 x 192', regexp:/.*Taco (?!merge).*/},
-        {title: 'microRNA', dimension: '150 x 491', regexp:/.*microRNA.*/},
-        {title: 'Methylation', dimension: '8266 x 112', regexp:/.*Methylation.*/},
-        {title: 'Mutations', dimension: '9414 x 284', regexp:/.*Mutations.*/},
-        {title: 'mRNA-seq', dimension: '18214 x 165', regexp:/.*seq.*/},
-        {title: 'mRNA', dimension: '12042 x 527', regexp:/.*mRNA(?!-seq).*/},
-        {title: 'Copy Number', dimension: '24174 x 563', regexp:/.*Copy Number.*/}
+        {title: 'microRNA', dimension: '150 x 491', regexp:/.*GBM*.*microRNA(?!-seq).*/},
+        {title: 'Methylation', dimension: '8266 x 112', regexp:/.*GBM*.*Methylation.*/},
+        {title: 'Mutations', dimension: '9414 x 284', regexp:/.*GBM*.*Mutations.*/},
+        {title: 'mRNA-seq', dimension: '18214 x 165', regexp:/.*GBM*.*seq.*/},
+        {title: 'mRNA', dimension: '12042 x 527', regexp:/.*GBM*.*mRNA(?!-seq).*/},
+        {title: 'Copy Number', dimension: '24174 x 563', regexp:/.*GBM*.*Copy Number.*/}
       ];
 
       // select by dataset directory name
