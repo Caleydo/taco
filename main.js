@@ -261,10 +261,14 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     // create dataset directory list
     data_provider.list(filter_list).then(function (items) {
       var dataset_categories = [
-        {title: 'microRNA', regexp:/.*microRNA.*/},
-        {title: 'Methylation', regexp:/.*Methylation.*/},
-        {title: 'Taco (All)', regexp:/.*Taco (?!merge).*/},
-        {title: 'Taco (Multiple + Tiny + Large)', regexp:/.*multiple.*|.*tiny.*|.*Large.*/}
+        {title: 'Taco (Multiple + Tiny + Large)', dimension: '401 x 192', regexp:/.*multiple.*|.*tiny.*|.*Large.*/},
+        {title: 'Taco (All)', dimension: '401 x 192', regexp:/.*Taco (?!merge).*/},
+        {title: 'microRNA', dimension: '150 x 491', regexp:/.*microRNA.*/},
+        {title: 'Methylation', dimension: '8266 x 112', regexp:/.*Methylation.*/},
+        {title: 'Mutations', dimension: '9414 x 284', regexp:/.*Mutations.*/},
+        {title: 'mRNA-seq', dimension: '18214 x 165', regexp:/.*seq.*/},
+        {title: 'mRNA', dimension: '12042 x 527', regexp:/.*mRNA(?!-seq).*/},
+        {title: 'Copy Number', dimension: '24174 x 563', regexp:/.*Copy Number.*/}
       ];
 
       // select by dataset directory name
@@ -277,7 +281,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       var $select  = d3.select("#dataset-selector").on("change", change),
           $options = $select.selectAll('option').data(dataset_categories); // Data join
 
-      $options.enter().append("option").text(function(d) { return d.title; });
+      $options.enter().append("option").text(function(d) { return d.title + " (" + d.dimension + ")"; });
 
       function change() {
         var si   = $select.property('selectedIndex'),
