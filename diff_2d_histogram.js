@@ -65,7 +65,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag', '../caleydo_core/tabl
         .style("width", function(d){
           return x(d.cols) + "px";
         })
-        .attr("title", function(d){return d.rows * 100 + "," + d.cols * 100;});
+        .attr("title", function(d){return "rows: " + d.rows * 100 + "%, columns: " + d.cols * 100 +"%";});
        // .text( p_data * 100 + "%");
       return container;
     }

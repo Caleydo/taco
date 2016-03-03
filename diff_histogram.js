@@ -22,7 +22,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
           })
           .style("height", gridSize - 1 + "px")
           .attr("title", function (d) {
-            return d.ratio.c_ratio;
+            return "content: " + d.ratio.c_ratio * 100 +"%";
           })
           .style("transform", function (d) {
             return "translate(" + 0 + "px," + y(d.pos) + "px)";
@@ -40,7 +40,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
           })
           .style("height", gridSize - 1 + "px")
           .attr("title", function (d) {
-            return d.ratio.d_ratio;
+            return "removed: " + d.ratio.d_ratio * 100 +"%";
           })
           .style("transform", function (d) {
             var acc = (has_content ? d.ratio.c_ratio: 0);
@@ -57,7 +57,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
           })
           .style("height", gridSize - 1 + "px")
           .attr("title", function (d) {
-            return d.ratio.a_ratio;
+            return "added: " + d.ratio.a_ratio * 100 +"%";
           })
           .style("transform", function (d) {
             var acc = (has_content ? d.ratio.c_ratio: 0) + d.ratio.d_ratio;
