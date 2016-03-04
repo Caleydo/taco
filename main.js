@@ -700,7 +700,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     });
 
     color_slider.on('change', function (ev) {
-      if (ds1 !== null && ds2 !== null && detail_slider.val() > 3){
+      if (ds1 !== null && ds2 !== null && detail_slider.val() >= 3){
         min_color = ev.value.newValue[0];
         max_color = ev.value.newValue[1];
         taco_dispatcher.update_color(min_color, max_color);
