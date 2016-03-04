@@ -56,8 +56,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       var cell_height = 1, cell_width = 1;
 
       if (dh){
-        var scaleX = (dh.$node.node().getBoundingClientRect().width - 10) / dh.options.gridSize[0];
-        var new_width = dh.$node.node().getBoundingClientRect().width - 10;
+        var scaleX = (dh.$node.node().getBoundingClientRect().width) / dh.options.gridSize[0];
+        var new_width = dh.$node.node().getBoundingClientRect().width;
         var new_height = dh.$node.node().getBoundingClientRect().height;
         cell_height = (union_rows ? new_height/union_rows : 1);
         cell_width = (union_cols ? new_width/union_cols : 1);
@@ -913,20 +913,16 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     //todo think of applying the same scaling for both heatmaps
     function resize_heatmap(hm, heatmapplugin) {
       var pw = hm.parent.getBoundingClientRect().width,
-        ph = hm.parent.getBoundingClientRect().height,
-        w_margin = 10,
-        h_margin = 10;
-      (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(pw  - w_margin, ph - h_margin);
+        ph = hm.parent.getBoundingClientRect().height;
+      (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(pw, ph);
     }
 
     function resize_heatmap_by_cell_height(hm, heatmapplugin, cell_height, cell_width){
       if (cell_height === 1 || cell_width === 1) {
         resize_heatmap(hm, heatmapplugin);
       } else {
-        var w_margin = 10,
-          h_margin = 10,
-          new_height = (hm.rawSize[1] * cell_height) - h_margin,
-          new_width = (hm.rawSize[0] * cell_width) - w_margin;
+        var new_height = (hm.rawSize[1] * cell_height),
+          new_width = (hm.rawSize[0] * cell_width);
         console.log("this heatmap has ", hm.rawSize, " rows");
         (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(new_width, new_height);
       }
@@ -968,10 +964,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         diffheatmap.load().then(function (plugin) {
           //here we call my diff_heatmap
           // heatmap1 and 2 have the same size as we scaled them to be the 1/3 of the view
-          var w_margin = 10,
-            h_margin = 10,
-            grid_height = diff_parent.getBoundingClientRect().height - h_margin,
-            grid_width = diff_parent.getBoundingClientRect().width - w_margin;
+          var grid_height = diff_parent.getBoundingClientRect().height -3, // -2 for border
+            grid_width = diff_parent.getBoundingClientRect().width;
           storage.diff_heatmap = {diffmatrix: diffmatrix, diffparent: diff_parent, plugin: plugin};
           dh = plugin.factory(diffmatrix, diff_parent,
             // optimal would be to find the smallest scaling factor

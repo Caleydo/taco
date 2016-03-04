@@ -43,8 +43,8 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
 
         var root = that.container.append("div")// g.margin
           .attr("class", "taco-table")
-          .style("width", width + 2 + 'px')
-          .style("height", height + 2 + 'px')
+          .style("width", width + 'px')
+          .style("height", height + 'px')
           //.style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
           //todo move this to the css
           .style("background-color", "white")
