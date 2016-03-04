@@ -78,7 +78,10 @@ svg {
     margin-right: 0;
   }
 
-  #src-heatmap > *, #dest-heatmap > * {
+  #src-heatmap .caleydo-heatmap canvas,
+  #src-heatmap svg,
+  #dest-heatmap .caleydo-heatmap canvas,
+  #dest-heatmap svg {
     border-right: 1px black solid;
     border-bottom: 1px black solid;
   }
