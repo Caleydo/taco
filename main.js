@@ -52,18 +52,14 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       // middle reference table
       if (mid_hm)
         resize_heatmap(mid_hm, heatmapplugin);
-      // src heatmap
-      if (heatmap1)
-        resize_heatmap(heatmap1, heatmapplugin);
-      // dest heatmap
-      if (heatmap2)
-        resize_heatmap(heatmap2, heatmapplugin);
-      // TODO diff heatmap
+
+      var cell_height = 1;
 
       if (dh){
         var scaleX = (dh.$node.node().getBoundingClientRect().width - 10) / dh.options.gridSize[0];
         var new_width = dh.$node.node().getBoundingClientRect().width - 10;
         var new_height = dh.$node.node().getBoundingClientRect().height;
+        cell_height = (union_rows ? new_height/union_rows : 1);
         console.log("diff heatmap:", scaleX);
         if (scaleX > 2){
           //todo remove this part if u want good performance but not good quality
@@ -74,7 +70,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           var plugin = storage.diff_heatmap.plugin;
           dh = plugin.factory(storage.diff_heatmap.diffmatrix, storage.diff_heatmap.diffparent,
             // optimal would be to find the smallest scaling factor
-            {gridSize: [new_width, new_height]}
+            {gridSize: [new_width, new_height],
+            colorDomain: [min_color, max_color],
+            taco_dispatcher: taco_dispatcher}
           );
           */
           d3.select(".taco-table").style("transform-origin", "0 0").style("transform", "scaleX(" + scaleX + ")");
@@ -93,6 +91,13 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
         //dh.$node.style("transform-origin", "0 0").style("transform", "scaleX(" + scaleX + ")"); //too wide!
       }
+
+      // src heatmap
+      if (heatmap1)
+        resize_heatmap_by_cell_height(heatmap1, heatmapplugin, cell_height);
+      // dest heatmap
+      if (heatmap2)
+        resize_heatmap_by_cell_height(heatmap2, heatmapplugin, cell_height);
     });
 
     taco_dispatcher.on('modify_direction.2', function(d_s_list) {
@@ -107,6 +112,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       console.log('change_type_added', selected);
     });
 
+    /******************************* GLOBAL VARIABLES *****************************************/
     //var windows = $('<div>').css('position', 'absolute').appendTo('#main')[0];
     var data_provider = data;
     var rows1 = null, rows2 = null, cols1 = null, cols2 = null, id1 = null, id2 = null,
@@ -126,6 +132,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     var storage = {};
 
     var heatmapplugin;
+    var union_rows = 0; // because we want to scale the heatmaps and we need to know how many rows we have at maximum
 
     // initializing the settings from the buttons in the nav bar
     $("[name='change[]']:checked").each(function () {
@@ -347,16 +354,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
           var ev = d3.event;
         });
 
-      //preparing a fixed test table for lineup and mds
-      test_items = items.filter(function (d) {
-        //return d.desc.fqname.match(/.*multiple.*|.*tiny.*|.*Large.*/);
-        //return d.desc.fqname.match(/.*multiple.*|.*tiny.*/);
-        //return d.desc.fqname.match(/.*microRNA.*/);
-        //return d.desc.fqname.match(/.*Methylation.*/);
-        // all except the merge because it causes errors
-        return d.desc.fqname.match(/.*Taco (?!merge).*/);
-      });
-
       //MDS part
       //creating the data
       /*calcGraphData(test_items)
@@ -366,12 +363,12 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
       // addThem
       taco_dispatcher.on('show_detail', function(ref_table, dest_table) {
-        console.log("moving to detail view");
+        //console.log("moving to detail view");
         //1 is the split between middle and overview
         //todo check if it's already 1 then don't do anything for the slider
         detail_slider.slider('setValue', 3, true, true);
 
-        console.log('show_detail for:', 'ref_table =', ref_table, 'and dest_table =', dest_table);
+        //console.log('show_detail for:', 'ref_table =', ref_table, 'and dest_table =', dest_table);
 
         // visualize ref_table and dest_table
         var table_heatmap_promises = [ref_table, dest_table].map(function(dataset) {
@@ -907,19 +904,19 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         w_margin = 10,
         h_margin = 10;
       (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(pw  - w_margin, ph - h_margin);
-      // the old method when caring about the aspect ratio
-      //if (w > h) {
-      //  if (pw < w) {
-      //    //aspect ratio pw/w
-      //    console.log("zoomset w to", pw / w);
-      //    (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(pw, h * pw / w);
-      //  }
-      //} else {
-      //  if (ph < h) {
-      //    console.log("zoomset h to", ph / h);
-      //    (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(w * ph / h, ph);
-      //  }
-      //}
+    }
+
+    function resize_heatmap_by_cell_height(hm, heatmapplugin, cell_height){
+      if (cell_height === 1) {
+        resize_heatmap(hm, heatmapplugin);
+      } else {
+        var pw = hm.parent.getBoundingClientRect().width,
+          w_margin = 10,
+          h_margin = 10,
+          new_height = (hm.rawSize[1] * cell_height) - h_margin;
+        console.log("this heatmap has ", hm.rawSize, " rows");
+        (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(pw - w_margin, new_height);
+      }
     }
 
     function getVersion(dataset){
@@ -939,6 +936,9 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         tocall: 'diff',
         size: [10, 10] //we can use dummy values instead
       }).then(function (diffmatrix) {
+        diffmatrix.data().then(function(data){
+          union_rows = data.union.ur_ids.length;
+        });
         //diffmatrix
         if (dh !== null) {
           dh.destroy();
