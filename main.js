@@ -12,7 +12,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
             d3utils, drag, lineup, mds) {
     'use strict';
 
-    var taco_dispatcher = d3.dispatch('show_detail', 'resized_flex_column', 'change_type_removed', 'change_type_added', 'modify_direction', 'update_color');
+    var taco_dispatcher = d3.dispatch('show_detail', 'resized_flex_column', 'change_type_removed', 'change_type_added', 'modify_direction', 'update_color', 'drew_diffheatmap');
 
     // @see http://stackoverflow.com/a/9090128/940219
     function transitionEndEventName () {
@@ -92,6 +92,16 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
         //dh.$node.style("transform-origin", "0 0").style("transform", "scaleX(" + scaleX + ")"); //too wide!
       }
 
+      // src heatmap
+      if (heatmap1)
+        resize_heatmap_by_cell_height(heatmap1, heatmapplugin, cell_height);
+      // dest heatmap
+      if (heatmap2)
+        resize_heatmap_by_cell_height(heatmap2, heatmapplugin, cell_height);
+    });
+
+    taco_dispatcher.on('drew_diffheatmap', function(r_size, height){
+      var cell_height =  height / r_size;
       // src heatmap
       if (heatmap1)
         resize_heatmap_by_cell_height(heatmap1, heatmapplugin, cell_height);

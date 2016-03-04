@@ -268,6 +268,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
               });
           }
         }
+        taco_dispatcher.drew_diffheatmap(data.union.ur_ids.length, height);
       }, function (reason) {
         //why this was rejected
         console.log(reason);
