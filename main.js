@@ -53,13 +53,14 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       if (mid_hm)
         resize_heatmap(mid_hm, heatmapplugin);
 
-      var cell_height = 1;
+      var cell_height = 1, cell_width = 1;
 
       if (dh){
         var scaleX = (dh.$node.node().getBoundingClientRect().width - 10) / dh.options.gridSize[0];
         var new_width = dh.$node.node().getBoundingClientRect().width - 10;
         var new_height = dh.$node.node().getBoundingClientRect().height;
         cell_height = (union_rows ? new_height/union_rows : 1);
+        cell_width = (union_cols ? new_width/union_cols : 1);
         console.log("diff heatmap:", scaleX);
         if (scaleX > 2){
           //todo remove this part if u want good performance but not good quality
@@ -94,20 +95,21 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
 
       // src heatmap
       if (heatmap1)
-        resize_heatmap_by_cell_height(heatmap1, heatmapplugin, cell_height);
+        resize_heatmap_by_cell_height(heatmap1, heatmapplugin, cell_height, cell_width);
       // dest heatmap
       if (heatmap2)
-        resize_heatmap_by_cell_height(heatmap2, heatmapplugin, cell_height);
+        resize_heatmap_by_cell_height(heatmap2, heatmapplugin, cell_height, cell_width);
     });
 
-    taco_dispatcher.on('drew_diffheatmap', function(r_size, height){
-      var cell_height =  height / r_size;
+    taco_dispatcher.on('drew_diffheatmap', function(r_size, height, c_size, width){
+      var cell_height =  height / r_size,
+        cell_width = width / c_size;
       // src heatmap
       if (heatmap1)
-        resize_heatmap_by_cell_height(heatmap1, heatmapplugin, cell_height);
+        resize_heatmap_by_cell_height(heatmap1, heatmapplugin, cell_height, cell_width);
       // dest heatmap
       if (heatmap2)
-        resize_heatmap_by_cell_height(heatmap2, heatmapplugin, cell_height);
+        resize_heatmap_by_cell_height(heatmap2, heatmapplugin, cell_height, cell_width);
     });
 
     taco_dispatcher.on('modify_direction.2', function(d_s_list) {
@@ -142,7 +144,8 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     var storage = {};
 
     var heatmapplugin;
-    var union_rows = 0; // because we want to scale the heatmaps and we need to know how many rows we have at maximum
+    var union_rows = 0,
+      union_cols = 0; // because we want to scale the heatmaps and we need to know how many rows we have at maximum
 
     // initializing the settings from the buttons in the nav bar
     $("[name='change[]']:checked").each(function () {
@@ -916,16 +919,16 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(pw  - w_margin, ph - h_margin);
     }
 
-    function resize_heatmap_by_cell_height(hm, heatmapplugin, cell_height){
-      if (cell_height === 1) {
+    function resize_heatmap_by_cell_height(hm, heatmapplugin, cell_height, cell_width){
+      if (cell_height === 1 || cell_width === 1) {
         resize_heatmap(hm, heatmapplugin);
       } else {
-        var pw = hm.parent.getBoundingClientRect().width,
-          w_margin = 10,
+        var w_margin = 10,
           h_margin = 10,
-          new_height = (hm.rawSize[1] * cell_height) - h_margin;
+          new_height = (hm.rawSize[1] * cell_height) - h_margin,
+          new_width = (hm.rawSize[0] * cell_width) - w_margin;
         console.log("this heatmap has ", hm.rawSize, " rows");
-        (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(pw - w_margin, new_height);
+        (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(new_width, new_height);
       }
     }
 
@@ -948,6 +951,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       }).then(function (diffmatrix) {
         diffmatrix.data().then(function(data){
           union_rows = data.union.ur_ids.length;
+          union_cols = data.union.uc_ids.length;
         });
         //diffmatrix
         if (dh !== null) {
