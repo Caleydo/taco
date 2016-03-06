@@ -23,7 +23,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
 
       var xScale = d3.scale.linear()
         .domain([pos.xmin, pos.xmax])
-        .range([margin, width - margin]);
+        .range([margin, width - margin - 50]);
 
       var yScale = d3.scale.linear()
         .domain([pos.ymin, pos.ymax])
