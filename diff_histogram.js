@@ -1,7 +1,7 @@
 /**
  * Created by Reem on 11/12/2015.
  */
-define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d3, d3utils, drag) {
+define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
     function drawBins(p_data, gridSize, parent, x, y, changes) {
       var has_content = (changes.indexOf("content") !== -1),
         has_struct = (changes.indexOf("structure") !== -1);
@@ -89,7 +89,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         width = size[0],
         height = size[1],
         gridSize = Math.floor(height / bins);
-      var myDrag = drag.Drag();
 
       // linear x and y scales
       var x = d3.scale.linear()

@@ -1,8 +1,8 @@
 /**
  * Created by Reem on 6/15/2015.
  */
-define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3util', './drag'],
-  function (require, exports, d3, _, toastr, d3utils, drag) {
+define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3util'],
+  function (require, exports, d3, _, toastr, d3utils) {
 
     var colorLow = '#d8b365', colorMed = 'white', colorHigh = '#8da0cb',
       colorMerged = '#B2DF8A',//light green

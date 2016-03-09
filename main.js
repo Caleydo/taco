@@ -6,10 +6,10 @@
 
 require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../caleydo_core/main', '../caleydo_core/behavior',
   '../caleydo_core/idtype', '../caleydo_core/multiform', './diffmatrix', 'underscore', 'toastr', 'bootstrap-slider',
-  '../caleydo_d3/d3util', './drag', './lineup', './mds', 'bootstrap', 'font-awesome'],
+  '../caleydo_d3/d3util', './lineup', './mds', 'bootstrap', 'font-awesome'],
   function (data, d3, $, vis, C, behavior,
             idtypes, multiform, diffm, _, toastr, Slider,
-            d3utils, drag, lineup, mds) {
+            d3utils, lineup, mds) {
     'use strict';
 
     var taco_dispatcher = d3.dispatch('show_detail', 'resized_flex_column', 'change_type_removed', 'change_type_added', 'modify_direction', 'update_color', 'drew_diffheatmap');
@@ -130,7 +130,6 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     var rows1 = null, rows2 = null, cols1 = null, cols2 = null, id1 = null, id2 = null,
       ds1 = null, ds2 = null, dh = null;
     var heatmap1 = null, heatmap2 = null;
-    var myDrag = drag.Drag();
 
     var gridSize = 6,
       setting_bins = 20,
@@ -923,7 +922,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       } else {
         var new_height = (hm.rawSize[1] * cell_height),
           new_width = (hm.rawSize[0] * cell_width);
-        console.log("this heatmap has ", hm.rawSize, " rows");
+        //console.log("this heatmap has ", hm.rawSize, " rows");
         (new behavior.ZoomLogic(hm, heatmapplugin)).zoomTo(new_width, new_height);
       }
     }

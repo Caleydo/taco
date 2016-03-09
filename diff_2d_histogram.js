@@ -1,11 +1,10 @@
 /**
  * Created by Reem on 12/1/2015.
  */
-define(['exports', 'd3', '../caleydo_d3/d3util', './drag', '../caleydo_core/table_impl', '../caleydo_core/idtype'],
-  function (exports, d3, d3utils, drag, tables, idtypes) {
+define(['exports', 'd3', '../caleydo_d3/d3util', '../caleydo_core/table_impl', '../caleydo_core/idtype'],
+  function (exports, d3, d3utils, tables, idtypes) {
 
     function draw2dHistogram(p_data, ref_table, dest_table, taco_dispatcher, index, usize, parent) {
-      var myDrag = drag.Drag();
       var usize0 = usize[0],
         usize1 = usize[1];
       var width = 160, //just to make it look a bit wider than the normal one in case both are selected
@@ -25,7 +24,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag', '../caleydo_core/tabl
         //todo move all the transform functions to the css
         //note that the transform has to be one sentence otherwise it won't happen
         //.style("transform", "translate(" + position + "px," + 20 + "px)")
-        //.call(myDrag)
         //.on('click', onClick);
 
       var x = d3.scale.linear()

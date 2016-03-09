@@ -1,7 +1,7 @@
 /**
  * Created by Reem and Sam on 9/17/2015.
  */
-define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d3, d3utils, drag) {
+define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils) {
     //draws the barplot based on the projected data
     function drawDiffBarplot(p_data, usize1, width, gridSize, parent, y, realsize) {
 
@@ -78,7 +78,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         //todo we could use the width of the max value
         width = (realsize ? (usize1 * gridSize) : 20),
         height = (usize0 * gridSize);
-      var myDrag = drag.Drag();
 
       var y = d3.scale.linear()
         .domain([0, usize0])
@@ -95,8 +94,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util', './drag'], function (exports, d
         //todo find an alternative for margin.top here!! or in the other heatmap (special margin)
         //todo move all the transform functions to the css
         //note that the transform has to be one sentence otherwise it won't happen
-        .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""))
-        .call(myDrag);
+        .style("transform", "translate(" + position + "px," + 20 + "px)" + (is_cols ? "rotate(90deg) scaleY(-1)" : ""));
 
       if (data.desc.change.indexOf('content') > -1) {
         //todo change this so that it consider the case of both rows and cols at the same time
