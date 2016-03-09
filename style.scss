@@ -489,7 +489,7 @@ rect.bar.struct-del-color {
 
 #lineup {
   border: solid 1px dimgrey;
-  height: 41vh;
+  height: 39vh;
   position: relative;
 }
 
@@ -622,13 +622,10 @@ rect.bar.struct-del-color {
 
 .number-circle {
     display: inline-block;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    padding: 8px;
+    padding: 4px 4px 0 0;
 
     background: #fff;
-    border: 2px solid #666;
+    //border: 2px solid #666;
     color: #666;
     text-align: center;
 
