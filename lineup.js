@@ -70,6 +70,34 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
             return d.cont;
           }
         }, {
+          name: 'Merge',
+          color: '#ffd92f',
+          value: {
+            type: 'real',
+            //range: d3.extent(data, function (d) {
+            //  return d.noch;
+            //})
+            range: [0,100]
+          },
+          getter: function (d) {
+            return 0;//d.noch;
+          }
+        },
+        {
+          name: 'Reorder',
+          color: '#e78ac3',
+          value: {
+            type: 'real',
+            //range: d3.extent(data, function (d) {
+            //  return d.noch;
+            //})
+            range: [0,100]
+          },
+          getter: function (d) {
+            return 0;//d.noch;
+          }
+        },
+        {
           name: 'No Change',
           color: '#999999',
           value: {
@@ -122,7 +150,7 @@ define(['exports', '../caleydo_core/vis', '../caleydo_core/table_impl'], functio
                 type: 'stacked',
                 width: 400,
                 label: 'Changes',
-                children: [col('Structure Add', 100), col('Structure Del', 100), col('Content', 100)]
+                children: [col('Structure Add', 100), col('Structure Del', 100), col('Content', 100), col('Merge', 100), col('Reorder', 100)]
               },
               col('No Change', 100)
             ]
