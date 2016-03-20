@@ -132,7 +132,6 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
         var bins = o.bins,
           bins_col = o.bins_col,
           changes = o.change;
-        //var new_size = (o.dim.length > 1 ? size : [size[0], size[1]*2]);
         //if (o.dim.indexOf("rows") !== -1 && o.dim.indexOf("columns") !== -1){
         //  console.log(data);
         //} else

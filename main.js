@@ -208,7 +208,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               //todo decide where to draw the table
               heatmap2 = plugin.factory(selectedDataset, document.getElementById('dest-heatmap'), {
                 initialScale: gridSize,
-                color: ['white', 'black']
+                color: ['black', 'white']
               });
               resize_heatmap(heatmap2, heatmapplugin);
               //(new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomSet(0.5,2);
@@ -224,7 +224,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               }
               heatmap1 = plugin.factory(selectedDataset, document.getElementById('src-heatmap'), {
                 initialScale: gridSize,
-                color: ['white', 'black']
+                color: ['black', 'white']
               });
               //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomSet(2,2);
               resize_heatmap(heatmap1, heatmapplugin);
@@ -414,7 +414,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                   //todo decide where to draw the table
                   heatmap2 = plugin.factory(dataset, document.getElementById('dest-heatmap'), {
                     initialScale: gridSize,
-                    color: ['white', 'black']
+                    color: ['black', 'white']
                   });
                   resize_heatmap(heatmap2, heatmapplugin);
                   //(new behavior.ZoomLogic(heatmap2, heatmapplugin)).zoomSet(0.5,2);
@@ -430,7 +430,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
                   }
                   heatmap1 = plugin.factory(dataset, document.getElementById('src-heatmap'), {
                     initialScale: gridSize,
-                    color: ['white', 'black']
+                    color: ['black', 'white']
                   });
                   //(new behavior.ZoomLogic(heatmap1, heatmapplugin)).zoomSet(2,2);
                   resize_heatmap(heatmap1, heatmapplugin);
@@ -506,7 +506,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
               }
               mid_hm = plugin.factory(ref_table, parent_ref, {
                 initialScale: gridSize,
-                color: ['white', 'black']
+                color: ['black', 'white']
               });
               (new behavior.ZoomLogic(mid_hm, heatmapplugin)).zoomTo(parent_ref.getBoundingClientRect().width, parent_ref.getBoundingClientRect().height);
             });
