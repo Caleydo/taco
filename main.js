@@ -928,7 +928,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
     }
 
     function getVersion(dataset){
-      return dataset.desc.fqname.substring(0,10)
+      return dataset.desc.fqname.substring(0,10);
     }
 
     function create_diff_heatmap(src, dest) {

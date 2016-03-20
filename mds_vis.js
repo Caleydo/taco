@@ -23,7 +23,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
 
       var xScale = d3.scale.linear()
         .domain([pos.xmin, pos.xmax])
-        .range([margin, width - margin - 50]);
+        .range([margin, width - margin - 80]);
 
       var yScale = d3.scale.linear()
         .domain([pos.ymin, pos.ymax])
@@ -39,6 +39,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
       var mixed_data = [];
       pos.pos.forEach(function(d,i) {
         d.name = nodes[i][0];
+        d.version = nodes[i][1].substring(0,8);
         mixed_data[i] = d;
       });
 
@@ -51,7 +52,7 @@ define(['exports', 'd3', 'jquery', '../caleydo_d3/d3util', '../caleydo_core/idty
        // .attr("dx", 10)
        // .attr("dy", ".35em")
         .text(function (d, i) {
-          return d.name;
+          return d.name + " (" + d.version + ")";
         });
 
       var circles = node.append("div")
