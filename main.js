@@ -644,8 +644,7 @@ require(['../caleydo_core/data', 'd3', 'jquery', '../caleydo_core/vis', '../cale
       max: 1,
       range: true,
       value: [-1, 1],
-      tooltip_position: 'bottom',
-      tooltip_split: 'true'
+      tooltip_position: 'bottom'
     });
     var min_color = -1, max_color = 1;
 

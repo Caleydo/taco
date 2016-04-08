@@ -22,7 +22,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           })
           .style("height", gridSize - 1 + "px")
           .attr("title", function (d) {
-            return "content: " + d.ratio.c_ratio * 100 +"%";
+            return "content: " + Math.round((d.ratio.c_ratio * 100)*1000)/1000 +"%";
           })
           .style("transform", function (d) {
             return "translate(" + 0 + "px," + y(d.pos) + "px)";
@@ -40,7 +40,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           })
           .style("height", gridSize - 1 + "px")
           .attr("title", function (d) {
-            return "removed: " + d.ratio.d_ratio * 100 +"%";
+            return "removed: " + Math.round((d.ratio.d_ratio * 100)*1000)/1000 +"%";
           })
           .style("transform", function (d) {
             var acc = (has_content ? d.ratio.c_ratio: 0);
@@ -57,7 +57,7 @@ define(['exports', 'd3', '../caleydo_d3/d3util'], function (exports, d3, d3utils
           })
           .style("height", gridSize - 1 + "px")
           .attr("title", function (d) {
-            return "added: " + d.ratio.a_ratio * 100 +"%";
+            return "added: " + Math.round((d.ratio.a_ratio * 100)*1000)/1000 +"%";
           })
           .style("transform", function (d) {
             var acc = (has_content ? d.ratio.c_ratio: 0) + d.ratio.d_ratio;

@@ -39,19 +39,31 @@ define(['exports', 'd3', '../caleydo_d3/d3util', '../caleydo_core/table_impl', '
       data_list.push({
         rows: p_data.rows.d_ratio + p_data.rows.a_ratio + p_data.rows.c_ratio + p_data.rows.no_ratio, //todo change to 1
         cols: p_data.cols.d_ratio + p_data.cols.a_ratio + p_data.cols.c_ratio + p_data.cols.no_ratio, //todo change to 1
+        rows_text : Math.round((p_data.rows.d_ratio * 100)*1000)/1000,
+        cols_text : Math.round((p_data.cols.d_ratio * 100)*1000)/1000,
         type: "struct-del"
       });
       data_list.push({
         rows: p_data.rows.a_ratio + p_data.rows.c_ratio + p_data.rows.no_ratio, // or 1 - d
         cols: p_data.cols.a_ratio + p_data.cols.c_ratio + p_data.cols.no_ratio,
+        rows_text : Math.round((p_data.rows.a_ratio * 100)*1000)/1000,
+        cols_text : Math.round((p_data.cols.a_ratio * 100)*1000)/1000,
         type: "struct-add"
       });
       data_list.push({
         rows: p_data.rows.c_ratio + p_data.rows.no_ratio,
         cols: p_data.cols.c_ratio + p_data.cols.no_ratio,
+        rows_text : Math.round((p_data.rows.c_ratio * 100)*1000)/1000,
+        cols_text : Math.round((p_data.cols.c_ratio * 100)*1000)/1000,
         type: "content-change"
       });
-      data_list.push({rows: p_data.rows.no_ratio, cols: p_data.cols.no_ratio, type: "no-change"});
+      data_list.push({
+        rows: p_data.rows.no_ratio,
+        cols: p_data.cols.no_ratio,
+        rows_text : Math.round((p_data.rows.no_ratio * 100)*1000)/1000,
+        cols_text : Math.round((p_data.cols.no_ratio * 100)*1000)/1000,
+        type: "no-change"
+      });
       var bp = container.selectAll("div.bars")
         .data(data_list)
         .enter()
@@ -63,7 +75,9 @@ define(['exports', 'd3', '../caleydo_d3/d3util', '../caleydo_core/table_impl', '
         .style("width", function(d){
           return x(d.cols) + "px";
         })
-        .attr("title", function(d){return "rows: " + d.rows * 100 + "%, columns: " + d.cols * 100 +"%";});
+        .attr("title", function(d){
+          return  d.type.replace("-", " ") + "\x0Arows: " + d.rows_text + "%\x0Acolumns: " + d.cols_text +"%";
+        });
        // .text( p_data * 100 + "%");
       return container;
     }
