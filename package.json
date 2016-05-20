@@ -1,8 +1,10 @@
 {
   "name": "taco",
+  "description": "Comparative visualization of large tabular data using Caleydo Web",
   "version": "0.0.1",
   "license" : "SEE LICENSE IN LICENSE",
   "repository": "Reemh/taco",
+  "homepage": "http://caleydo.org",
   "dependencies": {
   },
   "peerDependencies": {
@@ -12,6 +14,7 @@
     "caleydo_vis_lineup": "*"
   },
   "caleydo": {
+    "type": "app",
     "plugins": {
       "web": [
         {
