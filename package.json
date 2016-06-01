@@ -3,7 +3,7 @@
   "description": "Comparative visualization of large tabular data using Caleydo Web",
   "version": "0.0.1",
   "license" : "SEE LICENSE IN LICENSE",
-  "repository": "Reemh/taco",
+  "repository": "Caleydo/taco",
   "homepage": "http://caleydo.org",
   "dependencies": {
   },
