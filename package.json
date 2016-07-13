@@ -34,42 +34,47 @@
           "name": "Diff Structure Vis",
           "filter": "diffstructure",
           "file": "diff_heatmap",
-          "factory": "createDiff"
+          "factory": "create"
         },
         {
           "type": "vis",
           "id": "diffplotvis",
           "name": "Diff Plot Vis",
           "filter": "diffstructure",
-          "file": "diff_barplot"
+          "file": "diff_barplot",
+          "factory": "create"
         },
         {
           "type": "vis",
           "id": "diffhistvis",
           "name": "Diff Histogram Vis",
           "filter": "diffstructure",
-          "file": "diff_histogram"
+          "file": "diff_histogram",
+          "factory": "create"
         },
         {
           "type": "vis",
           "id": "diff2dhistvis",
           "name": "Diff 2D Histogram Vis",
           "filter": "diffstructure",
-          "file": "diff_2d_histogram"
+          "file": "diff_2d_histogram",
+          "factory": "create"
         },
         {
           "type": "vis",
           "id": "diffpercentagebarvis",
           "name": "Diff Perc Bar Vis",
           "filter": "diffstructure",
-          "file": "diff_percentagebar"
+          "file": "diff_percentagebar",
+          "factory": "create"
         },
         {
           "type": "vis",
           "id": "mdsvis",
           "name": "MDS Vis",
           "filter": "table",
-          "file": "mds_vis"
+          "file": "mds_vis",
+          "factory": "create"
         }
       ]
     },

@@ -299,7 +299,7 @@ define(["require", "exports", 'd3', 'underscore', 'toastr', '../caleydo_d3/d3uti
       return diff.container;
     });
 
-    exports.createDiff = function (data, parent, options) {
+    exports.create = function (data, parent, options) {
       return new exports.DiffHeatmapVis(data, parent, options);
     };
 
