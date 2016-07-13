@@ -11,7 +11,8 @@
     "caleydo_core": "*",
     "caleydo_vis": "*",
     "caleydo_d3": "*",
-    "caleydo_vis_lineup": "*"
+    "caleydo_vis_lineup": "*",
+    "caleydo_bootstrap_fontawesome": "*"
   },
   "caleydo": {
     "type": "app",
