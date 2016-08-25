@@ -1,5 +1,8 @@
 /.idea
 
-/*.css
+*.css
 *.map
-test.js
+
+# ignore all auto generated js files except the one from v1
+*.js
+!v1/*.js
