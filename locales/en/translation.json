@@ -1,0 +1,5 @@
+{
+  "app_name": "TaCo",
+  "welcome_msg": "Welcome to $t(app_name)",
+  "dataset": "Dataset"
+}

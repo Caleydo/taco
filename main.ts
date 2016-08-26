@@ -11,14 +11,18 @@
 /// <amd-dependency path="css!../caleydo_bootstrap_fontawesome/style.css" />
 
 
+import i18n = require('../caleydo_i18n/i18n');
 import taco = require('./Taco');
 import header = require('../caleydo_bootstrap_fontawesome/header');
 
-const parent = document.querySelector('#taCoApp');
+i18n.init('taco')
+  .then(() => {
+    header.create(
+      <HTMLElement>document.querySelector('#caleydoHeader'),
+      { appLink: new header.AppHeaderLink(i18n.t('app_name')) }
+    );
 
-header.create(
-  <HTMLElement>document.querySelector('#caleydoHeader'),
-  { appLink: new header.AppHeaderLink('TaCo') }
-);
+    const parent = document.querySelector('#app');
+    taco.create(parent);
+  });
 
-taco.create(parent);
