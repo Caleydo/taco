@@ -12,7 +12,13 @@
 
 
 import taco = require('./Taco');
+import header = require('../caleydo_bootstrap_fontawesome/header');
 
 const parent = document.querySelector('#taCoApp');
+
+header.create(
+  <HTMLElement>document.querySelector('#caleydoHeader'),
+  { appLink: new header.AppHeaderLink('TaCo') }
+);
 
 taco.create(parent);

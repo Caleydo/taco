@@ -14,7 +14,7 @@ export class TaCo {
   constructor(parent:Element) {
     this.$node = d3.select(parent);
 
-    this.$node.html(`<h1 style="margin: 20px;">Welcome to TaCo 2</h1>`);
+    this.$node.html(`<h1 style="margin: 20px;">Welcome to TaCo</h1>`);
   }
 
 }
