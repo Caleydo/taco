@@ -31,7 +31,7 @@ class DatasetSelector implements ITacoView {
   /**
    * List of possible datasets and how to filter the items
    * TODO Generate this list dynamically from server
-   * @type {IDatasetCategories}
+   * @type {IDatasets[]}
    */
   private datasets:IDatasets[] = [
     {title: 'Taco (Multiple + Tiny + Large)', dimension: '401 x 192', regexp:/.*multiple.*|.*tiny.*|.*Large.*/, items: []},
