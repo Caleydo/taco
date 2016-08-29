@@ -29,6 +29,13 @@
           "name": "Dataset Selector",
           "file": "DatasetSelector",
           "factory": "create"
+        },
+        {
+          "type": "tacoView",
+          "id": "Timeline",
+          "name": "Timeline",
+          "file": "Timeline",
+          "factory": "create"
         }
       ]
     },

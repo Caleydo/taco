@@ -11,4 +11,10 @@ export class TacoConstants {
    */
   static VIEW = 'tacoView';
 
+
+  /**
+   * Event that is fired when the selected dataset has changed
+   * @type {string}
+   */
+  static EVENT_DATASET_CHANGED = 'eventDataSetChanged';
 }

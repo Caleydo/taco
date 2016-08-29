@@ -23,6 +23,6 @@ i18n.init('taco')
     );
 
     const parent = document.querySelector('#app');
-    taco.create(parent);
+    taco.create(parent).init();
   });
 
