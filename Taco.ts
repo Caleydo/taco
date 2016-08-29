@@ -8,6 +8,20 @@ import d3 = require('d3');
 import {TacoConstants} from './TacoConstants';
 
 /**
+ * Interface for all TaCo Views
+ */
+export interface ITacoView {
+
+  /**
+   * Initialize the view and return a promise
+   * that is resolved as soon the view is completely initialized.
+   * @returns {Promise<ITacoView>}
+   */
+  init():Promise<ITacoView>;
+
+}
+
+/**
  * The main class for the TaCo app
  */
 export class Taco implements ITacoView {
@@ -78,19 +92,4 @@ export class Taco implements ITacoView {
  */
 export function create(parent:Element) {
   return new Taco(parent);
-}
-
-
-/**
- * Interface for all TaCo Views
- */
-export interface ITacoView {
-
-  /**
-   * Initialize the view and return a promise
-   * that is resolved as soon the view is completely initialized.
-   * @returns {Promise<ITacoView>}
-   */
-  init():Promise<ITacoView>;
-
 }

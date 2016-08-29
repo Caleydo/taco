@@ -38,7 +38,7 @@ class Timeline implements ITacoView {
     // TODO build timeline using D3 of parts that doesn't change on update()
     this.$node.html(`
       <h3>${i18n.t('timeline')}</h3>
-      <div class="output"></div>
+      <ul class="output"></ul>
     `);
   }
 
@@ -46,19 +46,20 @@ class Timeline implements ITacoView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(TacoConstants.EVENT_DATASET_CHANGED, (evt, selectedDataset) => this.updateWithDataset(selectedDataset));
+    events.on(TacoConstants.EVENT_DATASET_CHANGED, (evt, items) => this.updateItems(items));
   }
 
   /**
    * Handle the update for a selected dataset
-   * @param selectedDataset
+   * @param items
    */
-  private updateWithDataset(selectedDataset) {
+  private updateItems(items) {
     // TODO retrieve selected dataset and update the timeline with it
-    //console.log(selectedDataset);
-
-    this.$node.select('.output')
-      .html(`${i18n.t('selected_dataset')}: ${selectedDataset.desc.name} (${selectedDataset.dim[0]} x ${selectedDataset.dim[1]})`);
+    //console.log(items);
+    const $li = this.$node.select('ul.output').selectAll('li').data(items);
+    $li.enter().append('li');
+    $li.text((d) => `${d.desc.name} (${d.dim[0]} x ${d.dim[1]})`);
+    $li.exit().remove();
   }
 
 }
