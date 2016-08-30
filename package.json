@@ -25,9 +25,9 @@
         },
         {
           "type": "tacoView",
-          "id": "DatasetSelector",
-          "name": "Dataset Selector",
-          "file": "DatasetSelector",
+          "id": "DataSetSelector",
+          "name": "Data Set Selector",
+          "file": "DataSetSelector",
           "factory": "create"
         },
         {
