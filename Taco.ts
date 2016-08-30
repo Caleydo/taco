@@ -28,7 +28,7 @@ export class Taco implements ITacoView {
 
   private $node;
 
-  private views = ['DataSetSelector', 'Timeline', 'Heatmap'];
+  private views = ['DataSetSelector', 'Timeline', 'HeatMap'];
 
   constructor(parent:Element) {
     this.$node = d3.select(parent);
