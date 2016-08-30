@@ -13,7 +13,7 @@
     "caleydo_vis": "*",
     "caleydo_d3": "*",
     "caleydo_bootstrap_fontawesome": "*",
-    "taco_server"
+    "taco_server": "*"
   },
   "caleydo": {
     "type": "app",
