@@ -13,8 +13,14 @@ export class TacoConstants {
 
 
   /**
-   * Event that is fired when the selected dataset has changed
+   * Event that is fired when a data set collection has been selected
    * @type {string}
    */
-  static EVENT_DATASET_CHANGED = 'eventDataSetChanged';
+  static EVENT_DATA_COLLECTION_SELECTED = 'eventDataCollectionSelected';
+
+  /**
+   * Event that is fired when a data set has been selected
+   * @type {string}
+   */
+  static EVENT_DATASET_SELECTED = 'eventDataSetSelected';
 }

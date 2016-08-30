@@ -36,6 +36,13 @@
           "name": "Timeline",
           "file": "Timeline",
           "factory": "create"
+        },
+        {
+          "type": "tacoView",
+          "id": "HeatMap",
+          "name": "Heat Map",
+          "file": "HeatMap",
+          "factory": "create"
         }
       ]
     },

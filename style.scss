@@ -1,4 +1,5 @@
-
+$select-color: orange;
+$hover-color: #ffc46b;
 
 body, html {
   font-family: Yantramanav, 'Helvetica Neue', Helvetica, sans-serif !important;
@@ -28,4 +29,18 @@ b,
   bottom: 0;
   right: 0;
   left: 0;
+}
+
+a.active {
+  font-weight: 500;
+  color: $select-color;
+}
+
+rect {
+  &.caleydo-select-selected {
+    fill: $select-color;
+  }
+  &.caleydo-select-hovered {
+    fill: $hover-color;
+  }
 }

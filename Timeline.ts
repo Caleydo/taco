@@ -46,7 +46,7 @@ class Timeline implements ITacoView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(TacoConstants.EVENT_DATASET_CHANGED, (evt, items) => this.updateItems(items));
+    events.on(TacoConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
   }
 
   /**
@@ -54,12 +54,39 @@ class Timeline implements ITacoView {
    * @param items
    */
   private updateItems(items) {
-    // TODO retrieve selected dataset and update the timeline with it
-    //console.log(items);
+    // TODO retrieve selected data set and update the timeline with it
+
+    // set selection by default to first item
+    var selected = (items.length > 0) ? items[0] : undefined;
+
     const $li = this.$node.select('ul.output').selectAll('li').data(items);
-    $li.enter().append('li');
-    $li.text((d) => `${d.desc.name} (${d.dim[0]} x ${d.dim[1]})`);
+
+    $li.enter()
+      .append('li')
+      .append('a')
+      .attr('href', '#');
+
+    $li.select('a')
+      .classed('active', (d) => d === selected)
+      .text((d) => `${d.desc.name} (${d.dim[0]} x ${d.dim[1]})`)
+      .on('click', function(d) {
+        // prevents triggering the href
+        d3.event.preventDefault();
+
+        // toggle the active CSS classes
+        $li.select('a').classed('active', false);
+        d3.select(this).classed('active', true);
+
+        // dispatch selected dataset to other views
+        events.fire(TacoConstants.EVENT_DATASET_SELECTED, d);
+      });
+
     $li.exit().remove();
+
+    // initialize other views with the first item
+    if(selected !== undefined) {
+      events.fire(TacoConstants.EVENT_DATASET_SELECTED, selected);
+    }
   }
 
 }

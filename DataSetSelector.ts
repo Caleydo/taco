@@ -53,7 +53,7 @@ class DataSetSelector implements ITacoView {
           .data();
 
         if(selectedData.length > 0) {
-          events.fire(TacoConstants.EVENT_DATASET_CHANGED, selectedData[0].items);
+          events.fire(TacoConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].items);
         }
       });
   }
