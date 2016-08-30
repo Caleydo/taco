@@ -18,7 +18,6 @@ b,
   font-weight: 500 !important;
 }
 
-
 .busy {
   position: fixed;
   width: 100%;
@@ -30,6 +29,21 @@ b,
   right: 0;
   left: 0;
 }
+
+#app {
+  display: flex;
+  flex-direction: column;
+  margin: 15px;
+}
+
+.comparison {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  align-content: stretch;
+  justify-content: space-between;
+}
+
 
 a.active {
   font-weight: 500;

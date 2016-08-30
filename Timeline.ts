@@ -37,7 +37,7 @@ class Timeline implements ITacoView {
   private build() {
     // TODO build timeline using D3 of parts that doesn't change on update()
     this.$node.html(`
-      <h3>${i18n.t('timeline')}</h3>
+      <!--<h3>${i18n.t('timeline')}</h3>-->
       <ul class="output"></ul>
     `);
   }

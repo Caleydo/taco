@@ -22,16 +22,66 @@ export interface ITacoView {
 }
 
 /**
+ * Description for views that are loaded and initialized
+ */
+interface ITacoViewDesc {
+  /**
+   * View id as defined in the package.json
+   */
+  view: string;
+
+  /**
+   * Parent node where to append this view
+   * (either `selector` or `comparison`)
+   */
+  parent: string;
+
+  /**
+   * Options for this view
+   */
+  options: any;
+}
+
+/**
  * The main class for the TaCo app
  */
 export class Taco implements ITacoView {
 
   private $node;
 
-  private views = ['DataSetSelector', 'Timeline', 'HeatMap'];
+  private views:ITacoViewDesc[] = [
+    {
+      view: 'DataSetSelector',
+      parent: 'selector',
+      options: {}
+    },
+    {
+      view: 'Timeline',
+      parent: 'selector',
+      options: {}
+    },
+    {
+      view: 'HeatMap',
+      parent: 'comparison',
+      options: {}
+    },
+    /*{
+      view: 'DiffHeatMap',
+      parent: 'comparison',
+      options: {}
+    },*/
+    {
+      view: 'HeatMap',
+      parent: 'comparison',
+      options: {}
+    }
+  ];
 
   constructor(parent:Element) {
     this.$node = d3.select(parent);
+
+    this.$node.append('div').classed('selector', true);
+    this.$node.append('div').classed('comparison', true);
   }
 
   /**
@@ -51,15 +101,21 @@ export class Taco implements ITacoView {
     this.setBusy(true); // show loading indicator before loading
 
     // wrap view ids from package.json as plugin and load the necessary files
-    const pluginPromises = this.views.map((d) => plugins.get(TacoConstants.VIEW, d).load());
+    const pluginPromises = this.views
+      .map((d) => plugins.get(TacoConstants.VIEW, d.view))
+      .filter((d) => d !== undefined) // filter views that does not exists
+      .map((d) => d.load());
 
     // when everything is loaded, then create and init the views
     const buildPromise = Promise.all(pluginPromises)
       .then((plugins) => {
         this.$node.select('h3').remove(); // remove loading text from index.html template
 
-        const initPromises = plugins.map((p) => {
-          const view = p.factory(this.$node.node(), {});
+        const initPromises = plugins.map((p, index) => {
+          const view = p.factory(
+            this.$node.select(`.${this.views[index].parent}`).node(), // parent node
+            this.views[index].options || {} // options
+          );
           return view.init();
         });
 

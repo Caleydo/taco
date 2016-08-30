@@ -21,6 +21,8 @@ class DataSetSelector implements ITacoView {
     this.$node = d3.select(parent)
       .append('div')
       .classed('dataSelector', true)
+      .append('form')
+      .classed('form-inline', true)
       .append('div')
       .classed('form-group', true)
       .classed('hidden', true); // show after loading has finished
