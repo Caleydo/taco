@@ -1,214 +1,33 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>TAble COmparison</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <link rel="stylesheet" href="style.css">
-  <script src="/caleydo_web.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>TaCo</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link href="//fonts.googleapis.com/css?family=Yantramanav:500,400,300" rel="stylesheet" type="text/css">
+    <link type="text/css" rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="content">
-  <nav class="navbar-inverse taco-navbar">
-    <div class="container-fluid">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                data-target="#taco-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand taco-logo" href="#">
-          <img alt="Brand" src="images/taco_grey.png">
-          <!--<img alt="Brand" src="images/table_multiple.png">-->
-        </a>
-        <a class="navbar-brand" href="#">TaCo</a>
-      </div>
 
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="taco-navbar-collapse-1">
-        <!--<ul class="nav navbar-nav">
-          <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-          <li><a href="#">Link</a></li>
-        </ul>-->
-        <div class="navbar-left" style="margin-top:9px;">
-          <div class="btn-group" id="direction-group" data-toggle="buttons">
-            <label class="btn btn-default active">
-              <input type="checkbox" class="direction-chk" id="rows" autocomplete="off" name="direction[]" value="rows"
-                     checked><i class="fa fa-bars"></i> Rows
-            </label>
-            <label class="btn btn-default active">
-              <input type="checkbox" class="direction-chk" id="columns" autocomplete="off" name="direction[]"
-                     value="columns" checked><i class="fa fa-columns"></i> Columns
-            </label>
-          </div>
-          <div class="btn-group" id="change-group" data-toggle="buttons">
-            <label class="btn btn-default active">
-              <input type="checkbox" class="change-chk" id="structure" autocomplete="off" name="change[]"
-                     value="structure" checked><i class="fa fa-map-signs"></i> Structure
-            </label>
-            <label class="btn btn-default active">
-              <input type="checkbox" class="change-chk" id="content-ch" autocomplete="off" name="change[]"
-                     value="content" checked><i class="fa fa-th"></i> Content
-            </label>
-            <label class="btn btn-default">
-              <input type="checkbox" class="change-chk" id="merge" autocomplete="off" name="change[]" value="merge">
-              <i class="fa fa-code-fork"></i> Merge
-            </label>
-            <label class="btn btn-default">
-              <input type="checkbox" class="change-chk" id="reorder" autocomplete="off" name="change[]" value="reorder">
-              <i class="fa fa-random"></i> Reorder
-            </label>
-          </div>
-          <div class="btn-group" id="detail-slider-group">
-            <input id="detail-slider" data-slider-id='dsSlider' type="text" data-slider-min="0" data-slider-max="4"
-                   data-slider-step="1" data-slider-value="0"/>
-          </div>
-          <div id="taco-color-slider-group" class="btn-group hidden">
-            <!-- Range slider, low and high tracks, and selection: -->
-            <input id="taco-color-slider-input" type="text" data-slider-step="0.01"/><br/>
-          </div>
-        </div>
-        <ul class="nav navbar-nav navbar-right" data-header="rightmenu">
-          <li><a href="#" data-toggle="modal" data-target="#headerOptionsDialog"><span
-            class="glyphicon glyphicon-cog" title="Options"></span></a></li>
-          <li><a href="#" data-toggle="modal" data-target="#headerAboutDialog"><span
-            class="glyphicon glyphicon-info-sign" title="About"></span></a></li>
-          <li><a data-header='help' href="//caleydo.org" target="_blank"><span
-            class="glyphicon glyphicon-question-sign" title="Help"></span></a></li>
-        </ul>
-      </div>
-      <!-- /.navbar-collapse -->
-    </div>
-    <!-- /.container-fluid -->
-  </nav>
-  <!--/.navbar -->
-  <div class="flex-container">
-    <div class="flex-column expand" id="overview">
-      <div class="tab-title"><a data-expand-column="#overview" class="expand-column" data-expand-only="true"
-                                data-slider-value="0">Overview</a></div>
-      <div class="tab-content container-fluid">
-        <div class="row">
-          <div class="col-xs-12">
-            <div class="number-circle"><i class="fa fa-database"></i></div>
-            <label style="display:inline-block" for="dataset-selector"><h4>Datasets&nbsp;</h4></label>
-            <div style="display:inline-block"><select id="dataset-selector"></select></div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-12">
-            <h4><div class="number-circle"><img height="17" src="./images/mds.svg" style="width:auto;height:17px;" width="17"></div> MDS Plot</h4>
-            <div id="mds-graph">
-              <div class="loader">
-                <span class="block-1"></span>
-                <span class="block-2"></span>
-                <span class="block-3"></span>
-                <span class="block-4"></span>
-                <span class="block-5"></span>
-                <span class="block-6"></span>
-                <span class="block-7"></span>
-                <span class="block-8"></span>
-                <span class="block-9"></span>
-                <span class="block-10"></span>
-                <span class="block-11"></span>
-                <span class="block-12"></span>
-                <span class="block-13"></span>
-                <span class="block-14"></span>
-                <span class="block-15"></span>
-                <span class="block-16"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-12">
-            <h4><div class="number-circle"><i class="fa fa-sort-amount-asc"></i></div> LineUp</h4>
-            <div id="lineup">
+<div id="caleydoHeader"></div>
 
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="flex-column" id="middle">
-      <div class="tab-title"><a data-expand-column="#middle" class="expand-column" data-expand-only="true"
-                                data-slider-value="2">Middle</a></div>
-      <div class="tab-content container-fluid">
-        <div class="row">
-          <div class="col-xs-3">
-            <h4>Reference Table</h4>
-            <span id="ref-table-name"></span>
-            <div id="ref-table"></div>
-          </div>
-          <div class="col-xs-9">
-            <div class="row">
-              <div class="col-xs-12">
-                <h4 style="display: inline-block;">Compared to ...</h4>
-                <div id="bin-number-div">
-                  <label for="bin-number" id="bin-text">Rows Bins</label>
-                  <input type="number" value="20" name="bin-number" id="bin-number" max="100" min="2" title="row bins count"/>
-                </div>
-                <div id="bin-col-number-div">
-                  <label for="bin-col-number" id="bin-col-text">Columns Bins</label>
-                  <input type="number" value="20" name="bin-number" id="bin-col-number" max="100" min="2" title="col bins count"/>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div id="mid-comparison" class="col-xs-12"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="flex-column" id="detail">
-      <div class="tab-title"><a data-expand-column="#detail" class="expand-column" data-expand-only="true"
-                                data-slider-value="4">Detail</a></div>
-      <div class="tab-content container-fluid">
-        <div class="row">
-          <div class="col-xs-12">
-            <div id="detail-titles">
-              <div id="src-title" class="taco-table-container"><i class="fa fa-table"></i> Source Table: <span id="src-title-name"></span></div>
-              <div id="diff-title" class="taco-table-container"><i class="fa fa-arrows-h"></i> Diff Table</div>
-              <div id="dest-title" class="taco-table-container"><i class="fa fa-table"></i> Destination Table: <span id="dest-title-name"></span></div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-12">
-            <div id="board">
-              <div id="src-heatmap" class="taco-table-container"></div>
-              <div id="diff-heatmap" class="taco-table-container"></div>
-              <div id="dest-heatmap" class="taco-table-container"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer id="blockbrowser">
-    <table class="table table-striped table-hover table-condensed">
-      <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>ID Types</th>
-        <th>Dim</th>
-        <th>Src</th>
-        <th>Dest</th>
-      </tr>
-      </thead>
-      <tbody>
-
-      </tbody>
-    </table>
-  </footer>
+<div id="app">
+    <h3 style="margin: 5px;">Loading &hellip;</h3>
+    <div class="busy"></div>
 </div>
+
+<script>
+  (function() {
+    var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+    if (!isChrome) {
+      alert('This application was designed to be used in Google Chrome.\nRunning the application in other browsers might result in performance issues or other misbehavior.');
+    }
+  })();
+</script>
+<script src="/caleydo_web.js"></script>
+
 </body>
 </html>

@@ -1,7 +1,7 @@
 {
   "name": "taco",
   "description": "Comparative visualization of large tabular data using Caleydo Web",
-  "version": "0.0.1",
+  "version": "2.0.0-alpha.0",
   "license" : "SEE LICENSE IN LICENSE",
   "repository": "Caleydo/taco",
   "homepage": "http://caleydo.org",
@@ -9,10 +9,11 @@
   },
   "peerDependencies": {
     "caleydo_core": "*",
+    "caleydo_i18n": "*",
     "caleydo_vis": "*",
     "caleydo_d3": "*",
-    "caleydo_vis_lineup": "*",
-    "caleydo_bootstrap_fontawesome": "*"
+    "caleydo_bootstrap_fontawesome": "*",
+    "taco_server": "*"
   },
   "caleydo": {
     "type": "app",
@@ -21,87 +22,44 @@
         {
           "type": "app",
           "id": "taco",
-          "name": "Taco"
+          "name": "TaCo"
         },
         {
-          "type": "datatype",
-          "id": "diffstructure",
-          "name": "Diff Structure",
-          "file": "diffmatrix"
-        },
-        {
-          "type": "vis",
-          "id": "diffmatrixvis",
-          "name": "Diff Structure Vis",
-          "filter": "diffstructure",
-          "file": "diff_heatmap",
+          "type": "tacoView",
+          "id": "DataSetSelector",
+          "name": "Data Set Selector",
+          "file": "DataSetSelector",
           "factory": "create"
         },
         {
-          "type": "vis",
-          "id": "diffplotvis",
-          "name": "Diff Plot Vis",
-          "filter": "diffstructure",
-          "file": "diff_barplot",
+          "type": "tacoView",
+          "id": "Timeline",
+          "name": "Timeline",
+          "file": "Timeline",
           "factory": "create"
         },
         {
-          "type": "vis",
-          "id": "diffhistvis",
-          "name": "Diff Histogram Vis",
-          "filter": "diffstructure",
-          "file": "diff_histogram",
-          "factory": "create"
-        },
-        {
-          "type": "vis",
-          "id": "diff2dhistvis",
-          "name": "Diff 2D Histogram Vis",
-          "filter": "diffstructure",
-          "file": "diff_2d_histogram",
-          "factory": "create"
-        },
-        {
-          "type": "vis",
-          "id": "diffpercentagebarvis",
-          "name": "Diff Perc Bar Vis",
-          "filter": "diffstructure",
-          "file": "diff_percentagebar",
-          "factory": "create"
-        },
-        {
-          "type": "vis",
-          "id": "mdsvis",
-          "name": "MDS Vis",
-          "filter": "table",
-          "file": "mds_vis",
+          "type": "tacoView",
+          "id": "HeatMap",
+          "name": "Heat Map",
+          "file": "HeatMap",
           "factory": "create"
         }
       ]
     },
     "dependencies": {
       "web": {
-        "underscore": "~1.8",
-        "bootstrap": "~3.3.4",
-        "toastr" : ">=2.1.2",
-        "seiyria-bootstrap-slider" :">=5.2.1"
+        "bootstrap": "~3.3.4"
       }
     },
     "requirejs-config": {
       "paths": {
-        "bootstrap": "${baseUrl}/bootstrap/dist/js/bootstrap",
-        "bootstrap-slider": "${baseUrl}/seiyria-bootstrap-slider/dist/bootstrap-slider"
+        "bootstrap": "${baseUrl}/bootstrap/dist/js/bootstrap"
       },
       "shim": {
         "bootstrap": [
           "jquery",
           "css!${baseUrl}/bootstrap/dist/css/bootstrap"
-        ],
-        "toastr": [
-          "css!${baseUrl}/toastr/toastr.css"
-        ],
-        "bootstrap-slider": [
-          "css!${baseUrl}/seiyria-bootstrap-slider/dist/css/bootstrap-slider.css"
         ]
       }
     }

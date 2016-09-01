@@ -1,0 +1,7 @@
+{
+  "app_name": "TaCo",
+  "loading": "Loading &hellip;",
+  "dataset": "Dataset",
+  "timeline": "Timeline",
+  "selected_dataset": "Selected $t(dataset)"
+}
