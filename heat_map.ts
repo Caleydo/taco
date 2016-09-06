@@ -4,13 +4,13 @@
 
 import vis = require('../caleydo_core/vis');
 import events = require('../caleydo_core/event');
-import {TacoConstants} from './TacoConstants';
-import {ITacoView} from './Taco';
+import {AppConstants} from './app_constants';
+import {IAppView} from './app';
 
 /**
  * Shows a simple heat map for a given data set.
  */
-class HeatMap implements ITacoView {
+class HeatMap implements IAppView {
 
   private $node;
 
@@ -41,7 +41,7 @@ class HeatMap implements ITacoView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(TacoConstants.EVENT_DATASET_SELECTED, (evt, dataset) => this.update(dataset));
+    events.on(AppConstants.EVENT_DATASET_SELECTED, (evt, dataset) => this.update(dataset));
   }
 
   /**

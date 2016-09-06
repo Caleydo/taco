@@ -5,26 +5,26 @@
 //import i18n = require('../caleydo_i18n/i18n');
 import plugins = require('../caleydo_core/plugin');
 import d3 = require('d3');
-import {TacoConstants} from './TacoConstants';
+import {AppConstants} from './app_constants';
 
 /**
  * Interface for all TaCo Views
  */
-export interface ITacoView {
+export interface IAppView {
 
   /**
    * Initialize the view and return a promise
    * that is resolved as soon the view is completely initialized.
-   * @returns {Promise<ITacoView>}
+   * @returns {Promise<IAppView>}
    */
-  init():Promise<ITacoView>;
+  init():Promise<IAppView>;
 
 }
 
 /**
  * Description for views that are loaded and initialized
  */
-interface ITacoViewDesc {
+interface IAppViewDesc {
   /**
    * View id as defined in the package.json
    */
@@ -45,11 +45,11 @@ interface ITacoViewDesc {
 /**
  * The main class for the TaCo app
  */
-export class Taco implements ITacoView {
+export class App implements IAppView {
 
   private $node;
 
-  private views:ITacoViewDesc[] = [
+  private views:IAppViewDesc[] = [
     {
       view: 'DataSetSelector',
       parent: 'selector',
@@ -87,7 +87,7 @@ export class Taco implements ITacoView {
   /**
    * Initialize the view and return a promise
    * that is resolved as soon the view is completely initialized.
-   * @returns {Promise<Taco>}
+   * @returns {Promise<App>}
    */
   init() {
     return this.build();
@@ -95,14 +95,14 @@ export class Taco implements ITacoView {
 
   /**
    * Load and initialize all necessary views
-   * @returns {Promise<Taco>}
+   * @returns {Promise<App>}
    */
   private build() {
     this.setBusy(true); // show loading indicator before loading
 
     // wrap view ids from package.json as plugin and load the necessary files
     const pluginPromises = this.views
-      .map((d) => plugins.get(TacoConstants.VIEW, d.view))
+      .map((d) => plugins.get(AppConstants.VIEW, d.view))
       .filter((d) => d !== undefined) // filter views that does not exists
       .map((d) => d.load());
 
@@ -144,8 +144,8 @@ export class Taco implements ITacoView {
 /**
  * Factory method to create a new TaCo instance
  * @param parent
- * @returns {Taco}
+ * @returns {App}
  */
 export function create(parent:Element) {
-  return new Taco(parent);
+  return new App(parent);
 }

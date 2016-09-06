@@ -2,17 +2,17 @@
  * Created by Holger Stitz on 26.08.2016.
  */
 
-import i18n = require('../caleydo_i18n/i18n');
 import data = require('../caleydo_core/data');
 import events = require('../caleydo_core/event');
-import {TacoConstants} from './TacoConstants';
-import {ITacoView} from './Taco';
+import {AppConstants} from './app_constants';
+import {IAppView} from './app';
+import {Language} from './language';
 
 /**
  * Shows a list of available datasets and lets the user choose one.
  * The selection is broadcasted as event throughout the application.
  */
-class DataSetSelector implements ITacoView {
+class DataSetSelector implements IAppView {
 
   private $node;
   private $select;
@@ -44,7 +44,7 @@ class DataSetSelector implements ITacoView {
   private build() {
     this.$node.append('label')
       .attr('for', 'ds')
-      .text(i18n.t('dataset'));
+      .text(Language.DATA_SET);
 
     this.$select = this.$node.append('select')
       .attr('id', 'ds')
@@ -55,7 +55,7 @@ class DataSetSelector implements ITacoView {
           .data();
 
         if(selectedData.length > 0) {
-          events.fire(TacoConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].items);
+          events.fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].items);
         }
       });
   }

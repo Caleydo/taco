@@ -9,7 +9,6 @@
   },
   "peerDependencies": {
     "caleydo_core": "*",
-    "caleydo_i18n": "*",
     "caleydo_vis": "*",
     "caleydo_d3": "*",
     "caleydo_bootstrap_fontawesome": "*",
@@ -28,21 +27,21 @@
           "type": "tacoView",
           "id": "DataSetSelector",
           "name": "Data Set Selector",
-          "file": "DataSetSelector",
+          "file": "data_set_selector",
           "factory": "create"
         },
         {
           "type": "tacoView",
           "id": "Timeline",
           "name": "Timeline",
-          "file": "Timeline",
+          "file": "timeline",
           "factory": "create"
         },
         {
           "type": "tacoView",
           "id": "HeatMap",
           "name": "Heat Map",
-          "file": "HeatMap",
+          "file": "heat_map",
           "factory": "create"
         }
       ]

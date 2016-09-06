@@ -2,7 +2,7 @@
  * Created by Holger Stitz on 26.08.2016.
  */
 
-export class TacoConstants {
+export class AppConstants {
 
   /**
    * Static constant as identification for TaCo views

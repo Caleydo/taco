@@ -2,15 +2,15 @@
  * Created by Holger Stitz on 29.08.2016.
  */
 
-import i18n = require('../caleydo_i18n/i18n');
 import events = require('../caleydo_core/event');
-import {TacoConstants} from './TacoConstants';
-import {ITacoView} from './Taco';
+import {AppConstants} from './app_constants';
+import {IAppView} from './app';
+import {Language} from './language';
 
 /**
  * Shows a timeline with all available data points for
  */
-class Timeline implements ITacoView {
+class Timeline implements IAppView {
 
   private $node;
 
@@ -37,7 +37,7 @@ class Timeline implements ITacoView {
   private build() {
     // TODO build timeline using D3 of parts that doesn't change on update()
     this.$node.html(`
-      <!--<h3>${i18n.t('timeline')}</h3>-->
+      <!--<h3>${Language.TIMELINE}</h3>-->
       <ul class="output"></ul>
     `);
   }
@@ -46,7 +46,7 @@ class Timeline implements ITacoView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(TacoConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
   }
 
   /**
@@ -78,14 +78,14 @@ class Timeline implements ITacoView {
         d3.select(this).classed('active', true);
 
         // dispatch selected dataset to other views
-        events.fire(TacoConstants.EVENT_DATASET_SELECTED, d);
+        events.fire(AppConstants.EVENT_DATASET_SELECTED, d);
       });
 
     $li.exit().remove();
 
     // initialize other views with the first item
     if(selected !== undefined) {
-      events.fire(TacoConstants.EVENT_DATASET_SELECTED, selected);
+      events.fire(AppConstants.EVENT_DATASET_SELECTED, selected);
     }
   }
 
