@@ -8,7 +8,7 @@ import {IAppView} from './app';
 import {Language} from './language';
 
 /**
- * Shows a timeline with all available data points for
+ * Shows a timeline with all available data points for a selected data set
  */
 class Timeline implements IAppView {
 
