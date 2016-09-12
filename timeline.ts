@@ -71,7 +71,7 @@ class Timeline implements IAppView {
       .text((d) => `${d.desc.name} (${d.dim[0]} x ${d.dim[1]})`)
       .on('click', function(d) {
         // prevents triggering the href
-        d3.event.preventDefault();
+        (<MouseEvent>d3.event).preventDefault();
 
         // toggle the active CSS classes
         $li.select('a').classed('active', false);
