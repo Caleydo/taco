@@ -91,8 +91,6 @@ class Timeline implements IAppView {
 
 }
 
-/*Test comment*/
-
 /**
  * Factory method to create a new Timeline instance
  * @param parent
