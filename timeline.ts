@@ -39,7 +39,10 @@ class Timeline implements IAppView {
     this.$node.html(`
       <!--<h3>${Language.TIMELINE}</h3>-->
       <ul class="output"></ul>
+      <div id="timeline"></div>
     `);
+
+
   }
 
   /**
@@ -87,6 +90,48 @@ class Timeline implements IAppView {
     if(selected !== undefined) {
       events.fire(AppConstants.EVENT_DATASET_SELECTED, selected);
     }
+
+    var w = 600;
+    var h = 200;
+
+    var xScale = d3.scale.linear()
+      .domain([0, items.length])
+      .range([0, w]);
+
+    console.log(xScale(2));
+
+    var svgtimeline = d3.select("#timeline")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+          var circleScale = d3.scale.linear()
+            .domain([0, d3.max(items, function (d){
+              return d.dim[0];}) ])
+            .range([10, h/10]);
+
+          console.log(d3.max(items, function (d,i){
+              return d.dim[i];}));
+
+          svgtimeline.selectAll("circle")
+            .data(items)
+            .enter()
+            .append("circle")
+            .attr("cy", 60)
+            .attr("cx", function (d,i){
+              return xScale(i) + circleScale(d.dim[0]) ;
+            })
+            .attr("r", function(d,i){
+              return circleScale(d.dim[0]);
+             });
+
+          svgtimeline.append("line")
+            .style("stroke", "black")
+            .attr("x1", 0)
+            .attr("y1", 60)
+            .attr("x2", w)
+            .attr("y2", 60);
+
   }
 
 }
