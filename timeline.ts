@@ -100,8 +100,13 @@ class Timeline implements IAppView {
 
     console.log(xScale(2));
 
-    const svgtimeline = d3.select('#timeline')
-      .append('svg')
+    const timeline = d3.select('#timeline');
+
+    if(timeline.select('svg').size() > 0) {
+      timeline.select('svg').remove();
+    }
+
+    const svgtimeline = timeline.append('svg')
       .attr('width', w)
       .attr('height', h);
 
