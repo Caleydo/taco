@@ -49,7 +49,7 @@ class Timeline implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items:any) => this.updateItems(items));
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
   }
 
   /**
@@ -106,18 +106,18 @@ class Timeline implements IAppView {
       .attr('height', h);
 
     const circleScale = d3.scale.linear()
-      .domain([0, d3.max(items, (d) => d.dim[0]) ])
+      .domain([0, d3.max(items, (d:any) => d.dim[0]) ])
       .range([10, h/10]);
 
-    console.log(d3.max(items, (d,i) => d.dim[i]));
+    console.log(d3.max(items, (d:any,i) => d.dim[i]));
 
     svgtimeline.selectAll('circle')
       .data(items)
       .enter()
       .append('circle')
       .attr('cy', 60)
-      .attr('cx', (d,i) => xScale(i) + circleScale(d.dim[0]))
-      .attr('r', (d,i) => circleScale(d.dim[0]));
+      .attr('cx', (d:any,i) => xScale(i) + circleScale(d.dim[0]))
+      .attr('r', (d:any,i) => circleScale(d.dim[0]));
 
     svgtimeline.append('line')
       .style('stroke', 'black')
