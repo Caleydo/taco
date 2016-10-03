@@ -91,8 +91,6 @@ class Timeline implements IAppView {
       events.fire(AppConstants.EVENT_DATASET_SELECTED, selected);
     }
 
-
-
     var w = 600;
     var h = 200;
 
@@ -107,15 +105,15 @@ class Timeline implements IAppView {
             .attr("width", w)
             .attr("height", h);
 
-    var circleScale = d3.scale.linear()
+          var circleScale = d3.scale.linear()
             .domain([0, d3.max(items, function (d){
-             return d.dim[0];}) ])
+              return d.dim[0];}) ])
             .range([10, h/10]);
 
           console.log(d3.max(items, function (d,i){
-          return d.dim[i];}));
+              return d.dim[i];}));
 
-    svgtimeline.selectAll("circle")
+          svgtimeline.selectAll("circle")
             .data(items)
             .enter()
             .append("circle")
@@ -125,44 +123,14 @@ class Timeline implements IAppView {
             })
             .attr("r", function(d,i){
               return circleScale(d.dim[0]);
-             })
-            .style("cursor", "pointer")
-            .on('click', function(d) {
-                // prevents triggering the href
-                (<MouseEvent>d3.event).preventDefault();
+             });
 
-                // toggle the active CSS classes
-                $li.select('a').classed('active', false);
-                d3.select(this).classed('active', true).attr("fill", "red");
-
-
-
-                // dispatch selected dataset to other views
-                events.fire(AppConstants.EVENT_DATASET_SELECTED, d);
-
-              });
-
-
-
-
-    svgtimeline.append("line")
-      .style("stroke", "black")
-      .attr("x1", 0)
-      .attr("y1", 60)
-      .attr("x2", w)
-      .attr("y2", 60);
-
-    svgtimeline.selectAll("text")
-      .data(items)
-      .enter()
-      .append("text")
-      .text(function (d){  console.log(d.desc.name); return d.desc.name;})
-      .attr("x",function (d,i){
-              return xScale(i) + circleScale(d.dim[0]) ;
-            })
-      .attr("y",80)
-      .attr("font-size", "12px")
-      .attr("fill", "black");
+          svgtimeline.append("line")
+            .style("stroke", "black")
+            .attr("x1", 0)
+            .attr("y1", 60)
+            .attr("x2", w)
+            .attr("y2", 60);
 
   }
 
