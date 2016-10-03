@@ -128,8 +128,9 @@ class Timeline implements IAppView {
         (<MouseEvent>d3.event).preventDefault();
 
         // toggle the active CSS classes
-        $li.select('a').classed('active', false);
-        d3.select(this).classed('active', true).attr('fill', 'red');
+        svgtimeline.selectAll('circle').classed('active', false);
+
+        d3.select(this).classed('active', true);
 
         // dispatch selected dataset to other views
         events.fire(AppConstants.EVENT_DATASET_SELECTED, d);

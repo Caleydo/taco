@@ -58,3 +58,14 @@ rect {
     fill: $hover-color;
   }
 }
+
+#timeline {
+  circle{
+    cursor: pointer;
+
+    &.active {
+      fill: $select-color;
+    }
+  }
+
+}
