@@ -49,7 +49,7 @@ class Timeline implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items:any) => this.updateItems(items));
   }
 
   /**
