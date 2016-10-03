@@ -101,7 +101,6 @@ class Timeline implements IAppView {
     console.log(xScale(2));
 
     const timeline = d3.select('#timeline');
-
     if(timeline.select('svg').size() > 0) {
       timeline.select('svg').remove();
     }
@@ -130,7 +129,7 @@ class Timeline implements IAppView {
         // toggle the active CSS classes
         svgtimeline.selectAll('circle').classed('active', false);
 
-        d3.select(this).classed('active', true);
+        d3.select(this).classed('active', true).attr('fill', );
 
         // dispatch selected dataset to other views
         events.fire(AppConstants.EVENT_DATASET_SELECTED, d);
@@ -142,6 +141,19 @@ class Timeline implements IAppView {
       .attr('y1', 60)
       .attr('x2', w)
       .attr('y2', 60);
+
+    svgtimeline.selectAll('text')
+                .data(items)
+                .enter()
+                .append('text')
+                .text(function (d:any) { console.log(d.desc.name); return d.desc.name; })
+                .attr('x', function (d:any, i) {
+                return xScale(i) + circleScale(d.dim[0]);
+                })
+                .attr('y', 100)
+                .attr('font-size', '12px')
+                .attr('fill', 'black');
+
 
   }
 
