@@ -91,46 +91,56 @@ class Timeline implements IAppView {
       events.fire(AppConstants.EVENT_DATASET_SELECTED, selected);
     }
 
-    var w = 600;
-    var h = 200;
+    const w = 600;
+    const h = 200;
 
-    var xScale = d3.scale.linear()
+    const xScale = d3.scale.linear()
       .domain([0, items.length])
       .range([0, w]);
 
     console.log(xScale(2));
 
-    var svgtimeline = d3.select("#timeline")
-            .append("svg")
-            .attr("width", w)
-            .attr("height", h);
+    const timeline = d3.select('#timeline');
 
-          var circleScale = d3.scale.linear()
-            .domain([0, d3.max(items, function (d){
-              return d.dim[0];}) ])
-            .range([10, h/10]);
+    if(timeline.select('svg').size() > 0) {
+      timeline.select('svg').remove();
+    }
 
-          console.log(d3.max(items, function (d,i){
-              return d.dim[i];}));
+    const svgtimeline = timeline.append('svg')
+      .attr('width', w)
+      .attr('height', h);
 
-          svgtimeline.selectAll("circle")
-            .data(items)
-            .enter()
-            .append("circle")
-            .attr("cy", 60)
-            .attr("cx", function (d,i){
-              return xScale(i) + circleScale(d.dim[0]) ;
-            })
-            .attr("r", function(d,i){
-              return circleScale(d.dim[0]);
-             });
+    const circleScale = d3.scale.linear()
+      .domain([0, d3.max(items, (d:any) => d.dim[0]) ])
+      .range([10, h/10]);
 
-          svgtimeline.append("line")
-            .style("stroke", "black")
-            .attr("x1", 0)
-            .attr("y1", 60)
-            .attr("x2", w)
-            .attr("y2", 60);
+    console.log(d3.max(items, (d:any,i) => d.dim[i]));
+
+    svgtimeline.selectAll('circle')
+      .data(items)
+      .enter()
+      .append('circle')
+      .attr('cy', 60)
+      .attr('cx', (d:any,i) => xScale(i) + circleScale(d.dim[0]))
+      .attr('r', (d:any,i) => circleScale(d.dim[0]))
+      .on('click', function(d) {
+        // prevents triggering the href
+        (<MouseEvent>d3.event).preventDefault();
+
+        // toggle the active CSS classes
+        $li.select('a').classed('active', false);
+        d3.select(this).classed('active', true).attr('fill', 'red');
+
+        // dispatch selected dataset to other views
+        events.fire(AppConstants.EVENT_DATASET_SELECTED, d);
+      });
+
+    svgtimeline.append('line')
+      .style('stroke', 'black')
+      .attr('x1', 0)
+      .attr('y1', 60)
+      .attr('x2', w)
+      .attr('y2', 60);
 
   }
 
