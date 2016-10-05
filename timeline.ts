@@ -39,7 +39,10 @@ class Timeline implements IAppView {
     this.$node.html(`
       <!--<h3>${Language.TIMELINE}</h3>-->
       <ul class="output"></ul>
+      <div id="timeline"></div>
     `);
+
+
   }
 
   /**
@@ -87,6 +90,71 @@ class Timeline implements IAppView {
     if(selected !== undefined) {
       events.fire(AppConstants.EVENT_DATASET_SELECTED, selected);
     }
+
+    const w = 600;
+    const h = 200;
+
+    const xScale = d3.scale.linear()
+      .domain([0, items.length])
+      .range([0, w]);
+
+    console.log(xScale(2));
+
+    const timeline = d3.select('#timeline');
+    if(timeline.select('svg').size() > 0) {
+      timeline.select('svg').remove();
+    }
+
+    const svgtimeline = timeline.append('svg')
+      .attr('width', w)
+      .attr('height', h);
+
+    const circleScale = d3.scale.linear()
+      .domain([0, d3.max(items, (d:any) => d.dim[0]) ])
+      .range([10, h/10]);
+
+    console.log(d3.max(items, (d:any,i) => d.dim[i]));
+
+    svgtimeline.selectAll('circle')
+      .data(items)
+      .enter()
+      .append('circle')
+      .attr('cy', 60)
+      .attr('cx', (d:any,i) => xScale(i) + circleScale(d.dim[0]))
+      .attr('r', (d:any,i) => circleScale(d.dim[0]))
+      .on('click', function(d) {
+        // prevents triggering the href
+        (<MouseEvent>d3.event).preventDefault();
+
+        // toggle the active CSS classes
+        svgtimeline.selectAll('circle').classed('active', false);
+
+        d3.select(this).classed('active', true).attr('fill', );
+
+        // dispatch selected dataset to other views
+        events.fire(AppConstants.EVENT_DATASET_SELECTED, d);
+      });
+
+    svgtimeline.append('line')
+      .style('stroke', 'black')
+      .attr('x1', 0)
+      .attr('y1', 60)
+      .attr('x2', w)
+      .attr('y2', 60);
+
+    svgtimeline.selectAll('text')
+                .data(items)
+                .enter()
+                .append('text')
+                .text(function (d:any) { console.log(d.desc.name); return d.desc.name; })
+                .attr('x', function (d:any, i) {
+                return xScale(i) + circleScale(d.dim[0]);
+                })
+                .attr('y', 100)
+                .attr('font-size', '12px')
+                .attr('fill', 'black');
+
+
   }
 
 }
