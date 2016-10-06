@@ -114,10 +114,9 @@ class Timeline implements IAppView {
       .range([10, h/10]);
 
     //console.log(d3.max(items, (d:any,i) => d.dim[i]));
-    
-    //helper variable for clicking event 
-    var isClicked = 0;
 
+    //helper variable for clicking event
+    var isClicked = 0;
 
     svgtimeline.selectAll('circle')
       .data(items)
@@ -146,7 +145,7 @@ class Timeline implements IAppView {
           isClicked = 1;
 
 
-        }else {
+        } else {
 
           d3.select(this).classed('active', true);
           // dispatch selected dataset to other views
