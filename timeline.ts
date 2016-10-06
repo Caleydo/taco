@@ -115,6 +115,9 @@ class Timeline implements IAppView {
 
     console.log(d3.max(items, (d:any,i) => d.dim[i]));
 
+    var isClicked = 0;
+
+
     svgtimeline.selectAll('circle')
       .data(items)
       .enter()
@@ -123,16 +126,32 @@ class Timeline implements IAppView {
       .attr('cx', (d:any,i) => xScale(i) + circleScale(d.dim[0]))
       .attr('r', (d:any,i) => circleScale(d.dim[0]))
       .on('click', function(d) {
-        // prevents triggering the href
+
         (<MouseEvent>d3.event).preventDefault();
+        //svgtimeline.selectAll('circle').classed('active', false);
 
-        // toggle the active CSS classes
-        svgtimeline.selectAll('circle').classed('active', false);
+         if (isClicked === 0) {
+          console.log ('first Click');
+           svgtimeline.selectAll('circle').classed('active', false);
+           // toggle the active CSS classes
+          d3.select(this).classed('active', true);
 
-        d3.select(this).classed('active', true).attr('fill', );
+          // dispatch selected dataset to other views
+          events.fire(AppConstants.EVENT_DATASET_SELECTED, d);
+          isClicked = 1;
 
-        // dispatch selected dataset to other views
-        events.fire(AppConstants.EVENT_DATASET_SELECTED, d);
+
+        }else {
+
+          d3.select(this).classed('active', true);
+          // dispatch selected dataset to other views
+          events.fire(AppConstants.EVENT_DATASET_SELECTED, d);
+
+          isClicked = 0;
+          console.log ('second Click');
+        }
+
+
       });
 
     svgtimeline.append('line')
@@ -142,7 +161,7 @@ class Timeline implements IAppView {
       .attr('x2', w)
       .attr('y2', 60);
 
-    svgtimeline.selectAll('text')
+    /*svgtimeline.selectAll('text')
                 .data(items)
                 .enter()
                 .append('text')
@@ -152,7 +171,7 @@ class Timeline implements IAppView {
                 })
                 .attr('y', 100)
                 .attr('font-size', '12px')
-                .attr('fill', 'black');
+                .attr('fill', 'black');*/
 
 
   }
