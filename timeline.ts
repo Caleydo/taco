@@ -113,8 +113,9 @@ class Timeline implements IAppView {
       .domain([0, d3.max(items, (d:any) => d.dim[0]) ])
       .range([10, h/10]);
 
-    console.log(d3.max(items, (d:any,i) => d.dim[i]));
-
+    //console.log(d3.max(items, (d:any,i) => d.dim[i]));
+    
+    //helper variable for clicking event 
     var isClicked = 0;
 
 
@@ -130,15 +131,15 @@ class Timeline implements IAppView {
         (<MouseEvent>d3.event).preventDefault();
         //svgtimeline.selectAll('circle').classed('active', false);
 
-         if (isClicked === 0) {
+        if (isClicked === 0) {
           console.log ('first Click');
            svgtimeline.selectAll('circle').classed('active', false);
            // toggle the active CSS classes
           d3.select(this).classed('active', true);
-        // toggle the active CSS classes
-        svgtimeline.selectAll('circle').classed('active', false);
+          // toggle the active CSS classes
+          svgtimeline.selectAll('circle').classed('active', false);
 
-        d3.select(this).classed('active', true).attr('fill');
+          d3.select(this).classed('active', true).attr('fill');
 
           // dispatch selected dataset to other views
           events.fire(AppConstants.EVENT_DATASET_SELECTED, d);
