@@ -4,7 +4,6 @@
 
 import vis = require('../caleydo_core/vis');
 import events = require('../caleydo_core/event');
-import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 
 /**
