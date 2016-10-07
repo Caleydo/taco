@@ -147,7 +147,7 @@ class Timeline implements IAppView {
           d3.select(this).classed('active', true).attr('fill');
 
           // dispatch selected dataset to other views
-          events.fire(AppConstants.EVENT_DATASET_SELECTED, d.values[0]);
+          events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.values[0]);
           isClicked = 1;
 
 
@@ -155,7 +155,7 @@ class Timeline implements IAppView {
 
           d3.select(this).classed('active', true);
           // dispatch selected dataset to other views
-          events.fire(AppConstants.EVENT_DATASET_SELECTED, d.values[0]);
+          events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.values[0]);
 
           isClicked = 0;
           console.log ('second Click');

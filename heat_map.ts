@@ -41,7 +41,7 @@ class HeatMap implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(AppConstants.EVENT_DATASET_SELECTED, (evt, dataset) => this.update(dataset));
+    events.on(this.options.eventName, (evt, dataset) => this.update(dataset));
   }
 
   /**

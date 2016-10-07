@@ -23,4 +23,6 @@ export class AppConstants {
    * @type {string}
    */
   static EVENT_DATASET_SELECTED = 'eventDataSetSelected';
+  static EVENT_DATASET_SELECTED_LEFT = 'eventDataSetSelectedLeft';
+  static EVENT_DATASET_SELECTED_RIGHT = 'eventDataSetSelectedRight';
 }
