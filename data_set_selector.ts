@@ -132,8 +132,6 @@ class DataProvider {
           });
         });
 
-        console.log(r);
-
         return r;
       });
   }
