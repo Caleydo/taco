@@ -1,4 +1,3 @@
-import Moment = moment.Moment;
 /**
  * Created by Holger Stitz on 26.08.2016.
  */
