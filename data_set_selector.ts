@@ -104,11 +104,19 @@ class DataProvider {
   load() {
     return data.list((d) => d.desc.type === 'matrix')
       .then((list: IMatrix[]) => {
-        const listFiltered = list.filter((d) => /^\d.*/.test(d.desc.fqname));
-        return d3.nest()
+        // filter matrices that starts with a number --> assumption: must be a date
+        const dateData = d3.nest()
           .key((d: IMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending)
           .key((d: IMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending)
-          .entries(listFiltered);
+          .entries(list.filter((d) => /^\d.*/.test(d.desc.fqname) === true));
+
+        // filter matrices that starts NOT with a number
+        const otherData = d3.nest()
+          .key((d: IMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending)
+          .key((d: IMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending)
+          .entries(list.filter((d) => /^\d.*/.test(d.desc.fqname) === false));
+
+        return [].concat(dateData, otherData);
       });
   }
 
