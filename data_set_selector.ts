@@ -7,6 +7,7 @@ import events = require('../caleydo_core/event');
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 import {Language} from './language';
+import {IMatrix} from '../caleydo_core/matrix';
 
 /**
  * Shows a list of available datasets and lets the user choose one.
@@ -55,7 +56,7 @@ class DataSetSelector implements IAppView {
           .data();
 
         if(selectedData.length > 0) {
-          events.fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].items);
+          events.fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
         }
       });
   }
@@ -65,23 +66,16 @@ class DataSetSelector implements IAppView {
    * @returns {Promise<DataSetSelector>}
    */
   private update() {
-     return data.tree((d) => d.desc.type === 'matrix')
-      .then((tree) => {
-        // convert tree structure (uses only level 1 + 2)
-        const data = tree.children.map((d) => {
-          return {
-            name: d.name,
-            items: d.children.map((c) => c.data)
-          };
-        });
-
+    const dataprovider = new DataProvider();
+    return dataprovider.load()
+      .then((data) => {
         const $options = this.$select.selectAll('option').data(data);
 
         $options.enter().append('option');
 
         $options
-          .attr('value', (d) => d.name)
-          .text((d) => `${d.name}`);
+          .attr('value', (d) => d.key)
+          .text((d) => `${d.key}`);
 
         $options.exit().remove();
 
@@ -94,6 +88,42 @@ class DataSetSelector implements IAppView {
         return this;
       });
   }
+
+}
+
+class DataProvider {
+
+  constructor() {
+    //
+  }
+
+  /**
+   * Loads the data and retruns a promise
+   * @returns {Promise<U>}
+   */
+  load() {
+    return data.list((d) => d.desc.type === 'matrix')
+      .then((list: IMatrix[]) => {
+        const listFiltered = list.filter((d) => /^\d.*/.test(d.desc.fqname));
+        return d3.nest()
+          .key((d: IMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending)
+          .key((d: IMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending)
+          .entries(listFiltered);
+      });
+  }
+
+  /*load() {
+    return data.tree((d) => d.desc.type === 'matrix')
+      .then((tree) => {
+        // Convert tree structure (uses only level 1 + 2)
+        return tree.children.map((d) {
+          return {
+            name: d.name,
+            items: d.children.map((c) => c.data)
+          };
+        });
+      });
+  }*/
 
 }
 

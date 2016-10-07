@@ -60,7 +60,7 @@ class Timeline implements IAppView {
     // TODO retrieve selected data set and update the timeline with it
 
     // set selection by default to first item
-    var selected = (items.length > 0) ? items[0] : undefined;
+    var selected = (items.length > 0) ? items[0].values[0] : undefined;
 
     const $li = this.$node.select('ul.output').selectAll('li').data(items);
 
@@ -71,7 +71,7 @@ class Timeline implements IAppView {
 
     $li.select('a')
       .classed('active', (d) => d === selected)
-      .text((d) => `${d.desc.name} (${d.dim[0]} x ${d.dim[1]})`)
+      .text((d) => `${d.key} (${d.values[0].dim[0]} x ${d.values[0].dim[1]})`)
       .on('click', function(d) {
         // prevents triggering the href
         (<MouseEvent>d3.event).preventDefault();
@@ -81,7 +81,7 @@ class Timeline implements IAppView {
         d3.select(this).classed('active', true);
 
         // dispatch selected dataset to other views
-        events.fire(AppConstants.EVENT_DATASET_SELECTED, d);
+        events.fire(AppConstants.EVENT_DATASET_SELECTED, d.values[0]);
       });
 
     $li.exit().remove();
@@ -98,8 +98,6 @@ class Timeline implements IAppView {
       .domain([0, items.length])
       .range([0, w]);
 
-    console.log(xScale(2));
-
     const timeline = d3.select('#timeline');
     if(timeline.select('svg').size() > 0) {
       timeline.select('svg').remove();
@@ -110,7 +108,7 @@ class Timeline implements IAppView {
       .attr('height', h);
 
     const circleScale = d3.scale.linear()
-      .domain([0, d3.max(items, (d:any) => d.dim[0]) ])
+      .domain([0, d3.max(items, (d:any) => d.values[0].dim[0]) ])
       .range([10, h/10]);
 
     //console.log(d3.max(items, (d:any,i) => d.dim[i]));
@@ -118,14 +116,22 @@ class Timeline implements IAppView {
     //helper variable for clicking event
     var isClicked = 0;
 
+    svgtimeline.append('line')
+      .style('stroke', 'black')
+      .attr('x1', 0)
+      .attr('y1', 60)
+      .attr('x2', w)
+      .attr('y2', 60);
+
     svgtimeline.selectAll('circle')
       .data(items)
       .enter()
       .append('circle')
+      .attr('title', (d:any) => d.key)
       .attr('cy', 60)
-      .attr('cx', (d:any,i) => xScale(i) + circleScale(d.dim[0]))
-      .attr('r', (d:any,i) => circleScale(d.dim[0]))
-      .on('click', function(d) {
+      .attr('cx', (d:any,i) => xScale(i) + circleScale(d.values[0].dim[0]))
+      .attr('r', (d:any,i) => circleScale(d.values[0].dim[0]))
+      .on('click', function(d:any) {
 
         (<MouseEvent>d3.event).preventDefault();
         //svgtimeline.selectAll('circle').classed('active', false);
@@ -141,7 +147,7 @@ class Timeline implements IAppView {
           d3.select(this).classed('active', true).attr('fill');
 
           // dispatch selected dataset to other views
-          events.fire(AppConstants.EVENT_DATASET_SELECTED, d);
+          events.fire(AppConstants.EVENT_DATASET_SELECTED, d.values[0]);
           isClicked = 1;
 
 
@@ -149,7 +155,7 @@ class Timeline implements IAppView {
 
           d3.select(this).classed('active', true);
           // dispatch selected dataset to other views
-          events.fire(AppConstants.EVENT_DATASET_SELECTED, d);
+          events.fire(AppConstants.EVENT_DATASET_SELECTED, d.values[0]);
 
           isClicked = 0;
           console.log ('second Click');
