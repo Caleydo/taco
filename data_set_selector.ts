@@ -1,6 +1,9 @@
+import Moment = moment.Moment;
 /**
  * Created by Holger Stitz on 26.08.2016.
  */
+
+import moment = require('moment');
 
 import data = require('../caleydo_core/data');
 import events = require('../caleydo_core/event');
@@ -116,7 +119,22 @@ class DataProvider {
           .key((d: IMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending)
           .entries(list.filter((d) => /^\d.*/.test(d.desc.fqname) === false));
 
-        return [].concat(dateData, otherData);
+        const r = [].concat(dateData, otherData);
+
+        r.forEach((d) => {
+          d.values = d.values.map((e) => {
+            e.item = e.values[0]; // shortcut reference
+
+            let matches = e.key.match(/^(\d{4})[_-](\d{2})[_-](\d{2}).*/); // matches YYYY_MM_DD or YYYY-MM-DD
+            e.time = (matches === null) ? null : moment(e.key, AppConstants.PARSE_DATE_FORMATS);
+
+            return e;
+          });
+        });
+
+        console.log(r);
+
+        return r;
       });
   }
 

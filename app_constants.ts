@@ -25,4 +25,16 @@ export class AppConstants {
   static EVENT_DATASET_SELECTED = 'eventDataSetSelected';
   static EVENT_DATASET_SELECTED_LEFT = 'eventDataSetSelectedLeft';
   static EVENT_DATASET_SELECTED_RIGHT = 'eventDataSetSelectedRight';
+
+  /**
+   * Format the date output (see http://momentjs.com/docs/#/displaying/)
+   * @type {string}
+   */
+  static DATE_FORMAT = 'YYYY-MM-DD';
+
+  /**
+   * Parse the following date formats from strings using moment.js (see http://momentjs.com/docs/#/parsing/)
+   * @type {string[]}
+   */
+  static PARSE_DATE_FORMATS = ['YYYY_MM_DD', 'YYYY-MM-DD'];
 }

@@ -60,7 +60,7 @@ class Timeline implements IAppView {
     // TODO retrieve selected data set and update the timeline with it
 
     // set selection by default to first item
-    var selected = (items.length > 0) ? items[0].values[0] : undefined;
+    var selected = (items.length > 0) ? items[0].item : undefined;
 
     const $li = this.$node.select('ul.output').selectAll('li').data(items);
 
@@ -71,7 +71,13 @@ class Timeline implements IAppView {
 
     $li.select('a')
       .classed('active', (d) => d === selected)
-      .text((d) => `${d.key} (${d.values[0].dim[0]} x ${d.values[0].dim[1]})`)
+      .text((d) => {
+        if(d.time) {
+          return `${d.time.format(AppConstants.DATE_FORMAT)} (${d.item.dim[0]} x ${d.item.dim[1]})`;
+        } else {
+          return `${d.key} (${d.item.dim[0]} x ${d.item.dim[1]})`;
+        }
+      })
       .on('click', function(d) {
         // prevents triggering the href
         (<MouseEvent>d3.event).preventDefault();
@@ -81,7 +87,7 @@ class Timeline implements IAppView {
         d3.select(this).classed('active', true);
 
         // dispatch selected dataset to other views
-        events.fire(AppConstants.EVENT_DATASET_SELECTED, d.values[0]);
+        events.fire(AppConstants.EVENT_DATASET_SELECTED, d.item);
       });
 
     $li.exit().remove();
@@ -108,7 +114,7 @@ class Timeline implements IAppView {
       .attr('height', h);
 
     const circleScale = d3.scale.linear()
-      .domain([0, d3.max(items, (d:any) => d.values[0].dim[0]) ])
+      .domain([0, d3.max(items, (d:any) => d.item.dim[0]) ])
       .range([10, h/10]);
 
     //console.log(d3.max(items, (d:any,i) => d.dim[i]));
@@ -127,10 +133,10 @@ class Timeline implements IAppView {
       .data(items)
       .enter()
       .append('circle')
-      .attr('title', (d:any) => d.key)
+      .attr('title', (d:any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
       .attr('cy', 60)
-      .attr('cx', (d:any,i) => xScale(i) + circleScale(d.values[0].dim[0]))
-      .attr('r', (d:any,i) => circleScale(d.values[0].dim[0]))
+      .attr('cx', (d:any,i) => xScale(i) + circleScale(d.item.dim[0]))
+      .attr('r', (d:any,i) => circleScale(d.item.dim[0]))
       .on('click', function(d:any) {
 
         (<MouseEvent>d3.event).preventDefault();
@@ -147,15 +153,14 @@ class Timeline implements IAppView {
           d3.select(this).classed('active', true).attr('fill');
 
           // dispatch selected dataset to other views
-          events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.values[0]);
+          events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
           isClicked = 1;
-
 
         } else {
 
           d3.select(this).classed('active', true);
           // dispatch selected dataset to other views
-          events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.values[0]);
+          events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
 
           isClicked = 0;
           console.log ('second Click');
