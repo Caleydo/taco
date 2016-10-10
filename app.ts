@@ -2,7 +2,6 @@
  * Created by Holger Stitz on 25.08.2016.
  */
 
-//import i18n = require('../caleydo_i18n/i18n');
 import plugins = require('../caleydo_core/plugin');
 import d3 = require('d3');
 import {AppConstants} from './app_constants';
@@ -63,7 +62,9 @@ export class App implements IAppView {
     {
       view: 'HeatMap',
       parent: 'comparison',
-      options: {}
+      options: {
+        eventName: AppConstants.EVENT_DATASET_SELECTED_LEFT
+      }
     },
     /*{
       view: 'DiffHeatMap',
@@ -73,7 +74,9 @@ export class App implements IAppView {
     {
       view: 'HeatMap',
       parent: 'comparison',
-      options: {}
+      options: {
+        eventName: AppConstants.EVENT_DATASET_SELECTED_RIGHT
+      }
     }
   ];
 

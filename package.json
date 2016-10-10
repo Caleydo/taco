@@ -48,12 +48,14 @@
     },
     "dependencies": {
       "web": {
-        "bootstrap": "~3.3.4"
+        "bootstrap": "~3.3.4",
+        "moment": "~2.15.1"
       }
     },
     "requirejs-config": {
       "paths": {
-        "bootstrap": "${baseUrl}/bootstrap/dist/js/bootstrap"
+        "bootstrap": "${baseUrl}/bootstrap/dist/js/bootstrap",
+        "moment": "${baseUrl}/moment/min/moment.min"
       },
       "shim": {
         "bootstrap": [

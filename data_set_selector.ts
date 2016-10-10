@@ -2,11 +2,14 @@
  * Created by Holger Stitz on 26.08.2016.
  */
 
+import moment = require('moment');
+
 import data = require('../caleydo_core/data');
 import events = require('../caleydo_core/event');
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 import {Language} from './language';
+import {IMatrix} from '../caleydo_core/matrix';
 
 /**
  * Shows a list of available datasets and lets the user choose one.
@@ -55,7 +58,7 @@ class DataSetSelector implements IAppView {
           .data();
 
         if(selectedData.length > 0) {
-          events.fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].items);
+          events.fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
         }
       });
   }
@@ -65,23 +68,16 @@ class DataSetSelector implements IAppView {
    * @returns {Promise<DataSetSelector>}
    */
   private update() {
-     return data.tree((d) => d.desc.type === 'matrix')
-      .then((tree) => {
-        // convert tree structure (uses only level 1 + 2)
-        const data = tree.children.map((d) => {
-          return {
-            name: d.name,
-            items: d.children.map((c) => c.data)
-          };
-        });
-
+    const dataprovider = new DataProvider();
+    return dataprovider.load()
+      .then((data) => {
         const $options = this.$select.selectAll('option').data(data);
 
         $options.enter().append('option');
 
         $options
-          .attr('value', (d) => d.name)
-          .text((d) => `${d.name}`);
+          .attr('value', (d) => d.key)
+          .text((d) => `${d.key}`);
 
         $options.exit().remove();
 
@@ -94,6 +90,63 @@ class DataSetSelector implements IAppView {
         return this;
       });
   }
+
+}
+
+class DataProvider {
+
+  constructor() {
+    //
+  }
+
+  /**
+   * Loads the data and retruns a promise
+   * @returns {Promise<U>}
+   */
+  load() {
+    return data.list((d) => d.desc.type === 'matrix')
+      .then((list: IMatrix[]) => {
+        // filter matrices that starts with a number --> assumption: must be a date
+        const dateData = d3.nest()
+          .key((d: IMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending)
+          .key((d: IMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending)
+          .entries(list.filter((d) => /^\d.*/.test(d.desc.fqname) === true));
+
+        // filter matrices that starts NOT with a number
+        const otherData = d3.nest()
+          .key((d: IMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending)
+          .key((d: IMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending)
+          .entries(list.filter((d) => /^\d.*/.test(d.desc.fqname) === false));
+
+        const r = [].concat(dateData, otherData);
+
+        r.forEach((d) => {
+          d.values = d.values.map((e) => {
+            e.item = e.values[0]; // shortcut reference
+
+            let matches = e.key.match(/^(\d{4})[_-](\d{2})[_-](\d{2}).*/); // matches YYYY_MM_DD or YYYY-MM-DD
+            e.time = (matches === null) ? null : moment(e.key, AppConstants.PARSE_DATE_FORMATS);
+
+            return e;
+          });
+        });
+
+        return r;
+      });
+  }
+
+  /*load() {
+    return data.tree((d) => d.desc.type === 'matrix')
+      .then((tree) => {
+        // Convert tree structure (uses only level 1 + 2)
+        return tree.children.map((d) {
+          return {
+            name: d.name,
+            items: d.children.map((c) => c.data)
+          };
+        });
+      });
+  }*/
 
 }
 
