@@ -50,6 +50,9 @@
       "web": {
         "bootstrap": "~3.3.4",
         "moment": "~2.15.1"
+      },
+      "tsd": {
+        "moment": "637e7d6"
       }
     },
     "requirejs-config": {
