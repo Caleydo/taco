@@ -39,7 +39,7 @@ class Timeline implements IAppView {
     this.$node.html(`
       <!--<h3>${Language.TIMELINE}</h3>-->
       <ul class="output"></ul>
-      <div id="timeline"></div>
+      <div id="timeline" class="svg-container"></div>
     `);
 
 
@@ -100,9 +100,22 @@ class Timeline implements IAppView {
     const w = 600;
     const h = 200;
 
+    //resize
+    var width = $('#timeline').width();
+    //var height = $('#timeline').height();
+    //console.log(width);
+    var aspect = w/h;
+    //console.log(aspect);
+
     const xScale = d3.scale.linear()
       .domain([0, items.length])
       .range([0, w]);
+
+     const circleScale = d3.scale.linear()
+      .domain([0, d3.max(items, (d:any) => d.item.dim[0]) ])
+      .range([10, h/10]);
+
+    //console.log(d3.max(items, (d:any,i) => d.dim[i]));
 
     const timeline = d3.select('#timeline');
     if(timeline.select('svg').size() > 0) {
@@ -110,14 +123,21 @@ class Timeline implements IAppView {
     }
 
     const svgtimeline = timeline.append('svg')
-      .attr('width', w)
-      .attr('height', h);
+      .attr('preserveAspectRatio', 'xMinYMin meet')
+      .attr('viewBox', '0 0 600 200')
+      //.classed('svg-content', true)
+      .attr('width', width)
+      .attr('height', width * aspect);
+      //.attr('width', w)
+      //.attr('height', h);
 
-    const circleScale = d3.scale.linear()
-      .domain([0, d3.max(items, (d:any) => d.item.dim[0]) ])
-      .range([10, h/10]);
+    $(window).resize(function(){
+      var width = $('#timeline').width();
+      //var height = $('#timeline').height();
+      svgtimeline.attr('width', width);
+      svgtimeline.attr('height', width * aspect);
+    });
 
-    //console.log(d3.max(items, (d:any,i) => d.dim[i]));
 
     //helper variable for clicking event
     var isClicked = 0;
@@ -128,6 +148,12 @@ class Timeline implements IAppView {
       .attr('y1', 60)
       .attr('x2', w)
       .attr('y2', 60);
+
+    console.log(items[0].time._d);
+
+    //var diffTime = items[0].time._d - items[1].time._d;
+    //console.log(moment().subtract(items));
+
 
     svgtimeline.selectAll('circle')
       .data(items)
