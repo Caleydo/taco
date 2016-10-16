@@ -6,6 +6,9 @@ import events = require('../caleydo_core/event');
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 import {Language} from './language';
+//import moment = require("../../libs/bower_components/moment/moment");
+import moment = require('moment');
+import moment = require("moment");
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -107,13 +110,14 @@ class Timeline implements IAppView {
     var aspect = w/h;
     //console.log(aspect);
 
-    const xScale = d3.scale.linear()
+    /*const xScale = d3.scale.linear()
       .domain([0, items.length])
-      .range([0, w]);
+      .range([0, w]);*/
+
 
      const circleScale = d3.scale.linear()
       .domain([0, d3.max(items, (d:any) => d.item.dim[0]) ])
-      .range([10, h/10]);
+      .range([10, h/100]);
 
     //console.log(d3.max(items, (d:any,i) => d.dim[i]));
 
@@ -149,11 +153,49 @@ class Timeline implements IAppView {
       .attr('x2', w)
       .attr('y2', 60);
 
-    console.log(items[0].time._d);
+  /*
+      //calculate time duration between two timestamps
+      // time from title attribute - are String elements
+    var time:number [] = [];
 
-    //var diffTime = items[0].time._d - items[1].time._d;
-    //console.log(moment().subtract(items));
+    for (var _i = 0; _i < items.length; _i++) {
+      var store =  items[_i].time;
 
+      time.push(store);
+
+    }
+
+    var diffs:any [] = [];
+
+    var pairs = d3.pairs(time);
+    console.log('Pairs');
+    console.log(pairs);
+
+
+     for (var _i = 0; _i < pairs.length-1; _i++) {
+       var a = moment(pairs[_i][0]);
+       var b = moment(pairs[_i][1]);
+       console.log(a);
+       console.log(b);
+       var diff = b.diff(a, 'days');
+       diffs.push(diff);
+       console.log(diffs);
+     }
+     */
+
+    //gesamter Zeitbereich in Tagen
+    var firstTimePoint = moment(items[0].time);
+    var lastTimePoint =  moment(items[items.length-1].time);
+    var timeRange = lastTimePoint.diff(firstTimePoint, 'days');
+
+    // Abbildungsbereich = Width
+
+    // Skalierungfaktor = Width / Time Range
+
+
+    const xScaleTime = d3.scale.linear()
+      .domain([0, timeRange])
+      .range([20, w-20]); // 20 = Spacing
 
     svgtimeline.selectAll('circle')
       .data(items)
@@ -161,12 +203,16 @@ class Timeline implements IAppView {
       .append('circle')
       .attr('title', (d:any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
       .attr('cy', 60)
-      .attr('cx', (d:any,i) => xScale(i) + circleScale(d.item.dim[0]))
-      .attr('r', (d:any,i) => circleScale(d.item.dim[0]))
+      //.attr('cx', (d:any,i) => xScale(i) + circleScale(d.item.dim[0]))
+      
+      //moment(d.time) = current timestamp
+      //moment(items[0].time) = first timestamp
+      .attr('cx', (d:any) => xScaleTime(moment(d.time).diff(moment(items[0].time),'days')))
+      .attr('r', (d:any) => circleScale(d.item.dim[0]))
       .on('click', function(d:any) {
-
         (<MouseEvent>d3.event).preventDefault();
         //svgtimeline.selectAll('circle').classed('active', false);
+
 
         if (isClicked === 0) {
           console.log ('first Click');
