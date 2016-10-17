@@ -8,7 +8,6 @@ import {IAppView} from './app';
 import {Language} from './language';
 //import moment = require("../../libs/bower_components/moment/moment");
 import moment = require('moment');
-import moment = require("moment");
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -204,7 +203,7 @@ class Timeline implements IAppView {
       .attr('title', (d:any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
       .attr('cy', 60)
       //.attr('cx', (d:any,i) => xScale(i) + circleScale(d.item.dim[0]))
-      
+
       //moment(d.time) = current timestamp
       //moment(items[0].time) = first timestamp
       .attr('cx', (d:any) => xScaleTime(moment(d.time).diff(moment(items[0].time),'days')))
