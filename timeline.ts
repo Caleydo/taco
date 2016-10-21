@@ -8,6 +8,7 @@ import {IAppView} from './app';
 import {Language} from './language';
 //import moment = require("../../libs/bower_components/moment/moment");
 import moment = require('moment');
+import ajax = require('../caleydo_core/ajax');
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -112,6 +113,24 @@ class Timeline implements IAppView {
     /*const xScale = d3.scale.linear()
       .domain([0, items.length])
       .range([0, w]);*/
+
+    //console.log(items);
+
+    ajax.getAPIJSON(`/taco/jsontest`)
+    .then((json) => {
+      console.log(json);
+    });
+
+       //id-name of element
+    var id1 = items[0].item.desc.id;
+    var id2 = items[1].item.desc.id;
+
+    //ajax.getAPIJSON(`/taco/diff_log/20130222GbmMicrorna/20130326GbmMicrorna/10/10/2/structure,content`)
+    ajax.getAPIJSON(`/taco/diff_log/`+id1+`/`+id2+`/10/10/2/structure,content`)
+    .then((json) => {
+      console.log(json);
+    });
+
 
 
      const circleScale = d3.scale.linear()
