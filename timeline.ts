@@ -9,6 +9,7 @@ import {Language} from './language';
 //import moment = require("../../libs/bower_components/moment/moment");
 import moment = require('moment');
 import ajax = require('../caleydo_core/ajax');
+import {red} from "colors";
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -42,6 +43,7 @@ class Timeline implements IAppView {
     this.$node.html(`
       <!--<h3>${Language.TIMELINE}</h3>-->
       <ul class="output"></ul>
+      <div id="ratioBar" class ="ratioBarChart"></div>
       <div id="timeline" class="svg-container"></div>
     `);
 
@@ -116,21 +118,60 @@ class Timeline implements IAppView {
 
     //console.log(items);
 
-    ajax.getAPIJSON(`/taco/jsontest`)
+    /*ajax.getAPIJSON(`/taco/jsontest`)
     .then((json) => {
       console.log(json);
-    });
+    });*/
 
-       //id-name of element
+    console.log(items);
+    //id-name of element
     var id1 = items[0].item.desc.id;
     var id2 = items[1].item.desc.id;
+    console.log('DataItems');
+    console.log(items[0]);
+    console.log(items[1]);
+
+
 
     //ajax.getAPIJSON(`/taco/diff_log/20130222GbmMicrorna/20130326GbmMicrorna/10/10/2/structure,content`)
-    ajax.getAPIJSON(`/taco/diff_log/`+id1+`/`+id2+`/10/10/2/structure,content`)
+    ajax.getAPIJSON(`/taco/diff_log/`+id1+`/`+id2+`/1/1/2/structure,content`)
     .then((json) => {
       console.log(json);
-    });
 
+
+      var w = 200;
+      var h = 100;
+      var barPadding = 1;
+
+      var data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
+      console.log(data);
+
+      const ratioBarChart = d3.select('#ratioBar');
+      if(ratioBarChart.select('svg').size() > 0) {
+      ratioBarChart.select('svg').remove();
+    }
+
+      const svgRatioBar = ratioBarChart.append('svg')
+        .attr('width', w)
+        .attr('height', h);
+
+      svgRatioBar.selectAll('rect')
+        .data(data)
+        .enter()
+        .append('rect')
+        .attr('x', function(d,i){
+
+          return i * (w / data.length - barPadding);
+        })
+        .attr('y', function (d, i){
+        //return h - (d/1000);
+        return h - d * 100;
+        })
+        .attr('width', 50)
+        .attr('height', function(d){
+          return d * 100;
+        });
+    });
 
 
      const circleScale = d3.scale.linear()
