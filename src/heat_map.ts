@@ -2,8 +2,8 @@
  * Created by Holger Stitz on 30.08.2016.
  */
 
-import vis = require('../caleydo_core/vis');
-import events = require('../caleydo_core/event');
+import * as vis from 'phovea_core/src/vis';
+import * as events from 'phovea_core/src/event';
 import {IAppView} from './app';
 
 /**

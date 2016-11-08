@@ -8,11 +8,11 @@
 /// <amd-dependency path="css!/bower_components/bootstrap/dist/css/bootstrap.min" />
 
 /// <amd-dependency path="font-awesome" />
-/// <amd-dependency path="css!../caleydo_bootstrap_fontawesome/style.css" />
+/// <amd-dependency path="css!phovea_bootstrap_fontawesome/style.css" /src/>
 
 
-import app = require('./app');
-import header = require('../caleydo_bootstrap_fontawesome/header');
+import * as app from './app';
+import * as header from 'phovea_bootstrap_fontawesome/src/header';
 import {Language} from './language';
 
 header.create(

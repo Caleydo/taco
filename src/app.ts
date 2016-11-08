@@ -2,8 +2,8 @@
  * Created by Holger Stitz on 25.08.2016.
  */
 
-import plugins = require('../caleydo_core/plugin');
-import d3 = require('d3');
+import * as plugins from 'phovea_core/src/plugin';
+import * as d3 from 'd3';
 import {AppConstants} from './app_constants';
 
 /**

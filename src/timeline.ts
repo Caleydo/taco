@@ -2,13 +2,13 @@
  * Created by Holger Stitz on 29.08.2016.
  */
 
-import events = require('../caleydo_core/event');
+import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 import {Language} from './language';
 //import moment = require("../../libs/bower_components/moment/moment");
-import moment = require('moment');
-import ajax = require('../caleydo_core/ajax');
+import * as moment from 'moment';
+import * as ajax from 'phovea_core/src/ajax';
 import {red} from "colors";
 
 /**
