@@ -10,6 +10,7 @@ import {Language} from './language';
 import * as moment from 'moment';
 import * as ajax from 'phovea_core/src/ajax';
 import * as d3 from 'd3';
+import * as $ from 'jquery';
 // import {red} from "colors";
 
 /**
