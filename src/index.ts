@@ -2,14 +2,12 @@
  * Created by Holger Stitz on 25.08.2016.
  */
 
-// Determine the order of css files manually
-
-// HACK! because <amd-dependency path="bootstrap" /> is loaded after all the other stylesheets and not before (as declared)
-/// <amd-dependency path="css!/bower_components/bootstrap/dist/css/bootstrap.min" />
-
-/// <amd-dependency path="font-awesome" />
-/// <amd-dependency path="css!phovea_bootstrap_fontawesome/style.css" /src/>
-
+import 'file?name=index.html!./index.html';
+import 'file?name=404.html!./404.html';
+import 'file?name=robots.txt!./robots.txt';
+import 'phovea_bootstrap_fontawesome/src/_bootstrap';
+import 'phovea_bootstrap_fontawesome/src/_font-awesome';
+import './style.scss';
 
 import * as app from './app';
 import * as header from 'phovea_bootstrap_fontawesome/src/header';

@@ -1,6 +1,9 @@
 $select-color: orange;
 $hover-color: #ffc46b;
 
+
+$boostrapAssetDir: '~phovea_bootstrap_fontawesome/src/assets';
+
 body, html {
   font-family: Yantramanav, 'Helvetica Neue', Helvetica, sans-serif !important;
   font-weight: 400 !important;
@@ -22,7 +25,7 @@ b,
   position: fixed;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.26) url('/assets/caleydo_c_anim.svg') no-repeat fixed center;
+  background: rgba(255, 255, 255, 0.26) url('#{$boostrapAssetDir}/caleydo_c_anim.svg') no-repeat fixed center;
   z-index: 999;
   top: 0;
   bottom: 0;
@@ -51,10 +54,10 @@ a.active {
 }
 
 rect {
-  &.caleydo-select-selected {
+  &.phovea-select-selected {
     fill: $select-color;
   }
-  &.caleydo-select-hovered {
+  &.phovea-select-hovered {
     fill: $hover-color;
   }
 }

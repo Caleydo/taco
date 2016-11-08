@@ -5,6 +5,7 @@
 import * as vis from 'phovea_core/src/vis';
 import * as events from 'phovea_core/src/event';
 import {IAppView} from './app';
+import * as d3 from 'd3';
 
 /**
  * Shows a simple heat map for a given data set.

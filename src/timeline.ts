@@ -9,7 +9,8 @@ import {Language} from './language';
 //import moment = require("../../libs/bower_components/moment/moment");
 import * as moment from 'moment';
 import * as ajax from 'phovea_core/src/ajax';
-import {red} from "colors";
+import * as d3 from 'd3';
+// import {red} from "colors";
 
 /**
  * Shows a timeline with all available data points for a selected data set
