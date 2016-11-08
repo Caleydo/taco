@@ -1,5 +1,4 @@
 {
-  "main": "build/taco.js",
   "files": [
     "src",
     "index.js",
@@ -63,14 +62,12 @@
     "webpack-dev-server": "^2.1.0-beta.10"
   },
   "dependencies": {
-    "phovea_core": "github:phovea/phovea_core",
-    "phovea_vis": "github:phovea/phovea_vis",
-    "phovea_d3": "github:phovea/phovea_d3",
+    "@types/moment": "^2.13.0",
+    "moment": "^2.15.2",
     "phovea_bootstrap_fontawesome": "github:phovea/phovea_bootstrap_fontawesome",
-    "@types/bootstrap": "^3.3.32",
-    "bootstrap-sass": "^3.3.7",
-    "@types/select2": "^4.0.30",
-    "select2": "^4.0.3"
+    "phovea_core": "github:phovea/phovea_core",
+    "phovea_d3": "github:phovea/phovea_d3",
+    "phovea_vis": "github:phovea/phovea_vis"
   },
   "name": "taco",
   "description": "Comparative visualization of large tabular data using Phovea",
@@ -88,5 +85,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/phovea/taco.git"
-  }
+  },
+  "main": "build/taco.js"
 }

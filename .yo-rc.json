@@ -49,7 +49,6 @@
     ],
     "sextensions": [],
     "libraries": [
-      "bootstrap",
       "moment"
     ],
     "unknown": {
@@ -65,8 +64,6 @@
       "d3": "d3/d3"
     },
     "libraryExternals": [
-      "bootstrap",
-      "bootstrap-sass",
       "moment",
       "d3",
       "d3",
