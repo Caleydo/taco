@@ -1,0 +1,79 @@
+{
+  "generator-phovea": {
+    "type": "app",
+    "name": "taco",
+    "author": "The Caleydo Team",
+    "githubAccount": "phovea",
+    "modules": [
+      "phovea_core",
+      "phovea_vis",
+      "phovea_d3",
+      "phovea_bootstrap_fontawesome"
+    ],
+    "extensions": [
+      {
+        "type": "app",
+        "id": "taco",
+        "module": "",
+        "extras": {
+          "name": "TaCo"
+        }
+      },
+      {
+        "type": "tacoView",
+        "id": "DataSetSelector",
+        "module": "data_set_selector",
+        "extras": {
+          "name": "Data Set Selector",
+          "factory": "create"
+        }
+      },
+      {
+        "type": "tacoView",
+        "id": "Timeline",
+        "module": "timeline",
+        "extras": {
+          "name": "Timeline",
+          "factory": "create"
+        }
+      },
+      {
+        "type": "tacoView",
+        "id": "HeatMap",
+        "module": "heat_map",
+        "extras": {
+          "name": "Heat Map",
+          "factory": "create"
+        }
+      }
+    ],
+    "sextensions": [],
+    "libraries": [
+      "bootstrap",
+      "moment"
+    ],
+    "unknown": {
+      "requirements": [],
+      "debianPackages": [],
+      "redhatPackages": []
+    },
+    "app": "",
+    "entries": {
+      "app": "./src/index.ts"
+    },
+    "libraryAliases": {
+      "d3": "d3/d3"
+    },
+    "libraryExternals": [
+      "bootstrap",
+      "bootstrap-sass",
+      "moment",
+      "d3",
+      "d3",
+      "jquery",
+      "font-awesome"
+    ],
+    "ignores": [],
+    "today": "Tue, 08 Nov 2016 08:57:09 GMT"
+  }
+}

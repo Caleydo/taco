@@ -1,74 +1,92 @@
 {
-  "name": "taco",
-  "description": "Comparative visualization of large tabular data using Caleydo Web",
-  "version": "2.0.0-alpha.0",
-  "license" : "SEE LICENSE IN LICENSE",
-  "repository": "Caleydo/taco",
-  "homepage": "http://caleydo.org",
+  "main": "build/taco.js",
+  "files": [
+    "src",
+    "index.js",
+    "phovea.js",
+    "phovea_registry.js",
+    "build"
+  ],
+  "engines": {
+    "npm": ">= 3",
+    "node": ">= 6",
+    "iojs": ">= 3"
+  },
+  "scripts": {
+    "compile": "tsc",
+    "lint": "tslint -c tslint.json src/**.ts tests/**.ts",
+    "docs": "typedoc --options typedoc.json src/**.ts",
+    "prebuild": "npm run test",
+    "pretest": "npm run compile",
+    "test": "karma start",
+    "posttest": "npm run lint",
+    "test:watch": "karma start --autoWatch=true --singleRun=false",
+    "build:dev": "webpack",
+    "build": "webpack --env prod",
+    "start": "webpack-dev-server --inline",
+    "start:hot": "webpack-dev-server --inline --hot",
+    "watch": "webpack --watch",
+    "release:major": "npm version major && npm publish && git push --follow-tags",
+    "release:minor": "npm version minor && npm publish && git push --follow-tags",
+    "release:patch": "npm version patch && npm publish && git push --follow-tags",
+    "predist": "npm run build",
+    "dist": "mkdirp dist && cd build && tar cvzf ../dist/taco.tar.gz *"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^2.5.35",
+    "awesome-typescript-loader": "^2.2.4",
+    "css-loader": "^0.25.0",
+    "extract-text-webpack-plugin": "^2.0.0-beta.4",
+    "file-loader": "^0.9.0",
+    "html-loader": "^0.4.4",
+    "imports-loader": "^0.6.5",
+    "jasmine": "^2.5.2",
+    "json-loader": "^0.5.4",
+    "karma": "^1.3.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-jasmine": "^1.0.2",
+    "karma-junit-reporter": "^1.1.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^1.8.0",
+    "mkdirp": "^0.5.1",
+    "node-sass": "^3.10.0",
+    "null-loader": "^0.1.1",
+    "raw-loader": "^0.5.1",
+    "sass-loader": "^4.0.2",
+    "style-loader": "^0.13.1",
+    "tslint": "^3.15.1",
+    "typedoc": "^0.5.1",
+    "typescript": "^2.0.6",
+    "url-loader": "^0.5.7",
+    "webpack": "^2.1.0-beta.25",
+    "webpack-dev-server": "^2.1.0-beta.10"
+  },
   "dependencies": {
+    "phovea_core": "github:phovea/phovea_core",
+    "phovea_vis": "github:phovea/phovea_vis",
+    "phovea_d3": "github:phovea/phovea_d3",
+    "phovea_bootstrap_fontawesome": "github:phovea/phovea_bootstrap_fontawesome",
+    "@types/bootstrap": "^3.3.32",
+    "bootstrap-sass": "^3.3.7",
+    "@types/select2": "^4.0.30",
+    "select2": "^4.0.3"
   },
-  "peerDependencies": {
-    "caleydo_core": "*",
-    "caleydo_vis": "*",
-    "caleydo_d3": "*",
-    "caleydo_bootstrap_fontawesome": "*",
-    "taco_server": "*"
+  "name": "taco",
+  "description": "Comparative visualization of large tabular data using Phovea",
+  "homepage": "http://caleydo.org",
+  "version": "0.0.1",
+  "author": {
+    "name": "The Caleydo Team",
+    "email": "contact@caleydo.org",
+    "url": "https://caleydo.org"
   },
-  "caleydo": {
-    "type": "app",
-    "plugins": {
-      "web": [
-        {
-          "type": "app",
-          "id": "taco",
-          "name": "TaCo"
-        },
-        {
-          "type": "tacoView",
-          "id": "DataSetSelector",
-          "name": "Data Set Selector",
-          "file": "data_set_selector",
-          "factory": "create"
-        },
-        {
-          "type": "tacoView",
-          "id": "Timeline",
-          "name": "Timeline",
-          "file": "timeline",
-          "factory": "create"
-        },
-        {
-          "type": "tacoView",
-          "id": "HeatMap",
-          "name": "Heat Map",
-          "file": "heat_map",
-          "factory": "create"
-        }
-      ]
-    },
-    "dependencies": {
-      "web": {
-        "bootstrap": "~3.3.4",
-        "moment": "~2.15.1"
-      },
-      "tsd": {
-        "moment": "637e7d6"
-      }
-    },
-    "requirejs-config": {
-      "paths": {
-        "bootstrap": "${baseUrl}/bootstrap/dist/js/bootstrap",
-        "moment": "${baseUrl}/moment/min/moment.min"
-      },
-      "shim": {
-        "bootstrap": [
-          "jquery",
-          "css!${baseUrl}/bootstrap/dist/css/bootstrap"
-        ]
-      }
-    }
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/phovea/taco/issues"
   },
-  "publishConfig": {
-    "registry": "http://registry.caleydo.org/"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phovea/taco.git"
   }
 }
