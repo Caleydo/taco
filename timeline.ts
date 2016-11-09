@@ -118,38 +118,56 @@ class Timeline implements IAppView {
 
     //console.log(items);
 
-    /*ajax.getAPIJSON(`/taco/jsontest`)
-    .then((json) => {
-      console.log(json);
-    });*/
-
-    console.log(items);
+    console.log(items.length);
     //id-name of element
-    var id1 = items[0].item.desc.id;
-    var id2 = items[1].item.desc.id;
-    console.log('DataItems');
+    var id1 = items[1].item.desc.id;
+    var id2 = items[2].item.desc.id;
+   /* console.log('DataItems');
     console.log(items[0]);
-    console.log(items[1]);
+    console.log(items[1]);*/
 
+    var ids:any [] = [];
 
+   for (var _i = 0; _i < items.length-1; _i++) {
+     ids.push(items[_i].item.desc.id);
+   }
+    console.log('ID - Array');
+    console.log(ids);
 
+    var idPairs = d3.pairs(ids);
+
+    console.log('ID-Paris');
+    console.log(idPairs);
+    console.log(idPairs[0][0]);
+
+    /*
+    * Get the different type of changes as a sum (rows + cols) -> .../1/1/2/... */
+
+    for(var _i = 0; _i < idPairs.length;_i++) {
     //ajax.getAPIJSON(`/taco/diff_log/20130222GbmMicrorna/20130326GbmMicrorna/10/10/2/structure,content`)
-    ajax.getAPIJSON(`/taco/diff_log/`+id1+`/`+id2+`/1/1/2/structure,content`)
+    ajax.getAPIJSON(`/taco/diff_log/`+idPairs[_i][0]+`/`+idPairs[_i][1]+`/1/1/2/structure,content`)
     .then((json) => {
       console.log(json);
 
-
-      var w = 200;
-      var h = 100;
-      var barPadding = 1;
+      var w = 80;
+      var h = 30;
+      var barPadding = 0.5;
 
       var data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
-      console.log(data);
+      //console.log(data);
+
+      var color = d3.scale.ordinal()
+       .domain([ 0, data.length -1])
+       .range(['#D8D8D8', '#67C4A7' , '#8DA1CD', '#F08E65']);
+      /*console.log(color(0));
+      console.log(color(1));
+      console.log(color(2));
+      console.log(color(3));*/
 
       const ratioBarChart = d3.select('#ratioBar');
-      if(ratioBarChart.select('svg').size() > 0) {
+    /*  if(ratioBarChart.select('svg').size() > 0) {
       ratioBarChart.select('svg').remove();
-    }
+    }*/
 
       const svgRatioBar = ratioBarChart.append('svg')
         .attr('width', w)
@@ -161,17 +179,25 @@ class Timeline implements IAppView {
         .append('rect')
         .attr('x', function(d,i){
 
-          return i * (w / data.length - barPadding);
+          return i * (w  / data.length - barPadding);
         })
         .attr('y', function (d, i){
-        //return h - (d/1000);
-        return h - d * 100;
+         return h  - d * 100;
         })
-        .attr('width', 50)
+        .attr('width', 15)
         .attr('height', function(d){
           return d * 100;
+        })
+        .attr('fill', function (i){
+          return color(i);
         });
     });
+
+    }
+
+
+
+
 
 
      const circleScale = d3.scale.linear()
