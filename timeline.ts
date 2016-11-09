@@ -125,11 +125,7 @@ class Timeline implements IAppView {
      console.log(items[0]);
      console.log(items[1]);*/
 
-    var ids:any [] = [];
-
-    for (var _i = 0; _i < items.length-1; _i++) {
-      ids.push(items[_i].item.desc.id);
-    }
+    var ids:any [] = items.map((d) => d.item.desc.id);
     console.log('ID - Array');
     console.log(ids);
 
