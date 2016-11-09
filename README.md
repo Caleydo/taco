@@ -7,7 +7,7 @@ Installation
 ------------
 
 ```
-git clone https://github.com/phovea/taco.git
+git clone https://github.com/caleydo/taco.git
 cd taco
 npm install
 ```
@@ -38,7 +38,7 @@ This repository is part of **[Phovea](http://phovea.caleydo.org/)**, a platform 
 [phovea-url]: https://phovea.caleydo.org
 [npm-image]: https://badge.fury.io/js/taco.svg
 [npm-url]: https://npmjs.org/package/taco
-[travis-image]: https://travis-ci.org/Caleydo/taco.svg?branch=master
-[travis-url]: https://travis-ci.org/Caleydo/taco
-[daviddm-image]: https://david-dm.org/Caleydo/taco.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/Caleydo/taco
+[travis-image]: https://travis-ci.org/caleydo/taco.svg?branch=master
+[travis-url]: https://travis-ci.org/caleydo/taco
+[daviddm-image]: https://david-dm.org/caleydo/taco.svg?theme=shields.io
+[daviddm-url]: https://david-dm.org/caleydo/taco

@@ -3,7 +3,7 @@
     "type": "app",
     "name": "taco",
     "author": "The Caleydo Team",
-    "githubAccount": "phovea",
+    "githubAccount": "caleydo",
     "modules": [
       "phovea_core",
       "phovea_vis",
