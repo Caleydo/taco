@@ -278,7 +278,13 @@ class Timeline implements IAppView {
 
       //moment(d.time) = current timestamp
       //moment(items[0].time) = first timestamp
-      .attr('cx', (d:any) => xScaleTime(moment(d.time).diff(moment(items[0].time),'days')))
+      .attr('cx', (d:any) => {
+        if(d.time) {
+          return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
+        } else {
+          return 60;
+        }
+      })
       .attr('r', (d:any) => circleScale(d.item.dim[0]))
       .on('click', function(d:any) {
         (<MouseEvent>d3.event).preventDefault();
