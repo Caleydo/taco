@@ -199,7 +199,7 @@ function generateWebpack(options) {
   }
   if (!options.bundle || options.extractCss) {
     //extract the included css file to own file
-    var p = new ExtractTextPlugin('style' + (options.min ? '.min' : '') + '.css');
+    var p = new ExtractTextPlugin('style' + (options.min && !options.nosuffix ? '.min' : '') + '.css');
     base.plugins.push(p);
     base.module.loaders[0] = {
       test: /\.scss$/,
@@ -276,7 +276,7 @@ function generateWebpackConfig(env) {
   } else if (type === 'app') { //isProduction app
     return generateWebpack(Object.assign({}, base, {
         min: true,
-        nosuffix: true,
+        nosuffix: true
       }));
   } else { //isProduction
     return [
