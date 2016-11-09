@@ -135,61 +135,6 @@ class Timeline implements IAppView {
     console.log(idPairs);
     console.log(idPairs[0][0]);
 
-    /*
-     * Get the different type of changes as a sum (rows + cols) -> .../1/1/2/...
-     */
-
-    const barPromises = idPairs.map((pair) => {
-      console.log('start loading pair', pair);
-      //ajax.getAPIJSON(`/taco/diff_log/20130222GbmMicrorna/20130326GbmMicrorna/10/10/2/structure,content`)
-      return Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`), pair])
-        .then((args) => {
-          const json = args[0];
-          const pair = args[1];
-
-          console.log('finished loading pair', pair, json);
-
-          const w = 80;
-          const h = 30;
-          const barPadding = 0.5;
-
-          const data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
-          //console.log(data);
-
-          const color = d3.scale.ordinal()
-            .domain(<any>[ 0, data.length -1])
-            .range(['#D8D8D8', '#67C4A7' , '#8DA1CD', '#F08E65']);
-          /*console.log(color(0));
-           console.log(color(1));
-           console.log(color(2));
-           console.log(color(3));*/
-
-          const ratioBarChart = d3.select('#ratioBar');
-          /*  if(ratioBarChart.select('svg').size() > 0) {
-           ratioBarChart.select('svg').remove();
-           }*/
-
-          const svgRatioBar = ratioBarChart.append('svg')
-            .attr('width', w)
-            .attr('height', h);
-
-          svgRatioBar.selectAll('rect')
-            .data(data)
-            .enter()
-            .append('rect')
-            .attr('x', (d,i) => i * (w  / data.length - barPadding))
-            .attr('y', (d, i) => h  - d * 100)
-            .attr('width', 15)
-            .attr('height', (d) => d * 100)
-            .attr('fill', (d, i) => <string>color(i.toString()));
-        });
-    });
-
-    // check if all bars have been loaded
-    Promise.all(barPromises).then((bars) => {
-      console.log('finished loading of all bars');
-    });
-
     const circleScale = d3.scale.linear()
       .domain([0, d3.max(items, (d:any) => d.item.dim[0]) ])
       .range([10, h/100]);
@@ -290,6 +235,7 @@ class Timeline implements IAppView {
           return 60;
         }
       })
+      .attr('id', (d:any) => 'circle_' + d.item.desc.id)
       .attr('r', (d:any) => circleScale(d.item.dim[0]))
       .on('click', function(d:any) {
         (<MouseEvent>d3.event).preventDefault();
@@ -342,6 +288,54 @@ class Timeline implements IAppView {
      .attr('font-size', '12px')
      .attr('fill', 'black');*/
 
+
+
+    /*
+     * Get the different type of changes as a sum (rows + cols) -> .../1/1/2/...
+     */
+
+    const barPromises = idPairs.map((pair) => {
+      console.log('start loading pair', pair);
+      //ajax.getAPIJSON(`/taco/diff_log/20130222GbmMicrorna/20130326GbmMicrorna/10/10/2/structure,content`)
+      return Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`), pair])
+        .then((args) => {
+          const json = args[0];
+          const pair = args[1];
+          const pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
+
+          console.log('finished loading pair', pair, pairPosX, json);
+
+          const w = 80;
+          const h = 30;
+          const barPadding = 0.5;
+
+          const data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
+          //console.log(data);
+
+          const color = d3.scale.ordinal()
+            .domain(<any>[ 0, data.length -1])
+            .range(['#D8D8D8', '#67C4A7' , '#8DA1CD', '#F08E65']);
+
+          const width = 15;
+          const svgRatioBar = svgtimeline.append('g')
+            .style('transform', 'translate(' + (pairPosX[0] + 0.5*(pairPosX[1] - pairPosX[0] - width)) + 'px)');
+
+          svgRatioBar.selectAll('rect')
+            .data(data)
+            .enter()
+            .append('rect')
+            .attr('x', (d,i) => i * (w  / data.length - barPadding))
+            .attr('y', (d, i) => h  - d * 100)
+            .attr('width', width)
+            .attr('height', (d) => d * 100)
+            .attr('fill', (d, i) => <string>color(i.toString()));
+        });
+    });
+
+    // check if all bars have been loaded
+    Promise.all(barPromises).then((bars) => {
+      console.log('finished loading of all bars');
+    });
 
   }
 
