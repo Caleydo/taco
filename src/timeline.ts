@@ -11,7 +11,6 @@ import * as moment from 'moment';
 import * as ajax from 'phovea_core/src/ajax';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
-// import {red} from "colors";
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -115,74 +114,87 @@ class Timeline implements IAppView {
     //console.log(aspect);
 
     /*const xScale = d3.scale.linear()
-      .domain([0, items.length])
-      .range([0, w]);*/
+     .domain([0, items.length])
+     .range([0, w]);*/
 
     //console.log(items);
 
-    /*ajax.getAPIJSON(`/taco/jsontest`)
-    .then((json) => {
-      console.log(json);
-    });*/
-
-    console.log(items);
+    console.log(items.length);
     //id-name of element
-    var id1 = items[0].item.desc.id;
-    var id2 = items[1].item.desc.id;
-    console.log('DataItems');
-    console.log(items[0]);
-    console.log(items[1]);
+    //var id1 = items[1].item.desc.id;
+    //var id2 = items[2].item.desc.id;
+    /* console.log('DataItems');
+     console.log(items[0]);
+     console.log(items[1]);*/
 
+    var ids:any [] = [];
 
-
-    //ajax.getAPIJSON(`/taco/diff_log/20130222GbmMicrorna/20130326GbmMicrorna/10/10/2/structure,content`)
-    ajax.getAPIJSON(`/taco/diff_log/`+id1+`/`+id2+`/1/1/2/structure,content`)
-    .then((json) => {
-      console.log(json);
-
-
-      var w = 200;
-      var h = 100;
-      var barPadding = 1;
-
-      var data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
-      console.log(data);
-
-      const ratioBarChart = d3.select('#ratioBar');
-      if(ratioBarChart.select('svg').size() > 0) {
-      ratioBarChart.select('svg').remove();
+    for (var _i = 0; _i < items.length-1; _i++) {
+      ids.push(items[_i].item.desc.id);
     }
+    console.log('ID - Array');
+    console.log(ids);
 
-      const svgRatioBar = ratioBarChart.append('svg')
-        .attr('width', w)
-        .attr('height', h);
+    var idPairs = d3.pairs(ids);
 
-      svgRatioBar.selectAll('rect')
-        .data(data)
-        .enter()
-        .append('rect')
-        .attr('x', function(d,i){
+    console.log('ID-Paris');
+    console.log(idPairs);
+    console.log(idPairs[0][0]);
 
-          return i * (w / data.length - barPadding);
-        })
-        .attr('y', function (d, i){
-        //return h - (d/1000);
-        return h - d * 100;
-        })
-        .attr('width', 50)
-        .attr('height', function(d){
-          return d * 100;
+    /*
+     * Get the different type of changes as a sum (rows + cols) -> .../1/1/2/...
+     */
+
+    idPairs.forEach((pair) => {
+      //ajax.getAPIJSON(`/taco/diff_log/20130222GbmMicrorna/20130326GbmMicrorna/10/10/2/structure,content`)
+      ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`)
+        .then((json) => {
+          console.log(json);
+
+          const w = 80;
+          const h = 30;
+          const barPadding = 0.5;
+
+          const data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
+          //console.log(data);
+
+          const color = d3.scale.ordinal()
+            .domain(<any>[ 0, data.length -1])
+            .range(['#D8D8D8', '#67C4A7' , '#8DA1CD', '#F08E65']);
+          /*console.log(color(0));
+           console.log(color(1));
+           console.log(color(2));
+           console.log(color(3));*/
+
+          const ratioBarChart = d3.select('#ratioBar');
+          /*  if(ratioBarChart.select('svg').size() > 0) {
+           ratioBarChart.select('svg').remove();
+           }*/
+
+          const svgRatioBar = ratioBarChart.append('svg')
+            .attr('width', w)
+            .attr('height', h);
+
+          svgRatioBar.selectAll('rect')
+            .data(data)
+            .enter()
+            .append('rect')
+            .attr('x', (d,i) => i * (w  / data.length - barPadding))
+            .attr('y', (d, i) => h  - d * 100)
+            .attr('width', 15)
+            .attr('height', (d) => d * 100)
+            .attr('fill', (d, i) => <string>color(i.toString()));
         });
     });
 
-
-     const circleScale = d3.scale.linear()
+    const circleScale = d3.scale.linear()
       .domain([0, d3.max(items, (d:any) => d.item.dim[0]) ])
       .range([10, h/100]);
 
     //console.log(d3.max(items, (d:any,i) => d.dim[i]));
 
     const timeline = d3.select('#timeline');
+
     if(timeline.select('svg').size() > 0) {
       timeline.select('svg').remove();
     }
@@ -193,8 +205,8 @@ class Timeline implements IAppView {
       //.classed('svg-content', true)
       .attr('width', width)
       .attr('height', width * aspect);
-      //.attr('width', w)
-      //.attr('height', h);
+    //.attr('width', w)
+    //.attr('height', h);
 
     $(window).resize(function(){
       var width = $('#timeline').width();
@@ -214,33 +226,33 @@ class Timeline implements IAppView {
       .attr('x2', w)
       .attr('y2', 60);
 
-  /*
-      //calculate time duration between two timestamps
-      // time from title attribute - are String elements
-    var time:number [] = [];
+    /*
+     //calculate time duration between two timestamps
+     // time from title attribute - are String elements
+     var time:number [] = [];
 
-    for (var _i = 0; _i < items.length; _i++) {
-      var store =  items[_i].time;
+     for (var _i = 0; _i < items.length; _i++) {
+     var store =  items[_i].time;
 
-      time.push(store);
+     time.push(store);
 
-    }
+     }
 
-    var diffs:any [] = [];
+     var diffs:any [] = [];
 
-    var pairs = d3.pairs(time);
-    console.log('Pairs');
-    console.log(pairs);
+     var pairs = d3.pairs(time);
+     console.log('Pairs');
+     console.log(pairs);
 
 
      for (var _i = 0; _i < pairs.length-1; _i++) {
-       var a = moment(pairs[_i][0]);
-       var b = moment(pairs[_i][1]);
-       console.log(a);
-       console.log(b);
-       var diff = b.diff(a, 'days');
-       diffs.push(diff);
-       console.log(diffs);
+     var a = moment(pairs[_i][0]);
+     var b = moment(pairs[_i][1]);
+     console.log(a);
+     console.log(b);
+     var diff = b.diff(a, 'days');
+     diffs.push(diff);
+     console.log(diffs);
      }
      */
 
@@ -277,8 +289,8 @@ class Timeline implements IAppView {
 
         if (isClicked === 0) {
           console.log ('first Click');
-           svgtimeline.selectAll('circle').classed('active', false);
-           // toggle the active CSS classes
+          svgtimeline.selectAll('circle').classed('active', false);
+          // toggle the active CSS classes
           d3.select(this).classed('active', true);
           // toggle the active CSS classes
           svgtimeline.selectAll('circle').classed('active', false);
@@ -310,16 +322,16 @@ class Timeline implements IAppView {
       .attr('y2', 60);
 
     /*svgtimeline.selectAll('text')
-                .data(items)
-                .enter()
-                .append('text')
-                .text(function (d:any) { console.log(d.desc.name); return d.desc.name; })
-                .attr('x', function (d:any, i) {
-                return xScale(i) + circleScale(d.dim[0]);
-                })
-                .attr('y', 100)
-                .attr('font-size', '12px')
-                .attr('fill', 'black');*/
+     .data(items)
+     .enter()
+     .append('text')
+     .text(function (d:any) { console.log(d.desc.name); return d.desc.name; })
+     .attr('x', function (d:any, i) {
+     return xScale(i) + circleScale(d.dim[0]);
+     })
+     .attr('y', 100)
+     .attr('font-size', '12px')
+     .attr('fill', 'black');*/
 
 
   }
