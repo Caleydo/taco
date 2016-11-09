@@ -143,11 +143,15 @@ class Timeline implements IAppView {
      * Get the different type of changes as a sum (rows + cols) -> .../1/1/2/...
      */
 
-    idPairs.forEach((pair) => {
+    const barPromises = idPairs.map((pair) => {
+      console.log('start loading pair', pair);
       //ajax.getAPIJSON(`/taco/diff_log/20130222GbmMicrorna/20130326GbmMicrorna/10/10/2/structure,content`)
-      ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`)
-        .then((json) => {
-          console.log(json);
+      return Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`), pair])
+        .then((args) => {
+          const json = args[0];
+          const pair = args[1];
+
+          console.log('finished loading pair', pair, json);
 
           const w = 80;
           const h = 30;
@@ -183,6 +187,11 @@ class Timeline implements IAppView {
             .attr('height', (d) => d * 100)
             .attr('fill', (d, i) => <string>color(i.toString()));
         });
+    });
+
+    // check if all bars have been loaded
+    Promise.all(barPromises).then((bars) => {
+      console.log('finished loading of all bars');
     });
 
     const circleScale = d3.scale.linear()
