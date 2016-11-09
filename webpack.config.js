@@ -196,7 +196,8 @@ function generateWebpack(options) {
     (options.modules || []).forEach(function (m) {
       base.module.loaders.push({test: new RegExp('.*[\\\\/]' + m + '[\\\\/]phovea_registry.js'), loader: 'null'}); //use null loader
     });
-
+  }
+  if (!options.bundle || options.extractCss) {
     //extract the included css file to own file
     var p = new ExtractTextPlugin('style' + (options.min ? '.min' : '') + '.css');
     base.plugins.push(p);
@@ -256,6 +257,7 @@ function generateWebpackConfig(env) {
   }
 
   if (type.startsWith('app')) {
+    base.extractCss = true;
     base.bundle = true; //bundle everything together
     base.name = '[name]'; //multiple entries case
     base.commons = true; //extract commons module
