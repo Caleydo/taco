@@ -191,11 +191,11 @@ function generateWebpack(options) {
 
     //ignore extra modules
     (options.ignore || []).forEach(function (d) {
-      base.module.loaders.push({test: new RegExp(d), loader: 'null'}); //use null loader
+      base.module.loaders.push({test: new RegExp(d), loader: 'null-loader'}); //use null loader
     });
     //ingore phovea module registry calls
     (options.modules || []).forEach(function (m) {
-      base.module.loaders.push({test: new RegExp('.*[\\\\/]' + m + '[\\\\/]phovea_registry.js'), loader: 'null'}); //use null loader
+      base.module.loaders.push({test: new RegExp('.*[\\\\/]' + m + '[\\\\/]phovea_registry.js'), loader: 'null-loader'}); //use null loader
     });
   }
   if (!options.bundle || options.extractCss) {
