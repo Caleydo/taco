@@ -134,9 +134,9 @@ class Timeline implements IAppView {
 
 
     //get width of client browser window
-    console.log('Width of Window', $(window).innerWidth());
+   // console.log('Width of Window', $(window).innerWidth());
     var widthWindow = $(window).innerWidth();
-    console.log(widthWindow);
+   // console.log(widthWindow);
 
     const timeline = d3.select('#timeline');
 
@@ -144,43 +144,13 @@ class Timeline implements IAppView {
       timeline.select('svg').remove();
     }
 
-    /*Old Version of Scaling
-    const svgtimeline = timeline.append('svg')
-      .attr('preserveAspectRatio', 'xMinYMin meet')
-      .attr('viewBox', '0 0 600 200')
-      .attr('width', width)
-      .attr('height', width * aspect);*/
-
     const svgtimeline = timeline.append('svg')
       .attr('width', widthWindow)
       .attr('height', h);
-      //.classed('svg-container', true)
-      //.attr('preserveAspectRatio', 'xMinYMin meet')
-      //.attr('viewBox', '0 0 600 200')
-      //.attr('width', width)
-      //.attr('height', width * aspect)
-     // .classed('svg-content-responsive', true);
-;
 
-   /*  Version die funktioniert
-   $(window).resize(function(){
-      var width = $('#timeline').width();
-      //var height = $('#timeline').height();
-      svgtimeline.attr('width', width);
-      svgtimeline.attr('height', width * aspect);
-    });*/
 
     //console.log('Timeline-Width', $('#timeline').width());
     var widthTimelineDiv = $('#timeline').width();
-
-    /*$(window).resize(function(){
-      var width = $('#timeline').width();
-      //var height = $('#timeline').height();
-      svgtimeline.attr('width', width);
-      svgtimeline.attr('height', width * aspect);
-      //d3.select('line').attr('x2', widthWindow);
-      //line.attr('x2', widthWindow);
-    });*/
 
     /*
      //calculate time duration between two timestamps
@@ -234,16 +204,13 @@ class Timeline implements IAppView {
       .domain([0, timeRange])
       .range([20, widthTimelineDiv-20]); // 20 = Spacing
 
+
     svgtimeline.selectAll('circle')
       .data(items)
       .enter()
       .append('circle')
       .attr('title', (d:any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
       .attr('cy', 60)
-      //.attr('cx', (d:any,i) => xScale(i) + circleScale(d.item.dim[0]))
-
-      //moment(d.time) = current timestamp
-      //moment(items[0].time) = first timestamp
       .attr('cx', (d:any) => {
         if(d.time) {
           return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
@@ -256,7 +223,6 @@ class Timeline implements IAppView {
       .on('click', function(d:any) {
         (<MouseEvent>d3.event).preventDefault();
         //svgtimeline.selectAll('circle').classed('active', false);
-
 
         if (isClicked === 0) {
           console.log ('first Click');
@@ -285,12 +251,21 @@ class Timeline implements IAppView {
 
       });
 
-   
+    //Create Bars
+    const barPromises = generateBars();
 
+    // Call the resize function whenever a resize event occurs
+    d3.select(window).on('resize', resize);
+
+    // Check if all bars have been loaded
+    Promise.all(barPromises).then((bars) => {
+      console.log('finished loading of all bars');
+    });
+
+    //Resizing all element in the svg
     function resize() {
 
       widthTimelineDiv = $('#timeline').width();
-      console.log(widthTimelineDiv);
 
       // Update line
       svgtimeline.attr('width', widthTimelineDiv);
@@ -302,35 +277,35 @@ class Timeline implements IAppView {
      svgtimeline.selectAll('circle')
        .attr('cx', (d:any) => {
         if(d.time) {
-          return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
+         return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
         } else {
           return 60;
         }
       });
 
-  };
+      //Update bars
+      svgtimeline.selectAll('g').remove();
+      const barPromises = generateBars();
+
+      // check if all bars have been loaded while resizing window
+      Promise.all(barPromises).then((bars) => {
+      console.log('finished loading of all bars');
+    });
+    };
 
 
-
-    // Call the resize function whenever a resize event occurs
-    d3.select(window).on('resize', resize);
-
-    // Call the resize function
-    resize();
-
-
-    /*
-     * Get the different type of changes as a sum (rows + cols) -> .../1/1/2/...
-     */
-
-
-    const barPromises = idPairs.map((pair) => {
+    //creating 2D Ratio bars
+    function generateBars() {
+     return idPairs.map((pair) => {
       console.log('start loading pair', pair);
+      //Get the different type of changes as a sum (rows + cols) -> .../1/1/2/...
       //ajax.getAPIJSON(`/taco/diff_log/20130222GbmMicrorna/20130326GbmMicrorna/10/10/2/structure,content`)
       return Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`), pair])
         .then((args) => {
           const json = args[0];
           const pair = args[1];
+
+          console.log(args);
 
           //console.log('pair argument', pair);
           const pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
@@ -349,6 +324,7 @@ class Timeline implements IAppView {
             .range(['#D8D8D8', '#67C4A7' , '#8DA1CD', '#F08E65']);
 
           const width = 15;
+
           const svgRatioBar = svgtimeline.append('g')
             .style('transform', 'translate(' + (pairPosX[0] + 0.5*(pairPosX[1] - pairPosX[0] - width)) + 'px)');
 
@@ -361,16 +337,13 @@ class Timeline implements IAppView {
             .attr('width', width)
             .attr('height', (d) => d * 100)
             .attr('fill', (d, i) => <string>color(i.toString()));
+
+
         });
     });
-
-    // check if all bars have been loaded
-    Promise.all(barPromises).then((bars) => {
-      console.log('finished loading of all bars');
-    });
-
   }
 
+  }
 }
 
 /**
