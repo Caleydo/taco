@@ -45,7 +45,7 @@ class Timeline implements IAppView {
       <!--<h3>${Language.TIMELINE}</h3>-->
       <ul class="output"></ul>
       <div id="ratioBar" class ="ratioBarChart"></div>
-      <div id="timeline" class="svg-container"></div>
+      <div id="timeline"></div>
     `);
 
 
@@ -106,92 +106,39 @@ class Timeline implements IAppView {
     const w = 600;
     const h = 200;
 
-    //resize
-    var width = $('#timeline').width();
-    //var height = $('#timeline').height();
-    //console.log(width);
-    var aspect = w/h;
-    //console.log(aspect);
-
-    /*const xScale = d3.scale.linear()
-     .domain([0, items.length])
-     .range([0, w]);*/
-
-    //console.log(items);
-
-    console.log(items.length);
-    //id-name of element
-    //var id1 = items[1].item.desc.id;
-    //var id2 = items[2].item.desc.id;
-    /* console.log('DataItems');
-     console.log(items[0]);
-     console.log(items[1]);*/
-
-    var ids:any [] = [];
-
-    for (var _i = 0; _i < items.length-1; _i++) {
-      ids.push(items[_i].item.desc.id);
-    }
-    console.log('ID - Array');
-    console.log(ids);
+    var ids:any [] = items.map((d) => d.item.desc.id);
+    //console.log('ID - Array');
+    //console.log(ids);
 
     var idPairs = d3.pairs(ids);
 
-    console.log('ID-Paris');
-    console.log(idPairs);
-    console.log(idPairs[0][0]);
+    //console.log('ID-Paris');
+    //console.log(idPairs);
+    //console.log(idPairs[0][0]);
 
-    /*
-     * Get the different type of changes as a sum (rows + cols) -> .../1/1/2/...
-     */
+    //resize
+    //var width = $('#timeline').width();
+    //var height = $('#timeline').height();
+    //console.log(width);
+    //var aspect = w/h;
+    //console.log(aspect);
 
-    idPairs.forEach((pair) => {
-      //ajax.getAPIJSON(`/taco/diff_log/20130222GbmMicrorna/20130326GbmMicrorna/10/10/2/structure,content`)
-      ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`)
-        .then((json) => {
-          console.log(json);
+     /*const xScale = d3.scale.linear()
+     .domain([0, items.length])
+     .range([0, w]);*/
 
-          const w = 80;
-          const h = 30;
-          const barPadding = 0.5;
-
-          const data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
-          //console.log(data);
-
-          const color = d3.scale.ordinal()
-            .domain(<any>[ 0, data.length -1])
-            .range(['#D8D8D8', '#67C4A7' , '#8DA1CD', '#F08E65']);
-          /*console.log(color(0));
-           console.log(color(1));
-           console.log(color(2));
-           console.log(color(3));*/
-
-          const ratioBarChart = d3.select('#ratioBar');
-          /*  if(ratioBarChart.select('svg').size() > 0) {
-           ratioBarChart.select('svg').remove();
-           }*/
-
-          const svgRatioBar = ratioBarChart.append('svg')
-            .attr('width', w)
-            .attr('height', h);
-
-          svgRatioBar.selectAll('rect')
-            .data(data)
-            .enter()
-            .append('rect')
-            .attr('x', (d,i) => i * (w  / data.length - barPadding))
-            .attr('y', (d, i) => h  - d * 100)
-            .attr('width', 15)
-            .attr('height', (d) => d * 100)
-            .attr('fill', (d, i) => <string>color(i.toString()));
-        });
-    });
-
+    //Scaling factor for the size of the circles on the timeline
     const circleScale = d3.scale.linear()
       .domain([0, d3.max(items, (d:any) => d.item.dim[0]) ])
-      .range([10, h/100]);
+      .range([10, 5]);   //h/100
 
     //console.log(d3.max(items, (d:any,i) => d.dim[i]));
+
+
+    //get width of client browser window
+   // console.log('Width of Window', $(window).innerWidth());
+    var widthWindow = $(window).innerWidth();
+   // console.log(widthWindow);
 
     const timeline = d3.select('#timeline');
 
@@ -200,31 +147,12 @@ class Timeline implements IAppView {
     }
 
     const svgtimeline = timeline.append('svg')
-      .attr('preserveAspectRatio', 'xMinYMin meet')
-      .attr('viewBox', '0 0 600 200')
-      //.classed('svg-content', true)
-      .attr('width', width)
-      .attr('height', width * aspect);
-    //.attr('width', w)
-    //.attr('height', h);
-
-    $(window).resize(function(){
-      var width = $('#timeline').width();
-      //var height = $('#timeline').height();
-      svgtimeline.attr('width', width);
-      svgtimeline.attr('height', width * aspect);
-    });
+      .attr('width', widthWindow)
+      .attr('height', h);
 
 
-    //helper variable for clicking event
-    var isClicked = 0;
-
-    svgtimeline.append('line')
-      .style('stroke', 'black')
-      .attr('x1', 0)
-      .attr('y1', 60)
-      .attr('x2', w)
-      .attr('y2', 60);
+    //console.log('Timeline-Width', $('#timeline').width());
+    var widthTimelineDiv = $('#timeline').width();
 
     /*
      //calculate time duration between two timestamps
@@ -256,19 +184,28 @@ class Timeline implements IAppView {
      }
      */
 
+    svgtimeline.append('line')
+      .style('stroke', 'black')
+      .attr('x1', 0)
+      .attr('y1', 60)
+      .attr('x2', widthTimelineDiv-10)
+      .attr('y2', 60);
+
+    //helper variable for clicking event
+    var isClicked = 0;
     //gesamter Zeitbereich in Tagen
     var firstTimePoint = moment(items[0].time);
     var lastTimePoint =  moment(items[items.length-1].time);
     var timeRange = lastTimePoint.diff(firstTimePoint, 'days');
 
     // Abbildungsbereich = Width
-
     // Skalierungfaktor = Width / Time Range
 
 
     const xScaleTime = d3.scale.linear()
       .domain([0, timeRange])
-      .range([20, w-20]); // 20 = Spacing
+      .range([20, widthTimelineDiv-20]); // 20 = Spacing
+
 
     svgtimeline.selectAll('circle')
       .data(items)
@@ -276,16 +213,18 @@ class Timeline implements IAppView {
       .append('circle')
       .attr('title', (d:any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
       .attr('cy', 60)
-      //.attr('cx', (d:any,i) => xScale(i) + circleScale(d.item.dim[0]))
-
-      //moment(d.time) = current timestamp
-      //moment(items[0].time) = first timestamp
-      .attr('cx', (d:any) => xScaleTime(moment(d.time).diff(moment(items[0].time),'days')))
+      .attr('cx', (d:any) => {
+        if(d.time) {
+          return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
+        } else {
+          return 60;
+        }
+      })
+      .attr('id', (d:any) => 'circle_' + d.item.desc.id)
       .attr('r', (d:any) => circleScale(d.item.dim[0]))
       .on('click', function(d:any) {
         (<MouseEvent>d3.event).preventDefault();
         //svgtimeline.selectAll('circle').classed('active', false);
-
 
         if (isClicked === 0) {
           console.log ('first Click');
@@ -314,28 +253,99 @@ class Timeline implements IAppView {
 
       });
 
-    svgtimeline.append('line')
-      .style('stroke', 'black')
-      .attr('x1', 0)
-      .attr('y1', 60)
-      .attr('x2', w)
-      .attr('y2', 60);
+    //Create Bars
+    const barPromises = generateBars();
 
-    /*svgtimeline.selectAll('text')
-     .data(items)
-     .enter()
-     .append('text')
-     .text(function (d:any) { console.log(d.desc.name); return d.desc.name; })
-     .attr('x', function (d:any, i) {
-     return xScale(i) + circleScale(d.dim[0]);
-     })
-     .attr('y', 100)
-     .attr('font-size', '12px')
-     .attr('fill', 'black');*/
+    // Call the resize function whenever a resize event occurs
+    d3.select(window).on('resize', resize);
+
+    // Check if all bars have been loaded
+    Promise.all(barPromises).then((bars) => {
+      console.log('finished loading of all bars');
+    });
+
+    //Resizing all element in the svg
+    function resize() {
+
+      widthTimelineDiv = $('#timeline').width();
+
+      // Update line
+      svgtimeline.attr('width', widthTimelineDiv);
+      d3.select('line').attr('x2', widthTimelineDiv);
+
+      //Updating scale for circle position
+      xScaleTime.range([20, widthTimelineDiv-20]);
+
+     svgtimeline.selectAll('circle')
+       .attr('cx', (d:any) => {
+        if(d.time) {
+         return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
+        } else {
+          return 60;
+        }
+      });
+
+      //Update bars
+      svgtimeline.selectAll('g').remove();
+      const barPromises = generateBars();
+
+      // check if all bars have been loaded while resizing window
+      Promise.all(barPromises).then((bars) => {
+      console.log('finished loading of all bars');
+    });
+    };
 
 
+    //creating 2D Ratio bars
+    function generateBars() {
+     return idPairs.map((pair) => {
+      console.log('start loading pair', pair);
+      //Get the different type of changes as a sum (rows + cols) -> .../1/1/2/...
+      //ajax.getAPIJSON(`/taco/diff_log/20130222GbmMicrorna/20130326GbmMicrorna/10/10/2/structure,content`)
+      return Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`), pair])
+        .then((args) => {
+          const json = args[0];
+          const pair = args[1];
+
+          console.log(args);
+
+          //console.log('pair argument', pair);
+          const pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
+
+          console.log('finished loading pair', pair, pairPosX, json);
+
+          const w = 80;
+          const h = 30;
+          const barPadding = 0.5;
+
+          const data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
+          //console.log(data);
+
+          const color = d3.scale.ordinal()
+            .domain(<any>[ 0, data.length -1])
+            .range(['#D8D8D8', '#67C4A7' , '#8DA1CD', '#F08E65']);
+
+          const width = 15;
+
+          const svgRatioBar = svgtimeline.append('g')
+            .style('transform', 'translate(' + (pairPosX[0] + 0.5*(pairPosX[1] - pairPosX[0] - width)) + 'px)');
+
+          svgRatioBar.selectAll('rect')
+            .data(data)
+            .enter()
+            .append('rect')
+            .attr('x', (d,i) => i * (w  / data.length - barPadding))
+            .attr('y', (d, i) => h  - d * 100)
+            .attr('width', width)
+            .attr('height', (d) => d * 100)
+            .attr('fill', (d, i) => <string>color(i.toString()));
+
+
+        });
+    });
   }
 
+  }
 }
 
 /**
