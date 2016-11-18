@@ -48,7 +48,6 @@ class Timeline implements IAppView {
       <div id="timeline"></div>
     `);
 
-
   }
 
   /**
@@ -66,11 +65,11 @@ class Timeline implements IAppView {
     // TODO retrieve selected data set and update the timeline with it
 
     // set selection by default to first item
-    var selected = (items.length > 0) ? items[0].item : undefined;
+   // var selected = (items.length > 0) ? items[0].item : undefined;
 
-    const $li = this.$node.select('ul.output').selectAll('li').data(items);
+    //const $li = this.$node.select('ul.output').selectAll('li').data(items);
 
-    $li.enter()
+    /*$li.enter()
       .append('li')
       .append('a')
       .attr('href', '#');
@@ -96,12 +95,12 @@ class Timeline implements IAppView {
         events.fire(AppConstants.EVENT_DATASET_SELECTED, d.item);
       });
 
-    $li.exit().remove();
+    $li.exit().remove();*/
 
     // initialize other views with the first item
-    if(selected !== undefined) {
+    /*if(selected !== undefined) {
       events.fire(AppConstants.EVENT_DATASET_SELECTED, selected);
-    }
+    }*/
 
     const w = 600;
     const h = 200;
