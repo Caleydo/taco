@@ -205,18 +205,18 @@ class Timeline implements IAppView {
       .domain([0, timeRange])
       .range([20, widthTimelineDiv-20]); // 20 = Spacing
 
-
     svgtimeline.selectAll('circle')
       .data(items)
       .enter()
       .append('circle')
       .attr('title', (d:any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
       .attr('cy', 60)
-      .attr('cx', (d:any) => {
+      .attr('cx', (d:any, i) => {
         if(d.time) {
           return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
         } else {
-          return 60;
+          return i * ((widthTimelineDiv-20)/7);
+
         }
       })
       .attr('id', (d:any) => 'circle_' + d.item.desc.id)
@@ -253,7 +253,8 @@ class Timeline implements IAppView {
       });
 
     //Create Bars
-    const barPromises = generateBars();
+    const barPromises = generateBars(20);
+    //console.log('übergabe dingsi', generateBars(1));
 
     // Call the resize function whenever a resize event occurs
     d3.select(window).on('resize', resize);
@@ -262,6 +263,8 @@ class Timeline implements IAppView {
     Promise.all(barPromises).then((bars) => {
       console.log('finished loading of all bars');
     });
+
+    var rectWidth = 13;
 
     //Resizing all element in the svg
     function resize() {
@@ -275,28 +278,42 @@ class Timeline implements IAppView {
       //Updating scale for circle position
       xScaleTime.range([20, widthTimelineDiv-20]);
 
-     svgtimeline.selectAll('circle')
-       .attr('cx', (d:any) => {
-        if(d.time) {
-         return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
-        } else {
-          return 60;
-        }
-      });
+      svgtimeline.selectAll('circle')
+        .attr('cx', (d:any, i ) => {
+          if(d.time) {
+            return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
+          } else {
+            return i * ((widthTimelineDiv-20)/7);
+          }
+        });
 
       //Update bars
       svgtimeline.selectAll('g').remove();
-      const barPromises = generateBars();
 
+      if(widthTimelineDiv <= 800) {
+        if (rectWidth >= 5) {
+          svgtimeline.selectAll('g').remove();
+          console.log('all bars deleted');
+        } else {
+          rectWidth = rectWidth-1;
+          generateBars(rectWidth);
+          console.log('rectWidth after minus', rectWidth );
+        }
+      } else if (widthTimelineDiv >= 800) {
+        rectWidth = 15;
+        generateBars(rectWidth);
+        console.log('Browser Window grows');
+      }
       // check if all bars have been loaded while resizing window
-      Promise.all(barPromises).then((bars) => {
+      /*Promise.all(barPromises).then((bars) => {
       console.log('finished loading of all bars');
-    });
+    });*/
     };
 
+    //generateBars(20);
 
     //creating 2D Ratio bars
-    function generateBars() {
+    function generateBars(width) {
      return idPairs.map((pair) => {
       console.log('start loading pair', pair);
       //Get the different type of changes as a sum (rows + cols) -> .../1/1/2/...
@@ -324,7 +341,6 @@ class Timeline implements IAppView {
             .domain(<any>[ 0, data.length -1])
             .range(['#D8D8D8', '#67C4A7' , '#8DA1CD', '#F08E65']);
 
-          const width = 15;
 
           const svgRatioBar = svgtimeline.append('g')
             .style('transform', 'translate(' + (pairPosX[0] + 0.5*(pairPosX[1] - pairPosX[0] - width)) + 'px)');
@@ -339,6 +355,7 @@ class Timeline implements IAppView {
             .attr('height', (d) => d * 100)
             .attr('fill', (d, i) => <string>color(i.toString()));
 
+          return svgRatioBar;
 
         });
     });
