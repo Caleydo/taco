@@ -264,6 +264,8 @@ class Timeline implements IAppView {
       console.log('finished loading of all bars');
     });
 
+    generate2DRatioHistogram();
+
     var rectWidth = 13;
 
     //Resizing all element in the svg
@@ -324,6 +326,7 @@ class Timeline implements IAppView {
           const pair = args[1];
 
           console.log(args);
+          console.log('json-data', json);
 
           //console.log('pair argument', pair);
           const pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
@@ -361,8 +364,73 @@ class Timeline implements IAppView {
     });
   }
 
+
+
+    //generate 2DRatioHistogram
+    function generate2DRatioHistogram() {
+
+
+      return idPairs.map((pair) => {
+      console.log('start loading pair', pair);
+      Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/5/5/2/structure,content`), pair])
+        .then((args) => {
+          const json = args[0];
+          const pair = args[1];
+
+          //console.log('Args', args);
+          //console.log('json', json);
+          console.log('finished loading 2DRatioHistogram', json);
+          //console.log(json.content);
+
+          const data_list = [];
+
+          //console.log('No-ratio wert row null', json.cols[0].ratio.no_ratio);
+
+          const cols= json.cols;
+          const rows = json.rows;
+
+
+          for (var key in cols) {
+            if( cols.hasOwnProperty( key ) ) {
+
+             // console.log(cols[key], 'all array of rows');
+              data_list.push({
+
+                cols: cols[key].ratio.no_ratio + cols[key].ratio.a_ratio + cols[key].ratio.c_ratio + cols[key].ratio.d_ratio,
+                rows: rows[key].ratio.no_ratio + rows[key].ratio.a_ratio + rows[key].ratio.c_ratio + rows[key].ratio.d_ratio,
+                rows_text : Math.round((rows[key].ratio.d_ratio * 100)*1000)/1000,
+                cols_text : Math.round((cols[key].ratio.d_ratio * 100)*1000)/1000,
+                type: 'struct-del'});
+
+              data_list.push({
+
+                cols: cols[key].ratio.no_ratio + cols[key].ratio.a_ratio + cols[key].ratio.c_ratio ,
+                rows: rows[key].ratio.no_ratio + rows[key].ratio.a_ratio + rows[key].ratio.c_ratio ,
+                rows_text : Math.round((rows[key].ratio.a_ratio * 100)*1000)/1000,
+                cols_text : Math.round((cols[key].ratio.a_ratio * 100)*1000)/1000,
+                type: 'struct-add'});
+
+
+            }
+          }
+           console.log('Data-List' , data_list);
+
+          /*for (var key in cols) {
+            if( cols.hasOwnProperty( key ) ) {
+              data_list.push({
+                cols: cols[key].ratio.no_ratio + cols[key].ratio.a_ratio + cols[key].ratio.c_ratio + cols[key].ratio.d_ratio,
+                type: 'struct-del'});
+              console.log('Data-List' , data_list);
+
+            }
+          }*/
+
+        });
+      });
+    }
   }
 }
+
 
 /**
  * Factory method to create a new Timeline instance
