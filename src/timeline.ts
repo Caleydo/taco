@@ -64,80 +64,20 @@ class Timeline implements IAppView {
   private updateItems(items) {
     // TODO retrieve selected data set and update the timeline with it
 
-    // set selection by default to first item
-   // var selected = (items.length > 0) ? items[0].item : undefined;
-
-    //const $li = this.$node.select('ul.output').selectAll('li').data(items);
-
-    /*$li.enter()
-      .append('li')
-      .append('a')
-      .attr('href', '#');
-
-    $li.select('a')
-      .classed('active', (d) => d === selected)
-      .text((d) => {
-        if(d.time) {
-          return `${d.time.format(AppConstants.DATE_FORMAT)} (${d.item.dim[0]} x ${d.item.dim[1]})`;
-        } else {
-          return `${d.key} (${d.item.dim[0]} x ${d.item.dim[1]})`;
-        }
-      })
-      .on('click', function(d) {
-        // prevents triggering the href
-        (<MouseEvent>d3.event).preventDefault();
-
-        // toggle the active CSS classes
-        $li.select('a').classed('active', false);
-        d3.select(this).classed('active', true);
-
-        // dispatch selected dataset to other views
-        events.fire(AppConstants.EVENT_DATASET_SELECTED, d.item);
-      });
-
-    $li.exit().remove();*/
-
-    // initialize other views with the first item
-    /*if(selected !== undefined) {
-      events.fire(AppConstants.EVENT_DATASET_SELECTED, selected);
-    }*/
-
-    const w = 600;
     const h = 200;
 
     var ids:any [] = items.map((d) => d.item.desc.id);
-    //console.log('ID - Array');
-    //console.log(ids);
 
     var idPairs = d3.pairs(ids);
-
-    //console.log('ID-Paris');
-    //console.log(idPairs);
-    //console.log(idPairs[0][0]);
-
-    //resize
-    //var width = $('#timeline').width();
-    //var height = $('#timeline').height();
-    //console.log(width);
-    //var aspect = w/h;
-    //console.log(aspect);
-
-     /*const xScale = d3.scale.linear()
-     .domain([0, items.length])
-     .range([0, w]);*/
 
     //Scaling factor for the size of the circles on the timeline
     const circleScale = d3.scale.linear()
       .domain([0, d3.max(items, (d:any) => d.item.dim[0]) ])
       .range([10, 5]);   //h/100
 
-    //console.log(d3.max(items, (d:any,i) => d.dim[i]));
-
-
     //get width of client browser window
-   // console.log('Width of Window', $(window).innerWidth());
     var widthWindow = $(window).innerWidth();
-   // console.log(widthWindow);
+
 
     const timeline = d3.select('#timeline');
 
@@ -149,39 +89,8 @@ class Timeline implements IAppView {
       .attr('width', widthWindow)
       .attr('height', h);
 
-
-    //console.log('Timeline-Width', $('#timeline').width());
+    //width of the timeline div
     var widthTimelineDiv = $('#timeline').width();
-
-    /*
-     //calculate time duration between two timestamps
-     // time from title attribute - are String elements
-     var time:number [] = [];
-
-     for (var _i = 0; _i < items.length; _i++) {
-     var store =  items[_i].time;
-
-     time.push(store);
-
-     }
-
-     var diffs:any [] = [];
-
-     var pairs = d3.pairs(time);
-     console.log('Pairs');
-     console.log(pairs);
-
-
-     for (var _i = 0; _i < pairs.length-1; _i++) {
-     var a = moment(pairs[_i][0]);
-     var b = moment(pairs[_i][1]);
-     console.log(a);
-     console.log(b);
-     var diff = b.diff(a, 'days');
-     diffs.push(diff);
-     console.log(diffs);
-     }
-     */
 
     svgtimeline.append('line')
       .style('stroke', 'black')
@@ -192,7 +101,7 @@ class Timeline implements IAppView {
 
     //helper variable for clicking event
     var isClicked = 0;
-    //gesamter Zeitbereich in Tagen
+    //overall time span in days
     var firstTimePoint = moment(items[0].time);
     var lastTimePoint =  moment(items[items.length-1].time);
     var timeRange = lastTimePoint.diff(firstTimePoint, 'days');
@@ -205,6 +114,15 @@ class Timeline implements IAppView {
       .domain([0, timeRange])
       .range([20, widthTimelineDiv-20]); // 20 = Spacing
 
+    function scaleCircles(widthTimelineDiv) {
+      //Padding for the circles
+      const padding = 20;
+      //showing only 7 circles on the timeline when no time-object is availiable for the specific dataset
+      // in the next step -> implement the feature of a scroll bar showing more data points on the timeline
+      const numberofCircles = 7;
+      return (widthTimelineDiv - padding) / numberofCircles;
+    }
+
 
     svgtimeline.selectAll('circle')
       .data(items)
@@ -212,18 +130,18 @@ class Timeline implements IAppView {
       .append('circle')
       .attr('title', (d:any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
       .attr('cy', 60)
-      .attr('cx', (d:any) => {
+      .attr('cx', (d:any, i) => {
         if(d.time) {
           return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
         } else {
-          return 60;
+          return i * scaleCircles(widthTimelineDiv);
+
         }
       })
       .attr('id', (d:any) => 'circle_' + d.item.desc.id)
       .attr('r', (d:any) => circleScale(d.item.dim[0]))
       .on('click', function(d:any) {
         (<MouseEvent>d3.event).preventDefault();
-        //svgtimeline.selectAll('circle').classed('active', false);
 
         if (isClicked === 0) {
           console.log ('first Click');
@@ -253,7 +171,7 @@ class Timeline implements IAppView {
       });
 
     //Create Bars
-    const barPromises = generateBars();
+    const barPromises = generateBars(20);
 
     // Call the resize function whenever a resize event occurs
     d3.select(window).on('resize', resize);
@@ -262,6 +180,9 @@ class Timeline implements IAppView {
     Promise.all(barPromises).then((bars) => {
       console.log('finished loading of all bars');
     });
+
+    var rectWidth = 13;
+
 
     //Resizing all element in the svg
     function resize() {
@@ -275,40 +196,41 @@ class Timeline implements IAppView {
       //Updating scale for circle position
       xScaleTime.range([20, widthTimelineDiv-20]);
 
-     svgtimeline.selectAll('circle')
-       .attr('cx', (d:any) => {
-        if(d.time) {
-         return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
-        } else {
-          return 60;
-        }
-      });
+      svgtimeline.selectAll('circle')
+        .attr('cx', (d:any, i ) => {
+          if(d.time) {
+            return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
+          } else {
+            return i * scaleCircles(widthTimelineDiv);
+          }
+        });
 
       //Update bars
       svgtimeline.selectAll('g').remove();
-      const barPromises = generateBars();
 
-      // check if all bars have been loaded while resizing window
-      Promise.all(barPromises).then((bars) => {
-      console.log('finished loading of all bars');
-    });
+      if(widthTimelineDiv <= 800) {
+        if (rectWidth >= 5) {
+          svgtimeline.selectAll('g').remove();
+        } else {
+          rectWidth = rectWidth-1;
+          generateBars(rectWidth);
+        }
+      } else {
+        rectWidth = 15;
+        generateBars(rectWidth);
+      }
     };
 
-
     //creating 2D Ratio bars
-    function generateBars() {
+    function generateBars(width) {
      return idPairs.map((pair) => {
       console.log('start loading pair', pair);
-      //Get the different type of changes as a sum (rows + cols) -> .../1/1/2/...
-      //ajax.getAPIJSON(`/taco/diff_log/20130222GbmMicrorna/20130326GbmMicrorna/10/10/2/structure,content`)
+
       return Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`), pair])
         .then((args) => {
           const json = args[0];
           const pair = args[1];
 
-          console.log(args);
-
-          //console.log('pair argument', pair);
           const pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
 
           console.log('finished loading pair', pair, pairPosX, json);
@@ -318,13 +240,11 @@ class Timeline implements IAppView {
           const barPadding = 0.5;
 
           const data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
-          //console.log(data);
 
           const color = d3.scale.ordinal()
             .domain(<any>[ 0, data.length -1])
             .range(['#D8D8D8', '#67C4A7' , '#8DA1CD', '#F08E65']);
 
-          const width = 15;
 
           const svgRatioBar = svgtimeline.append('g')
             .style('transform', 'translate(' + (pairPosX[0] + 0.5*(pairPosX[1] - pairPosX[0] - width)) + 'px)');
@@ -339,6 +259,7 @@ class Timeline implements IAppView {
             .attr('height', (d) => d * 100)
             .attr('fill', (d, i) => <string>color(i.toString()));
 
+          return svgRatioBar;
 
         });
     });
