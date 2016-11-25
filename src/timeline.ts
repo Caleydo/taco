@@ -11,6 +11,7 @@ import * as moment from 'moment';
 import * as ajax from 'phovea_core/src/ajax';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
+import any = jasmine.any;
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -46,6 +47,7 @@ class Timeline implements IAppView {
       <ul class="output"></ul>
       <div id="ratioBar" class ="ratioBarChart"></div>
       <div id="timeline"></div>
+      <div id="ratiochart"></div>
     `);
 
   }
@@ -173,6 +175,12 @@ class Timeline implements IAppView {
     //Create Bars
     const barPromises = generateBars(20);
 
+    const ratiochart = d3.select('#ratiochart');
+    const svgratiochart = ratiochart.append('svg');
+
+
+
+
     // Call the resize function whenever a resize event occurs
     d3.select(window).on('resize', resize);
 
@@ -181,7 +189,7 @@ class Timeline implements IAppView {
       console.log('finished loading of all bars');
     });
 
-    generate2DRatioHistogram();
+
 
     var rectWidth = 13;
 
@@ -259,7 +267,11 @@ class Timeline implements IAppView {
             .attr('y', (d, i) => h  - d * 100)
             .attr('width', width)
             .attr('height', (d) => d * 100)
-            .attr('fill', (d, i) => <string>color(i.toString()));
+            .attr('fill', (d, i) => <string>color(i.toString()))
+            .on('click', function(pair1, pair2){
+
+              generate2DRatioHistogram(pair1, pair2);
+            });
 
           return svgRatioBar;
 
@@ -269,9 +281,9 @@ class Timeline implements IAppView {
 
 
 
-    //generate 2DRatioHistogram
-    function generate2DRatioHistogram() {
 
+    //generate 2DRatioHistogram
+    function generate2DRatioHistogram(pair1, pair2) {
 
       return idPairs.map((pair) => {
       console.log('start loading pair', pair);
@@ -280,23 +292,19 @@ class Timeline implements IAppView {
           const json = args[0];
           const pair = args[1];
 
-          //console.log('Args', args);
-          //console.log('json', json);
-          console.log('finished loading 2DRatioHistogram', json);
+          console.log('json', json);
+          console.log('pairs', pair1, pair2);
+          console.log('finished loading 2DRatioHistogram', json, pair);
           //console.log(json.content);
 
           const data_list = [];
 
-          //console.log('No-ratio wert row null', json.cols[0].ratio.no_ratio);
-
           const cols= json.cols;
           const rows = json.rows;
-
 
           for (var key in cols) {
             if( cols.hasOwnProperty( key ) ) {
 
-             // console.log(cols[key], 'all array of rows');
               data_list.push({
 
                 cols: cols[key].ratio.no_ratio + cols[key].ratio.a_ratio + cols[key].ratio.c_ratio + cols[key].ratio.d_ratio,
@@ -313,20 +321,51 @@ class Timeline implements IAppView {
                 cols_text : Math.round((cols[key].ratio.a_ratio * 100)*1000)/1000,
                 type: 'struct-add'});
 
+              data_list.push({
+                cols: cols[key].ratio.c_ratio  + cols[key].no_ratio,
+                rows: rows[key].ratio.c_ratio + rows[key].ratio.no_ratio,
+                rows_text : Math.round((rows[key].ratio.c_ratio * 100)*1000)/1000,
+                cols_text : Math.round((cols[key].ratio.c_ratio * 100)*1000)/1000,
+                type: 'content-change' });
 
+              data_list.push({
+                cols: cols[key].ratio.no_ratio,
+                rows: rows[key].ratio.no_ratio,
+                rows_text : Math.round((rows[key].ratio.no_ratio * 100)*1000)/1000,
+                cols_text : Math.round((cols[key].ratio.no_ratio * 100)*1000)/1000,
+                type: 'no-change'});
             }
           }
-           console.log('Data-List' , data_list);
 
-          /*for (var key in cols) {
-            if( cols.hasOwnProperty( key ) ) {
-              data_list.push({
-                cols: cols[key].ratio.no_ratio + cols[key].ratio.a_ratio + cols[key].ratio.c_ratio + cols[key].ratio.d_ratio,
-                type: 'struct-del'});
-              console.log('Data-List' , data_list);
+          console.log('Data-List' , data_list);
 
-            }
-          }*/
+          var width = 160,  height = 160;
+
+          var x = d3.scale.linear()
+             .domain([0,1])
+             .range([0, width]);
+
+          var y = d3.scale.linear()
+            .domain([0, 1])
+          .range([0, height]);
+
+
+          svgratiochart.selectAll('rect')
+            .data(data_list)
+            .enter()
+            .append('rect')
+            .attr('class', function(d){
+              return d.type + '-color';
+            })
+            .style('width', function (d){
+               return x(d.cols) + 'px';
+             })
+            .attr('height', function (d){
+               return y(d.rows) + 'px';
+             })
+            .attr('title', function(d){
+              return  d.type.replace('-', ' ') + '\x0Arows: ' + d.rows_text + '%\x0Acolumns: ' + d.cols_text +'%';
+            });
 
         });
       });
