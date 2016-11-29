@@ -16,10 +16,15 @@ class Histogram2D implements IAppView {
 
   private $node;
 
-  private $svg;
+  private $ratio;
 
-  private height = 160;
-  private width = 160;
+  private borderWidth = 2;
+
+  private height = 160 + this.borderWidth;
+  private width = 160 + this.borderWidth;
+
+  private x = d3.scale.linear().domain([0, 1]).range([0, this.width]);
+  private y = d3.scale.linear().domain([0, 1]).range([0, this.height]);
 
   private static getURL(pair) {
     const bin_cols = -1; // -1 = aggregate the whole table
@@ -30,7 +35,10 @@ class Histogram2D implements IAppView {
   }
 
   constructor(parent: Element, private options: any) {
-    this.$node = d3.select(parent).append('div').classed('histogram_2d', true);
+    this.$node = d3.select(parent)
+      .append('div')
+      .classed('histogram_2d', true)
+      .classed('hidden', true);
   }
 
   /**
@@ -51,21 +59,27 @@ class Histogram2D implements IAppView {
    */
   private build() {
     //get width of client browser window
-    const widthWindow = $(window).innerWidth();
+    const windowWidth = $(window).innerWidth();
 
-    //height of svg for 2dratiohistogram
-    const height = 160;
+    this.$node
+      .style('width', windowWidth + 'px')
+      .style('height', this.height + 'px');
 
-    this.$svg = this.$node.append('svg')
-      .attr('width', widthWindow)
-      .attr('height', height);
+    this.$ratio = this.$node.append('div').classed('ratio', true);
   }
 
   /**
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(AppConstants.EVENT_OPEN_2D_HISTOGRAM, (evt, posX, pair) => this.updateItems(posX, pair));
+    events.on(AppConstants.EVENT_CLOSE_2D_HISTOGRAM, () => {
+      this.$node.classed('hidden', true);
+    });
+
+    events.on(AppConstants.EVENT_OPEN_2D_HISTOGRAM, (evt, posX, pair) => {
+      this.$node.classed('hidden', false);
+      this.updateItems(posX, pair);
+    });
   }
 
   private updateItems(posX, pair) {
@@ -74,7 +88,6 @@ class Histogram2D implements IAppView {
   }
 
   private requestData(pair) {
-    //console.log('start loading pair', pair1, pair2);
     return ajax.getAPIJSON(Histogram2D.getURL(pair))
       .then((json) => {
         const data = [];
@@ -117,33 +130,23 @@ class Histogram2D implements IAppView {
   }
 
   private showData(posX, data) {
-    const g = this.$svg.append('g')
-      .style('transform', 'translate(' + posX + 'px)');
+    const div = this.$ratio
+      .style('left', posX + 'px')
+      .style('width', this.width + 'px')
+      .style('height', this.height + 'px');
 
-    const x = d3.scale.linear()
-      .domain([0, 1])
-      .range([0, this.width]);
+    const ratio2d = div.selectAll('div').data(data);
 
-    const y = d3.scale.linear()
-      .domain([0, 1])
-      .range([0, this.height]);
+    ratio2d.enter()
+      .append('div');
 
-    g.selectAll('rect')
-      .data(data)
-      .enter()
-      .append('rect')
-      .attr('class', function (d) {
-        return d.type + '-color';
-      })
-      .style('width', function (d) {
-        return x(d.cols) + 'px';
-      })
-      .attr('height', function (d) {
-        return y(d.rows) + 'px';
-      })
-      .attr('title', function (d) {
-        return d.type.replace('-', ' ') + '\x0Arows: ' + d.rows_text + '%\x0Acolumns: ' + d.cols_text + '%';
-      });
+    ratio2d
+      .attr('class', (d) => d.type + '-color')
+      .style('width', (d) => this.x(d.cols) + 'px')
+      .style('height', (d) => this.y(d.rows) + 'px')
+      .attr('title', (d) => d.type.replace('-', ' ') + '\x0Arows: ' + d.rows_text + '%\x0Acolumns: ' + d.cols_text + '%');
+
+    ratio2d.exit().remove();
   }
 
 }

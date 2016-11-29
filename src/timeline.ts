@@ -41,13 +41,7 @@ class Timeline implements IAppView {
   private build() {
     // TODO build timeline using D3 of parts that doesn't change on update()
     this.$node.html(`
-      <!--<h3>${Language.TIMELINE}</h3>-->
-      <ul class="output"></ul>
-      <div id="interface"></div> <!--Placeholder für Interface elements-->
-      <div id="ratiochart"></div> <!--2DRatioHistogramm-->
-      <div id="ratioBar" class ="ratioBarChart"></div> 
-      <div id="timeline"></div> <!--timeline-->
-      
+      <div id="timeline"></div>
     `);
 
   }
@@ -225,10 +219,8 @@ class Timeline implements IAppView {
       }
     }
 
-    let svgRatioChart: any;
-
     // helper variable for on click event
-    let openRatio = 0;
+    let isHistogram2dOpen = false;
 
     // creating 2D Ratio bars
     function generateBars(width) {
@@ -268,22 +260,16 @@ class Timeline implements IAppView {
               .attr('height', (d) => d * 100)
               .attr('fill', (d, i) => <string>color(i.toString()))
               .on('click', function () {
-
                 const parentNode = d3.select(this.parentNode);
                 const currentPosX = d3.transform(parentNode.style('transform')).translate[0];
-                //svgtimeline.selectAll('g').remove();
 
-                if (openRatio === 0) {
-                  events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, pair);
-                  openRatio = 1;
-
+                if (isHistogram2dOpen) {
+                  events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
                 } else {
-                  if (svgRatioChart.select('rect').size() > 0) {
-                    svgRatioChart.selectAll('rect').remove();
-                  }
-                  openRatio = 0;
+                  events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, pair);
                 }
 
+                isHistogram2dOpen = !isHistogram2dOpen;
               });
 
           });
