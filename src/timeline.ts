@@ -6,12 +6,10 @@ import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 import {Language} from './language';
-//import moment = require("../../libs/bower_components/moment/moment");
 import * as moment from 'moment';
 import * as ajax from 'phovea_core/src/ajax';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
-import any = jasmine.any;
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -71,9 +69,9 @@ class Timeline implements IAppView {
     const h = 200;
 
 
-    var ids:any [] = items.map((d) => d.item.desc.id);
+    const ids:any [] = items.map((d) => d.item.desc.id);
 
-    var idPairs = d3.pairs(ids);
+    const idPairs = d3.pairs(ids);
 
     //Scaling factor for the size of the circles on the timeline
     const circleScale = d3.scale.linear()
@@ -81,7 +79,7 @@ class Timeline implements IAppView {
       .range([10, 5]);   //h/100
 
     //get width of client browser window
-    var widthWindow = $(window).innerWidth();
+    const widthWindow = $(window).innerWidth();
 
 
     const timeline = d3.select('#timeline');
@@ -109,7 +107,7 @@ class Timeline implements IAppView {
       .attr('height', heightRatiosvg);
 
     //width of the timeline div
-    var widthTimelineDiv = $('#timeline').width();
+    let widthTimelineDiv = $('#timeline').width();
 
     svgtimeline.append('line')
       .style('stroke', 'black')
@@ -119,11 +117,11 @@ class Timeline implements IAppView {
       .attr('y2', 60);
 
     //helper variable for clicking event
-    var isClicked = 0;
+    let isClicked = 0;
     //overall time span in days
-    var firstTimePoint = moment(items[0].time);
-    var lastTimePoint =  moment(items[items.length-1].time);
-    var timeRange = lastTimePoint.diff(firstTimePoint, 'days');
+    const firstTimePoint = moment(items[0].time);
+    const lastTimePoint =  moment(items[items.length-1].time);
+    const timeRange = lastTimePoint.diff(firstTimePoint, 'days');
 
     // Abbildungsbereich = Width
     // Skalierungfaktor = Width / Time Range
@@ -201,7 +199,7 @@ class Timeline implements IAppView {
     });
 
     //start width for bars of ratio bar charts
-    var rectWidth = 13;
+    let rectWidth = 13;
 
     //Resizing all element in the svg
     function resize() {
@@ -238,18 +236,18 @@ class Timeline implements IAppView {
         rectWidth = 15;
         generateBars(rectWidth);
       }
-    };
+    }
 
 
     //Array for drawing Ratio Chart
     const data_list = [];
     //array for x postion of circle cx
-    var pairPosX = [];
+    let pairPosX = [];
 
-    var svgRatioChart:any;
+    let svgRatioChart:any;
 
     //helper variable for on click event
-    var openratio = 0;
+    let openratio = 0;
 
     //creating 2D Ratio bars
     function generateBars(width) {
@@ -279,8 +277,8 @@ class Timeline implements IAppView {
           const svgRatioBar = svgtimeline.append('g')
             .style('transform', 'translate(' + (pairPosX[0] + 0.5*(pairPosX[1] - pairPosX[0] - width)) + 'px)');
 
-          var pair1 = pair[0];
-          var pair2 = pair[1];
+          const pair1 = pair[0];
+          const pair2 = pair[1];
 
           //generate ratio chart array
           generate2DRatioHistogramData(pair1, pair2);
@@ -296,8 +294,8 @@ class Timeline implements IAppView {
             .attr('fill', (d, i) => <string>color(i.toString()))
             .on('click', function() {
 
-              var parentNode = d3.select(this.parentNode);
-              var currentXposition = d3.transform(parentNode.style('transform')).translate[0];
+              const parentNode = d3.select(this.parentNode);
+              const currentXposition = d3.transform(parentNode.style('transform')).translate[0];
               //svgtimeline.selectAll('g').remove();
 
               if(openratio === 0) {
@@ -336,7 +334,7 @@ class Timeline implements IAppView {
           const cols= json.cols;
           const rows = json.rows;
 
-          for (var key in cols) {
+          for (let key in cols) {
             if( cols.hasOwnProperty( key ) ) {
 
               data_list.push({
@@ -377,16 +375,16 @@ class Timeline implements IAppView {
 
     function draw2dratiohistogramm (actualposition) {
 
-      var width = 160,  height = 160;
+      const width = 160,  height = 160;
 
       svgRatioChart = svgratio.append('g')
             .style('transform', 'translate(' + actualposition + 'px' + ')');
 
-          var x = d3.scale.linear()
+          const x = d3.scale.linear()
              .domain([0,1])
              .range([0, width]);
 
-          var y = d3.scale.linear()
+          const y = d3.scale.linear()
             .domain([0, 1])
           .range([0, height]);
 
