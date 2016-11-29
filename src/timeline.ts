@@ -174,7 +174,7 @@ class Timeline implements IAppView {
 
       });
 
-    //Create Bars
+    // Create Bars
     const barPromises = generateBars(20);
 
     // Call the resize function whenever a resize event occurs
@@ -185,10 +185,10 @@ class Timeline implements IAppView {
       console.log('finished loading of all bars');
     });
 
-    //start width for bars of ratio bar charts
+    // start width for bars of ratio bar charts
     let rectWidth = 13;
 
-    //Resizing all element in the svg
+    // Resizing all element in the svg
     function resize() {
 
       widthTimelineDiv = $('#timeline').width();
@@ -197,7 +197,7 @@ class Timeline implements IAppView {
       svgtimeline.attr('width', widthTimelineDiv);
       d3.select('line').attr('x2', widthTimelineDiv);
 
-      //Updating scale for circle position
+      // Updating scale for circle position
       xScaleTime.range([20, widthTimelineDiv - 20]);
 
       svgtimeline.selectAll('circle')
@@ -209,7 +209,7 @@ class Timeline implements IAppView {
           }
         });
 
-      //Update bars
+      // Update bars
       svgtimeline.selectAll('g').remove();
 
       if (widthTimelineDiv <= 800) {
@@ -225,18 +225,12 @@ class Timeline implements IAppView {
       }
     }
 
-
-    //Array for drawing Ratio Chart
-    const data_list = [];
-    //array for x postion of circle cx
-    let pairPosX = [];
-
     let svgRatioChart: any;
 
-    //helper variable for on click event
-    let openratio = 0;
+    // helper variable for on click event
+    let openRatio = 0;
 
-    //creating 2D Ratio bars
+    // creating 2D Ratio bars
     function generateBars(width) {
       return idPairs.map((pair) => {
         console.log('start loading pair', pair);
@@ -264,12 +258,6 @@ class Timeline implements IAppView {
             const svgRatioBar = svgtimeline.append('g')
               .style('transform', 'translate(' + (pairPosX[0] + 0.5 * (pairPosX[1] - pairPosX[0] - width)) + 'px)');
 
-            const pair1 = pair[0];
-            const pair2 = pair[1];
-
-            //generate ratio chart array
-            generate2DRatioHistogramData(pair1, pair2);
-
             svgRatioBar.selectAll('rect')
               .data(data)
               .enter()
@@ -285,15 +273,15 @@ class Timeline implements IAppView {
                 const currentPosX = d3.transform(parentNode.style('transform')).translate[0];
                 //svgtimeline.selectAll('g').remove();
 
-                if (openratio === 0) {
-                  events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, data_list);
-                  openratio = 1;
+                if (openRatio === 0) {
+                  events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, pair);
+                  openRatio = 1;
 
                 } else {
                   if (svgRatioChart.select('rect').size() > 0) {
                     svgRatioChart.selectAll('rect').remove();
                   }
-                  openratio = 0;
+                  openRatio = 0;
                 }
 
               });
@@ -302,67 +290,7 @@ class Timeline implements IAppView {
       });
     }
 
-    //generate 2DRatioHistogram
-    function generate2DRatioHistogramData(pair1, pair2) {
-      return idPairs.map((pair) => {
-        console.log('start loading pair', pair);
-        Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair1}/${pair2}/5/5/2/structure,content`), pair])
-          .then((args) => {
-            const json = args[0];
-            const pair = args[1];
 
-            pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
-
-            /*const svgRatioChart = svgratio.append('g')
-             .style('transform', 'translate(' + (pairPosX[0] + 0.5*(pairPosX[1] - pairPosX[0] - 160)) + 'px' + ',' +  0 + 'px'+') ');*/
-
-            /*const data_list = [];*/
-
-            const cols = json.cols;
-            const rows = json.rows;
-
-            for (let key in cols) {
-              if (cols.hasOwnProperty(key)) {
-
-                data_list.push({
-
-                  cols: cols[key].ratio.no_ratio + cols[key].ratio.a_ratio + cols[key].ratio.c_ratio + cols[key].ratio.d_ratio,
-                  rows: rows[key].ratio.no_ratio + rows[key].ratio.a_ratio + rows[key].ratio.c_ratio + rows[key].ratio.d_ratio,
-                  rows_text: Math.round((rows[key].ratio.d_ratio * 100) * 1000) / 1000,
-                  cols_text: Math.round((cols[key].ratio.d_ratio * 100) * 1000) / 1000,
-                  type: 'struct-del'
-                });
-
-                data_list.push({
-
-                  cols: cols[key].ratio.no_ratio + cols[key].ratio.a_ratio + cols[key].ratio.c_ratio,
-                  rows: rows[key].ratio.no_ratio + rows[key].ratio.a_ratio + rows[key].ratio.c_ratio,
-                  rows_text: Math.round((rows[key].ratio.a_ratio * 100) * 1000) / 1000,
-                  cols_text: Math.round((cols[key].ratio.a_ratio * 100) * 1000) / 1000,
-                  type: 'struct-add'
-                });
-
-                data_list.push({
-                  cols: cols[key].ratio.c_ratio + cols[key].ratio.no_ratio,
-                  rows: rows[key].ratio.c_ratio + rows[key].ratio.no_ratio,
-                  rows_text: Math.round((rows[key].ratio.c_ratio * 100) * 1000) / 1000,
-                  cols_text: Math.round((cols[key].ratio.c_ratio * 100) * 1000) / 1000,
-                  type: 'content-change'
-                });
-
-                data_list.push({
-                  cols: cols[key].ratio.no_ratio,
-                  rows: rows[key].ratio.no_ratio,
-                  rows_text: Math.round((rows[key].ratio.no_ratio * 100) * 1000) / 1000,
-                  cols_text: Math.round((cols[key].ratio.no_ratio * 100) * 1000) / 1000,
-                  type: 'no-change'
-                });
-              }
-            }
-            //console.log('Data-List' , data_list);
-          });
-      });
-    }
 
   }
 }

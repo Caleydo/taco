@@ -5,6 +5,7 @@
 import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
+import * as ajax from 'phovea_core/src/ajax';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 
@@ -19,6 +20,14 @@ class Histogram2D implements IAppView {
 
   private height = 160;
   private width = 160;
+
+  private static getURL(pair) {
+    const bin_cols = -1; // -1 = aggregate the whole table
+    const bin_rows = -1; // -1 = aggregate the whole table
+    const direction = 2; // 2 = rows + columns
+    const changes = 'structure,content';
+    return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
+  }
 
   constructor(parent: Element, private options: any) {
     this.$node = d3.select(parent).append('div').classed('histogram_2d', true);
@@ -56,12 +65,60 @@ class Histogram2D implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(AppConstants.EVENT_OPEN_2D_HISTOGRAM, (evt, currentPosX, data_list) => this.updateItems(currentPosX, data_list));
+    events.on(AppConstants.EVENT_OPEN_2D_HISTOGRAM, (evt, posX, pair) => this.updateItems(posX, pair));
   }
 
-  private updateItems(actualposition, data_list) {
+  private updateItems(posX, pair) {
+    this.requestData(pair)
+      .then((data) => this.showData(posX, data));
+  }
+
+  private requestData(pair) {
+    //console.log('start loading pair', pair1, pair2);
+    return ajax.getAPIJSON(Histogram2D.getURL(pair))
+      .then((json) => {
+        const data = [];
+
+        const cols = json.cols;
+        const rows = json.rows;
+
+        data.push({
+          rows: rows.d_ratio + rows.a_ratio + rows.c_ratio + rows.no_ratio, //todo change to 1
+          cols: cols.d_ratio + cols.a_ratio + cols.c_ratio + cols.no_ratio, //todo change to 1
+          rows_text : Math.round((rows.d_ratio * 100)*1000)/1000,
+          cols_text : Math.round((cols.d_ratio * 100)*1000)/1000,
+          type: 'struct-del'
+        });
+        data.push({
+          rows: rows.a_ratio + rows.c_ratio + rows.no_ratio, // or 1 - d
+          cols: cols.a_ratio + cols.c_ratio + cols.no_ratio,
+          rows_text : Math.round((rows.a_ratio * 100)*1000)/1000,
+          cols_text : Math.round((cols.a_ratio * 100)*1000)/1000,
+          type: 'struct-add'
+        });
+        data.push({
+          rows: rows.c_ratio + rows.no_ratio,
+          cols: cols.c_ratio + cols.no_ratio,
+          rows_text : Math.round((rows.c_ratio * 100)*1000)/1000,
+          cols_text : Math.round((cols.c_ratio * 100)*1000)/1000,
+          type: 'content-change'
+        });
+        data.push({
+          rows: rows.no_ratio,
+          cols: cols.no_ratio,
+          rows_text : Math.round((rows.no_ratio * 100)*1000)/1000,
+          cols_text : Math.round((cols.no_ratio * 100)*1000)/1000,
+          type: 'no-change'
+        });
+
+        //console.log('data list' , dataList);
+        return data;
+      });
+  }
+
+  private showData(posX, data) {
     const g = this.$svg.append('g')
-      .style('transform', 'translate(' + actualposition + 'px' + ')');
+      .style('transform', 'translate(' + posX + 'px' + ')');
 
     const x = d3.scale.linear()
       .domain([0, 1])
@@ -72,7 +129,7 @@ class Histogram2D implements IAppView {
       .range([0, this.height]);
 
     g.selectAll('rect')
-      .data(data_list)
+      .data(data)
       .enter()
       .append('rect')
       .attr('class', function (d) {
@@ -87,7 +144,6 @@ class Histogram2D implements IAppView {
       .attr('title', function (d) {
         return d.type.replace('-', ' ') + '\x0Arows: ' + d.rows_text + '%\x0Acolumns: ' + d.cols_text + '%';
       });
-
   }
 
 }
