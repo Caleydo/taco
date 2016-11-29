@@ -26,6 +26,11 @@ module.exports = function(registry) {
   'name': 'Heat Map',
   'factory': 'create'
  });
+
+  registry.push('tacoView', 'Histogram2D', function() { return System.import('./src/histogram_2d'); }, {
+  'name': 'Histogram2D',
+  'factory': 'create'
+ });
   // generator-phovea:end
 };
 

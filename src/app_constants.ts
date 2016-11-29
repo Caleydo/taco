@@ -26,6 +26,8 @@ export class AppConstants {
   static EVENT_DATASET_SELECTED_LEFT = 'eventDataSetSelectedLeft';
   static EVENT_DATASET_SELECTED_RIGHT = 'eventDataSetSelectedRight';
 
+  static EVENT_OPEN_2D_HISTOGRAM = 'open2DHistogram';
+
   /**
    * Format the date output (see http://momentjs.com/docs/#/displaying/)
    * @type {string}

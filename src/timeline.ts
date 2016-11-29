@@ -93,20 +93,6 @@ class Timeline implements IAppView {
       .attr('width', widthWindow)
       .attr('height', h);
 
-    //height of svg for 2dratiohistogram
-    const heightRatiosvg = 160;
-
-    //2Dratiohistogramm Chart
-    const ratiochart = d3.select('#ratiochart');
-
-    if (ratiochart.select('svg').size() > 0) {
-      ratiochart.select('svg').remove();
-    }
-
-    const svgratio = ratiochart.append('svg')
-      .attr('width', widthWindow)
-      .attr('height', heightRatiosvg);
-
     //width of the timeline div
     let widthTimelineDiv = $('#timeline').width();
 
@@ -296,11 +282,11 @@ class Timeline implements IAppView {
               .on('click', function () {
 
                 const parentNode = d3.select(this.parentNode);
-                const currentXposition = d3.transform(parentNode.style('transform')).translate[0];
+                const currentPosX = d3.transform(parentNode.style('transform')).translate[0];
                 //svgtimeline.selectAll('g').remove();
 
                 if (openratio === 0) {
-                  draw2dratiohistogramm(currentXposition);
+                  events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, data_list);
                   openratio = 1;
 
                 } else {
@@ -378,39 +364,6 @@ class Timeline implements IAppView {
       });
     }
 
-    function draw2dratiohistogramm(actualposition) {
-
-      const width = 160, height = 160;
-
-      svgRatioChart = svgratio.append('g')
-        .style('transform', 'translate(' + actualposition + 'px' + ')');
-
-      const x = d3.scale.linear()
-        .domain([0, 1])
-        .range([0, width]);
-
-      const y = d3.scale.linear()
-        .domain([0, 1])
-        .range([0, height]);
-
-      svgRatioChart.selectAll('rect')
-        .data(data_list)
-        .enter()
-        .append('rect')
-        .attr('class', function (d) {
-          return d.type + '-color';
-        })
-        .style('width', function (d) {
-          return x(d.cols) + 'px';
-        })
-        .attr('height', function (d) {
-          return y(d.rows) + 'px';
-        })
-        .attr('title', function (d) {
-          return d.type.replace('-', ' ') + '\x0Arows: ' + d.rows_text + '%\x0Acolumns: ' + d.cols_text + '%';
-        });
-
-    }
   }
 }
 
