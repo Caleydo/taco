@@ -67,6 +67,8 @@ class Histogram2D implements IAppView {
 
     this.$ratio = this.$node
       .append('div')
+      .style('width', this.width + 'px')
+      .style('height', this.height + 'px')
       .classed('ratio', true)
       .on('click', function() {
         events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
@@ -88,8 +90,12 @@ class Histogram2D implements IAppView {
   }
 
   private updateItems(posX, pair) {
+    this.$ratio
+      .classed('loading', true)
+      .style('left', posX + 'px');
+
     this.requestData(pair)
-      .then((data) => this.showData(posX, data));
+      .then((data) => this.showData(data));
   }
 
   private requestData(pair) {
@@ -134,13 +140,8 @@ class Histogram2D implements IAppView {
       });
   }
 
-  private showData(posX, data) {
-    const div = this.$ratio
-      .style('left', posX + 'px')
-      .style('width', this.width + 'px')
-      .style('height', this.height + 'px');
-
-    const ratio2d = div.selectAll('div').data(data);
+  private showData(data) {
+    const ratio2d = this.$ratio.selectAll('div').data(data);
 
     ratio2d.enter()
       .append('div');
@@ -152,6 +153,8 @@ class Histogram2D implements IAppView {
       .attr('title', (d) => d.type.replace('-', ' ') + '\x0Arows: ' + d.rows_text + '%\x0Acolumns: ' + d.cols_text + '%');
 
     ratio2d.exit().remove();
+
+    this.$ratio.classed('loading', false);
   }
 
 }
