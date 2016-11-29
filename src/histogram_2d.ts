@@ -79,6 +79,11 @@ class Histogram2D implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
+    // hide when changing the dataset
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+      this.$node.classed('hidden', true);
+    });
+
     events.on(AppConstants.EVENT_CLOSE_2D_HISTOGRAM, () => {
       this.$node.classed('hidden', true);
     });
