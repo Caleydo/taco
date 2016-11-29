@@ -45,9 +45,11 @@ class Timeline implements IAppView {
     this.$node.html(`
       <!--<h3>${Language.TIMELINE}</h3>-->
       <ul class="output"></ul>
-      <div id="ratioBar" class ="ratioBarChart"></div>
-      <div id="timeline"></div>
-      <div id="ratiochart"></div>
+      <div id="interface"></div> <!--Placeholder für Interface elements-->
+      <div id="ratiochart"></div> <!--2DRatioHistogramm-->
+      <div id="ratioBar" class ="ratioBarChart"></div> 
+      <div id="timeline"></div> <!--timeline-->
+      
     `);
 
   }
@@ -68,6 +70,7 @@ class Timeline implements IAppView {
 
     const h = 200;
 
+
     var ids:any [] = items.map((d) => d.item.desc.id);
 
     var idPairs = d3.pairs(ids);
@@ -83,6 +86,7 @@ class Timeline implements IAppView {
 
     const timeline = d3.select('#timeline');
 
+
     if(timeline.select('svg').size() > 0) {
       timeline.select('svg').remove();
     }
@@ -90,6 +94,19 @@ class Timeline implements IAppView {
     const svgtimeline = timeline.append('svg')
       .attr('width', widthWindow)
       .attr('height', h);
+
+    //height of svg for 2dratiohistogram
+    const heightRatiosvg = 160;
+
+    //2Dratiohistogramm Chart
+    const ratiochart = d3.select('#ratiochart');
+
+    if(ratiochart.select('svg').size() > 0) {
+      ratiochart.select('svg').remove();    }
+
+    const svgratio = ratiochart.append('svg')
+      .attr('width', widthWindow)
+      .attr('height', heightRatiosvg);
 
     //width of the timeline div
     var widthTimelineDiv = $('#timeline').width();
@@ -175,12 +192,6 @@ class Timeline implements IAppView {
     //Create Bars
     const barPromises = generateBars(20);
 
-    const ratiochart = d3.select('#ratiochart');
-    const svgratiochart = ratiochart.append('svg');
-
-
-
-
     // Call the resize function whenever a resize event occurs
     d3.select(window).on('resize', resize);
 
@@ -189,10 +200,8 @@ class Timeline implements IAppView {
       console.log('finished loading of all bars');
     });
 
-
-
+    //start width for bars of ratio bar charts
     var rectWidth = 13;
-
 
     //Resizing all element in the svg
     function resize() {
@@ -231,6 +240,17 @@ class Timeline implements IAppView {
       }
     };
 
+
+    //Array for drawing Ratio Chart
+    const data_list = [];
+    //array for x postion of circle cx
+    var pairPosX = [];
+
+    var svgRatioChart:any;
+
+    //helper variable for on click event
+    var openratio = 0;
+
     //creating 2D Ratio bars
     function generateBars(width) {
      return idPairs.map((pair) => {
@@ -243,7 +263,7 @@ class Timeline implements IAppView {
 
           const pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
 
-          console.log('finished loading pair', pair, pairPosX, json);
+          console.log('finished loading pair - BARS', pair, pairPosX, json);
 
           const w = 80;
           const h = 30;
@@ -259,6 +279,12 @@ class Timeline implements IAppView {
           const svgRatioBar = svgtimeline.append('g')
             .style('transform', 'translate(' + (pairPosX[0] + 0.5*(pairPosX[1] - pairPosX[0] - width)) + 'px)');
 
+          var pair1 = pair[0];
+          var pair2 = pair[1];
+
+          //generate ratio chart array
+          generate2DRatioHistogramData(pair1, pair2);
+
           svgRatioBar.selectAll('rect')
             .data(data)
             .enter()
@@ -268,36 +294,44 @@ class Timeline implements IAppView {
             .attr('width', width)
             .attr('height', (d) => d * 100)
             .attr('fill', (d, i) => <string>color(i.toString()))
-            .on('click', function(pair1, pair2){
+            .on('click', function() {
 
-              generate2DRatioHistogram(pair1, pair2);
+              var parentNode = d3.select(this.parentNode);
+              var currentXposition = d3.transform(parentNode.style('transform')).translate[0];
+              //svgtimeline.selectAll('g').remove();
+
+              if(openratio === 0) {
+                draw2dratiohistogramm(currentXposition);
+                openratio = 1;
+
+              } else {
+                if(svgRatioChart.select('rect').size() > 0) {
+                svgRatioChart.selectAll('rect').remove();
+              }
+                openratio = 0;
+              }
+
             });
-
-          return svgRatioBar;
 
         });
     });
   }
 
-
-
-
     //generate 2DRatioHistogram
-    function generate2DRatioHistogram(pair1, pair2) {
-
+    function generate2DRatioHistogramData(pair1, pair2) {
       return idPairs.map((pair) => {
       console.log('start loading pair', pair);
-      Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/5/5/2/structure,content`), pair])
+      Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair1}/${pair2}/5/5/2/structure,content`), pair])
         .then((args) => {
           const json = args[0];
           const pair = args[1];
 
-          console.log('json', json);
-          console.log('pairs', pair1, pair2);
-          console.log('finished loading 2DRatioHistogram', json, pair);
-          //console.log(json.content);
+          pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
 
-          const data_list = [];
+          /*const svgRatioChart = svgratio.append('g')
+            .style('transform', 'translate(' + (pairPosX[0] + 0.5*(pairPosX[1] - pairPosX[0] - 160)) + 'px' + ',' +  0 + 'px'+') ');*/
+
+          /*const data_list = [];*/
 
           const cols= json.cols;
           const rows = json.rows;
@@ -322,7 +356,7 @@ class Timeline implements IAppView {
                 type: 'struct-add'});
 
               data_list.push({
-                cols: cols[key].ratio.c_ratio  + cols[key].no_ratio,
+                cols: cols[key].ratio.c_ratio  + cols[key].ratio.no_ratio,
                 rows: rows[key].ratio.c_ratio + rows[key].ratio.no_ratio,
                 rows_text : Math.round((rows[key].ratio.c_ratio * 100)*1000)/1000,
                 cols_text : Math.round((cols[key].ratio.c_ratio * 100)*1000)/1000,
@@ -336,10 +370,17 @@ class Timeline implements IAppView {
                 type: 'no-change'});
             }
           }
+          //console.log('Data-List' , data_list);
+        });
+      });
+    }
 
-          console.log('Data-List' , data_list);
+    function draw2dratiohistogramm (actualposition) {
 
-          var width = 160,  height = 160;
+      var width = 160,  height = 160;
+
+      svgRatioChart = svgratio.append('g')
+            .style('transform', 'translate(' + actualposition + 'px' + ')');
 
           var x = d3.scale.linear()
              .domain([0,1])
@@ -349,8 +390,7 @@ class Timeline implements IAppView {
             .domain([0, 1])
           .range([0, height]);
 
-
-          svgratiochart.selectAll('rect')
+          svgRatioChart.selectAll('rect')
             .data(data_list)
             .enter()
             .append('rect')
@@ -367,8 +407,6 @@ class Timeline implements IAppView {
               return  d.type.replace('-', ' ') + '\x0Arows: ' + d.rows_text + '%\x0Acolumns: ' + d.cols_text +'%';
             });
 
-        });
-      });
     }
   }
 }
