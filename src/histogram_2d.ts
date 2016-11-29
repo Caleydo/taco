@@ -23,8 +23,8 @@ class Histogram2D implements IAppView {
   private height = 160 + this.borderWidth;
   private width = 160 + this.borderWidth;
 
-  private x = d3.scale.linear().domain([0, 1]).range([0, this.width]);
-  private y = d3.scale.linear().domain([0, 1]).range([0, this.height]);
+  private x = d3.scale.linear().domain([0, 1]).range([0, this.width - this.borderWidth]);
+  private y = d3.scale.linear().domain([0, 1]).range([0, this.height - this.borderWidth]);
 
   private static getURL(pair) {
     const bin_cols = -1; // -1 = aggregate the whole table
