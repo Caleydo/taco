@@ -1,6 +1,10 @@
 $select-color: orange;
 $hover-color: #ffc46b;
 
+$struct-add-color: #67C4A7;
+$struct-delete-color: #fc8e62;
+$content-change-color: #8DA1CD;
+$no-change-color: #D8D8D8;
 
 $boostrapAssetDir: '~phovea_bootstrap_fontawesome/src/assets';
 
@@ -73,23 +77,50 @@ rect {
 
 }
 
-.struct-add-color {
-  //background-color: #456bb4;
-  fill: #67C4A7;
+.histogram_2d {
+  .ratio {
+    display: inline-block;
+    border: 1px solid darkslategray;
+    position: relative;
+    color: #fc8d62; //colorblind friendly
+    div {
+      position: absolute;
+      padding: 1px;
+
+    }
+  }
 }
 
-.struct-del-color {
-  //background-color: #456bb4;
-  fill: #fc8e62;
+div.struct-add-color {
+  background: $struct-add-color;
 }
 
-.content-change-color {
-  fill: #8DA1CD;
-
+div.struct-del-color {
+  background: $struct-delete-color;
 }
-.no-change-color {
-  fill: #D8D8D8;
 
+div.content-change-color {
+  background: $content-change-color;
+}
+
+div.no-change-color {
+  background: $no-change-color;
+}
+
+rect.struct-add-color {
+  fill: $struct-add-color;
+}
+
+rect.struct-del-color {
+  fill: $struct-delete-color;
+}
+
+rect.content-change-color {
+  fill: $content-change-color;
+}
+
+rect.no-change-color {
+  fill: $no-change-color;
 }
 
 #interface{
@@ -97,6 +128,7 @@ rect {
   margin-bottom: 20px;
 
 }
+
 
 
 
