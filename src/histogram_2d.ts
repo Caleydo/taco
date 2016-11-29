@@ -83,32 +83,32 @@ class Histogram2D implements IAppView {
         const rows = json.rows;
 
         data.push({
+          type: 'struct-del',
           rows: rows.d_ratio + rows.a_ratio + rows.c_ratio + rows.no_ratio, //todo change to 1
           cols: cols.d_ratio + cols.a_ratio + cols.c_ratio + cols.no_ratio, //todo change to 1
           rows_text : Math.round((rows.d_ratio * 100)*1000)/1000,
-          cols_text : Math.round((cols.d_ratio * 100)*1000)/1000,
-          type: 'struct-del'
+          cols_text : Math.round((cols.d_ratio * 100)*1000)/1000
         });
         data.push({
+          type: 'struct-add',
           rows: rows.a_ratio + rows.c_ratio + rows.no_ratio, // or 1 - d
           cols: cols.a_ratio + cols.c_ratio + cols.no_ratio,
           rows_text : Math.round((rows.a_ratio * 100)*1000)/1000,
-          cols_text : Math.round((cols.a_ratio * 100)*1000)/1000,
-          type: 'struct-add'
+          cols_text : Math.round((cols.a_ratio * 100)*1000)/1000
         });
         data.push({
+          type: 'content-change',
           rows: rows.c_ratio + rows.no_ratio,
           cols: cols.c_ratio + cols.no_ratio,
           rows_text : Math.round((rows.c_ratio * 100)*1000)/1000,
-          cols_text : Math.round((cols.c_ratio * 100)*1000)/1000,
-          type: 'content-change'
+          cols_text : Math.round((cols.c_ratio * 100)*1000)/1000
         });
         data.push({
+          type: 'no-change',
           rows: rows.no_ratio,
           cols: cols.no_ratio,
           rows_text : Math.round((rows.no_ratio * 100)*1000)/1000,
-          cols_text : Math.round((cols.no_ratio * 100)*1000)/1000,
-          type: 'no-change'
+          cols_text : Math.round((cols.no_ratio * 100)*1000)/1000
         });
 
         //console.log('data list' , dataList);
@@ -118,7 +118,7 @@ class Histogram2D implements IAppView {
 
   private showData(posX, data) {
     const g = this.$svg.append('g')
-      .style('transform', 'translate(' + posX + 'px' + ')');
+      .style('transform', 'translate(' + posX + 'px)');
 
     const x = d3.scale.linear()
       .domain([0, 1])
