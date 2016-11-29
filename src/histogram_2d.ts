@@ -65,7 +65,12 @@ class Histogram2D implements IAppView {
       .style('width', windowWidth + 'px')
       .style('height', this.height + 'px');
 
-    this.$ratio = this.$node.append('div').classed('ratio', true);
+    this.$ratio = this.$node
+      .append('div')
+      .classed('ratio', true)
+      .on('click', function() {
+        events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
+      });
   }
 
   /**

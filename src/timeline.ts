@@ -220,7 +220,7 @@ class Timeline implements IAppView {
     }
 
     // helper variable for on click event
-    let isHistogram2dOpen = false;
+    let open2dHistogram = null;
 
     // creating 2D Ratio bars
     function generateBars(width) {
@@ -260,16 +260,16 @@ class Timeline implements IAppView {
               .attr('height', (d) => d * 100)
               .attr('fill', (d, i) => <string>color(i.toString()))
               .on('click', function () {
-                const parentNode = d3.select(this.parentNode);
-                const currentPosX = d3.transform(parentNode.style('transform')).translate[0];
+                const currentPosX = d3.transform(d3.select(this.parentNode).style('transform')).translate[0];
 
-                if (isHistogram2dOpen) {
+                if (open2dHistogram === this.parentNode) {
                   events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
+                  open2dHistogram = null;
+
                 } else {
                   events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, pair);
+                  open2dHistogram = this.parentNode;
                 }
-
-                isHistogram2dOpen = !isHistogram2dOpen;
               });
 
           });
