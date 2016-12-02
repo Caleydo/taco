@@ -44,7 +44,7 @@ class Histogram2D implements IAppView {
 
     private static getURLHistogram(pair) {
     const bin_cols = 20; // -1 = aggregate the whole table
-    const bin_rows = 20; // -1 = aggregate the whole table
+    const bin_rows = 10; // -1 = aggregate the whole table
     const direction = 2; // 2 = rows + columns
     const changes = 'structure,content';
     return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
@@ -55,8 +55,6 @@ class Histogram2D implements IAppView {
       .append('div')
       .classed('histogram_2d', true)
       .classed('hidden', true);
-
-    //console.log(this.$node);
   }
 
   /**
@@ -137,10 +135,13 @@ class Histogram2D implements IAppView {
     this.$histogram
       .style('left', posX + 'px' );
 
-   this.requestDataHistogramRows(pair)
+    this.$histogramCols
+      .style('left', posX + 'px' );
+
+   this.requestDataHistogram(pair)
       .then((histodata) => this.showHistogram(histodata));
 
-  }
+     }
 
 
   //for the 2D Ratio Chart
@@ -188,12 +189,14 @@ class Histogram2D implements IAppView {
   }
 
     //for the histogram Rows
-    private requestDataHistogramRows(pair) {
+    private requestDataHistogram(pair) {
     return ajax.getAPIJSON(Histogram2D.getURLHistogram(pair))
       .then((json) => {
 
         const rows = json.rows;
-        return rows;
+        const cols = json.cols;
+        console.log(rows, cols);
+        return [rows, cols];
       });
   }
 
@@ -218,6 +221,13 @@ class Histogram2D implements IAppView {
 //Show Histogramm Rows
   private showHistogram(histodata) {
 
+    console.log('rows' , histodata[0], 'cols' , histodata[1]);
+
+    var rows = histodata[0];
+    var cols = histodata[1];
+
+
+
     const xScale = d3.scale.linear()
       //.domain([0, d3.max(histodata)])
       .domain([0, 1])
@@ -230,7 +240,12 @@ class Histogram2D implements IAppView {
     var gridSize = Math.floor(this.heightRowHistogram/20);
 
     const bincontainer = this.$histogram.selectAll('div.bin-container')
-      .data(histodata, function (d) {
+      .data(rows, function (d) {
+        return d.id;
+      });
+
+    const bincontainterCols = this.$histogramCols.selectAll('div.bin-container')
+      .data(cols, function (d) {
         return d.id;
       });
 
@@ -320,7 +335,76 @@ class Histogram2D implements IAppView {
 
     bincontainer.exit().remove();
 
+    /*
+    * Draw Cols Histogram  */
 
+
+    bincontainterCols.enter()
+      .append('div')
+      .classed('bin-container', true)
+      .attr('title', function(d){ return d.id; });
+
+    bincontainterCols
+      .append('div')
+      .classed('struct-del-color', true)
+      .style('width', function (d) {
+        return xScale(d.ratio.d_ratio)+ 'px';
+      })
+      .style('height', gridSize -1  + 'px')
+      .attr('title', function (d) {
+        return 'content: ' + Math.round((d.ratio.d_ratio * 100)*1000)/1000 +'%';
+      })
+     .style('transform', function (d) {
+
+       var content = xScale(d.ratio.d_ratio);
+       console.log(content);
+
+       var acc = 0;
+
+       if(content === 0) {
+         acc = 0;
+         console.log('content is 0');
+       } else {
+         acc = xScale(d.ratio.c_ratio);
+       }
+
+        return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
+      })
+      .style('display', function (d) {
+        return (d.ratio.d_ratio === 0) ? 'none' : null;
+      });
+
+   bincontainterCols
+      .append('div')
+      .classed('struct-add-color', true)
+      .style('width', function (d) {
+        return xScale(d.ratio.a_ratio)  + 'px';
+      })
+      .style('height', gridSize -1  + 'px')
+      .attr('title', function (d) {
+        return 'content: ' + Math.round((d.ratio.a_ratio * 100)*1000)/1000 +'%';
+      })
+     .style('transform', function (d) {
+
+       var structure = xScale(d.ratio.a_ratio);
+       console.log(structure);
+
+       var acc = 0;
+
+       if(structure === 0) {
+         acc = 0;
+         console.log('content is 0');
+       } else {
+         acc = xScale(d.ratio.c_ratio) + xScale(d.ratio.d_ratio);
+
+       }
+       return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
+      })
+     .style('display', function (d) {
+        return (d.ratio.a_ratio === 0) ? 'none' : null;
+      });
+
+   bincontainterCols.exit().remove();
   }
 
 }

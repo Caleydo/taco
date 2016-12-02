@@ -121,15 +121,15 @@ rect {
     margin-left:15px;
 
     &.rotated {
-   // display: block;
-    //margin-top: 10px;
-    //margin-bottom: -100px;
+   display: block;
+    margin-top: -45px;
+    margin-left: 50px;
     //margin-right: 100px;
     transform: rotate(90deg) scaleY(-1);
     //transform-origin: 0 0;
 
-      margin-bottom:-125px;
-      margin-left: 360px;
+      //margin-bottom:-125px;
+      //margin-left: 20px;
       position: relative;
   }
 
