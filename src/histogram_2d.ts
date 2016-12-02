@@ -18,6 +18,10 @@ class Histogram2D implements IAppView {
 
   private $ratio;
 
+  private $histogram;
+
+  private $histogramCols;
+
   private borderWidth = 2;
 
   private height = 160 + this.borderWidth;
@@ -26,9 +30,21 @@ class Histogram2D implements IAppView {
   private x = d3.scale.linear().domain([0, 1]).range([0, this.width - this.borderWidth]);
   private y = d3.scale.linear().domain([0, 1]).range([0, this.height - this.borderWidth]);
 
+  private widthRowHistogram = 60;
+  private heightRowHistogram = 160;
+
+
   private static getURL(pair) {
     const bin_cols = -1; // -1 = aggregate the whole table
     const bin_rows = -1; // -1 = aggregate the whole table
+    const direction = 2; // 2 = rows + columns
+    const changes = 'structure,content';
+    return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
+  }
+
+    private static getURLHistogram(pair) {
+    const bin_cols = 20; // -1 = aggregate the whole table
+    const bin_rows = 20; // -1 = aggregate the whole table
     const direction = 2; // 2 = rows + columns
     const changes = 'structure,content';
     return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
@@ -39,6 +55,8 @@ class Histogram2D implements IAppView {
       .append('div')
       .classed('histogram_2d', true)
       .classed('hidden', true);
+
+    //console.log(this.$node);
   }
 
   /**
@@ -73,6 +91,20 @@ class Histogram2D implements IAppView {
       .on('click', function() {
         events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
       });
+
+    this.$histogram = this.$node
+      .append('div')
+      .style('width', this.widthRowHistogram + 'px')
+      .style('height', this.height + 'px')
+      .classed ('histogram', true);
+
+    this.$histogramCols = this.$node
+       .append('div')
+       .style('width', this.widthRowHistogram + 'px')
+       .style('height', this.height + 'px')
+       .classed ('histogram', true)
+       .classed('rotated', true);
+
   }
 
   /**
@@ -101,8 +133,17 @@ class Histogram2D implements IAppView {
 
     this.requestData(pair)
       .then((data) => this.showData(data));
+
+    this.$histogram
+      .style('left', posX + 'px' );
+
+   this.requestDataHistogramRows(pair)
+      .then((histodata) => this.showHistogram(histodata));
+
   }
 
+
+  //for the 2D Ratio Chart
   private requestData(pair) {
     return ajax.getAPIJSON(Histogram2D.getURL(pair))
       .then((json) => {
@@ -140,15 +181,27 @@ class Histogram2D implements IAppView {
           cols_text : Math.round((cols.no_ratio * 100)*1000)/1000
         });
 
-        //console.log('data list' , dataList);
+        //console.log('data_list ratio', data);
+
         return data;
       });
   }
 
+    //for the histogram Rows
+    private requestDataHistogramRows(pair) {
+    return ajax.getAPIJSON(Histogram2D.getURLHistogram(pair))
+      .then((json) => {
+
+        const rows = json.rows;
+        return rows;
+      });
+  }
+
+  //Show 2d Ratio chart
   private showData(data) {
     const ratio2d = this.$ratio.selectAll('div').data(data);
 
-    ratio2d.enter()
+   ratio2d.enter()
       .append('div');
 
     ratio2d
@@ -160,6 +213,114 @@ class Histogram2D implements IAppView {
     ratio2d.exit().remove();
 
     this.$ratio.classed('loading', false);
+  }
+
+//Show Histogramm Rows
+  private showHistogram(histodata) {
+
+    const xScale = d3.scale.linear()
+      //.domain([0, d3.max(histodata)])
+      .domain([0, 1])
+      .range([0, 50]);
+
+    const yScale = d3.scale.linear()
+      .domain([0, 20])
+      .range([0, this.heightRowHistogram]);
+
+    var gridSize = Math.floor(this.heightRowHistogram/20);
+
+    const bincontainer = this.$histogram.selectAll('div.bin-container')
+      .data(histodata, function (d) {
+        return d.id;
+      });
+
+
+    bincontainer.enter()
+      .append('div')
+      .classed('bin-container', true)
+      .attr('title', function(d){ return d.id; });
+
+    bincontainer
+      .append('div')
+      .classed('content-change-color', true)
+      .style('width', function (d) {
+          //console.log(xScale(d.ratio.c_ratio));
+            return xScale(d.ratio.c_ratio) + 'px';
+          })
+      .style('height', gridSize -1  + 'px')
+      .attr('title', function (d) {
+        return 'content: ' + Math.round((d.ratio.c_ratio * 100)*1000)/1000 +'%';
+      })
+     .style('transform', function (d) {
+        return 'translate(' + 0 + 'px,' + yScale(d.pos) + 'px)';
+      })
+      .style('display', function (d) {
+        return (d.ratio.c_ratio === 0) ? 'none' : null;
+      });
+
+    bincontainer
+      .append('div')
+      .classed('struct-del-color', true)
+      .style('width', function (d) {
+        return xScale(d.ratio.d_ratio)+ 'px';
+      })
+      .style('height', gridSize -1  + 'px')
+      .attr('title', function (d) {
+        return 'content: ' + Math.round((d.ratio.d_ratio * 100)*1000)/1000 +'%';
+      })
+     .style('transform', function (d) {
+
+       var content = xScale(d.ratio.d_ratio);
+       console.log(content);
+
+       var acc = 0;
+
+       if(content === 0) {
+         acc = 0;
+         console.log('content is 0');
+       } else {
+         acc = xScale(d.ratio.c_ratio);
+       }
+
+        return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
+      })
+      .style('display', function (d) {
+        return (d.ratio.d_ratio === 0) ? 'none' : null;
+      });
+
+   bincontainer
+      .append('div')
+      .classed('struct-add-color', true)
+      .style('width', function (d) {
+        return xScale(d.ratio.a_ratio)  + 'px';
+      })
+      .style('height', gridSize -1  + 'px')
+      .attr('title', function (d) {
+        return 'content: ' + Math.round((d.ratio.a_ratio * 100)*1000)/1000 +'%';
+      })
+     .style('transform', function (d) {
+
+       var structure = xScale(d.ratio.a_ratio);
+       console.log(structure);
+
+       var acc = 0;
+
+       if(structure === 0) {
+         acc = 0;
+         console.log('content is 0');
+       } else {
+         acc = xScale(d.ratio.c_ratio) + xScale(d.ratio.d_ratio);
+
+       }
+       return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
+      })
+     .style('display', function (d) {
+        return (d.ratio.a_ratio === 0) ? 'none' : null;
+      });
+
+    bincontainer.exit().remove();
+
+
   }
 
 }

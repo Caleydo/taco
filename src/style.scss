@@ -75,6 +75,8 @@ rect {
     }
   }
 
+  margin-top: 50px;
+
 }
 
 @keyframes color_change {
@@ -83,6 +85,8 @@ rect {
 }
 
 .histogram_2d {
+}
+
   .ratio {
     transition: left .2s ease;
     display: inline-block;
@@ -90,6 +94,7 @@ rect {
     position: relative;
     color: #fc8d62; //colorblind friendly
     background: transparent;
+
 
     div {
       position: absolute;
@@ -105,7 +110,39 @@ rect {
       }
     }
   }
-}
+
+ .histogram {
+    transition: left .2s ease;
+    display: inline-block;
+    border: 1px solid #e6e8e4;
+    border-left: 1px solid #000000;
+    background: transparent;
+    position:relative;
+    margin-left:15px;
+
+    &.rotated {
+   // display: block;
+    //margin-top: 10px;
+    //margin-bottom: -100px;
+    //margin-right: 100px;
+    transform: rotate(90deg) scaleY(-1);
+    //transform-origin: 0 0;
+
+      margin-bottom:-125px;
+      margin-left: 360px;
+      position: relative;
+  }
+
+     div {
+       position: absolute;
+       text-align: right;
+       padding: 1px;
+       //margin-top: 1px;
+       color: white;
+    }
+
+  }
+
 
 div.struct-add-color {
   background: $struct-add-color;
