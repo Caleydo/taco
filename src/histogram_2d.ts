@@ -344,6 +344,24 @@ class Histogram2D implements IAppView {
       .classed('bin-container', true)
       .attr('title', function(d){ return d.id; });
 
+   bincontainterCols
+      .append('div')
+      .classed('content-change-color', true)
+      .style('width', function (d) {
+          //console.log(xScale(d.ratio.c_ratio));
+            return xScale(d.ratio.c_ratio) + 'px';
+          })
+      .style('height', gridSize -1  + 'px')
+      .attr('title', function (d) {
+        return 'content: ' + Math.round((d.ratio.c_ratio * 100)*1000)/1000 +'%';
+      })
+     .style('transform', function (d) {
+        return 'translate(' + 0 + 'px,' + yScale(d.pos) + 'px)';
+      })
+      .style('display', function (d) {
+        return (d.ratio.c_ratio === 0) ? 'none' : null;
+      });
+
     bincontainterCols
       .append('div')
       .classed('struct-del-color', true)
