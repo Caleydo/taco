@@ -195,7 +195,7 @@ class Histogram2D implements IAppView {
 
         const rows = json.rows;
         const cols = json.cols;
-        console.log(rows, cols);
+        //console.log(rows, cols);
         return [rows, cols];
       });
   }
@@ -286,7 +286,7 @@ class Histogram2D implements IAppView {
      .style('transform', function (d) {
 
        var content = xScale(d.ratio.d_ratio);
-       console.log(content);
+      // console.log(content);
 
        var acc = 0;
 
@@ -316,13 +316,13 @@ class Histogram2D implements IAppView {
      .style('transform', function (d) {
 
        var structure = xScale(d.ratio.a_ratio);
-       console.log(structure);
+       //console.log(structure);
 
        var acc = 0;
 
        if(structure === 0) {
          acc = 0;
-         console.log('content is 0');
+         //console.log('content is 0');
        } else {
          acc = xScale(d.ratio.c_ratio) + xScale(d.ratio.d_ratio);
 
@@ -381,7 +381,7 @@ class Histogram2D implements IAppView {
 
        if(content === 0) {
          acc = 0;
-         console.log('content is 0');
+        // console.log('content is 0');
        } else {
          acc = xScale(d.ratio.c_ratio);
        }
@@ -411,7 +411,7 @@ class Histogram2D implements IAppView {
 
        if(structure === 0) {
          acc = 0;
-         console.log('content is 0');
+         //console.log('content is 0');
        } else {
          acc = xScale(d.ratio.c_ratio) + xScale(d.ratio.d_ratio);
 

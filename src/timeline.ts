@@ -41,6 +41,18 @@ class Timeline implements IAppView {
     // TODO build timeline using D3 of parts that doesn't change on update()
     this.$node.html(`
       <div id="timeline"></div>
+      <div id="nav-bar">
+            <button type="button" class="btn-nochanges" data-toggle="buttons-checkbox">No Changes</button>    
+            <button type="button" class="btn-removed" data-toggle="buttons-checkbox">Removed</button>
+            <button type="button" class="btn-added" data-toggle="buttons-checkbox">Added</button>
+            <button type="button" class="btn-content" data-toggle="buttons-checkbox">Content</button> 
+                    
+            <button type="button" class="btn btn-primary" data-toggle="buttons-checkbox">Show/Hide Timeline</button>
+            
+           <a href="">Group changes</a> /  <a href="">Show as stacked bars</a>
+              
+      </div>
+      </div>
     `);
 
   }
@@ -57,16 +69,17 @@ class Timeline implements IAppView {
    * @param items
    */
   private updateItems(items) {
+
     // TODO retrieve selected data set and update the timeline with it
 
     const h = 200;
-
 
     const ids: any [] = items.map((d) => d.item.desc.id);
 
     const idPairs = d3.pairs(ids);
 
-    //Scaling factor for the size of the circles on the timeline
+
+       //Scaling factor for the size of the circles on the timeline
     const circleScale = d3.scale.linear()
       .domain([0, d3.max(items, (d: any) => d.item.dim[0])])
       .range([10, 5]);   //h/100
@@ -89,14 +102,16 @@ class Timeline implements IAppView {
     //width of the timeline div
     let widthTimelineDiv = $('#timeline').width();
 
-    svgtimeline.append('line')
-      .style('stroke', 'black')
-      .attr('x1', 0)
-      .attr('y1', 60)
-      .attr('x2', widthTimelineDiv - 10)
-      .attr('y2', 60);
+      function scaleCircles(widthTimelineDiv) {
+      //Padding for the circles
+      const padding = 20;
+      //showing only 7 circles on the timeline when no time-object is availiable for the specific dataset
+      // in the next step -> implement the feature of a scroll bar showing more data points on the timeline
+      const numberofCircles = 7;
+      return (widthTimelineDiv - padding) / numberofCircles;
+    }
 
-    //helper variable for clicking event
+     //helper variable for clicking event
     let isClicked = 0;
     //overall time span in days
     const firstTimePoint = moment(items[0].time);
@@ -111,15 +126,16 @@ class Timeline implements IAppView {
       .domain([0, timeRange])
       .range([20, widthTimelineDiv - 20]); // 20 = Spacing
 
-    function scaleCircles(widthTimelineDiv) {
-      //Padding for the circles
-      const padding = 20;
-      //showing only 7 circles on the timeline when no time-object is availiable for the specific dataset
-      // in the next step -> implement the feature of a scroll bar showing more data points on the timeline
-      const numberofCircles = 7;
-      return (widthTimelineDiv - padding) / numberofCircles;
-    }
+    drawTimeline();
 
+    function drawTimeline() {
+
+    svgtimeline.append('line')
+      .style('stroke', 'black')
+      .attr('x1', 0)
+      .attr('y1', 60)
+      .attr('x2', widthTimelineDiv - 10)
+      .attr('y2', 60);
 
     svgtimeline.selectAll('circle')
       .data(items)
@@ -166,6 +182,23 @@ class Timeline implements IAppView {
 
 
       });
+
+    }
+
+    // Hide and Show timeline (line + circles)
+    $('.btn-primary').on('click', function (e) {
+      var line = svgtimeline.select('line');
+      var circle = svgtimeline.selectAll('circle');
+      //console.log('btn-remove');
+
+      if (line.size() > 0 && circle.size() > 0) {
+      line.remove();
+      circle.remove();
+      } else {
+        drawTimeline();
+      }
+    })
+
 
     // Create Bars
     const barPromises = generateBars(20);
@@ -217,6 +250,8 @@ class Timeline implements IAppView {
         generateBars(rectWidth);
       }
     }
+
+
 
     // helper variable for on click event
     let open2dHistogram = null;
