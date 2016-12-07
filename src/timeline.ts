@@ -276,11 +276,14 @@ class Timeline implements IAppView {
 
             const data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
 
-           const data_removed = [json.no_ratio, json.a_ratio, json.c_ratio];
+            const data_removed = [json.no_ratio, json.a_ratio, json.c_ratio];
 
-           //const data_added = [json.no_ratio, json.a_ratio];
+            const data_content = [json.no_ratio, json.a_ratio, json.d_ratio];
 
-           //const data_nochange = [json.no_ratio];
+           const data_added = [json.no_ratio, json.c_ratio, json.d_ratio];
+
+           const data_nochange = [json.a_ratio, json.c_ratio, json.d_ratio];
+
            //console.log(data, data_removed);
 
 
@@ -292,10 +295,24 @@ class Timeline implements IAppView {
               //.domain(<any>[0, data_removed.length-1])
               .range(['#D8D8D8', '#67c4a7', '#8DA1CD']);
 
+           const color_added = d3.scale.ordinal()
+              //.domain(<any>[0, data_removed.length-1])
+              .range(['#D8D8D8', '#8DA1CD', '#F08E65']);
+
+           const color_content = d3.scale.ordinal()
+              //.domain(<any>[0, data_removed.length-1])
+              .range(['#D8D8D8', '#67c4a7', '#F08E65']);
+
+           const color_nochanges = d3.scale.ordinal()
+              //.domain(<any>[0, data_removed.length-1])
+              .range(['#67c4a7', '#8DA1CD', '#F08E65']);
+
+
 
            const svgRatioBar = svgtimeline.append('g')
               .style('transform', 'translate(' + (pairPosX[0] + 0.5 * (pairPosX[1] - pairPosX[0] - width)) + 'px)');
 
+           function drawBars (data:any, color) {
              svgRatioBar.selectAll('rect')
               .data(data)
               .enter()
@@ -318,75 +335,80 @@ class Timeline implements IAppView {
                   events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, pair);
                   open2dHistogram = this.parentNode;
                 }
-          });
+              });
+           }
 
-           //helper variable for clicking remove button!
+           //all changes
+           drawBars(data, color);
+          //helper variable for clicking remove button!
            var btnClicked = 0;
 
             $('.btn-removed').on('click', function (e) {
 
               var currentBars = svgRatioBar.selectAll('rect');
-              console.log(currentBars.size());
-              //currentBars.remove();
 
               if(btnClicked === 0) {
                 currentBars.remove();
-                svgRatioBar.selectAll('rect')
-                  .data(data_removed)
-                  .enter()
-                  .append('rect')
-                  .attr('title', function (d) {
-                    return 'content: ' + Math.round((d * 100)*1000)/1000 +'%';})
-                  .attr('x', (d, i) => i * (w / data_removed.length - barPadding))
-                  .attr('y', (d, i) => h - d * 100)
-                  .attr('width', width)
-                  .attr('height', (d) => d * 100)
-                  .attr('fill', (d, i) => <string>color_removed(i.toString()))
-                  .on('click', function () {
-                    const currentPosX = d3.transform(d3.select(this.parentNode).style('transform')).translate[0];
-                    if (open2dHistogram === this.parentNode) {
-                      events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
-                      open2dHistogram = null;
-                    } else {
-                      events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, pair);
-                      open2dHistogram = this.parentNode;
-                    }
-                  });
+                drawBars(data_removed, color_removed);
+                btnClicked = 1;
+              } else {
 
-               btnClicked = 1;
-
-              }else {
-                console.log('hallo');
                 svgRatioBar.selectAll('rect').remove();
-
-                svgRatioBar.selectAll('rect')
-              .data(data)
-              .enter()
-              .append('rect')
-               .attr('title', function (d) {
-                 return 'content: ' + Math.round((d * 100)*1000)/1000 +'%';})
-              .attr('x', (d, i) => i * (w / data.length - barPadding))
-              .attr('y', (d, i) => h - d * 100)
-              .attr('width', width)
-              .attr('height', (d) => d * 100)
-              .attr('fill', (d, i) => <string>color(i.toString()))
-              .on('click', function () {
-                const currentPosX = d3.transform(d3.select(this.parentNode).style('transform')).translate[0];
-
-                if (open2dHistogram === this.parentNode) {
-                  events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
-                  open2dHistogram = null;
-
-                } else {
-                  events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, pair);
-                  open2dHistogram = this.parentNode;
-                }
-          });
+                drawBars(data, color);
                 btnClicked = 0;
               }
+            });//End button remove
+
+           //no added changes
+           $('.btn-added').on('click', function (e) {
+
+              var currentBars = svgRatioBar.selectAll('rect');
+
+              if(btnClicked === 0) {
+                currentBars.remove();
+                drawBars(data_added, color_added);
+                btnClicked = 1;
+              } else {
+
+                svgRatioBar.selectAll('rect').remove();
+                drawBars(data, color);
+                btnClicked = 0;
+              }
+            });//End button remove
+
+            //no content changes
+           $('.btn-content').on('click', function (e) {
+
+              var currentBars = svgRatioBar.selectAll('rect');
+
+              if(btnClicked === 0) {
+                currentBars.remove();
+                drawBars(data_content, color_content);
+                btnClicked = 1;
+              } else {
+
+                svgRatioBar.selectAll('rect').remove();
+                drawBars(data, color);
+                btnClicked = 0;
+              }
+            });//End button remove
 
 
+            //no no changes
+            $('.btn-nochanges').on('click', function (e) {
 
+              var currentBars = svgRatioBar.selectAll('rect');
+
+              if(btnClicked === 0) {
+                currentBars.remove();
+                drawBars(data_nochange, color_nochanges);
+                btnClicked = 1;
+              } else {
+
+                svgRatioBar.selectAll('rect').remove();
+                drawBars(data, color);
+                btnClicked = 0;
+              }
             });//End button remove
 
           });
