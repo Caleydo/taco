@@ -9,7 +9,7 @@ import * as moment from 'moment';
 import * as ajax from 'phovea_core/src/ajax';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
-import {request} from "http";
+//import {request} from 'http';
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -60,8 +60,10 @@ class Timeline implements IAppView {
                     
             <button type="button" class="btn btn-primary" data-toggle="buttons-checkbox">Show/Hide Timeline</button>
             
-           <a href="">Group changes</a> /  <a href="">Show as stacked bars</a>
-              
+             <button type="button" class="btn btn-primary" data-toggle="buttons-checkbox" id="group">Group changes</button>
+             
+              <button type="button" class="btn btn-primary" data-toggle="buttons-checkbox" id="stackedBar">Show as stacked bars</button>
+                   
       </div>
       </div>
     `);
@@ -214,7 +216,6 @@ class Timeline implements IAppView {
       console.log('finished loading of all bars');
     });
 
-
     // start width for bars of ratio bar charts
     let rectWidth = 13;
 
@@ -284,7 +285,7 @@ class Timeline implements IAppView {
 
            const data_nochange = [json.a_ratio, json.c_ratio, json.d_ratio];
 
-           //console.log(data, data_removed);
+           console.log(data, json);
 
 
            const color = d3.scale.ordinal()
@@ -413,9 +414,9 @@ class Timeline implements IAppView {
 
           });
       });
-}
+    }
   }
-   }
+}
 
 /**
  * Factory method to create a new Timeline instance
