@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import * as ajax from 'phovea_core/src/ajax';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
+//import {request} from 'http';
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -20,6 +21,16 @@ class Timeline implements IAppView {
   constructor(parent: Element, private options: any) {
     this.$node = d3.select(parent).append('div').classed('timeline', true);
   }
+
+
+  private static getURL(pair) {
+    const bin_cols = 1; // -1 = aggregate the whole table
+    const bin_rows = 1; // -1 = aggregate the whole table
+    const direction = 2; // 2 = rows + columns
+    const changes = 'structure,content';
+    return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
+  }
+
 
   /**
    * Initialize the view and return a promise
@@ -49,8 +60,10 @@ class Timeline implements IAppView {
                     
             <button type="button" class="btn btn-primary" data-toggle="buttons-checkbox">Show/Hide Timeline</button>
             
-           <a href="">Group changes</a> /  <a href="">Show as stacked bars</a>
-              
+             <button type="button" class="btn btn-primary" data-toggle="buttons-checkbox" id="group">Group changes</button>
+             
+              <button type="button" class="btn btn-primary" data-toggle="buttons-checkbox" id="stackedBar">Show as stacked bars</button>
+                   
       </div>
       </div>
     `);
@@ -79,7 +92,7 @@ class Timeline implements IAppView {
     const idPairs = d3.pairs(ids);
 
 
-       //Scaling factor for the size of the circles on the timeline
+    //Scaling factor for the size of the circles on the timeline
     const circleScale = d3.scale.linear()
       .domain([0, d3.max(items, (d: any) => d.item.dim[0])])
       .range([10, 5]);   //h/100
@@ -87,9 +100,7 @@ class Timeline implements IAppView {
     //get width of client browser window
     const widthWindow = $(window).innerWidth();
 
-
     const timeline = d3.select('#timeline');
-
 
     if (timeline.select('svg').size() > 0) {
       timeline.select('svg').remove();
@@ -102,7 +113,7 @@ class Timeline implements IAppView {
     //width of the timeline div
     let widthTimelineDiv = $('#timeline').width();
 
-      function scaleCircles(widthTimelineDiv) {
+    function scaleCircles(widthTimelineDiv) {
       //Padding for the circles
       const padding = 20;
       //showing only 7 circles on the timeline when no time-object is availiable for the specific dataset
@@ -111,7 +122,7 @@ class Timeline implements IAppView {
       return (widthTimelineDiv - padding) / numberofCircles;
     }
 
-     //helper variable for clicking event
+    //helper variable for clicking event
     let isClicked = 0;
     //overall time span in days
     const firstTimePoint = moment(items[0].time);
@@ -148,7 +159,6 @@ class Timeline implements IAppView {
           return xScaleTime(moment(d.time).diff(moment(items[0].time), 'days'));
         } else {
           return i * scaleCircles(widthTimelineDiv);
-
         }
       })
       .attr('id', (d: any) => 'circle_' + d.item.desc.id)
@@ -171,19 +181,16 @@ class Timeline implements IAppView {
           isClicked = 1;
 
         } else {
-
           d3.select(this).classed('active', true);
           // dispatch selected dataset to other views
           events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
-
           isClicked = 0;
           console.log('second Click');
         }
-
-
       });
 
     }
+
 
     // Hide and Show timeline (line + circles)
     $('.btn-primary').on('click', function (e) {
@@ -197,15 +204,13 @@ class Timeline implements IAppView {
       } else {
         drawTimeline();
       }
-    })
+    });
 
 
     // Create Bars
     const barPromises = generateBars(20);
-
     // Call the resize function whenever a resize event occurs
     d3.select(window).on('resize', resize);
-
     // Check if all bars have been loaded
     Promise.all(barPromises).then((bars) => {
       console.log('finished loading of all bars');
@@ -216,9 +221,7 @@ class Timeline implements IAppView {
 
     // Resizing all element in the svg
     function resize() {
-
       widthTimelineDiv = $('#timeline').width();
-
       // Update line
       svgtimeline.attr('width', widthTimelineDiv);
       d3.select('line').attr('x2', widthTimelineDiv);
@@ -251,24 +254,22 @@ class Timeline implements IAppView {
       }
     }
 
-
-
     // helper variable for on click event
-    let open2dHistogram = null;
+     let open2dHistogram = null;
 
-    // creating 2D Ratio bars
+
+   // creating 2D Ratio bars
+
     function generateBars(width) {
       return idPairs.map((pair) => {
-        console.log('start loading pair', pair);
-
-        return Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`), pair])
-          .then((args) => {
+      return Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`), pair])
+         .then((args) => {
             const json = args[0];
             const pair = args[1];
 
             const pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
 
-            console.log('finished loading pair - BARS', pair, pairPosX, json);
+           // console.log('finished loading pair - BARS', pair, pairPosX, json);
 
             const w = 80;
             const h = 30;
@@ -276,18 +277,49 @@ class Timeline implements IAppView {
 
             const data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
 
-            const color = d3.scale.ordinal()
-              .domain(<any>[0, data.length - 1])
-              .range(['#D8D8D8', '#67C4A7', '#8DA1CD', '#F08E65']);
+            const data_removed = [json.no_ratio, json.a_ratio, json.c_ratio];
+
+            const data_content = [json.no_ratio, json.a_ratio, json.d_ratio];
+
+           const data_added = [json.no_ratio, json.c_ratio, json.d_ratio];
+
+           const data_nochange = [json.a_ratio, json.c_ratio, json.d_ratio];
+
+           console.log(data, json);
 
 
-            const svgRatioBar = svgtimeline.append('g')
+           const color = d3.scale.ordinal()
+              /*.domain(<any>[0, data.length-1])*/
+              .range(['#D8D8D8', '#67c4a7', '#8DA1CD', '#F08E65']);
+
+           const color_removed = d3.scale.ordinal()
+              //.domain(<any>[0, data_removed.length-1])
+              .range(['#D8D8D8', '#67c4a7', '#8DA1CD']);
+
+           const color_added = d3.scale.ordinal()
+              //.domain(<any>[0, data_removed.length-1])
+              .range(['#D8D8D8', '#8DA1CD', '#F08E65']);
+
+           const color_content = d3.scale.ordinal()
+              //.domain(<any>[0, data_removed.length-1])
+              .range(['#D8D8D8', '#67c4a7', '#F08E65']);
+
+           const color_nochanges = d3.scale.ordinal()
+              //.domain(<any>[0, data_removed.length-1])
+              .range(['#67c4a7', '#8DA1CD', '#F08E65']);
+
+
+
+           const svgRatioBar = svgtimeline.append('g')
               .style('transform', 'translate(' + (pairPosX[0] + 0.5 * (pairPosX[1] - pairPosX[0] - width)) + 'px)');
 
-            svgRatioBar.selectAll('rect')
+           function drawBars (data:any, color) {
+             svgRatioBar.selectAll('rect')
               .data(data)
               .enter()
               .append('rect')
+               .attr('title', function (d) {
+                 return 'content: ' + Math.round((d * 100)*1000)/1000 +'%';})
               .attr('x', (d, i) => i * (w / data.length - barPadding))
               .attr('y', (d, i) => h - d * 100)
               .attr('width', width)
@@ -305,16 +337,86 @@ class Timeline implements IAppView {
                   open2dHistogram = this.parentNode;
                 }
               });
+           }
+
+           //all changes
+           drawBars(data, color);
+          //helper variable for clicking remove button!
+           var btnClicked = 0;
+
+            $('.btn-removed').on('click', function (e) {
+
+              var currentBars = svgRatioBar.selectAll('rect');
+
+              if(btnClicked === 0) {
+                currentBars.remove();
+                drawBars(data_removed, color_removed);
+                btnClicked = 1;
+              } else {
+
+                svgRatioBar.selectAll('rect').remove();
+                drawBars(data, color);
+                btnClicked = 0;
+              }
+            });//End button remove
+
+           //no added changes
+           $('.btn-added').on('click', function (e) {
+
+              var currentBars = svgRatioBar.selectAll('rect');
+
+              if(btnClicked === 0) {
+                currentBars.remove();
+                drawBars(data_added, color_added);
+                btnClicked = 1;
+              } else {
+
+                svgRatioBar.selectAll('rect').remove();
+                drawBars(data, color);
+                btnClicked = 0;
+              }
+            });//End button remove
+
+            //no content changes
+           $('.btn-content').on('click', function (e) {
+
+              var currentBars = svgRatioBar.selectAll('rect');
+
+              if(btnClicked === 0) {
+                currentBars.remove();
+                drawBars(data_content, color_content);
+                btnClicked = 1;
+              } else {
+
+                svgRatioBar.selectAll('rect').remove();
+                drawBars(data, color);
+                btnClicked = 0;
+              }
+            });//End button remove
+
+
+            //no no changes
+            $('.btn-nochanges').on('click', function (e) {
+
+              var currentBars = svgRatioBar.selectAll('rect');
+
+              if(btnClicked === 0) {
+                currentBars.remove();
+                drawBars(data_nochange, color_nochanges);
+                btnClicked = 1;
+              } else {
+
+                svgRatioBar.selectAll('rect').remove();
+                drawBars(data, color);
+                btnClicked = 0;
+              }
+            });//End button remove
 
           });
       });
     }
-
-
-
   }
 }
-
 
 /**
  * Factory method to create a new Timeline instance
