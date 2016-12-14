@@ -39,30 +39,47 @@ class Timeline implements IAppView {
    */
   private build() {
     // TODO build timeline using D3 of parts that doesn't change on update()
-    this.$node.html(`
+    this.$node.html(`      
+      <div id="nav-bar">  
+      <div class="btn-group" role="group" aria-label="...">
+         <button type="button" class="btn btn-default" id="btn-nochange">No changes</button>
+         <button type="button" class="btn btn-default" id="btn-removed">Removed</button>
+         <button type="button" class="btn btn-default" id="btn-added">Added</button>
+         <button type="button" class="btn btn-default" id="btn-content">Content</button>        
+      </div>  
+         
+      <div class="btn-group" role="group" aria-label=""...">
+        <button type="button" class="btn btn-default" id="btn-timeline" >Show/Hide Timeline</button> 
+        <button type="button" class="btn btn-default" id="btn-group">Group Changes</button> 
+        <button type="button" class="btn btn-default" id="btn-stacked">Show as stacked bars</button> 
+     </div>
+           
       <div id="timeline"></div>
-      <div id="nav-bar">
-            <button type="button" class="btn-nochanges" data-toggle="buttons-checkbox">No Changes</button>    
-            <button type="button" class="btn-removed" data-toggle="buttons-checkbox">Removed</button>
-            <button type="button" class="btn-added" data-toggle="buttons-checkbox">Added</button>
-            <button type="button" class="btn-content" data-toggle="buttons-checkbox">Content</button> 
-                    
-            <button type="button" class="btn btn-primary" data-toggle="buttons-checkbox">Show/Hide Timeline</button>
-            
-           <a href="">Group changes</a> /  <a href="">Show as stacked bars</a>
-              
-      </div>
-      </div>
     `);
 
   }
-
+//data-toggle="buttons-checkbox"
   /**
    * Attach event handler for broadcasted events
    */
   private attachListener() {
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
   }
+
+  private h = 200;
+
+  private colorScale = d3.scale.ordinal().range(['#D8zD8D8', '#67C4A7', '#8DA1CD', '#F08E65']);
+
+
+  private timeline = d3.select('#timeline');
+  private widthWindow = $(window).innerWidth();
+
+  private svgtimeline = this.timeline.append('svg')
+    .attr('width', this.widthWindow)
+    .attr('height', this.h);
+
+  //width of the timeline div
+  private widthTimelineDiv:any = $('#timeline').width();
 
   /**
    * Handle the update for a selected dataset
@@ -72,37 +89,22 @@ class Timeline implements IAppView {
 
     // TODO retrieve selected data set and update the timeline with it
 
-    const h = 200;
+    //const h = 200;
 
     const ids: any [] = items.map((d) => d.item.desc.id);
 
     const idPairs = d3.pairs(ids);
 
-
-       //Scaling factor for the size of the circles on the timeline
+    //Scaling factor for the size of the circles on the timeline
     const circleScale = d3.scale.linear()
       .domain([0, d3.max(items, (d: any) => d.item.dim[0])])
       .range([10, 5]);   //h/100
 
-    //get width of client browser window
-    const widthWindow = $(window).innerWidth();
-
-
-    const timeline = d3.select('#timeline');
-
-
-    if (timeline.select('svg').size() > 0) {
-      timeline.select('svg').remove();
+    if (this.timeline.select('svg').size() > 0) {
+      this.timeline.select('svg').remove();
     }
 
-    const svgtimeline = timeline.append('svg')
-      .attr('width', widthWindow)
-      .attr('height', h);
-
-    //width of the timeline div
-    let widthTimelineDiv = $('#timeline').width();
-
-      function scaleCircles(widthTimelineDiv) {
+    function scaleCircles(widthTimelineDiv) {
       //Padding for the circles
       const padding = 20;
       //showing only 7 circles on the timeline when no time-object is availiable for the specific dataset
@@ -111,94 +113,20 @@ class Timeline implements IAppView {
       return (widthTimelineDiv - padding) / numberofCircles;
     }
 
-     //helper variable for clicking event
-    let isClicked = 0;
-    //overall time span in days
-    const firstTimePoint = moment(items[0].time);
-    const lastTimePoint = moment(items[items.length - 1].time);
-    const timeRange = lastTimePoint.diff(firstTimePoint, 'days');
-
-    // Abbildungsbereich = Width
-    // Skalierungfaktor = Width / Time Range
-
-
-    const xScaleTime = d3.scale.linear()
-      .domain([0, timeRange])
-      .range([20, widthTimelineDiv - 20]); // 20 = Spacing
-
-    drawTimeline();
-
-    function drawTimeline() {
-
-    svgtimeline.append('line')
-      .style('stroke', 'black')
-      .attr('x1', 0)
-      .attr('y1', 60)
-      .attr('x2', widthTimelineDiv - 10)
-      .attr('y2', 60);
-
-    svgtimeline.selectAll('circle')
-      .data(items)
-      .enter()
-      .append('circle')
-      .attr('title', (d: any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
-      .attr('cy', 60)
-      .attr('cx', (d: any, i) => {
-        if (d.time) {
-          return xScaleTime(moment(d.time).diff(moment(items[0].time), 'days'));
-        } else {
-          return i * scaleCircles(widthTimelineDiv);
-
-        }
-      })
-      .attr('id', (d: any) => 'circle_' + d.item.desc.id)
-      .attr('r', (d: any) => circleScale(d.item.dim[0]))
-      .on('click', function (d: any) {
-        (<MouseEvent>d3.event).preventDefault();
-
-        if (isClicked === 0) {
-          console.log('first Click');
-          svgtimeline.selectAll('circle').classed('active', false);
-          // toggle the active CSS classes
-          d3.select(this).classed('active', true);
-          // toggle the active CSS classes
-          svgtimeline.selectAll('circle').classed('active', false);
-
-          d3.select(this).classed('active', true).attr('fill');
-
-          // dispatch selected dataset to other views
-          events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
-          isClicked = 1;
-
-        } else {
-
-          d3.select(this).classed('active', true);
-          // dispatch selected dataset to other views
-          events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
-
-          isClicked = 0;
-          console.log('second Click');
-        }
-
-
-      });
-
-    }
-
     // Hide and Show timeline (line + circles)
-    $('.btn-primary').on('click', function (e) {
-      var line = svgtimeline.select('line');
-      var circle = svgtimeline.selectAll('circle');
-      //console.log('btn-remove');
+    $('#btn-timeline').on('click', function (e) {
+      let line = this.svgtimeline.select('line');
+      let circle = this.svgtimeline.selectAll('circle');
 
       if (line.size() > 0 && circle.size() > 0) {
-      line.remove();
-      circle.remove();
+        line.remove();
+        circle.remove();
       } else {
-        drawTimeline();
+        this.drawTimeline();
       }
-    })
+    });
 
+    this.drawTimeline(items);
 
     // Create Bars
     const barPromises = generateBars(20);
@@ -214,45 +142,6 @@ class Timeline implements IAppView {
     // start width for bars of ratio bar charts
     let rectWidth = 13;
 
-    // Resizing all element in the svg
-    function resize() {
-
-      widthTimelineDiv = $('#timeline').width();
-
-      // Update line
-      svgtimeline.attr('width', widthTimelineDiv);
-      d3.select('line').attr('x2', widthTimelineDiv);
-
-      // Updating scale for circle position
-      xScaleTime.range([20, widthTimelineDiv - 20]);
-
-      svgtimeline.selectAll('circle')
-        .attr('cx', (d: any, i) => {
-          if (d.time) {
-            return xScaleTime(moment(d.time).diff(moment(items[0].time), 'days'));
-          } else {
-            return i * scaleCircles(widthTimelineDiv);
-          }
-        });
-
-      // Update bars
-      svgtimeline.selectAll('g').remove();
-
-      if (widthTimelineDiv <= 800) {
-        if (rectWidth >= 5) {
-          svgtimeline.selectAll('g').remove();
-        } else {
-          rectWidth = rectWidth - 1;
-          generateBars(rectWidth);
-        }
-      } else {
-        rectWidth = 15;
-        generateBars(rectWidth);
-      }
-    }
-
-
-
     // helper variable for on click event
     let open2dHistogram = null;
 
@@ -260,11 +149,14 @@ class Timeline implements IAppView {
     function generateBars(width) {
       return idPairs.map((pair) => {
         console.log('start loading pair', pair);
-
         return Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`), pair])
           .then((args) => {
             const json = args[0];
             const pair = args[1];
+
+            console.log(json, pair);
+
+            console.log(d3.select('circle'));
 
             const pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
 
@@ -281,7 +173,7 @@ class Timeline implements IAppView {
               .range(['#D8D8D8', '#67C4A7', '#8DA1CD', '#F08E65']);
 
 
-            const svgRatioBar = svgtimeline.append('g')
+            const svgRatioBar = this.svgtimeline.append('g')
               .style('transform', 'translate(' + (pairPosX[0] + 0.5 * (pairPosX[1] - pairPosX[0] - width)) + 'px)');
 
             svgRatioBar.selectAll('rect')
@@ -310,9 +202,126 @@ class Timeline implements IAppView {
       });
     }
 
+      function resize() {
+      this.widthTimelineDiv = $('#timeline').width();
+      // Update line
+      this.svgtimeline.attr('width', this.widthTimelineDiv);
+      d3.select('line').attr('x2', this.widthTimelineDiv);
 
+      // Updating scale for circle position
+      this.getScaleTimeline().range([20, this.widthTimelineDiv - 20]);
+
+      this.svgtimeline.selectAll('circle')
+        .attr('cx', (d: any, i) => {
+          if (d.time) {
+            return this.getScaleTimeline((moment(d.time).diff(moment(items[0].time), 'days')));
+          } else {
+            return i * scaleCircles(this.widthTimelineDiv);
+          }
+        });
+
+      // Update bars
+      this.svgtimeline.selectAll('g').remove();
+
+      if (this.widthTimelineDiv <= 800) {
+        if (rectWidth >= 5) {
+          this.svgtimeline.selectAll('g').remove();
+        } else {
+          rectWidth = rectWidth - 1;
+          generateBars(rectWidth);
+        }
+      } else {
+        rectWidth = 15;
+        generateBars(rectWidth);
+      }
+    }
 
   }
+
+
+  //scaling for circles on timeline
+ /* private getScaleTimeline (items) {
+
+    const firstTimePoint = moment(items[0].time);
+    const lastTimePoint = moment(items[items.length - 1].time);
+    const timeRange = lastTimePoint.diff(firstTimePoint, 'days');
+    let xScaleTimeline = d3.scale.linear()
+      .domain([0, timeRange])
+      .range([20, this.widthTimelineDiv - 20]); // 20 = Spacing
+
+    return xScaleTimeline;
+  }*/
+
+  //helper variable for clicking event
+  private  isClicked = 0;
+
+  private drawTimeline(items) {
+    const firstTimePoint = moment(items[0].time);
+    const lastTimePoint = moment(items[items.length - 1].time);
+    const timeRange = lastTimePoint.diff(firstTimePoint, 'days');
+    let xScaleTimeline = d3.scale.linear()
+      .domain([0, timeRange])
+      .range([20, this.widthTimelineDiv - 20]); // 20 = Spacing
+
+    const circleScale = d3.scale.linear()
+      .domain([0, d3.max(items, (d: any) => d.item.dim[0])])
+      .range([10, 5]);   //h/100
+
+    this.svgtimeline.append('line')
+      .style('stroke', 'black')
+      .attr('x1', 0)
+      .attr('y1', 60)
+      .attr('x2', this.widthTimelineDiv - 10)
+      .attr('y2', 60);
+
+    this.svgtimeline.selectAll('circle')
+      .data(items)
+      .enter()
+      .append('circle')
+      .attr('title', (d: any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
+      .attr('cy', 60)
+      .attr('cx', (d:any, i) => {
+        if (d.time) {
+          return xScaleTimeline(moment(d.time).diff(moment(items[0].time), 'days'));
+        } else {
+          return i * xScaleTimeline(this.widthTimelineDiv);
+        }
+      })
+      .attr('id', (d: any) => 'circle_' + d.item.desc.id)
+      .attr('r', (d: any) => circleScale(d.item.dim[0]))
+      .on('click', function (d: any) {
+        (<MouseEvent>d3.event).preventDefault();
+
+        if (this.isClicked === 0) {
+          console.log('first Click');
+          this.svgtimeline.selectAll('circle').classed('active', false);
+          // toggle the active CSS classes
+          d3.select(this).classed('active', true);
+          // toggle the active CSS classes
+          this.svgtimeline.selectAll('circle').classed('active', false);
+
+          d3.select(this).classed('active', true).attr('fill');
+
+          // dispatch selected dataset to other views
+          events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
+          this.isClicked = 1;
+
+        } else {
+
+          d3.select(this).classed('active', true);
+          // dispatch selected dataset to other views
+          events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
+
+          this.isClicked = 0;
+          console.log('second Click');
+        }
+
+
+      });
+
+  }
+
+
 }
 
 

@@ -79,6 +79,10 @@ rect {
 
 }
 
+#nav-bar{
+  margin-top:20px;
+}
+
 @keyframes color_change {
   from { background-color: transparent; }
   to { background-color: $hover-color; }
@@ -119,105 +123,23 @@ button:active, button.active {
 
   }
 
-
-.btn-removed {
-  color: white;
-  background-color: #f08e65;
-  border-color: white;
-}
-
-  .btn-removed:focus, .btn-removed.focus {
-    color: white;
-    background-color: #f08e65;
-    border-color: white;
-  }
-  .btn-removed:hover {
-    color: white;
-    background-color: #f56527;
-    border-color: #adadad;
-  }
-
-  .btn-removed:focus, .btn-removed.focus, .open > .btn-removed.dropdown-toggle {
-    color: #fff;
-    background-color: #D8D8D8;
-    border-color: #204d74;
-}
-
-
-  .btn-nochanges {
-  color: white;
+#btn-nochange{
   background-color: #D8D8D8;
-  border-color: white;
-}
-
-  .btn-nochanges:focus, .btn-nochanges.focus {
-    color: white;
-    background-color: #D8D8D8;
-    border-color: white;
-  }
-  .btn-nochanges:hover {
-    color: white;
-    background-color: #c7c5c5;
-    border-color: #adadad;
-  }
-
-  .btn-nochanges:focus, .btn-nochanges.focus, .open > .btn-nochanges.dropdown-toggle {
-    color: #fff;
-    background-color: #c7c5c5;
-    border-color: #204d74;
 }
 
 
-
-  .btn-added {
-  color: white;
-  background-color: #67c4a7;
-  border-color: white;
+#btn-removed{
+  background-color: #f08e65;
 }
 
-  .btn-added:focus, .btn-added.focus {
-    color: white;
-    background-color: #67c4a7;
-    border-color: white;
-  }
-  .btn-added:hover {
-    color: white;
-    background-color: #48BF9A;
-    border-color: #adadad;
-  }
+#btn-added{
+background-color: #67c4a7;
 
+}
 
-
-
-
-   .btn-content {
-  color: white;
+#btn-content{
   background-color: #8da1cd;
-  border-color: white;
 }
-
-  .btn-content:focus, .btn-content.focus {
-    color: white;
-    background-color: #8da1cd;
-    border-color: white;
-  }
-  .btn-content:hover {
-    color: white;
-    background-color: #7792CD;
-    border-color: #adadad;
-  }
-
-
-  .btn-primary:active, .btn-primary.active, .open > .btn-primary.dropdown-toggle {
-    color: #fff;
-    background-color: #D8D8D8;
-    border-color: #204d74;
-}
-
-
-
-
-
 
 .histogram_2d {
   margin-bottom: 100px;
