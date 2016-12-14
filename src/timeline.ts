@@ -17,6 +17,22 @@ class Timeline implements IAppView {
 
   private $node;
 
+  private timelineWidth = $(window).innerWidth();
+  private timelineHeight = 200;
+
+  private items;
+
+  //private colorScale = d3.scale.ordinal().range(['#D8zD8D8', '#67C4A7', '#8DA1CD', '#F08E65']);
+
+  private $svgTimeline;
+
+  //width of the timeline div
+  private widthTimelineDiv: number;
+
+  // helper variable for on click event
+  private open2dHistogram = null;
+
+
   constructor(parent: Element, private options: any) {
     this.$node = d3.select(parent).append('div').classed('timeline', true);
   }
@@ -32,6 +48,16 @@ class Timeline implements IAppView {
 
     // return the promise directly as long there is no dynamical data to update
     return Promise.resolve(this);
+  }
+
+  /**
+   * Attach event handler for broadcasted events
+   */
+  private attachListener() {
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
+
+    // Call the resize function whenever a resize event occurs
+    d3.select(window).on('resize', () => this.resize());
   }
 
   /**
@@ -57,234 +83,210 @@ class Timeline implements IAppView {
       <div id="timeline"></div>
     `);
 
-  }
-//data-toggle="buttons-checkbox"
-  /**
-   * Attach event handler for broadcasted events
-   */
-  private attachListener() {
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
+    this.$svgTimeline = this.$node.select('#timeline')
+      .append('svg')
+      .attr('width', this.timelineWidth)
+      .attr('height', this.timelineHeight);
   }
 
-  private h = 200;
+  private resize() {
+    this.widthTimelineDiv = $('#timeline').width();
 
-  private colorScale = d3.scale.ordinal().range(['#D8zD8D8', '#67C4A7', '#8DA1CD', '#F08E65']);
+    // Update line
+    this.$svgTimeline.attr('width', this.widthTimelineDiv);
+    d3.select('line').attr('x2', this.widthTimelineDiv);
 
+    // Updating scale for circle position
+    this.getScaleTimeline(this.items).range([20, this.widthTimelineDiv - 20]);
 
-  private timeline = d3.select('#timeline');
-  private widthWindow = $(window).innerWidth();
+    this.$svgTimeline.selectAll('circle')
+      .attr('cx', (d: any, i) => {
+        // TODO for Christina: uncomment and make getScaleTimeline work again
+        //if (d.time) {
+        //  return this.getScaleTimeline((moment(d.time).diff(moment(this.items[0].time), 'days')));
+        //} else {
+        return i * this.scaleCircles();
+        //}
+      });
 
-  private svgtimeline = this.timeline.append('svg')
-    .attr('width', this.widthWindow)
-    .attr('height', this.h);
+    // Update bars
+    this.$svgTimeline.selectAll('g').remove();
 
-  //width of the timeline div
-  private widthTimelineDiv:any = $('#timeline').width();
+    // start width for bars of ratio bar charts
+    let rectWidth = 13;
+
+    if (this.widthTimelineDiv <= 800) {
+      if (rectWidth >= 5) {
+        this.$svgTimeline.selectAll('g').remove();
+      } else {
+        rectWidth = rectWidth - 1;
+        this.generateBars(rectWidth);
+      }
+    } else {
+      rectWidth = 15;
+      this.generateBars(rectWidth);
+    }
+  }
+
+  private scaleCircles() {
+    //Padding for the circles
+    const padding = 20;
+    //showing only 7 circles on the timeline when no time-object is availiable for the specific dataset
+    // in the next step -> implement the feature of a scroll bar showing more data points on the timeline
+    const numberofCircles = 7;
+    return (this.widthTimelineDiv - padding) / numberofCircles;
+  }
+
+  //scaling for circles on timeline
+  private getScaleTimeline(items) {
+    const firstTimePoint = moment(items[0].time);
+    const lastTimePoint = moment(items[items.length - 1].time);
+    const timeRange = lastTimePoint.diff(firstTimePoint, 'days');
+
+    return d3.scale.linear()
+      .domain([0, timeRange])
+      .range([20, this.widthTimelineDiv - 20]); // 20 = Spacing
+  }
 
   /**
    * Handle the update for a selected dataset
    * @param items
    */
   private updateItems(items) {
+    const that = this; // use `that` inside of function() (e.g., event listener)
 
-    // TODO retrieve selected data set and update the timeline with it
+    // make items available for other class members
+    this.items = items;
 
-    //const h = 200;
+    // delete all existing DOM elements
+    this.$svgTimeline.selectAll('*').remove();
 
-    const ids: any [] = items.map((d) => d.item.desc.id);
-
-    const idPairs = d3.pairs(ids);
-
-    //Scaling factor for the size of the circles on the timeline
-    const circleScale = d3.scale.linear()
-      .domain([0, d3.max(items, (d: any) => d.item.dim[0])])
-      .range([10, 5]);   //h/100
-
-    if (this.timeline.select('svg').size() > 0) {
-      this.timeline.select('svg').remove();
-    }
-
-    function scaleCircles(widthTimelineDiv) {
-      //Padding for the circles
-      const padding = 20;
-      //showing only 7 circles on the timeline when no time-object is availiable for the specific dataset
-      // in the next step -> implement the feature of a scroll bar showing more data points on the timeline
-      const numberofCircles = 7;
-      return (widthTimelineDiv - padding) / numberofCircles;
-    }
+    // initialize the width
+    this.resize();
 
     // Hide and Show timeline (line + circles)
     $('#btn-timeline').on('click', function (e) {
-      let line = this.svgtimeline.select('line');
-      let circle = this.svgtimeline.selectAll('circle');
+      let line = that.$svgTimeline.select('line');
+      let circle = that.$svgTimeline.selectAll('circle');
 
       if (line.size() > 0 && circle.size() > 0) {
         line.remove();
         circle.remove();
       } else {
-        this.drawTimeline();
+        that.drawTimeline();
       }
     });
 
-    this.drawTimeline(items);
+    this.drawTimeline();
 
     // Create Bars
-    const barPromises = generateBars(20);
-
-    // Call the resize function whenever a resize event occurs
-    d3.select(window).on('resize', resize);
+    const barPromises = this.generateBars(20);
 
     // Check if all bars have been loaded
     Promise.all(barPromises).then((bars) => {
       console.log('finished loading of all bars');
     });
-
-    // start width for bars of ratio bar charts
-    let rectWidth = 13;
-
-    // helper variable for on click event
-    let open2dHistogram = null;
-
-    // creating 2D Ratio bars
-    function generateBars(width) {
-      return idPairs.map((pair) => {
-        console.log('start loading pair', pair);
-        return Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`), pair])
-          .then((args) => {
-            const json = args[0];
-            const pair = args[1];
-
-            console.log(json, pair);
-
-            console.log(d3.select('circle'));
-
-            const pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
-
-            console.log('finished loading pair - BARS', pair, pairPosX, json);
-
-            const w = 80;
-            const h = 30;
-            const barPadding = 0.5;
-
-            const data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
-
-            const color = d3.scale.ordinal()
-              .domain(<any>[0, data.length - 1])
-              .range(['#D8D8D8', '#67C4A7', '#8DA1CD', '#F08E65']);
-
-
-            const svgRatioBar = this.svgtimeline.append('g')
-              .style('transform', 'translate(' + (pairPosX[0] + 0.5 * (pairPosX[1] - pairPosX[0] - width)) + 'px)');
-
-            svgRatioBar.selectAll('rect')
-              .data(data)
-              .enter()
-              .append('rect')
-              .attr('x', (d, i) => i * (w / data.length - barPadding))
-              .attr('y', (d, i) => h - d * 100)
-              .attr('width', width)
-              .attr('height', (d) => d * 100)
-              .attr('fill', (d, i) => <string>color(i.toString()))
-              .on('click', function () {
-                const currentPosX = d3.transform(d3.select(this.parentNode).style('transform')).translate[0];
-
-                if (open2dHistogram === this.parentNode) {
-                  events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
-                  open2dHistogram = null;
-
-                } else {
-                  events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, pair);
-                  open2dHistogram = this.parentNode;
-                }
-              });
-
-          });
-      });
-    }
-
-      function resize() {
-      this.widthTimelineDiv = $('#timeline').width();
-      // Update line
-      this.svgtimeline.attr('width', this.widthTimelineDiv);
-      d3.select('line').attr('x2', this.widthTimelineDiv);
-
-      // Updating scale for circle position
-      this.getScaleTimeline().range([20, this.widthTimelineDiv - 20]);
-
-      this.svgtimeline.selectAll('circle')
-        .attr('cx', (d: any, i) => {
-          if (d.time) {
-            return this.getScaleTimeline((moment(d.time).diff(moment(items[0].time), 'days')));
-          } else {
-            return i * scaleCircles(this.widthTimelineDiv);
-          }
-        });
-
-      // Update bars
-      this.svgtimeline.selectAll('g').remove();
-
-      if (this.widthTimelineDiv <= 800) {
-        if (rectWidth >= 5) {
-          this.svgtimeline.selectAll('g').remove();
-        } else {
-          rectWidth = rectWidth - 1;
-          generateBars(rectWidth);
-        }
-      } else {
-        rectWidth = 15;
-        generateBars(rectWidth);
-      }
-    }
-
   }
 
+  // creating 2D Ratio bars
+  private generateBars(width) {
+    const that = this;
 
-  //scaling for circles on timeline
- /* private getScaleTimeline (items) {
+    const ids = this.items.map((d) => d.item.desc.id);
 
-    const firstTimePoint = moment(items[0].time);
-    const lastTimePoint = moment(items[items.length - 1].time);
-    const timeRange = lastTimePoint.diff(firstTimePoint, 'days');
-    let xScaleTimeline = d3.scale.linear()
-      .domain([0, timeRange])
-      .range([20, this.widthTimelineDiv - 20]); // 20 = Spacing
+    return d3.pairs(ids).map((pair) => {
+      console.log('start loading pair', pair);
+      return Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`), pair])
+        .then((args) => {
+          const json = args[0];
+          const pair = args[1];
 
-    return xScaleTimeline;
-  }*/
+          console.log(json, pair);
+
+          console.log(d3.select('circle'));
+
+          const pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
+
+          console.log('finished loading pair - BARS', pair, pairPosX, json);
+
+          const w = 80;
+          const h = 30;
+          const barPadding = 0.5;
+
+          const data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
+
+          const color = d3.scale.ordinal()
+            .domain(<any>[0, data.length - 1])
+            .range(['#D8D8D8', '#67C4A7', '#8DA1CD', '#F08E65']);
+
+
+          const svgRatioBar = this.$svgTimeline.append('g')
+            .style('transform', 'translate(' + (pairPosX[0] + 0.5 * (pairPosX[1] - pairPosX[0] - width)) + 'px)');
+
+          svgRatioBar.selectAll('rect')
+            .data(data)
+            .enter()
+            .append('rect')
+            .attr('x', (d, i) => i * (w / data.length - barPadding))
+            .attr('y', (d, i) => h - d * 100)
+            .attr('width', width)
+            .attr('height', (d) => d * 100)
+            .attr('fill', (d, i) => <string>color(i.toString()))
+            .on('click', function () {
+              const currentPosX = d3.transform(d3.select(this.parentNode).style('transform')).translate[0];
+
+              if (that.open2dHistogram === this.parentNode) {
+                events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
+                that.open2dHistogram = null;
+
+              } else {
+                events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, pair);
+                that.open2dHistogram = this.parentNode;
+              }
+            });
+
+        });
+    });
+  }
 
   //helper variable for clicking event
-  private  isClicked = 0;
+  private isClicked = 0;
 
-  private drawTimeline(items) {
+  private drawTimeline() {
+    const that = this;
+    const items = this.items;
+
     const firstTimePoint = moment(items[0].time);
     const lastTimePoint = moment(items[items.length - 1].time);
+
     const timeRange = lastTimePoint.diff(firstTimePoint, 'days');
+
     let xScaleTimeline = d3.scale.linear()
       .domain([0, timeRange])
-      .range([20, this.widthTimelineDiv - 20]); // 20 = Spacing
+      .range([20, that.widthTimelineDiv - 20]); // 20 = Spacing
 
     const circleScale = d3.scale.linear()
       .domain([0, d3.max(items, (d: any) => d.item.dim[0])])
       .range([10, 5]);   //h/100
 
-    this.svgtimeline.append('line')
+    this.$svgTimeline.append('line')
       .style('stroke', 'black')
       .attr('x1', 0)
       .attr('y1', 60)
-      .attr('x2', this.widthTimelineDiv - 10)
+      .attr('x2', that.widthTimelineDiv - 10)
       .attr('y2', 60);
 
-    this.svgtimeline.selectAll('circle')
+    this.$svgTimeline.selectAll('circle')
       .data(items)
       .enter()
       .append('circle')
       .attr('title', (d: any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
       .attr('cy', 60)
-      .attr('cx', (d:any, i) => {
+      .attr('cx', (d: any, i) => {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(items[0].time), 'days'));
         } else {
-          return i * xScaleTimeline(this.widthTimelineDiv);
+          return i * xScaleTimeline(that.widthTimelineDiv);
         }
       })
       .attr('id', (d: any) => 'circle_' + d.item.desc.id)
@@ -292,19 +294,19 @@ class Timeline implements IAppView {
       .on('click', function (d: any) {
         (<MouseEvent>d3.event).preventDefault();
 
-        if (this.isClicked === 0) {
+        if (that.isClicked === 0) {
           console.log('first Click');
-          this.svgtimeline.selectAll('circle').classed('active', false);
+          this.$svgTimeline.selectAll('circle').classed('active', false);
           // toggle the active CSS classes
           d3.select(this).classed('active', true);
           // toggle the active CSS classes
-          this.svgtimeline.selectAll('circle').classed('active', false);
+          this.$svgTimeline.selectAll('circle').classed('active', false);
 
           d3.select(this).classed('active', true).attr('fill');
 
           // dispatch selected dataset to other views
           events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
-          this.isClicked = 1;
+          that.isClicked = 1;
 
         } else {
 
@@ -312,15 +314,12 @@ class Timeline implements IAppView {
           // dispatch selected dataset to other views
           events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
 
-          this.isClicked = 0;
+          that.isClicked = 0;
           console.log('second Click');
         }
 
-
       });
-
   }
-
 
 }
 
