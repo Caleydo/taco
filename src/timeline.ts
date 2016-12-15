@@ -74,10 +74,11 @@ class Timeline implements IAppView {
          <button type="button" class="btn btn-default" id="btn-content">Content</button>        
       </div>  
          
-      <div class="btn-group" role="group" aria-label=""...">
-        <button type="button" class="btn btn-default" id="btn-timeline" >Show/Hide Timeline</button> 
+      <div class="btn-group" role="group" aria-label="...">
+        <button type="button" class="btn btn-default toggleTimeline" id="btn-timeline">Show/Hide Timeline</button> 
         <button type="button" class="btn btn-default" id="btn-group">Group Changes</button> 
         <button type="button" class="btn btn-default" id="btn-stacked">Show as stacked bars</button> 
+     </div>
      </div>
            
       <div id="timeline"></div>
@@ -87,6 +88,7 @@ class Timeline implements IAppView {
       .append('svg')
       .attr('width', this.timelineWidth)
       .attr('height', this.timelineHeight);
+
   }
 
   private resize() {
@@ -99,14 +101,24 @@ class Timeline implements IAppView {
     // Updating scale for circle position
     this.getScaleTimeline(this.items).range([20, this.widthTimelineDiv - 20]);
 
+    const firstTimePoint = moment(this.items[0].time);
+    const lastTimePoint = moment(this.items[this.items.length - 1].time);
+    const timeRange = lastTimePoint.diff(firstTimePoint, 'days');
+
+    let xScaleTimeline = d3.scale.linear()
+      .domain([0, timeRange])
+      .range([20, this.widthTimelineDiv - 20]); // 20 = Spacing
+
     this.$svgTimeline.selectAll('circle')
       .attr('cx', (d: any, i) => {
         // TODO for Christina: uncomment and make getScaleTimeline work again
-        //if (d.time) {
-        //  return this.getScaleTimeline((moment(d.time).diff(moment(this.items[0].time), 'days')));
-        //} else {
-        return i * this.scaleCircles();
-        //}
+        if (d.time) {
+          let time = moment(d.time).diff(moment(this.items[0].time), 'days');
+          console.log(time);
+          return xScaleTimeline((moment(d.time).diff(moment(this.items[0].time), 'days')));
+        } else {
+          return i * this.scaleCircles();
+        }
       });
 
     // Update bars
@@ -128,6 +140,7 @@ class Timeline implements IAppView {
     }
   }
 
+  //Circle Scale if dataset has no time element
   private scaleCircles() {
     //Padding for the circles
     const padding = 20;
@@ -139,8 +152,9 @@ class Timeline implements IAppView {
 
   //scaling for circles on timeline
   private getScaleTimeline(items) {
-    const firstTimePoint = moment(items[0].time);
-    const lastTimePoint = moment(items[items.length - 1].time);
+    this.items = items;
+    const firstTimePoint = moment(this.items[0].time);
+    const lastTimePoint = moment(this.items[this.items.length - 1].time);
     const timeRange = lastTimePoint.diff(firstTimePoint, 'days');
 
     return d3.scale.linear()
@@ -152,11 +166,13 @@ class Timeline implements IAppView {
    * Handle the update for a selected dataset
    * @param items
    */
+
   private updateItems(items) {
     const that = this; // use `that` inside of function() (e.g., event listener)
 
     // make items available for other class members
     this.items = items;
+
 
     // delete all existing DOM elements
     this.$svgTimeline.selectAll('*').remove();
@@ -164,20 +180,26 @@ class Timeline implements IAppView {
     // initialize the width
     this.resize();
 
+    this.drawTimeline();
+
+    // get toogle Button
+    let showHideButton = this.$node.select('.toggleTimeline');
+
     // Hide and Show timeline (line + circles)
-    $('#btn-timeline').on('click', function (e) {
+    showHideButton.on('click', function (e) {
       let line = that.$svgTimeline.select('line');
       let circle = that.$svgTimeline.selectAll('circle');
+      //console.log(line, circle);
 
       if (line.size() > 0 && circle.size() > 0) {
         line.remove();
         circle.remove();
+       // console.log(line.size(), circle.size());
       } else {
+        //console.log(line.size(), circle.size());
         that.drawTimeline();
       }
     });
-
-    this.drawTimeline();
 
     // Create Bars
     const barPromises = this.generateBars(20);
@@ -190,6 +212,7 @@ class Timeline implements IAppView {
 
   // creating 2D Ratio bars
   private generateBars(width) {
+
     const that = this;
 
     const ids = this.items.map((d) => d.item.desc.id);
@@ -283,10 +306,11 @@ class Timeline implements IAppView {
       .attr('title', (d: any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
       .attr('cy', 60)
       .attr('cx', (d: any, i) => {
+
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(items[0].time), 'days'));
         } else {
-          return i * xScaleTimeline(that.widthTimelineDiv);
+          return i * this.scaleCircles();
         }
       })
       .attr('id', (d: any) => 'circle_' + d.item.desc.id)
