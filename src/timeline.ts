@@ -32,9 +32,13 @@ class Timeline implements IAppView {
   // helper variable for on click event
   private open2dHistogram = null;
 
+  private $navbar;
+
 
   constructor(parent: Element, private options: any) {
+    this.$navbar = d3.select(parent).append('div').classed('nav-bar', true);
     this.$node = d3.select(parent).append('div').classed('timeline', true);
+
   }
 
   /**
@@ -64,9 +68,8 @@ class Timeline implements IAppView {
    * Build the basic DOM elements and binds the change function
    */
   private build() {
-    // TODO build timeline using D3 of parts that doesn't change on update()
-    this.$node.html(`      
-      <div id="nav-bar">  
+
+      this.$navbar.html(` <div id="nav-bar">  
       <div class="btn-group" role="group" aria-label="...">
          <button type="button" class="btn btn-default" id="btn-nochange">No changes</button>
          <button type="button" class="btn btn-default" id="btn-removed">Removed</button>
@@ -79,15 +82,21 @@ class Timeline implements IAppView {
         <button type="button" class="btn btn-default" id="btn-group">Group Changes</button> 
         <button type="button" class="btn btn-default" id="btn-stacked">Show as stacked bars</button> 
      </div>
-     </div>
-           
+     </div>`);
+
+
+    // TODO build timeline using D3 of parts that doesn't change on update()
+    this.$node.html(`           
       <div id="timeline"></div>
     `);
+
 
     this.$svgTimeline = this.$node.select('#timeline')
       .append('svg')
       .attr('width', this.timelineWidth)
       .attr('height', this.timelineHeight);
+
+    console.log(d3.select('.selector').selectAll('div'));
 
   }
 
@@ -183,7 +192,7 @@ class Timeline implements IAppView {
     this.drawTimeline();
 
     // get toogle Button
-    let showHideButton = this.$node.select('.toggleTimeline');
+    let showHideButton = this.$navbar.select('.toggleTimeline');
 
     // Hide and Show timeline (line + circles)
     showHideButton.on('click', function (e) {
@@ -224,9 +233,9 @@ class Timeline implements IAppView {
           const json = args[0];
           const pair = args[1];
 
-          console.log(json, pair);
+          //console.log(json, pair);
 
-          console.log(d3.select('circle'));
+         // console.log(d3.select('circle'));
 
           const pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
 
