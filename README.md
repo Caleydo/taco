@@ -3,6 +3,8 @@ taco [![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] 
 
 TaCo (for **Ta**ble **Co**mparison) is an interactive comparison tool that effectively visualizes the differences between multiple tables at various levels of granularity.
 
+A [demonstration](http://playground.caleydo.org/taco/) is available in the Caleydo Playground.
+
 Installation
 ------------
 
