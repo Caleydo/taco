@@ -26,6 +26,25 @@ module.exports = function(registry) {
   'name': 'Heat Map',
   'factory': 'create'
  });
+
+  registry.push('tacoView', 'Histogram2D', function() { return System.import('./src/histogram_2d'); }, {
+  'name': 'Histogram2D',
+  'factory': 'create'
+ });
+
+  registry.push('tacoView', 'FilterBar', function () {
+    return System.import('./src/filter_bar');
+  }, {
+    'name': 'FilterBar',
+    'factory': 'create'
+  });
+
+  registry.push('tacoView', 'BarChart', function () {
+    return System.import('./src/bar_chart');
+  }, {
+    'name': 'BarChart',
+    'factory': 'create'
+  });
   // generator-phovea:end
 };
 

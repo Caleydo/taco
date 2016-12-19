@@ -2,15 +2,13 @@
  * Created by Holger Stitz on 29.08.2016.
  */
 
+import * as moment from 'moment';
+import * as d3 from 'd3';
+import * as $ from 'jquery';
 import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
-import {Language} from './language';
-//import moment = require("../../libs/bower_components/moment/moment");
-import * as moment from 'moment';
-import * as ajax from 'phovea_core/src/ajax';
-import * as d3 from 'd3';
-import * as $ from 'jquery';
+import {getPosXScale} from './util';
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -19,7 +17,23 @@ class Timeline implements IAppView {
 
   private $node;
 
-  constructor(parent:Element, private options:any) {
+  private timelineWidth = $(window).innerWidth();
+  private timelineHeight = 200;
+
+  private items;
+
+  //private colorScale = d3.scale.ordinal().range(['#D8zD8D8', '#67C4A7', '#8DA1CD', '#F08E65']);
+
+  private $svgTimeline;
+
+  //width of the timeline div
+  private totalWidth: number;
+
+  // helper variable for on click event
+  //private open2dHistogram = null;
+
+
+  constructor(parent: Element, private options: any) {
     this.$node = d3.select(parent).append('div').classed('timeline', true);
   }
 
@@ -37,125 +51,127 @@ class Timeline implements IAppView {
   }
 
   /**
-   * Build the basic DOM elements and binds the change function
-   */
-  private build() {
-    // TODO build timeline using D3 of parts that doesn't change on update()
-    this.$node.html(`
-      <!--<h3>${Language.TIMELINE}</h3>-->
-      <ul class="output"></ul>
-      <div id="ratioBar" class ="ratioBarChart"></div>
-      <div id="timeline"></div>
-    `);
-
-  }
-
-  /**
    * Attach event handler for broadcasted events
    */
   private attachListener() {
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
+
+    events.on(AppConstants.EVENT_TOGGLE_TIMELINE, (evt) => this.toggleTimeline());
+
+    // Call the resize function whenever a resize event occurs
+    d3.select(window).on('resize', () => this.resize());
+  }
+
+  /**
+   * Build the basic DOM elements and binds the change function
+   */
+  private build() {
+    this.$svgTimeline = this.$node
+      .append('svg')
+      .attr('width', this.timelineWidth)
+      .attr('height', this.timelineHeight);
+  }
+
+  private resize() {
+    this.totalWidth = $(this.$node.node()).width();
+
+    // Update line
+    this.$svgTimeline.attr('width', this.totalWidth);
+    d3.select('line').attr('x2', this.totalWidth);
+
+    // Updating scale for circle position
+    let xScaleTimeline = getPosXScale(this.items, this.totalWidth);
+
+    this.$svgTimeline.selectAll('circle')
+      .attr('cx', (d: any, i) => {
+        if (d.time) {
+          return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
+        } else {
+          return i * this.scaleCircles();
+        }
+      });
+  }
+
+  //Circle Scale if dataset has no time element
+  private scaleCircles() {
+    //Padding for the circles
+    const padding = 20;
+    //showing only 7 circles on the timeline when no time-object is availiable for the specific dataset
+    // in the next step -> implement the feature of a scroll bar showing more data points on the timeline
+    const numberofCircles = 7;
+    return (this.totalWidth - padding) / numberofCircles;
   }
 
   /**
    * Handle the update for a selected dataset
    * @param items
    */
+
   private updateItems(items) {
-    // TODO retrieve selected data set and update the timeline with it
+    // make items available for other class members
+    this.items = items;
 
-    const h = 200;
 
-    var ids:any [] = items.map((d) => d.item.desc.id);
+    // delete all existing DOM elements
+    this.$svgTimeline.selectAll('*').remove();
 
-    var idPairs = d3.pairs(ids);
+    // initialize the width
+    this.resize();
 
-    //Scaling factor for the size of the circles on the timeline
+    this.drawTimeline();
+  }
+
+
+  //helper variable for clicking event
+  private isClicked = 0;
+
+  private drawTimeline() {
+    const that = this;
+
+    let xScaleTimeline = getPosXScale(this.items, this.totalWidth);
+
     const circleScale = d3.scale.linear()
-      .domain([0, d3.max(items, (d:any) => d.item.dim[0]) ])
+      .domain([0, d3.max(this.items, (d: any) => d.item.dim[0])])
       .range([10, 5]);   //h/100
 
-    //get width of client browser window
-    var widthWindow = $(window).innerWidth();
-
-
-    const timeline = d3.select('#timeline');
-
-    if(timeline.select('svg').size() > 0) {
-      timeline.select('svg').remove();
-    }
-
-    const svgtimeline = timeline.append('svg')
-      .attr('width', widthWindow)
-      .attr('height', h);
-
-    //width of the timeline div
-    var widthTimelineDiv = $('#timeline').width();
-
-    svgtimeline.append('line')
+    this.$svgTimeline.append('line')
       .style('stroke', 'black')
       .attr('x1', 0)
       .attr('y1', 60)
-      .attr('x2', widthTimelineDiv-10)
+      .attr('x2', that.totalWidth - 10)
       .attr('y2', 60);
 
-    //helper variable for clicking event
-    var isClicked = 0;
-    //overall time span in days
-    var firstTimePoint = moment(items[0].time);
-    var lastTimePoint =  moment(items[items.length-1].time);
-    var timeRange = lastTimePoint.diff(firstTimePoint, 'days');
-
-    // Abbildungsbereich = Width
-    // Skalierungfaktor = Width / Time Range
-
-
-    const xScaleTime = d3.scale.linear()
-      .domain([0, timeRange])
-      .range([20, widthTimelineDiv-20]); // 20 = Spacing
-
-    function scaleCircles(widthTimelineDiv) {
-      //Padding for the circles
-      const padding = 20;
-      //showing only 7 circles on the timeline when no time-object is availiable for the specific dataset
-      // in the next step -> implement the feature of a scroll bar showing more data points on the timeline
-      const numberofCircles = 7;
-      return (widthTimelineDiv - padding) / numberofCircles;
-    }
-
-
-    svgtimeline.selectAll('circle')
-      .data(items)
+    this.$svgTimeline.selectAll('circle')
+      .data(this.items)
       .enter()
       .append('circle')
-      .attr('title', (d:any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
+      .attr('title', (d: any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
       .attr('cy', 60)
-      .attr('cx', (d:any, i) => {
-        if(d.time) {
-          return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
+      .attr('cx', (d: any, i) => {
+        if (d.time) {
+          return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         } else {
-          return i * scaleCircles(widthTimelineDiv);
-
+          return i * this.scaleCircles();
         }
       })
-      .attr('id', (d:any) => 'circle_' + d.item.desc.id)
-      .attr('r', (d:any) => circleScale(d.item.dim[0]))
-      .on('click', function(d:any) {
+      .attr('id', (d: any) => 'circle_' + d.item.desc.id)
+      .attr('r', (d: any) => circleScale(d.item.dim[0]))
+      .on('click', function (d: any) {
         (<MouseEvent>d3.event).preventDefault();
 
-        if (isClicked === 0) {
-          console.log ('first Click');
-          svgtimeline.selectAll('circle').classed('active', false);
+        if (that.isClicked === 0) {
+          console.log('first Click');
+          this.$svgTimeline.selectAll('circle').classed('active', false);
           // toggle the active CSS classes
           d3.select(this).classed('active', true);
           // toggle the active CSS classes
-          svgtimeline.selectAll('circle').classed('active', false);
+          this.$svgTimeline.selectAll('circle').classed('active', false);
 
           d3.select(this).classed('active', true).attr('fill');
 
           // dispatch selected dataset to other views
           events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
-          isClicked = 1;
+          that.isClicked = 1;
 
         } else {
 
@@ -163,110 +179,32 @@ class Timeline implements IAppView {
           // dispatch selected dataset to other views
           events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
 
-          isClicked = 0;
-          console.log ('second Click');
+          that.isClicked = 0;
+          console.log('second Click');
         }
-
 
       });
-
-    //Create Bars
-    const barPromises = generateBars(20);
-
-    // Call the resize function whenever a resize event occurs
-    d3.select(window).on('resize', resize);
-
-    // Check if all bars have been loaded
-    Promise.all(barPromises).then((bars) => {
-      console.log('finished loading of all bars');
-    });
-
-    var rectWidth = 13;
-
-
-    //Resizing all element in the svg
-    function resize() {
-
-      widthTimelineDiv = $('#timeline').width();
-
-      // Update line
-      svgtimeline.attr('width', widthTimelineDiv);
-      d3.select('line').attr('x2', widthTimelineDiv);
-
-      //Updating scale for circle position
-      xScaleTime.range([20, widthTimelineDiv-20]);
-
-      svgtimeline.selectAll('circle')
-        .attr('cx', (d:any, i ) => {
-          if(d.time) {
-            return xScaleTime(moment(d.time).diff(moment(items[0].time),'days'));
-          } else {
-            return i * scaleCircles(widthTimelineDiv);
-          }
-        });
-
-      //Update bars
-      svgtimeline.selectAll('g').remove();
-
-      if(widthTimelineDiv <= 800) {
-        if (rectWidth >= 5) {
-          svgtimeline.selectAll('g').remove();
-        } else {
-          rectWidth = rectWidth-1;
-          generateBars(rectWidth);
-        }
-      } else {
-        rectWidth = 15;
-        generateBars(rectWidth);
-      }
-    };
-
-    //creating 2D Ratio bars
-    function generateBars(width) {
-     return idPairs.map((pair) => {
-      console.log('start loading pair', pair);
-
-      return Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`), pair])
-        .then((args) => {
-          const json = args[0];
-          const pair = args[1];
-
-          const pairPosX = pair.map((d) => parseFloat(d3.select(`#circle_${d}`).attr('cx')));
-
-          console.log('finished loading pair', pair, pairPosX, json);
-
-          const w = 80;
-          const h = 30;
-          const barPadding = 0.5;
-
-          const data = [json.no_ratio, json.a_ratio, json.c_ratio, json.d_ratio];
-
-          const color = d3.scale.ordinal()
-            .domain(<any>[ 0, data.length -1])
-            .range(['#D8D8D8', '#67C4A7' , '#8DA1CD', '#F08E65']);
-
-
-          const svgRatioBar = svgtimeline.append('g')
-            .style('transform', 'translate(' + (pairPosX[0] + 0.5*(pairPosX[1] - pairPosX[0] - width)) + 'px)');
-
-          svgRatioBar.selectAll('rect')
-            .data(data)
-            .enter()
-            .append('rect')
-            .attr('x', (d,i) => i * (w  / data.length - barPadding))
-            .attr('y', (d, i) => h  - d * 100)
-            .attr('width', width)
-            .attr('height', (d) => d * 100)
-            .attr('fill', (d, i) => <string>color(i.toString()));
-
-          return svgRatioBar;
-
-        });
-    });
   }
 
+  private toggleTimeline() {
+    // let button = d3.select(this);
+    //console.log(button);
+    let line = this.$svgTimeline.select('line');
+    let circle = this.$svgTimeline.selectAll('circle');
+    //console.log(line, circle);
+
+    if (line.size() > 0 && circle.size() > 0) {
+      line.remove();
+      circle.remove();
+      // console.log(line.size(), circle.size());
+    } else {
+      //console.log(line.size(), circle.size());
+      this.drawTimeline();
+    }
   }
+
 }
+
 
 /**
  * Factory method to create a new Timeline instance
@@ -274,6 +212,6 @@ class Timeline implements IAppView {
  * @param options
  * @returns {Timeline}
  */
-export function create(parent:Element, options:any) {
+export function create(parent: Element, options: any) {
   return new Timeline(parent, options);
 }

@@ -45,6 +45,15 @@
           "name": "Heat Map",
           "factory": "create"
         }
+      },
+      {
+        "type": "tacoView",
+        "id": "Histogram2D",
+        "module": "histogram_2d",
+        "extras": {
+          "name": "Histogram2D",
+          "factory": "create"
+        }
       }
     ],
     "sextensions": [],
