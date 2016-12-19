@@ -55,7 +55,17 @@ export class App implements IAppView {
       options: {}
     },
     {
+      view: 'FilterBar',
+      parent: 'selector',
+      options: {}
+    },
+    {
       view: 'Histogram2D',
+      parent: 'selector',
+      options: {}
+    },
+    {
+      view: 'BarChart',
       parent: 'selector',
       options: {}
     },

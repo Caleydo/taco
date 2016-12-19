@@ -42,7 +42,7 @@ class Histogram2D implements IAppView {
     return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
   }
 
-    private static getURLHistogram(pair) {
+  private static getURLHistogram(pair) {
     const bin_cols = 20; // -1 = aggregate the whole table
     const bin_rows = 10; // -1 = aggregate the whole table
     const direction = 2; // 2 = rows + columns
@@ -292,7 +292,7 @@ class Histogram2D implements IAppView {
 
        if(content === 0) {
          acc = 0;
-         console.log('content is 0');
+         //console.log('content is 0');
        } else {
          acc = xScale(d.ratio.c_ratio);
        }
