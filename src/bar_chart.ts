@@ -9,7 +9,7 @@ import * as $ from 'jquery';
 import * as events from 'phovea_core/src/event';
 import {AppConstants, ChangeTypes, IChangeType} from './app_constants';
 import {IAppView} from './app';
-import {getPosXScale} from './util';
+import {getPosXScale, scaleCircles} from './util';
 
 /**
  * Shows a bar with buttons to filter other views
@@ -140,21 +140,64 @@ class BarChart implements IAppView {
     const that = this;
 
     const posXScale = getPosXScale(this.items, this.totalWidth);
+
     const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days'));
+
+      //.style('transform', 'translate(' + (pairPosX[0] + 0.5 * (pairPosX[1] - pairPosX[0] - width)) + 'px)');
+
+    const circleScale = scaleCircles(this.totalWidth);
+
+    console.log('CircleScale', circleScale);
+
+    const w = 80;
+    const h = 50;
+    //const barPadding = 0.5;
+
+    //console.log('items', this.items);
 
     const barData = this.getBarData(data);
 
+    const barScaling = d3.scale.log()
+      .domain([0.0000001, 1])
+      //.domain([0, barData])
+      .range([0, h]);
+
+    //console.log('BarScaling', barScaling(1));
+
+
     const $barsGroup = this.$node.append('div')
       .classed('bars', true)
-      .style('left', posX + 'px')
-      .text('test');
+    /*.style('left', (items) => {
+       if (this.items[0].time) {
+            //console.log('in if', posX);
+            return posX + 'px';
+          } else {
+            return circleScale * ;
+          }
+        })*/
+      .style('left', posX + 45 + 'px')
+      .style ('width', w + 'px')
+      .style('height', h + 'px')
+      .style('position', 'absolute')
+      .style('margin-bottom', 20 + 'px')
+      .style('transform', 'scaleY(-1)');
+
+
+
+    //.text('test');
 
     const $bars = $barsGroup.selectAll('div.bar').data(barData);
 
     $bars.enter().append('div');
+    //console.log(barData[0].value);
 
     $bars
-      .attr('class', (d) => 'bar ' + d.type);
+      .attr('class', (d) => 'bar ' + d.type)
+      .style('float', 'left')
+      .style('height', (d) => barScaling(d.value)  + 'px')
+      .style('width',  20 + 'px')
+      .style('position', 'relative')
+      .style('margin-bottom', (d) => barScaling(d.value) - h  + 'px');
 
     $bars.exit().remove();
 

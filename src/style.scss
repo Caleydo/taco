@@ -81,6 +81,7 @@ rect {
 
 #nav-bar{
   margin-top:20px;
+  margin-bottom: 20px;
 }
 
 @keyframes color_change {
@@ -123,8 +124,13 @@ button:active, button.active {
 
   }
 
-#btn-nochange{
+#btn-nochange {
   background-color: #D8D8D8;
+}
+
+div.bar.nochange{
+background-color: #D8D8D8;
+
 }
 
 
@@ -132,13 +138,29 @@ button:active, button.active {
   background-color: #f08e65;
 }
 
+
+div.bar.removed{
+background-color: #f08e65;
+
+}
+
 #btn-added{
 background-color: #67c4a7;
 
 }
 
+div.bar.added{
+background-color:  #67c4a7;
+
+}
+
 #btn-content{
   background-color: #8da1cd;
+}
+
+div.bar.content{
+background-color:  #8da1cd;
+
 }
 
 .histogram_2d {

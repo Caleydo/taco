@@ -8,7 +8,7 @@ import * as $ from 'jquery';
 import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
-import {getPosXScale} from './util';
+import {getPosXScale, scaleCircles} from './util';
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -87,20 +87,21 @@ class Timeline implements IAppView {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         } else {
-          return i * this.scaleCircles();
+         // return i * this.scaleCircles();
+          return i * scaleCircles(this.totalWidth);
         }
       });
   }
 
   //Circle Scale if dataset has no time element
-  private scaleCircles() {
+  /*private scaleCircles() {
     //Padding for the circles
     const padding = 20;
     //showing only 7 circles on the timeline when no time-object is availiable for the specific dataset
     // in the next step -> implement the feature of a scroll bar showing more data points on the timeline
     const numberofCircles = 7;
     return (this.totalWidth - padding) / numberofCircles;
-  }
+  }/*
 
   /**
    * Handle the update for a selected dataset
@@ -151,7 +152,8 @@ class Timeline implements IAppView {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         } else {
-          return i * this.scaleCircles();
+          //return i * this.scaleCircles();
+          return i * scaleCircles(this.totalWidth);
         }
       })
       .attr('id', (d: any) => 'circle_' + d.item.desc.id)
