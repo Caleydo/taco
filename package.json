@@ -15,7 +15,7 @@
     "compile": "tsc",
     "lint": "tslint -c tslint.json src/**.ts tests/**.ts",
     "docs": "typedoc --options typedoc.json src/**.ts",
-    "prebuild": "npm run test",
+    "prebuild": "node -e \"process.exit(process.env.PHOVEA_SKIP_TESTS === undefined?1:0)\" || npm run test",
     "pretest": "npm run compile",
     "test": "karma start",
     "posttest": "npm run lint",
