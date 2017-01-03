@@ -8,7 +8,7 @@
       "phovea_core",
       "phovea_vis",
       "phovea_d3",
-      "phovea_bootstrap_fontawesome"
+      "phovea_ui"
     ],
     "extensions": [
       {

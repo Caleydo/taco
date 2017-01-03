@@ -65,7 +65,7 @@
   "dependencies": {
     "@types/moment": "^2.13.0",
     "moment": "^2.15.2",
-    "phovea_bootstrap_fontawesome": "github:phovea/phovea_bootstrap_fontawesome",
+    "phovea_ui": "github:phovea/phovea_ui",
     "phovea_core": "github:phovea/phovea_core",
     "phovea_d3": "github:phovea/phovea_d3",
     "phovea_vis": "github:phovea/phovea_vis"
