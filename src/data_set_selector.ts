@@ -9,7 +9,8 @@ import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 import {Language} from './language';
-import {IMatrix} from 'phovea_core/src/matrix';
+import {IValueTypeDesc, VALUE_TYPE_REAL} from 'phovea_core/src/datatype';
+import {INumericalMatrix, IMatrixDataDescription} from 'phovea_core/src/matrix';
 import * as d3 from 'd3';
 
 /**
@@ -105,18 +106,20 @@ class DataProvider {
    * @returns {Promise<U>}
    */
   load() {
-    return data.list((d) => d.desc.type === 'matrix')
-      .then((list: IMatrix[]) => {
+    return data.list((d) => {
+     return d.desc.type === 'matrix' && (<IMatrixDataDescription<IValueTypeDesc>>d.desc).value.type === VALUE_TYPE_REAL; // return numerical matrices only
+    })
+      .then((list: INumericalMatrix[]) => {
         // filter matrices that starts with a number --> assumption: must be a date
         const dateData = d3.nest()
-          .key((d: IMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending)
-          .key((d: IMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending)
+          .key((d: INumericalMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending)
+          .key((d: INumericalMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending)
           .entries(list.filter((d) => /^\d.*/.test(d.desc.fqname) === true));
 
         // filter matrices that starts NOT with a number
         const otherData = d3.nest()
-          .key((d: IMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending)
-          .key((d: IMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending)
+          .key((d: INumericalMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending)
+          .key((d: INumericalMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending)
           .entries(list.filter((d) => /^\d.*/.test(d.desc.fqname) === false));
 
         const r = [].concat(dateData, otherData);
