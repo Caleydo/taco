@@ -75,11 +75,11 @@
     "libraryExternals": [
       "moment",
       "d3",
-      "d3",
       "jquery",
       "font-awesome"
     ],
     "ignores": [],
-    "today": "Tue, 08 Nov 2016 08:57:09 GMT"
+    "today": "Tue, 08 Nov 2016 08:57:09 GMT",
+    "clientOnly": false
   }
 }
