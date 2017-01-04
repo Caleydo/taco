@@ -1,0 +1,245 @@
+$select-color: orange;
+$hover-color: #ffc46b;
+
+$struct-add-color: #67C4A7;
+$struct-delete-color: #fc8e62;
+$content-change-color: #8DA1CD;
+$no-change-color: #D8D8D8;
+
+$boostrapAssetDir: '~phovea_ui/src/assets';
+
+body, html {
+  font-family: Yantramanav, 'Helvetica Neue', Helvetica, sans-serif !important;
+  font-weight: 400 !important;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: Yantramanav, 'Helvetica Neue', Helvetica, sans-serif !important;
+}
+
+th,
+label,
+strong,
+b,
+.label {
+  font-weight: 500 !important;
+}
+
+.busy {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.26) url('#{$boostrapAssetDir}/caleydo_c_anim.svg') no-repeat fixed center;
+  z-index: 999;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  margin: 15px;
+}
+
+.comparison {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  align-content: stretch;
+  justify-content: space-between;
+}
+
+
+a.active {
+  font-weight: 500;
+  color: $select-color;
+}
+
+rect {
+  &.phovea-select-selected {
+    fill: $select-color;
+  }
+  &.phovea-select-hovered {
+    fill: $hover-color;
+  }
+}
+
+#timeline {
+  circle{
+    cursor: pointer;
+
+    &.active {
+      fill: $select-color;
+    }
+  }
+
+  margin-top: 50px;
+
+}
+
+#nav-bar{
+  margin-top:20px;
+}
+
+@keyframes color_change {
+  from { background-color: transparent; }
+  to { background-color: $hover-color; }
+
+}
+button {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857;
+  border-radius: 4px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+}
+  button:focus, button.focus, button:active:focus, button:active.focus, button.active:focus, button.active.focus {
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+
+  }
+
+button:active, button.active {
+    outline: 0;
+    background-image: none;
+    -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    //box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+
+  }
+
+#btn-nochange{
+  background-color: #D8D8D8;
+}
+
+
+#btn-removed{
+  background-color: #f08e65;
+}
+
+#btn-added{
+background-color: #67c4a7;
+
+}
+
+#btn-content{
+  background-color: #8da1cd;
+}
+
+.histogram_2d {
+  margin-bottom: 100px;
+}
+
+  .ratio {
+    transition: left .2s ease;
+    display: inline-block;
+    border: 1px solid darkslategray;
+    position: relative;
+    color: #fc8d62; //colorblind friendly
+    background: transparent;
+
+
+    div {
+      position: absolute;
+      padding: 1px;
+
+    }
+
+    &.loading {
+      animation: color_change 1s ease-out infinite alternate;
+
+      div {
+        display: none;
+      }
+    }
+  }
+
+ .histogram {
+    transition: left .2s ease;
+    display: inline-block;
+    border: 1px solid #e6e8e4;
+    border-left: 1px solid #000000;
+    background: transparent;
+    position:relative;
+    margin-left:15px;
+
+    &.rotated {
+   display: block;
+    margin-top: -45px;
+    margin-left: 50px;
+    //margin-right: 100px;
+    transform: rotate(90deg) scaleY(-1);
+    //transform-origin: 0 0;
+
+      //margin-bottom:-125px;
+      //margin-left: 20px;
+      position: relative;
+  }
+
+     div {
+       position: absolute;
+       text-align: right;
+       padding: 1px;
+       //margin-top: 1px;
+       color: white;
+    }
+
+  }
+
+
+div.struct-add-color {
+  background: $struct-add-color;
+}
+
+div.struct-del-color {
+  background: $struct-delete-color;
+}
+
+div.content-change-color {
+  background: $content-change-color;
+}
+
+div.no-change-color {
+  background: $no-change-color;
+}
+
+rect.struct-add-color {
+  fill: $struct-add-color;
+}
+
+rect.struct-del-color {
+  fill: $struct-delete-color;
+}
+
+rect.content-change-color {
+  fill: $content-change-color;
+}
+
+rect.no-change-color {
+  fill: $no-change-color;
+}
+
+#interface{
+  //height: 50px;
+  margin-bottom: 20px;
+
+}
+
+
+
+

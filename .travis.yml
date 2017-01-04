@@ -1,0 +1,25 @@
+language: node_js
+
+node_js:
+- 6
+
+before_install:
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+- if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
+
+script: npm run dist
+
+deploy:
+  provider: releases
+  api_key:
+    secure: TK9/P34Bi3WuppiDrBCwVcn41yCBwmILaU8hXTBzUPbT7TbeFIwsC6/4CtH85Z+ZrUve4S5pTmWRNf2dQDxWw3uYu7+bJuemV2J1LHG76mognj+TNEiYxfLQUt3Gql4W7C7FcI4Rlx5/uMN9wY1wro8TWUBMwT6jjSrUWIvK3GXoojd5bHvJx07XpjWl9wCon4D0ruZiFoM2mdeP23lbc2GckETi32oEKswnQXxkMACmxbPzoWbvkxH4aK8Bt2Rj2sl2TbPhVkN6DAkHGkGAvLI+2/aRfG27+oo3OKsaDjbuGABct8TfZccJ970CbQ8kbnCjYxstvqkg1JWjF0W67sX/flBZZOEUA5l0OLWo6HqMGMxm7/lEQhIdPMsRmvXL+HVOxkMrB2dda58QzxVwiZp+rRqUaeabPZp8Kl5xodGrVxsBvxe6zAbJ5jCtCSumG6+kLyKI00/kYlghqQNrgUw0ZsYJlQ34h3lo/24QpaeyDpQoCkGWQgtgqiXGpeKSu7bCnOqIqAy3nbT9Utwj7K8gIasTG5idosEAz/THMampNbGDuyxxc340sYGNMg9Bhm1g2ILWRdtV470p5hwBtIDTKi3/PAizEO26+Wh0zI47Sg3ao57avcbCsTmzbZUeA5J4bojmchhJCHX8su9cSCGh/2fJA/1eBIgEvOQ8LNE=
+  file: dist/taco.tar.gz
+  on:
+    tags: true
+
+notifications:
+  slack:
+    secure: LH7fnnRykIAmW6H1qwuq0v6om7FeMUbcXTw5Y3jxavXXIlqVMFPCqz8ymBaLze1n0X6dtg1YLHV5M6XJozHr0ApGEdq9fIW8RimUtjHjDZ04hiZJdiIQwNIJHecRT7DbCJwOV67h9MekmMA1GRA6k/KUB9wGYy8FX7Hz9+XoV6K+/6tuIiMULApaJO3p5vhl1IGfmsU9Y2eWcx4Z3FuZdVhfB2TNjtmempiQvEUtj7BI3gkH5nX7yxxXV+aW1aiFLSWHYlzlYHLT03A22xSfrSdBXMxc/ESWMO/zUP3VE07DDssPnwdK4nmPU+f1rW8OzQBECqp8gloMP41kss0SFDn7ZhVnMbVxABR/F9Qd9/7gFI+/FJdZFwsA8em8PUFPPzsD/6cXUhuVksRVfax5fCe/NLNS20XDwpMSE4xkzkL2ZG0lT1XMv7uCgpMAlv2g+qtfBq7/D0rluzx3CCDODclWsx/avUFeFz98P0I573BpSYJFjTYJdF0jLd0Szev4MPqy1UqAqI5Dg49IdCYvxUGWvXdTqeFX5OIijr6WvgpxO6/swOzAa+i0kEV8PmC1Sa72jHoG2rJhvbZqxWLsyvNCtZU76osZuUr+efvAhFWmAKKpuhM19Dzt8xlanITm/r/a1MBoFU2D20DBE4jU/Ji2peuhJkMVv95656mYNa0=
+    on_success: change
+    on_failure: change

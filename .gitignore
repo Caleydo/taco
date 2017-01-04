@@ -1,8 +1,10 @@
+/.tscache
 /.idea
-
-*.css
+/build/
+/dist/
+node_modules/
+/src/**/*.js
+/tests/**/*.js
 *.map
-
-# ignore all auto generated js files except the one from v1
-*.js
-!v1/*.js
+*.css
+*.log

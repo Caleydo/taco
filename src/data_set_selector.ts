@@ -2,14 +2,15 @@
  * Created by Holger Stitz on 26.08.2016.
  */
 
-import moment = require('moment');
+import * as moment from 'moment';
 
-import data = require('../caleydo_core/data');
-import events = require('../caleydo_core/event');
+import * as data from 'phovea_core/src/data';
+import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 import {Language} from './language';
-import {IMatrix} from '../caleydo_core/matrix';
+import {IMatrix} from 'phovea_core/src/matrix';
+import * as d3 from 'd3';
 
 /**
  * Shows a list of available datasets and lets the user choose one.
