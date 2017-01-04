@@ -144,7 +144,8 @@ function generateWebpack(options) {
         __BUILD_ID__: buildId,
         __DEBUG__: options.isDev || options.isTest,
         __TEST__: options.isTest,
-        __PRODUCTION__: options.isProduction
+        __PRODUCTION__: options.isProduction,
+        __APP_CONTEXT__: JSON.stringify('/')
       }),
       new webpack.optimize.MinChunkSizePlugin({
         minChunkSize: 10000 //at least 10.000 characters
