@@ -162,11 +162,11 @@ class Timeline implements IAppView {
 
         if (that.isClicked === 0) {
           console.log('first Click');
-          this.$svgTimeline.selectAll('circle').classed('active', false);
+          that.$svgTimeline.selectAll('circle').classed('active', false);
           // toggle the active CSS classes
           d3.select(this).classed('active', true);
           // toggle the active CSS classes
-          this.$svgTimeline.selectAll('circle').classed('active', false);
+          that.$svgTimeline.selectAll('circle').classed('active', false);
 
           d3.select(this).classed('active', true).attr('fill');
 

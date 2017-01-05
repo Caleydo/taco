@@ -3,6 +3,9 @@ language: node_js
 node_js:
 - 6
 
+addons:
+  firefox: 49.0.1
+
 before_install:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
@@ -20,6 +23,6 @@ deploy:
 
 notifications:
   slack:
-    secure: LH7fnnRykIAmW6H1qwuq0v6om7FeMUbcXTw5Y3jxavXXIlqVMFPCqz8ymBaLze1n0X6dtg1YLHV5M6XJozHr0ApGEdq9fIW8RimUtjHjDZ04hiZJdiIQwNIJHecRT7DbCJwOV67h9MekmMA1GRA6k/KUB9wGYy8FX7Hz9+XoV6K+/6tuIiMULApaJO3p5vhl1IGfmsU9Y2eWcx4Z3FuZdVhfB2TNjtmempiQvEUtj7BI3gkH5nX7yxxXV+aW1aiFLSWHYlzlYHLT03A22xSfrSdBXMxc/ESWMO/zUP3VE07DDssPnwdK4nmPU+f1rW8OzQBECqp8gloMP41kss0SFDn7ZhVnMbVxABR/F9Qd9/7gFI+/FJdZFwsA8em8PUFPPzsD/6cXUhuVksRVfax5fCe/NLNS20XDwpMSE4xkzkL2ZG0lT1XMv7uCgpMAlv2g+qtfBq7/D0rluzx3CCDODclWsx/avUFeFz98P0I573BpSYJFjTYJdF0jLd0Szev4MPqy1UqAqI5Dg49IdCYvxUGWvXdTqeFX5OIijr6WvgpxO6/swOzAa+i0kEV8PmC1Sa72jHoG2rJhvbZqxWLsyvNCtZU76osZuUr+efvAhFWmAKKpuhM19Dzt8xlanITm/r/a1MBoFU2D20DBE4jU/Ji2peuhJkMVv95656mYNa0=
+    secure: E8/1UIdHSczUbN+6i6gd1d5LM4vmLdwLQ30tpyjvnM0wvfDce76oPxLJAy240WJ5ybXRZUtNrttpVpt4tEXCy8aLFCmxD7s77rVloH+q1J8R/ptTFWZGhFGEujk1awEmVbzcWxJkV9/JENQaeGBKxwv8/EQwWwEkAb7p/+AJb9owmH88b3wUZUGHBWtbMiyyaF4Rm1Wg1stJB8Z1Ga7PRF4cqufTgcDdsCPVv9gAY+VxOIGqX/Vfuc9UWpUH8vq8lHUE7Inn5QS78kuFfSgLWga3H6Mu/Gko1XNlWk0QWWQBUvEZ6ZC6Wuo68KzvUjJHDTnx8WyfHue2JNHIslcX+eJq2WHLeEgM24VeNkILCGo/H/60NGHiSjrIv/Y9h6bQ9FDjo6TUyE4nbdPYN1RN9FQ5UbI9Y4Gi753H9mqnHWlEywBOzHxdZCAuz9Wh03CCF/blsvJ+Obbyo6Jrfe+g44jyi9kQdBNQ78qG6v4EXws8FiYao6x3PpgIwFix42Cpr+soAh5FpA3C1zHSAyZZpXF65/lrDl5yPNofK7Wy0B9bw+0I6Z/u7ZKFNVZXvYPGYvtUVcsALGBdmYc61+LCta36Po0KZseWVAlJj6QnOJDYzv0wvV/zsuf9A5KpYFGiqV9Q7zmtiO5FYF5sBy+lE7O9tHVO4O18IRndhRQgxhs=
     on_success: change
-    on_failure: change
+    on_failure: always
