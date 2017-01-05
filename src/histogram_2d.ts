@@ -221,7 +221,7 @@ class Histogram2D implements IAppView {
 //Show Histogramm Rows
   private showHistogram(histodata) {
 
-    console.log('rows' , histodata[0], 'cols' , histodata[1]);
+   // console.log('rows' , histodata[0], 'cols' , histodata[1]);
 
     var rows = histodata[0];
     var cols = histodata[1];

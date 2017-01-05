@@ -87,7 +87,6 @@ class Timeline implements IAppView {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         } else {
-         // return i * this.scaleCircles();
           return i * scaleCircles(this.totalWidth);
         }
       });

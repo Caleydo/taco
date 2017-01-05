@@ -10,6 +10,7 @@ import * as events from 'phovea_core/src/event';
 import {AppConstants, ChangeTypes, IChangeType} from './app_constants';
 import {IAppView} from './app';
 import {getPosXScale, scaleCircles} from './util';
+//import forEach = ts.forEach;
 
 /**
  * Shows a bar with buttons to filter other views
@@ -24,6 +25,11 @@ class BarChart implements IAppView {
 
   private openHistogram2D;
 
+  private index = [];
+
+  private leftValue = [];
+
+
   private static getURL(pair) {
     const bin_cols = 1; // 1 bin
     const bin_rows = 1; // 1 bin
@@ -33,7 +39,7 @@ class BarChart implements IAppView {
   }
 
 
-  constructor(parent: Element, private options: any) {
+  constructor(parent:Element, private options:any) {
     this.$node = d3.select(parent)
       .append('div')
       .classed('bar_chart', true);
@@ -58,60 +64,67 @@ class BarChart implements IAppView {
    */
   private build() {
     //
+
   }
+
 
   private resize() {
     this.totalWidth = $(this.$node.node()).width();
-
     // Update line
     this.$node.attr('width', this.totalWidth);
 
-    // Updating scale for circle position
-    //let xScaleTimeline = getPosXScale(this.items, this.totalWidth);
-
-    /*this.$node.selectAll('div')
-     .attr('x', (d: any, i) => {
-     if (d.time) {
-     return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
-     } else {
-     return i * this.scaleCircles();
-     }
-     });*/
-
-
-    // start width for bars of ratio bar charts
-    /*let rectWidth = 13;
-
-     if (this.widthTimelineDiv <= 800) {
-     if (rectWidth >= 5) {
-     this.$svgTimeline.selectAll('g').remove();
-     } else {
-     rectWidth = rectWidth - 1;
-     //this.generateBars(rectWidth);
-     }
-     } else {
-     rectWidth = 15;
-     //this.generateBars(rectWidth);
-     }*/
   }
 
   private attachListener() {
+
     // Call the resize function whenever a resize event occurs
-    d3.select(window).on('resize', () => this.resize());
+    //d3.select(window).on('resize', () =>  this.windowResize());
 
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
 
-    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
-    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType:IChangeType) => this.toggleChangeType(changeType));
+    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType:IChangeType) => this.toggleChangeType(changeType));
+  }
+
+
+  //Create Array with index numbers for the positioning of the bars without time element
+  private generateIndexArray(items, width) {
+    this.items = items;
+
+    this.index = d3.range(0, items.length);
+    const circleScaling = scaleCircles(width);
+
+    for (var i in this.index) {
+      this.leftValue.push((this.index[i] * circleScaling) + 30);
+    }
   }
 
   private updateItems(items) {
     this.items = items;
 
+    let width = $(window).innerWidth();
+
+    this.generateIndexArray(this.items, width);
+
     // initialize the width
     this.resize();
 
-    let barPromises = this.requestData();
+    $(window).on('resize', () => this.windowResize(this.items));
+
+    let barPromises;
+    const elements = this.$node.selectAll('*');
+    //console.log(elements, elements.empty());
+
+    if (elements.empty() === false) {
+      // console.log('remove');
+      barPromises = this.requestData(this.totalWidth, this.leftValue);
+      elements.remove();
+
+    } else {
+      barPromises = this.requestData(this.totalWidth, this.leftValue);
+      this.leftValue = [];
+    }
+
     // Check if all bars have been loaded
     Promise.all(barPromises).then((bars) => {
       console.log('finished loading of all bars');
@@ -122,86 +135,104 @@ class BarChart implements IAppView {
     this.$node.selectAll(`div.bars > .${changeType.type}`).classed('hidden', !changeType.isActive);
   }
 
-  private requestData() {
+  private widthBar = 15;
+
+  private windowResize(items) {
+    this.items = items;
+    let width = $(window).innerWidth();
+
+    this.generateIndexArray(this.items, width);
+
+    const elements = d3.selectAll('.bars');
+    if (elements.empty() === false) {
+
+      this.requestData(width, this.leftValue);
+      elements.remove();
+    }
+    this.leftValue = [];
+
+  }
+
+  private requestData(totalWidth, leftValue) {
+
     return d3.pairs(this.items)
       .map((pair) => {
-        let ids = pair.map((d: any) => d.item.desc.id);
+
+        let ids = pair.map((d:any) => d.item.desc.id);
         return Promise.all([ajax.getAPIJSON(BarChart.getURL(ids)), pair, ids])
           .then((args) => {
             const json = args[0];
             const pair = args[1];
             const ids = args[2];
-            this.drawBars(json, pair, ids);
+
+            this.drawBars(json, pair, ids, leftValue.shift(), totalWidth);
+
           });
       });
   }
 
-  private drawBars(data, pair, ids) {
+  private drawBars(data, pair, ids, circleScale, totalWidth) {
+
     const that = this;
+    const posXScale = getPosXScale(this.items, totalWidth);
 
-    const posXScale = getPosXScale(this.items, this.totalWidth);
 
-    const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days'));
+    const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days'))
+      + 0.5 * (posXScale(moment(pair[1].time).diff(moment(this.items[0].time), 'days'))
+      - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));
 
-      //.style('transform', 'translate(' + (pairPosX[0] + 0.5 * (pairPosX[1] - pairPosX[0] - width)) + 'px)');
-
-    const circleScale = scaleCircles(this.totalWidth);
-
-    console.log('CircleScale', circleScale);
+    // console.log('posX', posX);
 
     const w = 80;
     const h = 50;
-    //const barPadding = 0.5;
-
-    //console.log('items', this.items);
 
     const barData = this.getBarData(data);
+
 
     const barScaling = d3.scale.log()
       .domain([0.0000001, 1])
       //.domain([0, barData])
       .range([0, h]);
 
-    //console.log('BarScaling', barScaling(1));
+    let $barsGroup = this.$node;
 
+    if (pair[0].time) {
+      $barsGroup = this.$node.append('div')
+        .classed('bars', true)
+        .style('left', posX + 'px')
+        .style('width', w + 'px')
+        .style('height', h + 'px')
+        .style('position', 'absolute')
+        .style('margin-bottom', 20 + 'px')
+        .style('transform', 'scaleY(-1)');
+    } else {
 
-    const $barsGroup = this.$node.append('div')
-      .classed('bars', true)
-    /*.style('left', (items) => {
-       if (this.items[0].time) {
-            //console.log('in if', posX);
-            return posX + 'px';
-          } else {
-            return circleScale * ;
-          }
-        })*/
-      .style('left', posX + 45 + 'px')
-      .style ('width', w + 'px')
-      .style('height', h + 'px')
-      .style('position', 'absolute')
-      .style('margin-bottom', 20 + 'px')
-      .style('transform', 'scaleY(-1)');
+      $barsGroup = this.$node.append('div');
 
-
-
-    //.text('test');
+      $barsGroup
+        .classed('bars', true)
+        .style('left', circleScale + 'px')
+        .style('width', w + 'px')
+        .style('height', h + 'px')
+        .style('position', 'absolute')
+        .style('margin-bottom', 20 + 'px')
+        .style('transform', 'scaleY(-1)');
+    }
 
     const $bars = $barsGroup.selectAll('div.bar').data(barData);
 
     $bars.enter().append('div');
     //console.log(barData[0].value);
-
     $bars
       .attr('class', (d) => 'bar ' + d.type)
       .style('float', 'left')
-      .style('height', (d) => barScaling(d.value)  + 'px')
-      .style('width',  20 + 'px')
+      .style('height', (d) => barScaling(d.value) + 'px')
+      .style('width', this.widthBar + 'px')
       .style('position', 'relative')
-      .style('margin-bottom', (d) => barScaling(d.value) - h  + 'px');
+      .style('margin-bottom', (d) => barScaling(d.value) - h + 'px');
 
     $bars.exit().remove();
 
-    //console.log(pair, data, posX);
 
     $barsGroup.on('click', function (e) {
       const currentPosX = parseFloat(d3.select(this).style('left'));
@@ -215,6 +246,8 @@ class BarChart implements IAppView {
         that.openHistogram2D = this.parentNode;
       }
     });
+
+    //console.log('all bars', d3.selectAll('div.bar'));
   }
 
   private getBarData(data) {
@@ -227,7 +260,6 @@ class BarChart implements IAppView {
         };
       });
   }
-
 }
 
 /**
@@ -236,6 +268,6 @@ class BarChart implements IAppView {
  * @param options
  * @returns {FilterBar}
  */
-export function create(parent: Element, options: any) {
+export function create(parent:Element, options:any) {
   return new BarChart(parent, options);
 }
