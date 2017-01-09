@@ -8,7 +8,7 @@ import * as $ from 'jquery';
 import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
-import {getPosXScale} from './util';
+import {getPosXScale, scaleCircles} from './util';
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -27,13 +27,13 @@ class Timeline implements IAppView {
   private $svgTimeline;
 
   //width of the timeline div
-  private totalWidth: number;
+  private totalWidth:number;
 
   // helper variable for on click event
   //private open2dHistogram = null;
 
 
-  constructor(parent: Element, private options: any) {
+  constructor(parent:Element, private options:any) {
     this.$node = d3.select(parent).append('div').classed('timeline', true);
   }
 
@@ -83,23 +83,13 @@ class Timeline implements IAppView {
     let xScaleTimeline = getPosXScale(this.items, this.totalWidth);
 
     this.$svgTimeline.selectAll('circle')
-      .attr('cx', (d: any, i) => {
+      .attr('cx', (d:any, i) => {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         } else {
-          return i * this.scaleCircles();
+          return i * scaleCircles(this.totalWidth);
         }
       });
-  }
-
-  //Circle Scale if dataset has no time element
-  private scaleCircles() {
-    //Padding for the circles
-    const padding = 20;
-    //showing only 7 circles on the timeline when no time-object is availiable for the specific dataset
-    // in the next step -> implement the feature of a scroll bar showing more data points on the timeline
-    const numberofCircles = 7;
-    return (this.totalWidth - padding) / numberofCircles;
   }
 
   /**
@@ -110,7 +100,6 @@ class Timeline implements IAppView {
   private updateItems(items) {
     // make items available for other class members
     this.items = items;
-
 
     // delete all existing DOM elements
     this.$svgTimeline.selectAll('*').remove();
@@ -131,7 +120,7 @@ class Timeline implements IAppView {
     let xScaleTimeline = getPosXScale(this.items, this.totalWidth);
 
     const circleScale = d3.scale.linear()
-      .domain([0, d3.max(this.items, (d: any) => d.item.dim[0])])
+      .domain([0, d3.max(this.items, (d:any) => d.item.dim[0])])
       .range([10, 5]);   //h/100
 
     this.$svgTimeline.append('line')
@@ -145,18 +134,18 @@ class Timeline implements IAppView {
       .data(this.items)
       .enter()
       .append('circle')
-      .attr('title', (d: any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
+      .attr('title', (d:any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
       .attr('cy', 60)
-      .attr('cx', (d: any, i) => {
+      .attr('cx', (d:any, i) => {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         } else {
-          return i * this.scaleCircles();
+          return i * scaleCircles(this.totalWidth);
         }
       })
-      .attr('id', (d: any) => 'circle_' + d.item.desc.id)
-      .attr('r', (d: any) => circleScale(d.item.dim[0]))
-      .on('click', function (d: any) {
+      .attr('id', (d:any) => 'circle_' + d.item.desc.id)
+      .attr('r', (d:any) => circleScale(d.item.dim[0]))
+      .on('click', function (d:any) {
         (<MouseEvent>d3.event).preventDefault();
 
         if (that.isClicked === 0) {
@@ -212,6 +201,6 @@ class Timeline implements IAppView {
  * @param options
  * @returns {Timeline}
  */
-export function create(parent: Element, options: any) {
+export function create(parent:Element, options:any) {
   return new Timeline(parent, options);
 }
