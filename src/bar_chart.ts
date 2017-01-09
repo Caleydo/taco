@@ -27,11 +27,13 @@ class BarChart implements IAppView {
   private index = [];
 
   private leftValue = [];
-
+  
+  //width of the bars in the bar chart
   private widthBar = 15;
 
-  private w = 80;
-  private h = 50;
+  //Width and Height for the bar chart between time points
+  private widthBarChart = 80;
+  private heightBarChart = 50;
 
   private static getURL(pair) {
     const bin_cols = 1; // 1 bin
@@ -187,7 +189,7 @@ class BarChart implements IAppView {
 
     const barScaling = d3.scale.log()
       .domain([0.0000001, 1])
-      .range([0, this.h]);
+      .range([0, this.heightBarChart]);
 
     let $barsGroup = this.$node;
 
@@ -195,8 +197,8 @@ class BarChart implements IAppView {
       $barsGroup = this.$node.append('div')
         .classed('bars', true)
         .style('left', posX + 'px')
-        .style('width', this.w + 'px')
-        .style('height', this.h + 'px')
+        .style('width', this.widthBarChart + 'px')
+        .style('height', this.heightBarChart + 'px')
         .style('position', 'absolute')
         .style('margin-bottom', 20 + 'px')
         .style('transform', 'scaleY(-1)');
@@ -207,8 +209,8 @@ class BarChart implements IAppView {
       $barsGroup
         .classed('bars', true)
         .style('left', circleScale + 'px')
-        .style('width', this.w + 'px')
-        .style('height', this.h + 'px')
+        .style('width', this.widthBarChart + 'px')
+        .style('height', this.heightBarChart + 'px')
         .style('position', 'absolute')
         .style('margin-bottom', 20 + 'px')
         .style('transform', 'scaleY(-1)');
@@ -224,7 +226,7 @@ class BarChart implements IAppView {
       .style('height', (d) => barScaling(d.value) + 'px')
       .style('width', this.widthBar + 'px')
       .style('position', 'relative')
-      .style('margin-bottom', (d) => barScaling(d.value) - this.h + 'px');
+      .style('margin-bottom', (d) => barScaling(d.value) - this.heightBarChart + 'px');
 
     $bars.exit().remove();
 
