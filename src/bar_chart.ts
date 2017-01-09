@@ -28,6 +28,10 @@ class BarChart implements IAppView {
 
   private leftValue = [];
 
+  private widthBar = 15;
+
+  private w = 80;
+  private h = 50;
 
   private static getURL(pair) {
     const bin_cols = 1; // 1 bin
@@ -136,7 +140,6 @@ class BarChart implements IAppView {
     this.$node.selectAll(`div.bars > .${changeType.type}`).classed('hidden', !changeType.isActive);
   }
 
-  private widthBar = 15;
 
   private windowResize(items) {
     this.items = items;
@@ -179,14 +182,12 @@ class BarChart implements IAppView {
       + 0.5 * (posXScale(moment(pair[1].time).diff(moment(this.items[0].time), 'days'))
       - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));
 
-    const w = 80;
-    const h = 50;
 
     const barData = this.getBarData(data);
 
     const barScaling = d3.scale.log()
       .domain([0.0000001, 1])
-      .range([0, h]);
+      .range([0, this.h]);
 
     let $barsGroup = this.$node;
 
@@ -194,8 +195,8 @@ class BarChart implements IAppView {
       $barsGroup = this.$node.append('div')
         .classed('bars', true)
         .style('left', posX + 'px')
-        .style('width', w + 'px')
-        .style('height', h + 'px')
+        .style('width', this.w + 'px')
+        .style('height', this.h + 'px')
         .style('position', 'absolute')
         .style('margin-bottom', 20 + 'px')
         .style('transform', 'scaleY(-1)');
@@ -206,8 +207,8 @@ class BarChart implements IAppView {
       $barsGroup
         .classed('bars', true)
         .style('left', circleScale + 'px')
-        .style('width', w + 'px')
-        .style('height', h + 'px')
+        .style('width', this.w + 'px')
+        .style('height', this.h + 'px')
         .style('position', 'absolute')
         .style('margin-bottom', 20 + 'px')
         .style('transform', 'scaleY(-1)');
@@ -223,7 +224,7 @@ class BarChart implements IAppView {
       .style('height', (d) => barScaling(d.value) + 'px')
       .style('width', this.widthBar + 'px')
       .style('position', 'relative')
-      .style('margin-bottom', (d) => barScaling(d.value) - h + 'px');
+      .style('margin-bottom', (d) => barScaling(d.value) - this.h + 'px');
 
     $bars.exit().remove();
 
