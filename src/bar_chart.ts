@@ -95,7 +95,10 @@ class BarChart implements IAppView {
     const circleScaling = scaleCircles(width);
 
     for (var i in this.index) {
-      this.leftValue.push((this.index[i] * circleScaling) + 30);
+      if (this.index.hasOwnProperty(i)) {
+
+        this.leftValue.push((this.index[i] * circleScaling) + 30);
+      }
     }
   }
 
