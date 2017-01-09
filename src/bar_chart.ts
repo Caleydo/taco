@@ -10,7 +10,6 @@ import * as events from 'phovea_core/src/event';
 import {AppConstants, ChangeTypes, IChangeType} from './app_constants';
 import {IAppView} from './app';
 import {getPosXScale, scaleCircles} from './util';
-//import forEach = ts.forEach;
 
 /**
  * Shows a bar with buttons to filter other views
@@ -37,7 +36,6 @@ class BarChart implements IAppView {
     const changes = 'structure,content';
     return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
   }
-
 
   constructor(parent:Element, private options:any) {
     this.$node = d3.select(parent)
@@ -70,6 +68,7 @@ class BarChart implements IAppView {
 
   private resize() {
     this.totalWidth = $(this.$node.node()).width();
+
     // Update line
     this.$node.attr('width', this.totalWidth);
 
@@ -116,10 +115,9 @@ class BarChart implements IAppView {
 
     let barPromises;
     const elements = this.$node.selectAll('*');
-    //console.log(elements, elements.empty());
+
 
     if (elements.empty() === false) {
-      // console.log('remove');
       barPromises = this.requestData(this.totalWidth, this.leftValue);
       elements.remove();
 
@@ -157,10 +155,8 @@ class BarChart implements IAppView {
   }
 
   private requestData(totalWidth, leftValue) {
-
     return d3.pairs(this.items)
       .map((pair) => {
-
         let ids = pair.map((d:any) => d.item.desc.id);
         return Promise.all([ajax.getAPIJSON(BarChart.getURL(ids)), pair, ids])
           .then((args) => {
@@ -179,22 +175,17 @@ class BarChart implements IAppView {
     const that = this;
     const posXScale = getPosXScale(this.items, totalWidth);
 
-
     const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days'))
       + 0.5 * (posXScale(moment(pair[1].time).diff(moment(this.items[0].time), 'days'))
       - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));
-
-    // console.log('posX', posX);
 
     const w = 80;
     const h = 50;
 
     const barData = this.getBarData(data);
 
-
     const barScaling = d3.scale.log()
       .domain([0.0000001, 1])
-      //.domain([0, barData])
       .range([0, h]);
 
     let $barsGroup = this.$node;
@@ -225,7 +216,7 @@ class BarChart implements IAppView {
     const $bars = $barsGroup.selectAll('div.bar').data(barData);
 
     $bars.enter().append('div');
-    //console.log(barData[0].value);
+
     $bars
       .attr('class', (d) => 'bar ' + d.type)
       .style('float', 'left')
@@ -235,7 +226,6 @@ class BarChart implements IAppView {
       .style('margin-bottom', (d) => barScaling(d.value) - h + 'px');
 
     $bars.exit().remove();
-
 
     $barsGroup.on('click', function (e) {
       const currentPosX = parseFloat(d3.select(this).style('left'));
@@ -249,8 +239,6 @@ class BarChart implements IAppView {
         that.openHistogram2D = this.parentNode;
       }
     });
-
-    //console.log('all bars', d3.selectAll('div.bar'));
   }
 
   private getBarData(data) {

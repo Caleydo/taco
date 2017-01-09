@@ -90,17 +90,7 @@ class Timeline implements IAppView {
           return i * scaleCircles(this.totalWidth);
         }
       });
-  }
-
-  //Circle Scale if dataset has no time element
-  /*private scaleCircles() {
-    //Padding for the circles
-    const padding = 20;
-    //showing only 7 circles on the timeline when no time-object is availiable for the specific dataset
-    // in the next step -> implement the feature of a scroll bar showing more data points on the timeline
-    const numberofCircles = 7;
-    return (this.totalWidth - padding) / numberofCircles;
-  }/*
+  } 
 
   /**
    * Handle the update for a selected dataset
@@ -110,7 +100,6 @@ class Timeline implements IAppView {
   private updateItems(items) {
     // make items available for other class members
     this.items = items;
-
 
     // delete all existing DOM elements
     this.$svgTimeline.selectAll('*').remove();
@@ -150,8 +139,7 @@ class Timeline implements IAppView {
       .attr('cx', (d: any, i) => {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
-        } else {
-          //return i * this.scaleCircles();
+        } else {         
           return i * scaleCircles(this.totalWidth);
         }
       })
