@@ -75,16 +75,16 @@ export class App implements IAppView {
       options: {}
     },
     {
-      view: 'DiffHeatMap',
-      parent: 'comparison',
-      options: {}
-    },
-    {
       view: 'HeatMap',
       parent: 'comparison',
       options: {
         eventName: AppConstants.EVENT_DATASET_SELECTED_LEFT
       }
+    },
+    {
+      view: 'DiffHeatMap',
+      parent: 'comparison',
+      options: {}
     },
     {
       view: 'HeatMap',
