@@ -149,14 +149,16 @@ class Timeline implements IAppView {
         (<MouseEvent>d3.event).preventDefault();
 
         if (that.isClicked === 0) {
-          console.log('first Click');
+          //console.log('first Click');
           that.$svgTimeline.selectAll('circle').classed('active', false);
           // toggle the active CSS classes
-          d3.select(this).classed('active', true);
+          //d3.select(this).classed('active', true);
           // toggle the active CSS classes
-          that.$svgTimeline.selectAll('circle').classed('active', false);
+          //that.$svgTimeline.selectAll('circle').classed('active', false);
+
 
           d3.select(this).classed('active', true).attr('fill');
+          //console.log(d.item);
 
           // dispatch selected dataset to other views
           events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
@@ -164,12 +166,12 @@ class Timeline implements IAppView {
 
         } else {
 
-          d3.select(this).classed('active', true);
+          d3.select(this).classed('active', true).attr('fill');
           // dispatch selected dataset to other views
           events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
 
           that.isClicked = 0;
-          console.log('second Click');
+          //console.log('second Click');
         }
 
       });

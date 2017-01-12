@@ -46,6 +46,15 @@
           "factory": "create"
         }
       },
+       {
+        "type": "tacoView",
+        "id": "DiffHeatMap",
+        "module": "diffHeatMap",
+        "extras": {
+          "name": "Diff Heat Map",
+          "factory": "create"
+        }
+      },
       {
         "type": "tacoView",
         "id": "Histogram2D",

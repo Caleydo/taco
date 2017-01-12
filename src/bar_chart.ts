@@ -27,7 +27,7 @@ class BarChart implements IAppView {
   private index = [];
 
   private leftValue = [];
-  
+
   //width of the bars in the bar chart
   private widthBar = 15;
 
@@ -109,6 +109,7 @@ class BarChart implements IAppView {
 
   private updateItems(items) {
     this.items = items;
+    //console.log(this.items);
 
     let width = $(window).innerWidth();
 
@@ -168,6 +169,8 @@ class BarChart implements IAppView {
             const json = args[0];
             const pair = args[1];
             const ids = args[2];
+
+            console.log(json);
 
             this.drawBars(json, pair, ids, leftValue.shift(), totalWidth);
 
