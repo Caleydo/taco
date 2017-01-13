@@ -65,9 +65,8 @@ class DiffHeatMap implements IAppView {
     //attach event listener
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
 
-   events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, pair) => {
-
-      this.requestData();
+    events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items) => {
+      this.diffHeatmap();
     });
 
 
@@ -75,16 +74,21 @@ class DiffHeatMap implements IAppView {
 
   private updateItems(items) {
     this.items = items;
-
-   //this.requestData().then((data) => this.drawDiffHeatmap(data));
     //this.requestData();
+  }
 
+  private diffHeatmap (){
+    let dataPromise = this.requestData();
+
+    Promise.all(dataPromise).then((data) => {
+      console.log('Data', data);
+      this.drawDiffHeatmap(data);
+    });
   }
 
 
   private requestData() {
-     console.log('event');
-   return d3.pairs(this.items)
+    return d3.pairs(this.items)
       .map((pair) => {
         //console.log(pair);
         let ids = pair.map((d:any) => d.item.desc.id);
@@ -92,7 +96,8 @@ class DiffHeatMap implements IAppView {
         // return Promise.all([ajax.getAPIJSON(DiffHeatMap.getURL(ids)), pair, ids])
         return ajax.getAPIJSON(DiffHeatMap.getURL(ids))
           .then((args) => {
-            this.drawDiffHeatmap(args);
+            //this.drawDiffHeatmap(args);
+            return args;
           });
       });
 
@@ -104,9 +109,9 @@ class DiffHeatMap implements IAppView {
     let that = this;
     // console.log('data get from draw function', data);
     //console.log('option', this.options);
-   //console.log('colorDomain', this.options.colorDomain);
+    //console.log('colorDomain', this.options.colorDomain);
 
-     /*const colorScale = d3.scale.linear()
+    /*const colorScale = d3.scale.linear()
      //.domain([-1, 0, 1])
      .domain([colorDomain[0], 0, colorDomain[1]]) // these are from main
      .clamp(true)
@@ -121,9 +126,10 @@ class DiffHeatMap implements IAppView {
 
     //console.log('Data', data);
     //height of each row in the heatmap
-    var h = height / data.union.ur_ids.length,
+    console.log('übergebenes Data', data);
+    var h = height / data[0].union.ur_ids.length,
     //width of each column in the heatmap
-      w = width / data.union.uc_ids.length;
+      w = width / data[0].union.uc_ids.length;
 
 
     var root = this.$node.append("div")// g.margin
@@ -135,27 +141,25 @@ class DiffHeatMap implements IAppView {
       .style("transform-origin", "0 0");
 
 
-    console.log('data', data);
-
-   /*root.selectAll(".taco-added-row")
-      .data(data.structure.added_rows)
-      .enter()
-      .append("div")
-      .attr("class", "taco-added-row")
-      .attr("class", "struct-add-color")
-      .attr("title", function (d) {
-        return d.id;
-      })
-      .style("left", 0 + "px")
-      .style("top", function (d) {
-        var y = d.pos;
-        return (y !== -1 ? y * h : null) + "px";
-      })
-      .style("width", width + "px")
-      .style("height", h + "px");
+    root.selectAll(".taco-added-row")
+     .data(data[0].structure.added_rows)
+     .enter()
+     .append("div")
+     .attr("class", "taco-added-row")
+     .attr("class", "struct-add-color")
+     .attr("title", function (d) {
+     return d.id;
+     })
+     .style("left", 0 + "px")
+     .style("top", function (d) {
+     var y = d.pos;
+     return (y !== -1 ? y * h : null) + "px";
+     })
+     .style("width", width + "px")
+     .style("height", h + "px");
 
 
-    //visualizing the diff
+     /*//visualizing the diff
 
      var addedRows = root.selectAll(".taco-added-row")
      .data(data.structure.added_rows)
