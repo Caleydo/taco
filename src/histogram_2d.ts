@@ -375,7 +375,7 @@ class Histogram2D implements IAppView {
      .style('transform', function (d) {
 
        var content = xScale(d.ratio.d_ratio);
-       console.log(content);
+       //console.log(content);
 
        var acc = 0;
 
@@ -405,7 +405,7 @@ class Histogram2D implements IAppView {
      .style('transform', function (d) {
 
        var structure = xScale(d.ratio.a_ratio);
-       console.log(structure);
+       //console.log(structure);
 
        var acc = 0;
 
