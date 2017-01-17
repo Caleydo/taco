@@ -57,9 +57,8 @@ class HeatMap implements IAppView {
       return;
 
     }
-
+    console.log('DATASET', dataset);
     const plugins = vis.list(dataset).filter((d) => /.*heatmap.*/.test(d.id));
-
 
 
     if (plugins.length === 0) {
@@ -72,7 +71,9 @@ class HeatMap implements IAppView {
         // remove the previous heat map
         this.$node.selectAll('*').remove();
 
+       // console.log('args from plugins', args);
         const plugin = args[0];
+       // console.log('const plugin- args', plugin);
         plugin.factory(
           dataset,
           this.$node.node(),

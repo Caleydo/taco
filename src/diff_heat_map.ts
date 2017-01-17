@@ -77,11 +77,10 @@ class DiffHeatMap implements IAppView {
     //this.requestData();
   }
 
-  private diffHeatmap (){
+  private diffHeatmap() {
     let dataPromise = this.requestData();
 
     Promise.all(dataPromise).then((data) => {
-      console.log('Data', data);
       this.drawDiffHeatmap(data);
     });
   }
@@ -96,6 +95,7 @@ class DiffHeatMap implements IAppView {
         // return Promise.all([ajax.getAPIJSON(DiffHeatMap.getURL(ids)), pair, ids])
         return ajax.getAPIJSON(DiffHeatMap.getURL(ids))
           .then((args) => {
+            // console.log('args', args);
             //this.drawDiffHeatmap(args);
             return args;
           });
@@ -107,9 +107,6 @@ class DiffHeatMap implements IAppView {
   private drawDiffHeatmap(data) {
 
     let that = this;
-    // console.log('data get from draw function', data);
-    //console.log('option', this.options);
-    //console.log('colorDomain', this.options.colorDomain);
 
     /*const colorScale = d3.scale.linear()
      //.domain([-1, 0, 1])
@@ -117,20 +114,18 @@ class DiffHeatMap implements IAppView {
      .clamp(true)
      .range([this.colorLow, this.colorMed, this.colorHigh]);*/
 
-    //that.h_data.then(function (operations, directions, data) {
-    // var height = gridSize[1];
-    // var width = gridSize[0];
+    let diff_parent = that.$node.node();
 
-    let height = 50;
-    let width = 50;
+    let grid_height = diff_parent.getBoundingClientRect().height - 3;
+    let grid_width = diff_parent.getBoundingClientRect().width;
 
-    //console.log('Data', data);
-    //height of each row in the heatmap
-    console.log('übergebenes Data', data);
-    var h = height / data[0].union.ur_ids.length,
-    //width of each column in the heatmap
-      w = width / data[0].union.uc_ids.length;
+    //console.log('grid-height, grid-width', grid_height, grid_width);
 
+    let height = grid_height;
+    let width = grid_width + 100;
+
+    let h = 0;
+    let w = 0;
 
     var root = this.$node.append("div")// g.margin
       .attr("class", "taco-table")
@@ -140,219 +135,107 @@ class DiffHeatMap implements IAppView {
       .style("background-color", "white")
       .style("transform-origin", "0 0");
 
+    //visualizing the diff
+    data.forEach(function (d) {
+      h = height / d.union.ur_ids.length;
 
-    root.selectAll(".taco-added-row")
-     .data(data[0].structure.added_rows)
-     .enter()
-     .append("div")
-     .attr("class", "taco-added-row")
-     .attr("class", "struct-add-color")
-     .attr("title", function (d) {
-     return d.id;
-     })
-     .style("left", 0 + "px")
-     .style("top", function (d) {
-     var y = d.pos;
-     return (y !== -1 ? y * h : null) + "px";
-     })
-     .style("width", width + "px")
-     .style("height", h + "px");
+      //width of each column in the heatmap
+      w = width / d.union.uc_ids.length;
 
+      var addedRows = root.selectAll(".taco-added-row")
+        .data(d.structure.added_rows)
+        .enter()
+        .append("div")
+        .attr("class", "taco-added-row")
+        .attr("class", "struct-add-color")
+        .attr("title", function (d) {
+          return d.id;
+        })
+        .style("left", 0 + "px")
+        .style("top", function (d) {
+          var y = d.pos;
+          return (y !== -1 ? y * h : null) + "px";
+        })
+        .style("width", width + "px")
+        .style("height", h + "px");
 
-     /*//visualizing the diff
+      var addedCols = root.selectAll(".taco-added-col")
+        .data(d.structure.added_cols)
+        .enter()
+        .append("div")
+        .attr("title", function (d) {
+          return d.id;
+        })
+        .attr("class", "taco-added-col")
+        .attr("class", "struct-add-color")
+        .style("top", 0 + "px")
+        .style("left", function (d) {
+          var x = d.pos;
+          return (x !== -1 ? x * w : null) + "px";
+        })
+        .style("width", w + "px")
+        .style("height", height + "px");
 
-     var addedRows = root.selectAll(".taco-added-row")
-     .data(data.structure.added_rows)
-     .enter()
-     .append("div")
-     .attr("class", "taco-added-row")
-     .attr("class", "struct-add-color")
-     .attr("title", function(d){return d.id;})
-     .style("left", 0 + "px")
-     .style("top", function (d) {
-     var y = d.pos;
-     return (y !== -1 ? y * h : null) + "px";
-     })
-     .style("width", width + "px")
-     .style("height", h + "px");
-
-
-     var addedCols = root.selectAll(".taco-added-col")
-     .data(data.structure.added_cols)
-     .enter()
-     .append("div")
-     .attr("title", function(d){return d.id;})
-     .attr("class", "taco-added-col")
-     .attr("class", "struct-add-color")
-     .style("top", 0 + "px")
-     .style("left", function (d) {
-     var x = d.pos;
-     return (x !== -1 ? x * w : null) + "px";
-     })
-     .style("width", w + "px")
-     .style("height", height + "px");
-
-     var deletedRows = root.selectAll(".taco-del-row")
-     .data(data.structure.deleted_rows)
-     .enter()
-     .append("div")
-     .attr("class", "taco-del-row")
-     .attr("class", "struct-del-color")
-     .attr("title", function(d){return d.id})
-     .style("left", 0 + "px")
-     .style("top", function (d) {
-     var y = d.pos;
-     return (y !== -1 ? y * h : null) + "px";
-     })
-     .style("width", width + "px")
-     .style("height", h + "px");
+      var deletedRows = root.selectAll(".taco-del-row")
+        .data(d.structure.deleted_rows)
+        .enter()
+        .append("div")
+        .attr("class", "taco-del-row")
+        .attr("class", "struct-del-color")
+        .attr("title", function (d) {
+          return d.id
+        })
+        .style("left", 0 + "px")
+        .style("top", function (d) {
+          var y = d.pos;
+          return (y !== -1 ? y * h : null) + "px";
+        })
+        .style("width", width + "px")
+        .style("height", h + "px");
 
 
-     var deletedCols = root.selectAll(".taco-del-col")
-     .data(data.structure.deleted_cols)
-     .enter()
-     .append("div")
-     .attr("class", "taco-del-col")
-     .attr("class", "struct-del-color")
-     .attr("title", function(d){return d.id;})
-     .style("top", 0 + "px")
-     .style("left", function (d) {
-     var x = d.pos;
-     return (x !== -1 ? x * w : null) + "px";
-     })
-     .style("width", w + "px")
-     .style("height", height + "px");
+      var deletedCols = root.selectAll(".taco-del-col")
+        .data(d.structure.deleted_cols)
+        .enter()
+        .append("div")
+        .attr("class", "taco-del-col")
+        .attr("class", "struct-del-color")
+        .attr("title", function (d) {
+          return d.id;
+        })
+        .style("top", 0 + "px")
+        .style("left", function (d) {
+          var x = d.pos;
+          return (x !== -1 ? x * w : null) + "px";
+        })
+        .style("width", w + "px")
+        .style("height", height + "px");
 
-
-     var chCells = root.selectAll(".taco-ch-cell").data(data.content);
-     chCells.enter()
-     .append("div")
-     .attr("class", "taco-ch-cell")
-     .attr("title", function(d){
-     return "(" + d.row + "," + d.col + ": " + d.diff_data + ")" ;
-     })
-     .style("top", function (d) {
-     //var y = that.row_ids.indexOf(d.row);
-     var y = d.rpos;
-     return (y !== -1 ? y * h : null) + "px";
-     })
-     .style("left", function (d) {
-     //var x = that.col_ids.indexOf(d.col);
-     var x = d.cpos;
-     return (x !== -1 ? x * w : null) + "px";
-     })
-     .style("width", w + "px")
-     .style("height", h + "px")
-     .style("background-color", function (d) {
-     return colorScale(d.diff_data);
-     });
-
-     var mergedCols = root.selectAll(".taco-mer-col")
-     .data(data.merge.merged_cols)
-     .enter()
-     .append("div")
-     .attr("class", "taco-mer-col")
-     .attr("title", function(d){
-     return "(" + d.id + "," + d.merge_id + ")" ;
-     })
-
-     .style("top", 0 + "px")
-     .style("left", function (d) {
-     var x = d.pos;
-     return (x !== -1 ? x * w : null) + "px";
-     })
-     .style("width", w + "px")
-     .style("height", height + "px")
-     .style("background-color", function (d) {
-     return d.is_added ? this.colorMerged : this.colorSplit
-     })
-     .style("z-index", function (d) {
-     return d.is_added ? "0" : "1"
-     });
-
-     var mergedRows = root.selectAll(".taco-mer-row")
-     .data(data.merge.merged_rows)
-     .enter()
-     .append("div")
-     .attr("class", "taco-mer-row")
-     .attr("title", function(d){
-     return "(" + d.id + "," + d.merge_id + ")" ;
-     })
-     .style("zIndex", function (d) {
-     return d.is_merge ? "0" : "1"
-     })
-
-     .style("left", 0 + "px")
-     .style("top", function (d) {
-     //var y = that.row_ids.indexOf(d);
-     var y = d.pos;
-     return (y !== -1 ? y * h : null) + "px";
-     })
-     .style("width", width + "px")
-     .style("height", h + "px")
-     .style("background-color", function (d) {
-     return d.is_added ? this.colorMerged : this.colorSplit
-     })
-     .style("z-index", function (d) {
-     return d.is_added ? "0" : "1"
-     });
-
-     var splitCols = root.selectAll(".taco-spl-col")
-     .data(data.merge.split_cols)
-     .enter()
-     .append("div")
-     .attr("class", "taco-spl-col")
-     .attr("title", function(d){
-     return "(" + d.id + "," + d.merge_id + ")" ;
-     })
-     .style("z-index", function (d) {
-     return d.is_added ? "0" : "1"
-     })
-
-     .style("top", 0 + "px")
-     .style("left", function (d) {
-     //var x = that.col_ids.indexOf(d);
-     var x = d.pos;
-     return (x !== -1 ? x * w : null) + "px";
-     })
-     .style("width", w + "px")
-     .style("height", height + "px")
-     .style("background-color", function (d) {
-     return (d.is_added ? this.colorMerged : this.colorSplit)
-     });
-
-
-     var splitRows = root.selectAll(".taco-spl-row")
-     .data(data.merge.split_rows)
-     .enter()
-     .append("div")
-     .attr("class", "taco-spl-row")
-     .attr("title", function(d){
-     return "(" + d.id + "," + d.merge_id + ")" ;
-     })
-     .style("z-index", function (d) {
-     return d.is_added ? "0" : "1"
-     })
-
-     .style("left", 0 + "px")
-     .style("top", function (d) {
-     //var y = that.row_ids.indexOf(d);
-     var y = d.pos;
-     return (y !== -1 ? y * h : null) + "px";
-     })
-     .style("width", width + "px")
-     .style("height", h + "px")
-     .style("background-color", function (d) {
-     return (d.is_added ? this.colorMerged : this.colorSplit)
-     });*/
-    //}
-    // }
-
-    //});
-
+      var chCells = root.selectAll(".taco-ch-cell").data(d.content);
+      chCells.enter()
+        .append("div")
+        .attr("class", "taco-ch-cell")
+        .attr("title", function (d) {
+          return "(" + d.row + "," + d.col + ": " + d.diff_data + ")";
+        })
+        .style("top", function (d) {
+          //var y = that.row_ids.indexOf(d.row);
+          var y = d.rpos;
+          return (y !== -1 ? y * h : null) + "px";
+        })
+        .style("left", function (d) {
+          //var x = that.col_ids.indexOf(d.col);
+          var x = d.cpos;
+          return (x !== -1 ? x * w : null) + "px";
+        })
+        .style("width", w * 10 + "px")
+        .style("height", h * 10 + "px")
+        .style('background-color', 'red');
+      /* .style("background-color", function (d) {
+       return colorScale(d.diff_data);
+       });*/
+    });
   }
-
-
 }
 
 
