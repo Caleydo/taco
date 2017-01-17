@@ -67,10 +67,10 @@
   "dependencies": {
     "@types/moment": "2.13.0",
     "moment": "2.15.2",
-    "phovea_ui": "github:phovea/phovea_ui#develop",
-    "phovea_core": "github:phovea/phovea_core#develop",
-    "phovea_d3": "github:phovea/phovea_d3#develop",
-    "phovea_vis": "github:phovea/phovea_vis#develop"
+    "phovea_ui": "github:phovea/phovea_ui#feature_update_dependencies",
+    "phovea_core": "github:phovea/phovea_core#feature_update_dependencies",
+    "phovea_d3": "github:phovea/phovea_d3#feature_update_dependencies",
+    "phovea_vis": "github:phovea/phovea_vis#feature_update_dependencies"
   },
   "name": "taco",
   "description": "Comparative visualization of large tabular data using Phovea",
