@@ -403,7 +403,6 @@ class Histogram2D implements IAppView {
       })
      .style('transform', function (d) {
        const structure = xScale(d.ratio.a_ratio);
-     
        let acc = 0;
 
        if(structure === 0) {
