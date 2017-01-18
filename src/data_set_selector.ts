@@ -128,7 +128,7 @@ class DataProvider {
           d.values = d.values.map((e) => {
             e.item = e.values[0]; // shortcut reference
 
-            let matches = e.key.match(/^(\d{4})[_-](\d{2})[_-](\d{2}).*/); // matches YYYY_MM_DD or YYYY-MM-DD
+            const matches = e.key.match(/^(\d{4})[_-](\d{2})[_-](\d{2}).*/); // matches YYYY_MM_DD or YYYY-MM-DD
             e.time = (matches === null) ? null : moment(e.key, AppConstants.PARSE_DATE_FORMATS);
 
             return e;

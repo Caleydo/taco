@@ -35,19 +35,19 @@ class Histogram2D implements IAppView {
 
 
   private static getURL(pair) {
-    const bin_cols = -1; // -1 = aggregate the whole table
-    const bin_rows = -1; // -1 = aggregate the whole table
+    const binCols = -1; // -1 = aggregate the whole table
+    const binRows = -1; // -1 = aggregate the whole table
     const direction = 2; // 2 = rows + columns
     const changes = 'structure,content';
-    return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
+    return `/taco/diff_log/${pair[0]}/${pair[1]}/${binCols}/${binRows}/${direction}/${changes}`;
   }
 
   private static getURLHistogram(pair) {
-    const bin_cols = 20; // -1 = aggregate the whole table
-    const bin_rows = 10; // -1 = aggregate the whole table
+    const binCols = 20; // -1 = aggregate the whole table
+    const binRows = 10; // -1 = aggregate the whole table
     const direction = 2; // 2 = rows + columns
     const changes = 'structure,content';
-    return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
+    return `/taco/diff_log/${pair[0]}/${pair[1]}/${binCols}/${binRows}/${direction}/${changes}`;
   }
 
   constructor(parent: Element, private options: any) {
@@ -223,8 +223,8 @@ class Histogram2D implements IAppView {
 
    // console.log('rows' , histodata[0], 'cols' , histodata[1]);
 
-    var rows = histodata[0];
-    var cols = histodata[1];
+    const rows = histodata[0];
+    const cols = histodata[1];
 
 
 
@@ -237,7 +237,7 @@ class Histogram2D implements IAppView {
       .domain([0, 20])
       .range([0, this.heightRowHistogram]);
 
-    var gridSize = Math.floor(this.heightRowHistogram/20);
+    const gridSize = Math.floor(this.heightRowHistogram/20);
 
     const bincontainer = this.$histogram.selectAll('div.bin-container')
       .data(rows, function (d) {
@@ -285,10 +285,10 @@ class Histogram2D implements IAppView {
       })
      .style('transform', function (d) {
 
-       var content = xScale(d.ratio.d_ratio);
+       const content = xScale(d.ratio.d_ratio);
       // console.log(content);
 
-       var acc = 0;
+       let acc = 0;
 
        if(content === 0) {
          acc = 0;
@@ -315,10 +315,10 @@ class Histogram2D implements IAppView {
       })
      .style('transform', function (d) {
 
-       var structure = xScale(d.ratio.a_ratio);
+       const structure = xScale(d.ratio.a_ratio);
        //console.log(structure);
 
-       var acc = 0;
+       let acc = 0;
 
        if(structure === 0) {
          acc = 0;
@@ -374,10 +374,10 @@ class Histogram2D implements IAppView {
       })
      .style('transform', function (d) {
 
-       var content = xScale(d.ratio.d_ratio);
+       const content = xScale(d.ratio.d_ratio);
        console.log(content);
 
-       var acc = 0;
+       let acc = 0;
 
        if(content === 0) {
          acc = 0;
@@ -404,10 +404,10 @@ class Histogram2D implements IAppView {
       })
      .style('transform', function (d) {
 
-       var structure = xScale(d.ratio.a_ratio);
+       const structure = xScale(d.ratio.a_ratio);
        console.log(structure);
 
-       var acc = 0;
+       let acc = 0;
 
        if(structure === 0) {
          acc = 0;
