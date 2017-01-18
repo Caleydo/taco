@@ -373,9 +373,8 @@ class Histogram2D implements IAppView {
         return 'content: ' + Math.round((d.ratio.d_ratio * 100)*1000)/1000 +'%';
       })
      .style('transform', function (d) {
-
        const content = xScale(d.ratio.d_ratio);
-       console.log(content);
+       //console.log(content);
 
        let acc = 0;
 
@@ -403,10 +402,8 @@ class Histogram2D implements IAppView {
         return 'content: ' + Math.round((d.ratio.a_ratio * 100)*1000)/1000 +'%';
       })
      .style('transform', function (d) {
-
        const structure = xScale(d.ratio.a_ratio);
-       console.log(structure);
-
+     
        let acc = 0;
 
        if(structure === 0) {

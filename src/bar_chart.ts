@@ -109,6 +109,7 @@ class BarChart implements IAppView {
 
   private updateItems(items) {
     this.items = items;
+    //console.log(this.items);
 
     const width = $(window).innerWidth();
 
@@ -168,6 +169,8 @@ class BarChart implements IAppView {
             const json = args[0];
             const pair = args[1];
             const ids = args[2];
+
+            //console.log(json);
 
             this.drawBars(json, pair, ids, leftValue.shift(), totalWidth);
 
@@ -239,6 +242,7 @@ class BarChart implements IAppView {
 
       } else {
         events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, ids);
+        events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, ids);
         that.openHistogram2D = this.parentNode;
       }
     });
