@@ -36,11 +36,11 @@ class BarChart implements IAppView {
   private heightBarChart = 50;
 
   private static getURL(pair) {
-    const bin_cols = 1; // 1 bin
-    const bin_rows = 1; // 1 bin
+    const binCols = 1; // 1 bin
+    const binRows = 1; // 1 bin
     const direction = 2; // 2 = rows + columns
     const changes = 'structure,content';
-    return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
+    return `/taco/diff_log/${pair[0]}/${pair[1]}/${binCols}/${binRows}/${direction}/${changes}`;
   }
 
   constructor(parent:Element, private options:any) {
@@ -99,7 +99,7 @@ class BarChart implements IAppView {
     this.index = d3.range(0, items.length);
     const circleScaling = scaleCircles(width);
 
-    for (var i in this.index) {
+    for (const i in this.index) {
       if (this.index.hasOwnProperty(i)) {
 
         this.leftValue.push((this.index[i] * circleScaling) + 30);
@@ -111,7 +111,7 @@ class BarChart implements IAppView {
     this.items = items;
     //console.log(this.items);
 
-    let width = $(window).innerWidth();
+    const width = $(window).innerWidth();
 
     this.generateIndexArray(this.items, width);
 
@@ -146,7 +146,7 @@ class BarChart implements IAppView {
 
   private windowResize(items) {
     this.items = items;
-    let width = $(window).innerWidth();
+    const width = $(window).innerWidth();
 
     this.generateIndexArray(this.items, width);
 
@@ -163,7 +163,7 @@ class BarChart implements IAppView {
   private requestData(totalWidth, leftValue) {
     return d3.pairs(this.items)
       .map((pair) => {
-        let ids = pair.map((d:any) => d.item.desc.id);
+        const ids = pair.map((d:any) => d.item.desc.id);
         return Promise.all([ajax.getAPIJSON(BarChart.getURL(ids)), pair, ids])
           .then((args) => {
             const json = args[0];
