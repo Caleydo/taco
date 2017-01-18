@@ -29,11 +29,11 @@ class DiffHeatMap implements IAppView {
 
 
   private static getURL(pair) {
-    const bin_cols = 0; // -1 = aggregate the whole table
-    const bin_rows = 0; // -1 = aggregate the whole table
+    const binCols = 0; // -1 = aggregate the whole table
+    const binRows = 0; // -1 = aggregate the whole table
     const direction = 2; // 2 = rows + columns
     const changes = 'structure,content';
-    return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
+    return `/taco/diff_log/${pair[0]}/${pair[1]}/${binCols}/${binRows}/${direction}/${changes}`;
   }
 
 
@@ -78,7 +78,7 @@ class DiffHeatMap implements IAppView {
   }
 
   private diffHeatmap() {
-    let dataPromise = this.requestData();
+    const dataPromise = this.requestData();
 
     Promise.all(dataPromise).then((data) => {
       this.drawDiffHeatmap(data);
@@ -90,7 +90,7 @@ class DiffHeatMap implements IAppView {
     return d3.pairs(this.items)
       .map((pair) => {
         //console.log(pair);
-        let ids = pair.map((d:any) => d.item.desc.id);
+        const ids = pair.map((d:any) => d.item.desc.id);
         //console.log(ids, pair);
         // return Promise.all([ajax.getAPIJSON(DiffHeatMap.getURL(ids)), pair, ids])
         return ajax.getAPIJSON(DiffHeatMap.getURL(ids))
@@ -106,7 +106,7 @@ class DiffHeatMap implements IAppView {
 
   private drawDiffHeatmap(data) {
 
-    let that = this;
+    const that = this;
 
     /*const colorScale = d3.scale.linear()
      //.domain([-1, 0, 1])
@@ -114,26 +114,26 @@ class DiffHeatMap implements IAppView {
      .clamp(true)
      .range([this.colorLow, this.colorMed, this.colorHigh]);*/
 
-    let diff_parent = that.$node.node();
+    const diffParent = that.$node.node();
 
-    let grid_height = diff_parent.getBoundingClientRect().height - 3;
-    let grid_width = diff_parent.getBoundingClientRect().width;
+    const gridHeight = diffParent.getBoundingClientRect().height - 3;
+    const gridWidth = diffParent.getBoundingClientRect().width;
 
     //console.log('grid-height, grid-width', grid_height, grid_width);
 
-    let height = grid_height;
-    let width = grid_width + 100;
+    const height = gridHeight;
+    const width = gridWidth + 100;
 
     let h = 0;
     let w = 0;
 
-    var root = this.$node.append("div")// g.margin
-      .attr("class", "taco-table")
-      .style("width", width + 'px')
-      .style("height", height + 'px')
+    const root = this.$node.append('div')// g.margin
+      .attr('class', 'taco-table')
+      .style('width', width + 'px')
+      .style('height', height + 'px')
 
-      .style("background-color", "white")
-      .style("transform-origin", "0 0");
+      .style('background-color', 'white')
+      .style('transform-origin', '0 0');
 
     //visualizing the diff
     data.forEach(function (d) {
@@ -142,96 +142,96 @@ class DiffHeatMap implements IAppView {
       //width of each column in the heatmap
       w = width / d.union.uc_ids.length;
 
-      var addedRows = root.selectAll(".taco-added-row")
+      const addedRows = root.selectAll('.taco-added-row')
         .data(d.structure.added_rows)
         .enter()
-        .append("div")
-        .attr("class", "taco-added-row")
-        .attr("class", "struct-add-color")
-        .attr("title", function (d) {
+        .append('div')
+        .attr('class', 'taco-added-row')
+        .attr('class', 'struct-add-color')
+        .attr('title', function (d) {
           return d.id;
         })
-        .style("left", 0 + "px")
-        .style("top", function (d) {
-          var y = d.pos;
-          return (y !== -1 ? y * h : null) + "px";
+        .style('left', 0 + 'px')
+        .style('top', function (d) {
+          const y = d.pos;
+          return (y !== -1 ? y * h : null) + 'px';
         })
-        .style("width", width + "px")
-        .style("height", h + "px");
+        .style('width', width + 'px')
+        .style('height', h + 'px');
 
-      var addedCols = root.selectAll(".taco-added-col")
+      const addedCols = root.selectAll('.taco-added-col')
         .data(d.structure.added_cols)
         .enter()
-        .append("div")
-        .attr("title", function (d) {
+        .append('div')
+        .attr('title', function (d) {
           return d.id;
         })
-        .attr("class", "taco-added-col")
-        .attr("class", "struct-add-color")
-        .style("top", 0 + "px")
-        .style("left", function (d) {
-          var x = d.pos;
-          return (x !== -1 ? x * w : null) + "px";
+        .attr('class', 'taco-added-col')
+        .attr('class', 'struct-add-color')
+        .style('top', 0 + 'px')
+        .style('left', function (d) {
+          const x = d.pos;
+          return (x !== -1 ? x * w : null) + 'px';
         })
-        .style("width", w + "px")
-        .style("height", height + "px");
+        .style('width', w + 'px')
+        .style('height', height + 'px');
 
-      var deletedRows = root.selectAll(".taco-del-row")
+      const deletedRows = root.selectAll('.taco-del-row')
         .data(d.structure.deleted_rows)
         .enter()
-        .append("div")
-        .attr("class", "taco-del-row")
-        .attr("class", "struct-del-color")
-        .attr("title", function (d) {
-          return d.id
-        })
-        .style("left", 0 + "px")
-        .style("top", function (d) {
-          var y = d.pos;
-          return (y !== -1 ? y * h : null) + "px";
-        })
-        .style("width", width + "px")
-        .style("height", h + "px");
-
-
-      var deletedCols = root.selectAll(".taco-del-col")
-        .data(d.structure.deleted_cols)
-        .enter()
-        .append("div")
-        .attr("class", "taco-del-col")
-        .attr("class", "struct-del-color")
-        .attr("title", function (d) {
+        .append('div')
+        .attr('class', 'taco-del-row')
+        .attr('class', 'struct-del-color')
+        .attr('title', function (d) {
           return d.id;
         })
-        .style("top", 0 + "px")
-        .style("left", function (d) {
-          var x = d.pos;
-          return (x !== -1 ? x * w : null) + "px";
+        .style('left', 0 + 'px')
+        .style('top', function (d) {
+          const y = d.pos;
+          return (y !== -1 ? y * h : null) + 'px';
         })
-        .style("width", w + "px")
-        .style("height", height + "px");
+        .style('width', width + 'px')
+        .style('height', h + 'px');
 
-      var chCells = root.selectAll(".taco-ch-cell").data(d.content);
+
+      const deletedCols = root.selectAll('.taco-del-col')
+        .data(d.structure.deleted_cols)
+        .enter()
+        .append('div')
+        .attr('class', 'taco-del-col')
+        .attr('class', 'struct-del-color')
+        .attr('title', function (d) {
+          return d.id;
+        })
+        .style('top', 0 + 'px')
+        .style('left', function (d) {
+          const x = d.pos;
+          return (x !== -1 ? x * w : null) + 'px';
+        })
+        .style('width', w + 'px')
+        .style('height', height + 'px');
+
+      const chCells = root.selectAll('.taco-ch-cell').data(d.content);
       chCells.enter()
-        .append("div")
-        .attr("class", "taco-ch-cell")
-        .attr("title", function (d) {
-          return "(" + d.row + "," + d.col + ": " + d.diff_data + ")";
+        .append('div')
+        .attr('class', 'taco-ch-cell')
+        .attr('title', function (d) {
+          return '(' + d.row + ',' + d.col + ': ' + d.diff_data + ')';
         })
-        .style("top", function (d) {
+        .style('top', function (d) {
           //var y = that.row_ids.indexOf(d.row);
-          var y = d.rpos;
-          return (y !== -1 ? y * h : null) + "px";
+          const y = d.rpos;
+          return (y !== -1 ? y * h : null) + 'px';
         })
-        .style("left", function (d) {
+        .style('left', function (d) {
           //var x = that.col_ids.indexOf(d.col);
-          var x = d.cpos;
-          return (x !== -1 ? x * w : null) + "px";
+          const x = d.cpos;
+          return (x !== -1 ? x * w : null) + 'px';
         })
-        .style("width", w * 10 + "px")
-        .style("height", h * 10 + "px")
+        .style('width', w * 10 + 'px')
+        .style('height', h * 10 + 'px')
         .style('background-color', 'red');
-      /* .style("background-color", function (d) {
+      /* .style('background-color', function (d) {
        return colorScale(d.diff_data);
        });*/
     });
