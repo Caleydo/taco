@@ -35,19 +35,19 @@ class Histogram2D implements IAppView {
 
 
   private static getURL(pair) {
-    const bin_cols = -1; // -1 = aggregate the whole table
-    const bin_rows = -1; // -1 = aggregate the whole table
+    const binCols = -1; // -1 = aggregate the whole table
+    const binRows = -1; // -1 = aggregate the whole table
     const direction = 2; // 2 = rows + columns
     const changes = 'structure,content';
-    return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
+    return `/taco/diff_log/${pair[0]}/${pair[1]}/${binCols}/${binRows}/${direction}/${changes}`;
   }
 
   private static getURLHistogram(pair) {
-    const bin_cols = 20; // -1 = aggregate the whole table
-    const bin_rows = 10; // -1 = aggregate the whole table
+    const binCols = 20; // -1 = aggregate the whole table
+    const binRows = 10; // -1 = aggregate the whole table
     const direction = 2; // 2 = rows + columns
     const changes = 'structure,content';
-    return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
+    return `/taco/diff_log/${pair[0]}/${pair[1]}/${binCols}/${binRows}/${direction}/${changes}`;
   }
 
   constructor(parent: Element, private options: any) {
@@ -190,15 +190,15 @@ class Histogram2D implements IAppView {
 
     //for the histogram Rows
     private requestDataHistogram(pair) {
-      return ajax.getAPIJSON(Histogram2D.getURLHistogram(pair))
-        .then((json) => {
+    return ajax.getAPIJSON(Histogram2D.getURLHistogram(pair))
+      .then((json) => {
 
-          const rows = json.rows;
-          const cols = json.cols;
-          //console.log(rows, cols);
-          return [rows, cols];
-        });
-    }
+        const rows = json.rows;
+        const cols = json.cols;
+        //console.log(rows, cols);
+        return [rows, cols];
+      });
+  }
 
   //Show 2d Ratio chart
   private showData(data) {
@@ -373,7 +373,6 @@ class Histogram2D implements IAppView {
         return 'content: ' + Math.round((d.ratio.d_ratio * 100)*1000)/1000 +'%';
       })
      .style('transform', function (d) {
-
        const content = xScale(d.ratio.d_ratio);
        //console.log(content);
 
@@ -403,10 +402,8 @@ class Histogram2D implements IAppView {
         return 'content: ' + Math.round((d.ratio.a_ratio * 100)*1000)/1000 +'%';
       })
      .style('transform', function (d) {
-
        const structure = xScale(d.ratio.a_ratio);
-       //console.log(structure);
-
+     
        let acc = 0;
 
        if(structure === 0) {

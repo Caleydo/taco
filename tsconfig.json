@@ -5,6 +5,8 @@
     "noImplicitAny": false,
     "sourceMap": true,
     "moduleResolution": "node",
+    "jsx": "react",
+    "experimentalDecorators": true,
     "lib": [
       "dom",
       "es2015"
@@ -13,6 +15,7 @@
   },
   "include": [
     "src/**/*.ts",
+    "src/**/*.tsx",
     "tests/**/*.ts",
     "index.ts",
     "tsd.d.ts"

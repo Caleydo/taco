@@ -241,5 +241,18 @@ rect.no-change-color {
 }
 
 
+div.struct-add-color, .row-add-color, .col-add-color {
+  //background-color: #4daf4a;
+  background-color: $struct-add-color; //colorblind friendly
+}
+
+div.struct-del-color, .row-del-color, .col-del-color {
+  //background-color: #e41a1c;
+  background-color: $struct-delete-color; //colorblind friendly
+}
+
+
+
+
 
 

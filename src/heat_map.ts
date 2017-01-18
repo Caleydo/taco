@@ -42,6 +42,7 @@ class HeatMap implements IAppView {
    */
   private attachListener() {
     events.on(this.options.eventName, (evt, dataset) => this.update(dataset));
+
   }
 
   /**
@@ -50,12 +51,15 @@ class HeatMap implements IAppView {
    * @returns {Promise<HeatMap>}
    */
   private update(dataset) {
+
     if(dataset.desc.type !== 'matrix') {
       console.warn(`Data set is not of type matrix and cannot be visualized from heat map plugin`);
       return;
-    }
 
+    }
+    console.log('DATASET', dataset);
     const plugins = vis.list(dataset).filter((d) => /.*heatmap.*/.test(d.id));
+
 
     if (plugins.length === 0) {
       console.warn(`Heat map visualization plugin not found`);
@@ -67,13 +71,14 @@ class HeatMap implements IAppView {
         // remove the previous heat map
         this.$node.selectAll('*').remove();
 
+       // console.log('args from plugins', args);
         const plugin = args[0];
+       // console.log('const plugin- args', plugin);
         plugin.factory(
           dataset,
           this.$node.node(),
           this.heatMapOptions
         );
-
         return this;
       });
   }

@@ -36,11 +36,11 @@ class BarChart implements IAppView {
   private heightBarChart = 50;
 
   private static getURL(pair) {
-    const bin_cols = 1; // 1 bin
-    const bin_rows = 1; // 1 bin
+    const binCols = 1; // 1 bin
+    const binRows = 1; // 1 bin
     const direction = 2; // 2 = rows + columns
     const changes = 'structure,content';
-    return `/taco/diff_log/${pair[0]}/${pair[1]}/${bin_cols}/${bin_rows}/${direction}/${changes}`;
+    return `/taco/diff_log/${pair[0]}/${pair[1]}/${binCols}/${binRows}/${direction}/${changes}`;
   }
 
   constructor(parent:Element, private options:any) {
@@ -109,8 +109,9 @@ class BarChart implements IAppView {
 
   private updateItems(items) {
     this.items = items;
+    //console.log(this.items);
 
-    let width = $(window).innerWidth();
+    const width = $(window).innerWidth();
 
     this.generateIndexArray(this.items, width);
 
@@ -145,7 +146,7 @@ class BarChart implements IAppView {
 
   private windowResize(items) {
     this.items = items;
-    let width = $(window).innerWidth();
+    const width = $(window).innerWidth();
 
     this.generateIndexArray(this.items, width);
 
@@ -162,12 +163,14 @@ class BarChart implements IAppView {
   private requestData(totalWidth, leftValue) {
     return d3.pairs(this.items)
       .map((pair) => {
-        let ids = pair.map((d:any) => d.item.desc.id);
+        const ids = pair.map((d:any) => d.item.desc.id);
         return Promise.all([ajax.getAPIJSON(BarChart.getURL(ids)), pair, ids])
           .then((args) => {
             const json = args[0];
             const pair = args[1];
             const ids = args[2];
+
+            //console.log(json);
 
             this.drawBars(json, pair, ids, leftValue.shift(), totalWidth);
 
@@ -239,6 +242,7 @@ class BarChart implements IAppView {
 
       } else {
         events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, ids);
+        events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, ids);
         that.openHistogram2D = this.parentNode;
       }
     });

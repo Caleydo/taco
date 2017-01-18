@@ -80,7 +80,7 @@ class Timeline implements IAppView {
     d3.select('line').attr('x2', this.totalWidth);
 
     // Updating scale for circle position
-    let xScaleTimeline = getPosXScale(this.items, this.totalWidth);
+    const xScaleTimeline = getPosXScale(this.items, this.totalWidth);
 
     this.$svgTimeline.selectAll('circle')
       .attr('cx', (d:any, i) => {
@@ -117,7 +117,7 @@ class Timeline implements IAppView {
   private drawTimeline() {
     const that = this;
 
-    let xScaleTimeline = getPosXScale(this.items, this.totalWidth);
+    const xScaleTimeline = getPosXScale(this.items, this.totalWidth);
 
     const circleScale = d3.scale.linear()
       .domain([0, d3.max(this.items, (d:any) => d.item.dim[0])])
@@ -149,14 +149,16 @@ class Timeline implements IAppView {
         (<MouseEvent>d3.event).preventDefault();
 
         if (that.isClicked === 0) {
-          console.log('first Click');
+          //console.log('first Click');
           that.$svgTimeline.selectAll('circle').classed('active', false);
           // toggle the active CSS classes
-          d3.select(this).classed('active', true);
+          //d3.select(this).classed('active', true);
           // toggle the active CSS classes
-          that.$svgTimeline.selectAll('circle').classed('active', false);
+          //that.$svgTimeline.selectAll('circle').classed('active', false);
+
 
           d3.select(this).classed('active', true).attr('fill');
+          //console.log(d.item);
 
           // dispatch selected dataset to other views
           events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
@@ -164,12 +166,13 @@ class Timeline implements IAppView {
 
         } else {
 
-          d3.select(this).classed('active', true);
+          d3.select(this).classed('active', true).attr('fill');
           // dispatch selected dataset to other views
           events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
+          events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, d.item);
 
           that.isClicked = 0;
-          console.log('second Click');
+          //console.log('second Click');
         }
 
       });
@@ -178,8 +181,8 @@ class Timeline implements IAppView {
   private toggleTimeline() {
     // let button = d3.select(this);
     //console.log(button);
-    let line = this.$svgTimeline.select('line');
-    let circle = this.$svgTimeline.selectAll('circle');
+    const line = this.$svgTimeline.select('line');
+    const circle = this.$svgTimeline.selectAll('circle');
     //console.log(line, circle);
 
     if (line.size() > 0 && circle.size() > 0) {

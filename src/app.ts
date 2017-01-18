@@ -81,11 +81,11 @@ export class App implements IAppView {
         eventName: AppConstants.EVENT_DATASET_SELECTED_LEFT
       }
     },
-    /*{
+    {
       view: 'DiffHeatMap',
       parent: 'comparison',
       options: {}
-    },*/
+    },
     {
       view: 'HeatMap',
       parent: 'comparison',

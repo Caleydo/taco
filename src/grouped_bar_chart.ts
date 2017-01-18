@@ -74,7 +74,7 @@ class GroupedBarChart implements IAppView {
 
   private openBarChart() {
     Promise.all(this.requestDataGroupedBars()).then(() => {
-      let finalArray = this.noratio.concat(this.aratio, this.cratio, this.dratio);
+      const finalArray = this.noratio.concat(this.aratio, this.cratio, this.dratio);
       this.drawgroupedBars(finalArray);
     });
   }
