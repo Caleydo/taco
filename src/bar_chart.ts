@@ -27,7 +27,7 @@ class BarChart implements IAppView {
   private index = [];
 
   private leftValue = [];
-  
+
   //width of the bars in the bar chart
   private widthBar = 15;
 
@@ -99,7 +99,7 @@ class BarChart implements IAppView {
     this.index = d3.range(0, items.length);
     const circleScaling = scaleCircles(width);
 
-    for (var i in this.index) {
+    for (const i in this.index) {
       if (this.index.hasOwnProperty(i)) {
 
         this.leftValue.push((this.index[i] * circleScaling) + 30);
