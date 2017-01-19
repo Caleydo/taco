@@ -49,6 +49,10 @@ b,
   align-items: stretch;
   align-content: stretch;
   justify-content: space-between;
+
+  &>div {
+    width: 33%;
+  }
 }
 
 
