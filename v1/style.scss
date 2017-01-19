@@ -367,6 +367,13 @@ rect.bar.struct-del-color {
   background-color: white;
 }
 
+.taco-table {
+  &> div{
+    postion:aboslute;
+  }
+
+}
+
 .struct {
   border-radius: 25px;
 }

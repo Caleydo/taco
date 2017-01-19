@@ -56,6 +56,8 @@ class DiffHeatMap implements IAppView {
     return Promise.resolve(this);
   }
 
+  private selectedTables = [];
+
   /**
    * Attach event handler for broadcasted events
    */
@@ -64,49 +66,44 @@ class DiffHeatMap implements IAppView {
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
 
     events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items) => {
-      console.log('übergebene items', items,'id of Table', items.desc.id);
-      let selectedTables = items;
+      //console.log('übergebene items', items[0], items[1]);
+      this.selectedTables = items;
+      //console.log('selected Tables', this.selectedTables);
       this.diffHeatmap();
     });
-
-
   }
 
   private updateItems(items) {
     this.items = items;
-    //this.requestData();
   }
 
   private diffHeatmap() {
     const dataPromise = this.requestData();
-
     Promise.all(dataPromise).then((data) => {
-      this.drawDiffHeatmap(data);
+       this.drawDiffHeatmap(data);
     });
   }
 
-
   private requestData() {
-    console.log('this.items', this.items);
-    return d3.pairs(this.items)
+    return d3.pairs(this.selectedTables)
       .map((pair) => {
-        const ids = pair.map((d:any) => d.item.desc.id);
+        //console.log('pair', pair);
+        // const ids = pair.map((d:any) => d.item.desc.id);
+        //console.log('ids', ids);
+        const idsSelectedTable = pair.map((d:any) => d.desc.id);
+        //console.log('ids', idsSelectedTable);
         // return Promise.all([ajax.getAPIJSON(DiffHeatMap.getURL(ids)), pair, ids])
-        return ajax.getAPIJSON(DiffHeatMap.getURL(ids))
+        return ajax.getAPIJSON(DiffHeatMap.getURL(idsSelectedTable))
           .then((args) => {
             // console.log('args', args);
             //this.drawDiffHeatmap(args);
             return args;
           });
       });
-
   }
 
-
   private drawDiffHeatmap(data) {
-
     const that = this;
-
     /*const colorScale = d3.scale.linear()
      //.domain([-1, 0, 1])
      .domain([colorDomain[0], 0, colorDomain[1]]) // these are from main
@@ -134,7 +131,7 @@ class DiffHeatMap implements IAppView {
       .style('background-color', 'white')
       .style('transform-origin', '0 0');
 
-   // console.log(data);
+    // console.log(data);
 
     //visualizing the diff
     data.forEach(function (d) {
