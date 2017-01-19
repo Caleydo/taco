@@ -42,8 +42,6 @@ class DiffHeatMap implements IAppView {
     this.$node = d3.select(parent)
       .append('div')
       .classed('diffheatmap', true);
-
-
   }
 
   /**
@@ -66,6 +64,8 @@ class DiffHeatMap implements IAppView {
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
 
     events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items) => {
+      console.log('übergebene items', items,'id of Table', items.desc.id);
+      let selectedTables = items;
       this.diffHeatmap();
     });
 
@@ -87,11 +87,10 @@ class DiffHeatMap implements IAppView {
 
 
   private requestData() {
+    console.log('this.items', this.items);
     return d3.pairs(this.items)
       .map((pair) => {
-        //console.log(pair);
         const ids = pair.map((d:any) => d.item.desc.id);
-        //console.log(ids, pair);
         // return Promise.all([ajax.getAPIJSON(DiffHeatMap.getURL(ids)), pair, ids])
         return ajax.getAPIJSON(DiffHeatMap.getURL(ids))
           .then((args) => {
@@ -122,7 +121,7 @@ class DiffHeatMap implements IAppView {
     //console.log('grid-height, grid-width', grid_height, grid_width);
 
     const height = gridHeight;
-    const width = gridWidth + 100;
+    const width = gridWidth ;
 
     let h = 0;
     let w = 0;
@@ -135,105 +134,121 @@ class DiffHeatMap implements IAppView {
       .style('background-color', 'white')
       .style('transform-origin', '0 0');
 
+   // console.log(data);
+
     //visualizing the diff
     data.forEach(function (d) {
-      h = height / d.union.ur_ids.length;
 
+      h = height / d.union.ur_ids.length;
       //width of each column in the heatmap
       w = width / d.union.uc_ids.length;
 
-      const addedRows = root.selectAll('.taco-added-row')
-        .data(d.structure.added_rows)
-        .enter()
-        .append('div')
-        .attr('class', 'taco-added-row')
-        .attr('class', 'struct-add-color')
-        .attr('title', function (d) {
-          return d.id;
-        })
-        .style('left', 0 + 'px')
-        .style('top', function (d) {
-          const y = d.pos;
-          return (y !== -1 ? y * h : null) + 'px';
-        })
-        .style('width', width + 'px')
-        .style('height', h + 'px');
+      if (d.hasOwnProperty('structure')) {
 
-      const addedCols = root.selectAll('.taco-added-col')
-        .data(d.structure.added_cols)
-        .enter()
-        .append('div')
-        .attr('title', function (d) {
-          return d.id;
-        })
-        .attr('class', 'taco-added-col')
-        .attr('class', 'struct-add-color')
-        .style('top', 0 + 'px')
-        .style('left', function (d) {
-          const x = d.pos;
-          return (x !== -1 ? x * w : null) + 'px';
-        })
-        .style('width', w + 'px')
-        .style('height', height + 'px');
+        if(d.structure.hasOwnProperty('added_rows')){
+          const addedRows = root.selectAll('.taco-added-row')
+            .data(d.structure.added_rows)
+            .enter()
+            .append('div')
+            .attr('class', 'taco-added-row')
+            .attr('class', 'struct-add-color')
+            .attr('title', function (d) {
+              return d.id;
+            })
+            .style('left', 0 + 'px')
+            .style('top', function (d) {
+              const y = d.pos;
+              return (y !== -1 ? y * h : null) + 'px';
+            })
+            .style('width', width + 'px')
+            .style('height', h + 'px');
+        }
 
-      const deletedRows = root.selectAll('.taco-del-row')
-        .data(d.structure.deleted_rows)
-        .enter()
-        .append('div')
-        .attr('class', 'taco-del-row')
-        .attr('class', 'struct-del-color')
-        .attr('title', function (d) {
-          return d.id;
-        })
-        .style('left', 0 + 'px')
-        .style('top', function (d) {
-          const y = d.pos;
-          return (y !== -1 ? y * h : null) + 'px';
-        })
-        .style('width', width + 'px')
-        .style('height', h + 'px');
+        if(d.structure.hasOwnProperty('added_cols')){
+          const addedCols = root.selectAll('.taco-added-col')
+            .data(d.structure.added_cols)
+            .enter()
+            .append('div')
+            .attr('title', function (d) {
+              return d.id;
+            })
+            .attr('class', 'taco-added-col')
+            .attr('class', 'struct-add-color')
+            .style('top', 0 + 'px')
+            .style('left', function (d) {
+              const x = d.pos;
+              return (x !== -1 ? x * w : null) + 'px';
+            })
+            .style('width', w + 'px')
+            .style('height', height + 'px');
+        }
 
+        if(d.structure.hasOwnProperty('deleted_rows')){
+          const deletedRows = root.selectAll('.taco-del-row')
+            .data(d.structure.deleted_rows)
+            .enter()
+            .append('div')
+            .attr('class', 'taco-del-row')
+            .attr('class', 'struct-del-color')
+            .attr('title', function (d) {
+              return d.id;
+            })
+            .style('left', 0 + 'px')
+            .style('top', function (d) {
+              const y = d.pos;
+              return (y !== -1 ? y * h : null) + 'px';
+            })
+            .style('width', width + 'px')
+            .style('height', h + 'px');
+        }
 
-      const deletedCols = root.selectAll('.taco-del-col')
-        .data(d.structure.deleted_cols)
-        .enter()
-        .append('div')
-        .attr('class', 'taco-del-col')
-        .attr('class', 'struct-del-color')
-        .attr('title', function (d) {
-          return d.id;
-        })
-        .style('top', 0 + 'px')
-        .style('left', function (d) {
-          const x = d.pos;
-          return (x !== -1 ? x * w : null) + 'px';
-        })
-        .style('width', w + 'px')
-        .style('height', height + 'px');
+        if(d.structure.hasOwnProperty('deleted_cols')){
+          const deletedCols = root.selectAll('.taco-del-col')
+            .data(d.structure.deleted_cols)
+            .enter()
+            .append('div')
+            .attr('class', 'taco-del-col')
+            .attr('class', 'struct-del-color')
+            .attr('title', function (d) {
+              return d.id;
+            })
+            .style('top', 0 + 'px')
+            .style('left', function (d) {
+              const x = d.pos;
+              return (x !== -1 ? x * w : null) + 'px';
+            })
+            .style('width', w + 'px')
+            .style('height', height + 'px');
+        }
+      }
 
-      const chCells = root.selectAll('.taco-ch-cell').data(d.content);
-      chCells.enter()
-        .append('div')
-        .attr('class', 'taco-ch-cell')
-        .attr('title', function (d) {
-          return '(' + d.row + ',' + d.col + ': ' + d.diff_data + ')';
-        })
-        .style('top', function (d) {
-          //var y = that.row_ids.indexOf(d.row);
-          const y = d.rpos;
-          return (y !== -1 ? y * h : null) + 'px';
-        })
-        .style('left', function (d) {
-          //var x = that.col_ids.indexOf(d.col);
-          const x = d.cpos;
-          return (x !== -1 ? x * w : null) + 'px';
-        })
-        .style('width', w * 10 + 'px')
-        .style('height', h * 10 + 'px')
-        .style('background-color', 'red');
-      /* .style('background-color', function (d) {
-       return colorScale(d.diff_data);
-       });*/
+      if (d.hasOwnProperty('content')) {
+        //console.log(d);
+        const chCells = root.selectAll('.taco-ch-cell').data(d.content);
+        chCells.enter()
+          .append('div')
+          .attr('class', 'taco-ch-cell')
+          .attr('title', function (d) {
+            return '(' + d.row + ',' + d.col + ': ' + d.diff_data + ')';
+          })
+          .style('top', function (d) {
+            //var y = that.row_ids.indexOf(d.row);
+            const y = d.rpos;
+            return (y !== -1 ? y * h : null) + 'px';
+          })
+          .style('left', function (d) {
+            //var x = that.col_ids.indexOf(d.col);
+            const x = d.cpos;
+            return (x !== -1 ? x * w : null) + 'px';
+          })
+          .style('width', w+10 + 'px')
+          .style('height', h +10+ 'px')
+          .style('background-color', 'red')
+          .style('z-index', 1000);
+        /* .style('background-color', function (d) {
+         return colorScale(d.diff_data);
+         });*/
+      }
     });
   }
 }

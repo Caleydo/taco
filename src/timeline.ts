@@ -161,6 +161,7 @@ class Timeline implements IAppView {
           //console.log(d.item);
 
           // dispatch selected dataset to other views
+          console.log('d.item', d.item);
           events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
           that.isClicked = 1;
 
@@ -168,6 +169,7 @@ class Timeline implements IAppView {
 
           d3.select(this).classed('active', true).attr('fill');
           // dispatch selected dataset to other views
+          console.log('d.item-second', d.item);
           events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
           events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, d.item);
 

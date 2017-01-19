@@ -55,6 +55,15 @@ b,
   }
 }
 
+.taco-table {
+
+  position: relative;
+
+  &>div {
+   position: absolute;
+
+  }
+}
 
 a.active {
   font-weight: 500;
