@@ -56,14 +56,40 @@ b,
 }
 
 .taco-table {
-
   position: relative;
+  border: 1px solid black;
 
   &>div {
    position: absolute;
-
   }
 }
+
+.difftitle {
+  width:100%;
+  display:flex;
+  flex-direction: row;
+  align-items: stretch;
+  align-content: stretch;
+  justify-content: space-between;
+
+
+  > .leftHeatmapTitle {
+
+  }
+
+  > .diffHeatmapTitle {
+
+  }
+
+  > .rightHeatmapTitle{
+
+  }
+
+
+}
+
+
+
 
 a.active {
   font-weight: 500;

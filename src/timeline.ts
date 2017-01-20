@@ -175,6 +175,7 @@ class Timeline implements IAppView {
           events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
           //console.log('clicked second time', clickedElement);
           that.isClicked = 0;
+          clickedElement = [];
           //console.log('second Click');
         }
       });

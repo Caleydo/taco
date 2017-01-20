@@ -20,6 +20,8 @@ class DiffHeatMap implements IAppView {
 
   private items;
 
+  private selectedTables = [];
+
 
   private colorLow = '#d8b365';
   private colorMed = 'white';
@@ -38,7 +40,6 @@ class DiffHeatMap implements IAppView {
 
 
   constructor(public parent:Element, private options:any) {
-
     this.$node = d3.select(parent)
       .append('div')
       .classed('diffheatmap', true);
@@ -51,12 +52,11 @@ class DiffHeatMap implements IAppView {
    */
   init() {
     this.attachListener();
-
     // return the promise directly as long there is no dynamical data to update
     return Promise.resolve(this);
   }
 
-  private selectedTables = [];
+
 
   /**
    * Attach event handler for broadcasted events
@@ -69,7 +69,9 @@ class DiffHeatMap implements IAppView {
       //console.log('übergebene items', items[0], items[1]);
       this.selectedTables = items;
       //console.log('selected Tables', this.selectedTables);
+      this.$node.selectAll('div').remove();
       this.diffHeatmap();
+      //console.log('selectedTables -- NOW', this.selectedTables);
     });
   }
 
@@ -82,9 +84,11 @@ class DiffHeatMap implements IAppView {
     Promise.all(dataPromise).then((data) => {
        this.drawDiffHeatmap(data);
     });
+    this.selectedTables = [];
   }
 
   private requestData() {
+    //console.log('seletedTable -- Request data', this.selectedTables);
     return d3.pairs(this.selectedTables)
       .map((pair) => {
         //console.log('pair', pair);
@@ -135,6 +139,7 @@ class DiffHeatMap implements IAppView {
 
     //visualizing the diff
     data.forEach(function (d) {
+      console.log('data',d);
 
       h = height / d.union.ur_ids.length;
       //width of each column in the heatmap
@@ -219,7 +224,7 @@ class DiffHeatMap implements IAppView {
         }
       }
 
-      if (d.hasOwnProperty('content')) {
+      /* if (d.hasOwnProperty('content')) {
         //console.log(d);
         const chCells = root.selectAll('.taco-ch-cell').data(d.content);
         chCells.enter()
@@ -244,8 +249,8 @@ class DiffHeatMap implements IAppView {
           .style('z-index', 1000);
         /* .style('background-color', function (d) {
          return colorScale(d.diff_data);
-         });*/
-      }
+         });
+      }*/
     });
   }
 }

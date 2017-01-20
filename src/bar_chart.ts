@@ -242,7 +242,7 @@ class BarChart implements IAppView {
 
       } else {
         events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, ids);
-        events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, ids);
+        //events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, ids);
         that.openHistogram2D = this.parentNode;
       }
     });
