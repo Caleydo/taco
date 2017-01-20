@@ -82,7 +82,7 @@ class DiffHeatMap implements IAppView {
   private diffHeatmap() {
     const dataPromise = this.requestData();
     Promise.all(dataPromise).then((data) => {
-       this.drawDiffHeatmap(data);
+      this.drawDiffHeatmap(data);
     });
     this.selectedTables = [];
   }
@@ -135,12 +135,9 @@ class DiffHeatMap implements IAppView {
       .style('background-color', 'white')
       .style('transform-origin', '0 0');
 
-    // console.log(data);
 
     //visualizing the diff
     data.forEach(function (d) {
-      console.log('data',d);
-
       h = height / d.union.ur_ids.length;
       //width of each column in the heatmap
       w = width / d.union.uc_ids.length;
@@ -225,32 +222,32 @@ class DiffHeatMap implements IAppView {
       }
 
       /* if (d.hasOwnProperty('content')) {
-        //console.log(d);
-        const chCells = root.selectAll('.taco-ch-cell').data(d.content);
-        chCells.enter()
-          .append('div')
-          .attr('class', 'taco-ch-cell')
-          .attr('title', function (d) {
-            return '(' + d.row + ',' + d.col + ': ' + d.diff_data + ')';
-          })
-          .style('top', function (d) {
-            //var y = that.row_ids.indexOf(d.row);
-            const y = d.rpos;
-            return (y !== -1 ? y * h : null) + 'px';
-          })
-          .style('left', function (d) {
-            //var x = that.col_ids.indexOf(d.col);
-            const x = d.cpos;
-            return (x !== -1 ? x * w : null) + 'px';
-          })
-          .style('width', w+10 + 'px')
-          .style('height', h +10+ 'px')
-          .style('background-color', 'red')
-          .style('z-index', 1000);
-        /* .style('background-color', function (d) {
-         return colorScale(d.diff_data);
-         });
-      }*/
+       //console.log(d);
+       const chCells = root.selectAll('.taco-ch-cell').data(d.content);
+       chCells.enter()
+       .append('div')
+       .attr('class', 'taco-ch-cell')
+       .attr('title', function (d) {
+       return '(' + d.row + ',' + d.col + ': ' + d.diff_data + ')';
+       })
+       .style('top', function (d) {
+       //var y = that.row_ids.indexOf(d.row);
+       const y = d.rpos;
+       return (y !== -1 ? y * h : null) + 'px';
+       })
+       .style('left', function (d) {
+       //var x = that.col_ids.indexOf(d.col);
+       const x = d.cpos;
+       return (x !== -1 ? x * w : null) + 'px';
+       })
+       .style('width', w+10 + 'px')
+       .style('height', h +10+ 'px')
+       .style('background-color', 'red')
+       .style('z-index', 1000);
+       /* .style('background-color', function (d) {
+       return colorScale(d.diff_data);
+       });
+       }*/
     });
   }
 }
