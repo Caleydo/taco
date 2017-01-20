@@ -144,7 +144,7 @@ class DiffHeatMap implements IAppView {
 
       if (d.hasOwnProperty('structure')) {
 
-        if(d.structure.hasOwnProperty('added_rows')){
+        if(d.structure.hasOwnProperty('added_rows')) {
           const addedRows = root.selectAll('.taco-added-row')
             .data(d.structure.added_rows)
             .enter()
@@ -163,7 +163,7 @@ class DiffHeatMap implements IAppView {
             .style('height', h + 'px');
         }
 
-        if(d.structure.hasOwnProperty('added_cols')){
+        if(d.structure.hasOwnProperty('added_cols')) {
           const addedCols = root.selectAll('.taco-added-col')
             .data(d.structure.added_cols)
             .enter()
@@ -182,7 +182,7 @@ class DiffHeatMap implements IAppView {
             .style('height', height + 'px');
         }
 
-        if(d.structure.hasOwnProperty('deleted_rows')){
+        if(d.structure.hasOwnProperty('deleted_rows')) {
           const deletedRows = root.selectAll('.taco-del-row')
             .data(d.structure.deleted_rows)
             .enter()
@@ -201,7 +201,7 @@ class DiffHeatMap implements IAppView {
             .style('height', h + 'px');
         }
 
-        if(d.structure.hasOwnProperty('deleted_cols')){
+        if(d.structure.hasOwnProperty('deleted_cols')) {
           const deletedCols = root.selectAll('.taco-del-col')
             .data(d.structure.deleted_cols)
             .enter()

@@ -46,14 +46,14 @@ class DiffTitle implements IAppView {
 
     if(this.countTables >= 2) {
       this.countTables = 0;
-      d3.select(".difftitle").selectAll("*").remove();
+      d3.select('.difftitle').selectAll('*').remove();
     }
 
     switch (position) {
       case 'LEFT':
         this.countTables++;
 
-        let divLeft = d3.select('.difftitle')
+        const divLeft = d3.select('.difftitle')
           .append('div')
           .attr('class', 'leftHeatmapTitle')
           .attr('id', 'leftHeatmapTitle');
@@ -70,7 +70,7 @@ class DiffTitle implements IAppView {
           .attr('id', 'diffHeatmapTitle')
           .html('DiffTable');
 
-        let divRight = d3.select('.difftitle')
+        const divRight = d3.select('.difftitle')
           .append('div')
           .attr('class', 'rightHeatmapTitle')
           .attr('id', 'rightHeatmapTitle');
