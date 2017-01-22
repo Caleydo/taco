@@ -60,8 +60,8 @@
     "typedoc": "0.5.5",
     "typescript": "2.1.5",
     "url-loader": "0.5.7",
-    "webpack": "2.1.0-beta.28",
-    "webpack-dev-server": "2.1.0-beta.12",
+    "webpack": "2.2.0",
+    "webpack-dev-server": "2.2.0",
     "extract-loader": "0.1.0"
   },
   "dependencies": {
