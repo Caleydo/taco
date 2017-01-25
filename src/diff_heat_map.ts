@@ -232,7 +232,7 @@ class DiffHeatMap implements IAppView {
        .style('height', h + 'px')
        .style('background-color', 'red')
        .style('z-index', 1000)
-       .style('background-color', (d) =>colorScale(d.diff_data))
+       .style('background-color', (d) => colorScale(d.diff_data));
        }
     });
   }
