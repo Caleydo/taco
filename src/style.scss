@@ -84,12 +84,7 @@ b,
   > .rightHeatmapTitle{
 
   }
-
-
 }
-
-
-
 
 a.active {
   font-weight: 500;
@@ -153,7 +148,6 @@ button {
   button:focus, button.focus, button:active:focus, button:active.focus, button.active:focus, button.active.focus {
     outline: 5px auto -webkit-focus-ring-color;
     outline-offset: -2px;
-
   }
 
 button:active, button.active {
@@ -161,7 +155,6 @@ button:active, button.active {
     background-image: none;
     -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
     //box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-
   }
 
 
@@ -193,11 +186,9 @@ background-color: $struct-add-color;
     color: #fc8d62; //colorblind friendly
     background: transparent;
 
-
     div {
       position: absolute;
       padding: 1px;
-
     }
 
     &.loading {
@@ -238,9 +229,7 @@ background-color: $struct-add-color;
        //margin-top: 1px;
        color: white;
     }
-
   }
-
 
 div.struct-add-color {
   background: $struct-add-color;
@@ -277,9 +266,7 @@ rect.no-change-color {
 #interface{
   //height: 50px;
   margin-bottom: 20px;
-
 }
-
 
 div.struct-add-color, .row-add-color, .col-add-color {
   //background-color: #4daf4a;
