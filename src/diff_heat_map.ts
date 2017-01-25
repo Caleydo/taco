@@ -107,7 +107,7 @@ class DiffHeatMap implements IAppView {
 
   private drawDiffHeatmap(data) {
     const that = this;
-    const colorScale = d3.scale.linear()
+    const colorScale = d3.scale.linear<string>()
      .domain([-1, 0, 1])
       .clamp(true)
      .range([this.colorLow, this.colorMed, this.colorHigh]);
