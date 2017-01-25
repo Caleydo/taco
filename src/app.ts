@@ -75,6 +75,11 @@ export class App implements IAppView {
       options: {}
     },
     {
+      view: 'DiffTitle',
+      parent: 'selector',
+      options: {}
+    },
+    {
       view: 'HeatMap',
       parent: 'comparison',
       options: {

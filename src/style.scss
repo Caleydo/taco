@@ -49,7 +49,46 @@ b,
   align-items: stretch;
   align-content: stretch;
   justify-content: space-between;
+
+  &>div {
+    width: 33%;
+  }
 }
+
+.taco-table {
+  position: relative;
+  border: 1px solid black;
+
+  &>div {
+   position: absolute;
+  }
+}
+
+.difftitle {
+  width:100%;
+  display:flex;
+  flex-direction: row;
+  align-items: stretch;
+  align-content: stretch;
+  justify-content: space-between;
+
+
+  > .leftHeatmapTitle {
+
+  }
+
+  > .diffHeatmapTitle {
+
+  }
+
+  > .rightHeatmapTitle{
+
+  }
+
+
+}
+
+
 
 
 a.active {
@@ -66,7 +105,8 @@ rect {
   }
 }
 
-#timeline {
+
+.timeline {
   circle{
     cursor: pointer;
 
