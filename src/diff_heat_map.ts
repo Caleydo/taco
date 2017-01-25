@@ -2,7 +2,6 @@
  * Created by Christina Niederer on 12.01.2017.
  */
 
-//import * as events from 'phovea_core/src/event';
 import {IAppView} from './app';
 import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
@@ -142,9 +141,9 @@ class DiffHeatMap implements IAppView {
       //width of each column in the heatmap
       w = width / d.union.uc_ids.length;
 
-      if (d.hasOwnProperty('structure')) {
+      if (d.structure) {
 
-        if(d.structure.hasOwnProperty('added_rows')) {
+        if(d.structure.added_rows) {
           const addedRows = root.selectAll('.taco-added-row')
             .data(d.structure.added_rows)
             .enter()
@@ -163,18 +162,16 @@ class DiffHeatMap implements IAppView {
             .style('height', h + 'px');
         }
 
-        if(d.structure.hasOwnProperty('added_cols')) {
+        if(d.structure.added_cols) {
           const addedCols = root.selectAll('.taco-added-col')
             .data(d.structure.added_cols)
             .enter()
             .append('div')
-            .attr('title', function (d) {
-              return d.id;
-            })
+            .attr('title', (d) => d.id)
             .attr('class', 'taco-added-col')
             .attr('class', 'struct-add-color')
             .style('top', 0 + 'px')
-            .style('left', function (d) {
+            .style('left', (d) => {
               const x = d.pos;
               return (x !== -1 ? x * w : null) + 'px';
             })
@@ -182,18 +179,16 @@ class DiffHeatMap implements IAppView {
             .style('height', height + 'px');
         }
 
-        if(d.structure.hasOwnProperty('deleted_rows')) {
+        if(d.structure.deleted_rows) {
           const deletedRows = root.selectAll('.taco-del-row')
             .data(d.structure.deleted_rows)
             .enter()
             .append('div')
             .attr('class', 'taco-del-row')
             .attr('class', 'struct-del-color')
-            .attr('title', function (d) {
-              return d.id;
-            })
+            .attr('title', (d) => d.id)
             .style('left', 0 + 'px')
-            .style('top', function (d) {
+            .style('top', (d) => {
               const y = d.pos;
               return (y !== -1 ? y * h : null) + 'px';
             })
@@ -201,18 +196,16 @@ class DiffHeatMap implements IAppView {
             .style('height', h + 'px');
         }
 
-        if(d.structure.hasOwnProperty('deleted_cols')) {
+        if(d.structure.deleted_cols) {
           const deletedCols = root.selectAll('.taco-del-col')
             .data(d.structure.deleted_cols)
             .enter()
             .append('div')
             .attr('class', 'taco-del-col')
             .attr('class', 'struct-del-color')
-            .attr('title', function (d) {
-              return d.id;
-            })
+            .attr('title', (d) => d.id)
             .style('top', 0 + 'px')
-            .style('left', function (d) {
+            .style('left', (d) => {
               const x = d.pos;
               return (x !== -1 ? x * w : null) + 'px';
             })
