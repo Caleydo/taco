@@ -29,6 +29,12 @@ class Timeline implements IAppView {
   //width of the timeline div
   private totalWidth:number;
 
+  //helper variable for clicking event
+  private isClicked = 0;
+
+  private circleX;
+  private circleY;
+
   // helper variable for on click event
   //private open2dHistogram = null;
 
@@ -109,39 +115,56 @@ class Timeline implements IAppView {
 
     this.drawTimeline();
     //this.drawLine();
-
   }
-
-
-  //helper variable for clicking event
-  private isClicked = 0;
 
   //Linking Line for Heatmap
-  private drawLine() {
+  private drawLine(x, y, mode) {
     const that = this;
+    let direction: number = 0;
+    let lineCol: string = 'grey';
+
+    switch (mode) {
+      case 'sourceTable':
+            direction = 100;
+            lineCol = 'green';
+            break;
+      case 'destinationTable':
+            direction = this.totalWidth - 100;
+            lineCol = 'red';
+            break;
+      default:
+            break;
+    }
 
     that.$svgTimeline.append('line')
-      .style('stroke', 'grey')
-      .attr('x1', 90)
-      .attr('y1', 50)
-      .attr('x2', 90)
-      .attr('y2', 100);
+      .attr('id', 'connectionLine')
+      .style('stroke', lineCol)
+      .style('stroke-width', 3 + 'px')
+      .attr('x1', x)
+      .attr('y1', y)
+      .attr('x2', x )
+      .attr('y2', y + 100);
 
     that.$svgTimeline.append('line')
-      .style('stroke', 'grey')
-      .attr('x1', 90)
-      .attr('y1', 100)
-      .attr('x2', 40)
-      .attr('y2', 100);
+      .attr('id', 'connectionLine')
+      .style('stroke', lineCol)
+      .style('stroke-width', 3 + 'px')
+      .attr('x1', x)
+      .attr('y1', y + 100 )
+      .attr('x2', direction)
+      .attr('y2', y + 100);
 
     that.$svgTimeline.append('line')
-      .style('stroke', 'grey')
-      .attr('x1', 40)
-      .attr('y1', 100)
-      .attr('x2', 40)
-      .attr('y2', 500);
+      .attr('id', 'connectionLine')
+      .style('stroke', lineCol)
+      .style('stroke-width', 3 + 'px')
+      .attr('x1', direction )
+      .attr('y1', y + 100)
+      .attr('x2', direction)
+      .attr('y2', y + 360);
 
   }
+
 
 
   private drawTimeline() {
@@ -181,7 +204,6 @@ class Timeline implements IAppView {
       .on('click', function (d:any) {
         (<MouseEvent>d3.event).preventDefault();
 
-
         if (that.isClicked === 0) {
 
           that.$svgTimeline.selectAll('circle').classed('active', false);
@@ -195,7 +217,12 @@ class Timeline implements IAppView {
           clickedElement.push(d.item);
           //console.log('firstClick', clickedElement);
           that.isClicked = 1;
-          this.drawLine();
+          that.circleX = parseInt(d3.select(this).attr('cx'));
+          that.circleY = parseInt(d3.select(this).attr('cy'));
+
+          d3.selectAll('#connectionLine').remove();
+
+          that.drawLine(that.circleX, that.circleY, 'sourceTable');
 
         } else {
 
@@ -208,6 +235,12 @@ class Timeline implements IAppView {
           //console.log('clicked second time', clickedElement);
           that.isClicked = 0;
           clickedElement = [];
+
+          that.circleX = parseInt(d3.select(this).attr('cx'));
+          that.circleY = parseInt(d3.select(this).attr('cy'));
+
+          //d3.selectAll('#connectionLine').remove();
+          that.drawLine(that.circleX, that.circleY, 'destinationTable');
           //console.log('second Click');
         }
       });
