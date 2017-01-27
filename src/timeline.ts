@@ -108,15 +108,44 @@ class Timeline implements IAppView {
     this.resize();
 
     this.drawTimeline();
+    //this.drawLine();
+
   }
 
 
   //helper variable for clicking event
   private isClicked = 0;
 
+  //Linking Line for Heatmap
+  private drawLine() {
+    const that = this;
+
+    that.$svgTimeline.append('line')
+      .style('stroke', 'grey')
+      .attr('x1', 90)
+      .attr('y1', 50)
+      .attr('x2', 90)
+      .attr('y2', 100);
+
+    that.$svgTimeline.append('line')
+      .style('stroke', 'grey')
+      .attr('x1', 90)
+      .attr('y1', 100)
+      .attr('x2', 40)
+      .attr('y2', 100);
+
+    that.$svgTimeline.append('line')
+      .style('stroke', 'grey')
+      .attr('x1', 40)
+      .attr('y1', 100)
+      .attr('x2', 40)
+      .attr('y2', 500);
+
+  }
 
 
   private drawTimeline() {
+
     const that = this;
 
     const xScaleTimeline = getPosXScale(this.items, this.totalWidth);
@@ -152,18 +181,21 @@ class Timeline implements IAppView {
       .on('click', function (d:any) {
         (<MouseEvent>d3.event).preventDefault();
 
+
         if (that.isClicked === 0) {
 
           that.$svgTimeline.selectAll('circle').classed('active', false);
           // toggle the active CSS classes
 
           d3.select(this).classed('active', true).attr('fill');
-           // dispatch selected dataset to other views
+          // dispatch selected dataset to other views
 
           events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
+
           clickedElement.push(d.item);
           //console.log('firstClick', clickedElement);
           that.isClicked = 1;
+          this.drawLine();
 
         } else {
 
