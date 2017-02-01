@@ -278,6 +278,14 @@ div.struct-del-color, .row-del-color, .col-del-color {
   background-color: $struct-delete-color; //colorblind friendly
 }
 
+.phovea-heatmap {
+  max-height: 1500px;
+}
+
+.phovea-heatmap-data {
+  max-height: 1500px;
+  max-width: 100%;
+}
 
 
 
