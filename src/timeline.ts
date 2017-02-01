@@ -34,6 +34,8 @@ class Timeline implements IAppView {
 
   private circleX;
   private circleY;
+  private circleTextX;
+  private circleTextY;
 
   // helper variable for on click event
   //private open2dHistogram = null;
@@ -125,15 +127,15 @@ class Timeline implements IAppView {
 
     switch (mode) {
       case 'sourceTable':
-            direction = 100;
-            lineCol = 'green';
-            break;
+        direction = 100;
+        lineCol = 'green';
+        break;
       case 'destinationTable':
-            direction = this.totalWidth - 100;
-            lineCol = 'red';
-            break;
+        direction = this.totalWidth - 100;
+        lineCol = 'red';
+        break;
       default:
-            break;
+        break;
     }
 
     that.$svgTimeline.append('line')
@@ -185,6 +187,23 @@ class Timeline implements IAppView {
       .attr('y1', 60)
       .attr('x2', that.totalWidth - 10)
       .attr('y2', 60);
+
+    let circleLabels = this.$svgTimeline.selectAll('text')
+      .data(this.items)
+      .enter()
+      .append('text')
+      .attr('y', 50)
+      .attr('x', (d:any, i) => {
+        if (d.time) {
+          return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
+        }  else {
+          return i * scaleCircles(this.totalWidth);
+        }
+      })
+      .text((d: any) => {
+        return d.key;
+      })
+      .style('visibility', 'hidden');
 
     this.$svgTimeline.selectAll('circle')
       .data(this.items)
@@ -243,6 +262,12 @@ class Timeline implements IAppView {
           that.drawLine(that.circleX, that.circleY, 'destinationTable');
           //console.log('second Click');
         }
+      })
+      .on('mouseover', function(d, i) {
+        d3.select(circleLabels[0][i]).style('visibility', 'visible');
+      })
+      .on('mouseout', function(d, i) {
+        d3.select(circleLabels[0][i]).style('visibility', 'hidden');
       });
   }
 
