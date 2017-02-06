@@ -128,11 +128,11 @@ class Timeline implements IAppView {
     switch (mode) {
       case 'sourceTable':
         direction = 100;
-        lineCol = 'green';
+        lineCol = '#E0CBC3';
         break;
       case 'destinationTable':
         direction = this.totalWidth - 100;
-        lineCol = 'red';
+        lineCol = '#BFAEA8';
         break;
       default:
         break;
