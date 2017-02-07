@@ -16,31 +16,37 @@ import {getPosXScale, scaleCircles} from './util';
 class Timeline implements IAppView {
 
   private $node;
-
-  private timelineWidth = $(window).innerWidth();
-  private timelineHeight = 200;
-
+  private $svgTimeline;
   private items;
 
-  //private colorScale = d3.scale.ordinal().range(['#D8zD8D8', '#67C4A7', '#8DA1CD', '#F08E65']);
+  // Width of the timeline div element
+  private totalWidth: number;
+  private timelineWidth = $(window).innerWidth();
+  private timelineHeight = 200;
+  private tooltipDiv;
 
-  private $svgTimeline;
+  // Helper variable for the clicking event
+  private isClicked: number = 0;
 
-  //width of the timeline div
-  private totalWidth:number;
-
-  //helper variable for clicking event
-  private isClicked = 0;
-
-  private circleX;
-  private circleY;
+  // Helper variables for saving the circle position
+  private circleX: number;
+  private circleY: number;
   private circleTextX;
   private circleTextY;
 
+
+  //TODO: CHECK unused variables here!
   // helper variable for on click event
   //private open2dHistogram = null;
+  //private colorScale = d3.scale.ordinal().range(['#D8zD8D8', '#67C4A7', '#8DA1CD', '#F08E65']);
 
 
+  /**
+   * Constructor method for the Timeline class which creates the timeline on the given parent element.
+   * Including eventual options if supplied
+   * @param parent element on which the timeline element is created
+   * @param options optional options for the timeline element
+   */
   constructor(parent:Element, private options:any) {
     this.$node = d3.select(parent).append('div').classed('timeline', true);
   }
@@ -54,7 +60,7 @@ class Timeline implements IAppView {
     this.build();
     this.attachListener();
 
-    // return the promise directly as long there is no dynamical data to update
+    // Return the promise directly as long there is no dynamical data to update
     return Promise.resolve(this);
   }
 
@@ -71,7 +77,7 @@ class Timeline implements IAppView {
   }
 
   /**
-   * Build the basic DOM elements and binds the change function
+   * Build the basic DOM elements like the svg graph and appends the tooltip div.
    */
   private build() {
     this.$svgTimeline = this.$node
@@ -80,6 +86,9 @@ class Timeline implements IAppView {
       .attr('height', this.timelineHeight);
   }
 
+  /**
+   * This method updates the graph and the timeline based on the window size and resizes the whole page.
+   */
   private resize() {
     this.totalWidth = $(this.$node.node()).width();
 
@@ -91,7 +100,7 @@ class Timeline implements IAppView {
     const xScaleTimeline = getPosXScale(this.items, this.totalWidth);
 
     this.$svgTimeline.selectAll('circle')
-      .attr('cx', (d:any, i) => {
+      .attr('cx', (d: any, i) => {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         } else {
@@ -101,25 +110,26 @@ class Timeline implements IAppView {
   }
 
   /**
-   * Handle the update for a selected dataset
-   * @param items
+   * This method handles the update for a new dataset or changed dataset.
+   * @param items The new items which should be displayed.
    */
 
   private updateItems(items) {
-    // make items available for other class members
+    // Store new items in class variable
     this.items = items;
 
-    // delete all existing DOM elements
+    // Delete all existing DOM elements
     this.$svgTimeline.selectAll('*').remove();
-
-    // initialize the width
     this.resize();
-
     this.drawTimeline();
-    //this.drawLine();
   }
 
-  //Linking Line for Heatmap
+  /**
+   * This method draws a link from the circle to the heatmap of the source and destination table.
+   * @param x Position of the circle
+   * @param y Position of the circle
+   * @param mode Distinguish between source and destination tables and cricles
+   */
   private drawLine(x, y, mode) {
     const that = this;
     let direction: number = 0;
@@ -164,23 +174,23 @@ class Timeline implements IAppView {
       .attr('y1', y + 100)
       .attr('x2', direction)
       .attr('y2', y + 360);
-
   }
 
-
-
+  /**
+   * This method draws the timeline and also adds the circles.
+   * It also handles the click and mouseover events for showing further context.
+   */
   private drawTimeline() {
-
     const that = this;
-
     const xScaleTimeline = getPosXScale(this.items, this.totalWidth);
-
     let clickedElement = [];
 
+    // Basic scale of the circles and the range
     const circleScale = d3.scale.linear()
-      .domain([0, d3.max(this.items, (d:any) => d.item.dim[0])])
+      .domain([0, d3.max(this.items, (d: any) => d.item.dim[0])])
       .range([10, 5]);   //h/100
 
+    // Append the base line where the circles are drawn onto
     this.$svgTimeline.append('line')
       .style('stroke', 'black')
       .attr('x1', 0)
@@ -188,12 +198,13 @@ class Timeline implements IAppView {
       .attr('x2', that.totalWidth - 10)
       .attr('y2', 60);
 
-    let circleLabels = this.$svgTimeline.selectAll('text')
+    // Create the labels for the circles and hide them at beginning
+    const circleLabels = this.$svgTimeline.selectAll('text')
       .data(this.items)
       .enter()
       .append('text')
       .attr('y', 50)
-      .attr('x', (d:any, i) => {
+      .attr('x', (d: any, i) => {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         }  else {
@@ -205,13 +216,14 @@ class Timeline implements IAppView {
       })
       .style('visibility', 'hidden');
 
+    // Append the circles and add the mouseover and click listeners
     this.$svgTimeline.selectAll('circle')
       .data(this.items)
       .enter()
       .append('circle')
-      .attr('title', (d:any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
+      .attr('title', (d: any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
       .attr('cy', 60)
-      .attr('cx', (d:any, i) => {
+      .attr('cx', (d: any, i) => {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         } else {
@@ -224,43 +236,37 @@ class Timeline implements IAppView {
         (<MouseEvent>d3.event).preventDefault();
 
         if (that.isClicked === 0) {
-
+          // Toggle the active CSS classes
           that.$svgTimeline.selectAll('circle').classed('active', false);
-          // toggle the active CSS classes
-
+          //Enable the active class only on clicked circle
           d3.select(this).classed('active', true).attr('fill');
-          // dispatch selected dataset to other views
 
+          // IMPORTANT: Dispatch selected dataset to other views
           events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
 
           clickedElement.push(d.item);
-          //console.log('firstClick', clickedElement);
           that.isClicked = 1;
-          that.circleX = parseInt(d3.select(this).attr('cx'));
-          that.circleY = parseInt(d3.select(this).attr('cy'));
+          that.circleX = parseInt(d3.select(this).attr('cx'), 10);
+          that.circleY = parseInt(d3.select(this).attr('cy'), 10);
 
+          //Remove previous connection line before drawing new one
           d3.selectAll('#connectionLine').remove();
-
           that.drawLine(that.circleX, that.circleY, 'sourceTable');
-
         } else {
 
           d3.select(this).classed('active', true).attr('fill');
-          // dispatch selected dataset to other views
-
           clickedElement.push(d.item);
+
+          // IMPORTANT: Dispatch selected dataset to other views
           events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
           events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
-          //console.log('clicked second time', clickedElement);
+
           that.isClicked = 0;
           clickedElement = [];
+          that.circleX = parseInt(d3.select(this).attr('cx'), 10);
+          that.circleY = parseInt(d3.select(this).attr('cy'), 10);
 
-          that.circleX = parseInt(d3.select(this).attr('cx'));
-          that.circleY = parseInt(d3.select(this).attr('cy'));
-
-          //d3.selectAll('#connectionLine').remove();
           that.drawLine(that.circleX, that.circleY, 'destinationTable');
-          //console.log('second Click');
         }
       })
       .on('mouseover', function(d, i) {
@@ -271,19 +277,20 @@ class Timeline implements IAppView {
       });
   }
 
+
+  /**
+   * With this method the timeline can be disabled. It's removed and redrawn in case of a data change.
+   */
   private toggleTimeline() {
-    // let button = d3.select(this);
-    //console.log(button);
     const line = this.$svgTimeline.select('line');
     const circle = this.$svgTimeline.selectAll('circle');
-    //console.log(line, circle);
+    const connectionLines = d3.selectAll('#connectionLine');
 
     if (line.size() > 0 && circle.size() > 0) {
       line.remove();
       circle.remove();
-      // console.log(line.size(), circle.size());
+      connectionLines.remove();
     } else {
-      //console.log(line.size(), circle.size());
       this.drawTimeline();
     }
   }
@@ -291,11 +298,11 @@ class Timeline implements IAppView {
 
 
 /**
- * Factory method to create a new Timeline instance
- * @param parent
- * @param options
+ * Factory method to create a new Timeline instance.
+ * @param parent Element on which the timeline is drawn
+ * @param options Parameters for the instance (optional)
  * @returns {Timeline}
  */
-export function create(parent:Element, options:any) {
+export function create(parent: Element, options: any) {
   return new Timeline(parent, options);
 }
