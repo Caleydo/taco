@@ -62,7 +62,8 @@
     "url-loader": "0.5.7",
     "webpack": "2.2.1",
     "webpack-dev-server": "2.3.0",
-    "extract-loader": "0.1.0"
+    "extract-loader": "0.1.0",
+    "tslib": "1.5.0"
   },
   "dependencies": {
     "@types/moment": "2.13.0",
