@@ -41,7 +41,7 @@ class Timeline implements IAppView {
 
   /**
    * Constructor method for the Timeline class which creates the timeline on the given parent element.
-   * Including eventual options if supplied
+   * Including eventual options if supplied.
    * @param parent element on which the timeline element is created
    * @param options optional options for the timeline element
    */
