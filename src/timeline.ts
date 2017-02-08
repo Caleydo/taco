@@ -31,8 +31,6 @@ class Timeline implements IAppView {
   // Helper variables for saving the circle position
   private circleX: number;
   private circleY: number;
-  private circleTextX;
-  private circleTextY;
 
 
   //TODO: CHECK unused variables here!
@@ -84,6 +82,10 @@ class Timeline implements IAppView {
       .append('svg')
       .attr('width', this.timelineWidth)
       .attr('height', this.timelineHeight);
+
+    this.tooltipDiv = d3.select('.timeline').append('div')
+      .classed('tooltip', true)
+      .style('opacity', 0);
   }
 
   /**
@@ -198,24 +200,6 @@ class Timeline implements IAppView {
       .attr('x2', that.totalWidth - 10)
       .attr('y2', 60);
 
-    // Create the labels for the circles and hide them at beginning
-    const circleLabels = this.$svgTimeline.selectAll('text')
-      .data(this.items)
-      .enter()
-      .append('text')
-      .attr('y', 50)
-      .attr('x', (d: any, i) => {
-        if (d.time) {
-          return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
-        }  else {
-          return i * scaleCircles(this.totalWidth);
-        }
-      })
-      .text((d: any) => {
-        return d.key;
-      })
-      .style('visibility', 'hidden');
-
     // Append the circles and add the mouseover and click listeners
     this.$svgTimeline.selectAll('circle')
       .data(this.items)
@@ -270,10 +254,26 @@ class Timeline implements IAppView {
         }
       })
       .on('mouseover', function(d, i) {
-        d3.select(circleLabels[0][i]).style('visibility', 'visible');
+        const position = d3.mouse(document.body);
+
+        that.tooltipDiv
+          .transition()
+          .duration(200)
+          .style('opacity', .9);
+        that.tooltipDiv.html(d.key)
+         .style('left', function(d) {
+            if( ($(window).innerWidth() - 100) < position[0] ) {
+              return (position[0] - 50) + 'px';
+            } else {
+              return (position[0] + 15) + 'px';
+            }
+         })
+         .style('top', (position[1] + 20) + 'px');
       })
       .on('mouseout', function(d, i) {
-        d3.select(circleLabels[0][i]).style('visibility', 'hidden');
+        that.tooltipDiv.transition()
+          .duration(500)
+          .style('opacity', 0);
       });
   }
 

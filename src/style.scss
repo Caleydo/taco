@@ -287,7 +287,15 @@ div.struct-del-color, .row-del-color, .col-del-color {
   max-width: 100%;
 }
 
-
-
-
-
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: auto;
+    padding: 5px;
+    font: 10px sans-serif;
+    background: #e4f0ff;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+    hyphens: auto;
+}
