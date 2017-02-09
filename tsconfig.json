@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "es6",
     "target": "es5",
-    "noImplicitAny": false,
+    "importHelpers": true,
     "sourceMap": true,
     "moduleResolution": "node",
     "jsx": "react",
@@ -11,7 +11,9 @@
       "dom",
       "es2015"
     ],
-    "baseUrl": "../"
+    "baseUrl": "../",
+    "noImplicitAny": false,
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*.ts",
