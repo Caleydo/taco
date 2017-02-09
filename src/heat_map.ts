@@ -57,7 +57,7 @@ class HeatMap implements IAppView {
       return;
 
     }
-    console.log('DATASET', dataset);
+    //console.log('DATASET', dataset);
     const plugins = vis.list(dataset).filter((d) => /.*heatmap.*/.test(d.id));
 
 

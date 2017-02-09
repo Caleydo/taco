@@ -114,10 +114,14 @@ class Timeline implements IAppView {
   //helper variable for clicking event
   private isClicked = 0;
 
+
+
   private drawTimeline() {
     const that = this;
 
     const xScaleTimeline = getPosXScale(this.items, this.totalWidth);
+
+    let clickedElement = [];
 
     const circleScale = d3.scale.linear()
       .domain([0, d3.max(this.items, (d:any) => d.item.dim[0])])
@@ -149,32 +153,31 @@ class Timeline implements IAppView {
         (<MouseEvent>d3.event).preventDefault();
 
         if (that.isClicked === 0) {
-          //console.log('first Click');
+
           that.$svgTimeline.selectAll('circle').classed('active', false);
           // toggle the active CSS classes
-          //d3.select(this).classed('active', true);
-          // toggle the active CSS classes
-          //that.$svgTimeline.selectAll('circle').classed('active', false);
-
 
           d3.select(this).classed('active', true).attr('fill');
-          //console.log(d.item);
+           // dispatch selected dataset to other views
 
-          // dispatch selected dataset to other views
           events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
+          clickedElement.push(d.item);
+          //console.log('firstClick', clickedElement);
           that.isClicked = 1;
 
         } else {
 
           d3.select(this).classed('active', true).attr('fill');
           // dispatch selected dataset to other views
-          events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
-          events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, d.item);
 
+          clickedElement.push(d.item);
+          events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
+          events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
+          //console.log('clicked second time', clickedElement);
           that.isClicked = 0;
+          clickedElement = [];
           //console.log('second Click');
         }
-
       });
   }
 
@@ -194,7 +197,6 @@ class Timeline implements IAppView {
       this.drawTimeline();
     }
   }
-
 }
 
 
