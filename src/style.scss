@@ -299,3 +299,9 @@ div.tooltip {
     pointer-events: none;
     hyphens: auto;
 }
+
+.invisibleClass {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}

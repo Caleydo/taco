@@ -24,6 +24,7 @@ class Timeline implements IAppView {
   private timelineWidth = $(window).innerWidth();
   private timelineHeight = 200;
   private tooltipDiv;
+  private toggledElements: boolean;
 
   // Helper variable for the clicking event
   private isClicked: number = 0;
@@ -55,6 +56,7 @@ class Timeline implements IAppView {
    * @returns {Promise<Timeline>}
    */
   init() {
+    this.toggledElements = false;
     this.build();
     this.attachListener();
 
@@ -280,18 +282,41 @@ class Timeline implements IAppView {
 
   /**
    * With this method the timeline can be disabled. It's removed and redrawn in case of a data change.
+   * DEPRECATED  -- still there in case of need
+   */
+  // private toggleTimeline2() {
+  //   const line = this.$svgTimeline.select('line');
+  //   const circle = this.$svgTimeline.selectAll('circle');
+  //   const connectionLines = d3.selectAll('#connectionLine');
+  //
+  //   if (line.size() > 0 && circle.size() > 0) {
+  //     line.remove();
+  //     circle.remove();
+  //     connectionLines.remove();
+  //   } else {
+  //     this.drawTimeline();
+  //   }
+  // }
+
+  /**
+   * This method disables and enables the timeline and all it's elements by just not make it hidden.
+   * This is should be more performing and also remove some visual errors.
    */
   private toggleTimeline() {
     const line = this.$svgTimeline.select('line');
     const circle = this.$svgTimeline.selectAll('circle');
     const connectionLines = d3.selectAll('#connectionLine');
 
-    if (line.size() > 0 && circle.size() > 0) {
-      line.remove();
-      circle.remove();
-      connectionLines.remove();
+    if ( ! this.toggledElements ) {
+      this.toggledElements = true;
+      line.classed('invisibleClass', true);
+      circle.classed('invisibleClass', true);
+      connectionLines.classed('invisibleClass', true);
     } else {
-      this.drawTimeline();
+      this.toggledElements = false;
+      line.classed('invisibleClass', false);
+      circle.classed('invisibleClass', false);
+      connectionLines.classed('invisibleClass', false);
     }
   }
 }
