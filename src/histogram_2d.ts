@@ -2,12 +2,12 @@
  * Created by Holger Stitz on 29.11.2016.
  */
 
-import * as events from "phovea_core/src/event";
-import {IAppView} from "./app";
-import * as ajax from "phovea_core/src/ajax";
+import * as events from 'phovea_core/src/event';
+import {IAppView} from './app';
+import * as ajax from 'phovea_core/src/ajax';
 import {AppConstants, IChangeType} from "./app_constants";
-import * as d3 from "d3";
-import * as $ from "jquery";
+import * as d3 from 'd3';
+import * as $ from 'jquery';
 //import {AppConstants} from './app_constants';
 
 /**
