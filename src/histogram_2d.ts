@@ -51,7 +51,7 @@ class Histogram2D implements IAppView {
     return `/taco/diff_log/${pair[0]}/${pair[1]}/${binCols}/${binRows}/${direction}/${changes}`;
   }
 
-  constructor(parent:Element, private options:any) {
+  constructor(parent: Element, private options: any) {
     this.$node = d3.select(parent)
       .append('div')
       .classed('histogram_2d', true)
@@ -124,12 +124,12 @@ class Histogram2D implements IAppView {
       this.updateItems(posX, pair);
     });
 
-    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType:IChangeType) => this.toggleChangeType(changeType));
-    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType:IChangeType) => this.toggleChangeType(changeType));
+    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
   }
 
   private toggleChangeType(changeType) {
-   // console.log('changeType', changeType);
+    // console.log('changeType', changeType);
     if (changeType.type === 'removed') {
       this.$ratio.selectAll('.struct-del-color').classed('hidden', !changeType.isActive);
       this.$histogram.selectAll('.struct-del-color').classed('hidden', !changeType.isActive);
@@ -295,9 +295,9 @@ class Histogram2D implements IAppView {
         //console.log(xScale(d.ratios.c_ratio));
         return xScale(d.ratios.c_ratio) + 'px';
       })
-      .style('height', gridSize -1  + 'px')
+      .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratios.c_ratio * 100)*1000)/1000 +'%';
+        return 'content: ' + Math.round((d.ratios.c_ratio * 100) * 1000) / 1000 + '%';
       })
       .style('transform', function (d) {
         return 'translate(' + 0 + 'px,' + yScale(d.pos) + 'px)';
@@ -310,17 +310,17 @@ class Histogram2D implements IAppView {
       .append('div')
       .classed('struct-del-color', true)
       .style('width', function (d) {
-        return xScale(d.ratios.d_ratio)+ 'px';
+        return xScale(d.ratios.d_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratios.d_ratio * 100)*1000)/1000 +'%';
+        return 'content: ' + Math.round((d.ratios.d_ratio * 100) * 1000) / 1000 + '%';
       })
       .style('transform', function (d) {
         const content = xScale(d.ratios.d_ratio);
         // console.log(content);
         let acc = 0;
-        if(content === 0) {
+        if (content === 0) {
           acc = 0;
           //console.log('content is 0');
         } else {
@@ -336,25 +336,25 @@ class Histogram2D implements IAppView {
       .append('div')
       .classed('struct-add-color', true)
       .style('width', function (d) {
-        return xScale(d.ratios.a_ratio)  + 'px';
+        return xScale(d.ratios.a_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratios.a_ratio * 100)*1000)/1000 +'%';
+        return 'content: ' + Math.round((d.ratios.a_ratio * 100) * 1000) / 1000 + '%';
       })
       .style('transform', function (d) {
         const structure = xScale(d.ratios.a_ratio);
         //console.log(structure);
         let acc = 0;
-        if(structure === 0) {
+        if (structure === 0) {
           acc = 0;
-         //console.log('content is 0');
+          //console.log('content is 0');
         } else {
           acc = xScale(d.ratios.c_ratio) + xScale(d.ratios.d_ratio);
         }
         return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
       })
-     .style('display', function (d) {
+      .style('display', function (d) {
         return (d.ratios.a_ratio === 0) ? 'none' : null;
       });
 
@@ -378,9 +378,9 @@ class Histogram2D implements IAppView {
         //console.log(xScale(d.ratios.c_ratio));
         return xScale(d.ratios.c_ratio) + 'px';
       })
-      .style('height', gridSize -1  + 'px')
+      .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratios.c_ratio * 100)*1000)/1000 +'%';
+        return 'content: ' + Math.round((d.ratios.c_ratio * 100) * 1000) / 1000 + '%';
       })
       .style('transform', function (d) {
         return 'translate(' + 0 + 'px,' + yScale(d.pos) + 'px)';
@@ -393,17 +393,17 @@ class Histogram2D implements IAppView {
       .append('div')
       .classed('struct-del-color', true)
       .style('width', function (d) {
-        return xScale(d.ratios.d_ratio)+ 'px';
+        return xScale(d.ratios.d_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratios.d_ratio * 100)*1000)/1000 +'%';
+        return 'content: ' + Math.round((d.ratios.d_ratio * 100) * 1000) / 1000 + '%';
       })
-     .style('transform', function (d) {
+      .style('transform', function (d) {
         const content = xScale(d.ratios.d_ratio);
         //console.log(content);
         let acc = 0;
-        if(content === 0) {
+        if (content === 0) {
           acc = 0;
           // console.log('content is 0');
         } else {
@@ -419,29 +419,29 @@ class Histogram2D implements IAppView {
       .append('div')
       .classed('struct-add-color', true)
       .style('width', function (d) {
-        return xScale(d.ratios.a_ratio)  + 'px';
+        return xScale(d.ratios.a_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratios.a_ratio * 100)*1000)/1000 +'%';
+        return 'content: ' + Math.round((d.ratios.a_ratio * 100) * 1000) / 1000 + '%';
       })
-     .style('transform', function (d) {
-       const structure = xScale(d.ratios.a_ratio);
-       let acc = 0;
+      .style('transform', function (d) {
+        const structure = xScale(d.ratios.a_ratio);
+        let acc = 0;
 
-       if(structure === 0) {
-         acc = 0;
-         //console.log('content is 0');
-       } else {
-         acc = xScale(d.ratios.c_ratio) + xScale(d.ratios.d_ratio);
+        if (structure === 0) {
+          acc = 0;
+          //console.log('content is 0');
+        } else {
+          acc = xScale(d.ratios.c_ratio) + xScale(d.ratios.d_ratio);
 
-       }
-       return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
+        }
+        return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
       })
-     .style('display', function (d) {
+      .style('display', function (d) {
         return (d.ratios.a_ratio === 0) ? 'none' : null;
       });
-    
+
     bincontainterCols.exit().remove();
   }
 
@@ -453,6 +453,6 @@ class Histogram2D implements IAppView {
  * @param options
  * @returns {Histogram2D}
  */
-export function create(parent:Element, options:any) {
+export function create(parent: Element, options: any) {
   return new Histogram2D(parent, options);
 }
