@@ -188,7 +188,7 @@ class BarChart implements IAppView {
       - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));
 
 
-    const barData = this.getBarData(data);
+    const barData = this.getBarData(data.ratios);
 
     const barScaling = d3.scale.log()
       .domain([0.0000001, 1])
