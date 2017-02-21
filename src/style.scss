@@ -162,20 +162,38 @@ button:active, button.active {
   background-color: $no-change-color;
 }
 
-#btn-removed, div.bar.removed{
+#btn-nochange.inactive {
+  background-color: $no-change-color;
+  opacity: 0.5;
+}
+
+#btn-removed.active, div.bar.removed{
   background-color: $struct-delete-color;
 }
 
-#btn-removed.active {
-  background-color: #0000FF;
+#btn-removed.inactive {
+  background-color: $struct-delete-color;
+  opacity: 0.5;
 }
 
 #btn-added, div.bar.added {
-background-color: $struct-add-color;
+  background-color: $struct-add-color;
 }
+
+
+#btn-added.inactive {
+  background-color: $struct-add-color;
+  opacity: 0.5;
+}
+
 
 #btn-content, div.bar.content {
   background-color: $content-change-color;
+}
+
+#btn-content.inactive{
+  background-color: $content-change-color;
+  opacity: 0.5;
 }
 
 .histogram_2d {
