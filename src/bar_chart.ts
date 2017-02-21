@@ -53,7 +53,7 @@ class BarChart implements IAppView {
    * @param parent element on which the bar chart element is created
    * @param options optional options for the bar chart element
    */
-  constructor(parent:Element, private options:any) {
+  constructor(parent: Element, private options: any) {
     this.$node = d3.select(parent)
       .append('div')
       .classed('bar_chart', true);
@@ -103,8 +103,8 @@ class BarChart implements IAppView {
 
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
 
-    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType:IChangeType) => this.toggleChangeType(changeType));
-    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType:IChangeType) => this.toggleChangeType(changeType));
+    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
   }
 
   /**
@@ -195,7 +195,7 @@ class BarChart implements IAppView {
   private requestData(totalWidth, leftValue) {
     return d3.pairs(this.items)
       .map((pair) => {
-        const ids = pair.map((d:any) => d.item.desc.id);
+        const ids = pair.map((d: any) => d.item.desc.id);
         return Promise.all([ajax.getAPIJSON(BarChart.getURL(ids)), pair, ids])
           .then((args) => {
             const json = args[0];
@@ -229,7 +229,8 @@ class BarChart implements IAppView {
       + 0.5 * (posXScale(moment(pair[1].time).diff(moment(this.items[0].time), 'days'))
       - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));
 
-    const barData = this.getBarData(data);
+    const barData = this.getBarData(data.ratios);
+
     const barScaling = d3.scale.log()
       .domain([0.0000001, 1])
       .range([0, this.heightBarChart]);
@@ -269,7 +270,7 @@ class BarChart implements IAppView {
       .style('width', this.widthBar + 'px')
       .style('position', 'relative')
       .style('margin-bottom', (d) => barScaling(d.value) - this.heightBarChart + 'px')
-      .on('mouseover', function(d, i) {
+      .on('mouseover', function (d, i) {
         const position = d3.mouse(document.body);
 
         that.tooltipDivBar
@@ -277,8 +278,8 @@ class BarChart implements IAppView {
           .duration(200)
           .style('opacity', .9);
         that.tooltipDivBar.html((d.value * 100).toFixed(2) + '%')
-          .style('left', function(d) {
-            if( ($(window).innerWidth() - 100) < position[0] ) {
+          .style('left', function (d) {
+            if (($(window).innerWidth() - 100) < position[0]) {
               return (position[0] - 30) + 'px';
             } else {
               return (position[0] + 10) + 'px';
@@ -286,7 +287,7 @@ class BarChart implements IAppView {
           })
           .style('top', (position[1] + 10) + 'px');
       })
-      .on('mouseout', function(d, i) {
+      .on('mouseout', function (d, i) {
         that.tooltipDivBar.transition()
           .duration(500)
           .style('opacity', 0);
@@ -332,6 +333,6 @@ class BarChart implements IAppView {
  * @param options Parameters for the instance (optional)
  * @returns {BarChart}
  */
-export function create(parent:Element, options:any) {
+export function create(parent: Element, options: any) {
   return new BarChart(parent, options);
 }
