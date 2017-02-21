@@ -70,8 +70,6 @@ class Timeline implements IAppView {
   private attachListener() {
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
 
-    events.on(AppConstants.EVENT_TOGGLE_TIMELINE, (evt) => this.toggleTimeline());
-
     // Call the resize function whenever a resize event occurs
     d3.select(window).on('resize', () => this.resize());
   }
@@ -278,47 +276,7 @@ class Timeline implements IAppView {
           .style('opacity', 0);
       });
   }
-
-
-  /**
-   * With this method the timeline can be disabled. It's removed and redrawn in case of a data change.
-   * DEPRECATED  -- still there in case of need
-   */
-  // private toggleTimeline2() {
-  //   const line = this.$svgTimeline.select('line');
-  //   const circle = this.$svgTimeline.selectAll('circle');
-  //   const connectionLines = d3.selectAll('#connectionLine');
-  //
-  //   if (line.size() > 0 && circle.size() > 0) {
-  //     line.remove();
-  //     circle.remove();
-  //     connectionLines.remove();
-  //   } else {
-  //     this.drawTimeline();
-  //   }
-  // }
-
-  /**
-   * This method disables and enables the timeline and all it's elements by just not make it hidden.
-   * This is should be more performing and also remove some visual errors.
-   */
-  private toggleTimeline() {
-    const line = this.$svgTimeline.select('line');
-    const circle = this.$svgTimeline.selectAll('circle');
-    const connectionLines = d3.selectAll('#connectionLine');
-
-    if ( ! this.toggledElements ) {
-      this.toggledElements = true;
-      line.classed('invisibleClass', true);
-      circle.classed('invisibleClass', true);
-      connectionLines.classed('invisibleClass', true);
-    } else {
-      this.toggledElements = false;
-      line.classed('invisibleClass', false);
-      circle.classed('invisibleClass', false);
-      connectionLines.classed('invisibleClass', false);
-    }
-  }
+  
 }
 
 

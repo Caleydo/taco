@@ -45,23 +45,13 @@ class FilterBar implements IAppView {
          <button type="button" class="btn btn-default active" id="btn-removed" data-change-type="${ChangeTypes.REMOVED.type}">Removed</button>
          <button type="button" class="btn btn-default active" id="btn-added" data-change-type="${ChangeTypes.ADDED.type}">Added</button>
          <button type="button" class="btn btn-default active" id="btn-content" data-change-type="${ChangeTypes.CONTENT.type}">Content</button>        
-      </div>  
-         
-      <div class="btn-group filter" role="group" aria-label="...">
-        <button type="button" class="btn btn-default toggleTimeline" id="btn-timeline" data-change-type="timefilter">Show/Hide Timeline</button> 
-        <!--<button type="button" class="btn btn-default toggleGroup" id="btn-group">Group Changes</button> 
-        <button type="button" class="btn btn-default" id="btn-stacked">Show as stacked bars</button>-->
-     </div>
+      </div>          
+  
      </div>`);
 
   }
 
   private attachListener() {
-
-    this.$node.select('.toggleTimeline')
-      .on('click', function (e) {
-        events.fire(AppConstants.EVENT_TOGGLE_TIMELINE);
-      });
 
     this.$node.select('.toggleGroup')
       .on('click', function (e) {
