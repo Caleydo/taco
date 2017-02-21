@@ -114,10 +114,10 @@ rect {
 
 }
 
-#nav-bar{
-  margin-top:20px;
-  margin-bottom: 20px;
-}
+//#nav-bar{
+//  margin-top:20px;
+//  margin-bottom: 20px;
+//}
 
 @keyframes color_change {
   from { background-color: transparent; }
@@ -166,11 +166,15 @@ button:active, button.active {
   background-color: $struct-delete-color;
 }
 
+#btn-removed.active {
+  background-color: #0000FF;
+}
+
 #btn-added, div.bar.added {
 background-color: $struct-add-color;
 }
 
-#btn-content,div.bar.content {
+#btn-content, div.bar.content {
   background-color: $content-change-color;
 }
 
@@ -304,4 +308,18 @@ div.tooltip {
   display: none !important;
   margin: 0 !important;
   padding: 0 !important;
+}
+
+.filter_bar {
+  float: left;
+  margin: 6px 0px 6px 0px;
+}
+
+.dataSelector {
+  float: left;
+  margin: 6px 20px 6px 60px;
+}
+
+select.form-control {
+  margin-left: 10px;
 }

@@ -15,7 +15,7 @@ class FilterBar implements IAppView {
   private $node;
 
   constructor(parent: Element, private options: any) {
-    this.$node = d3.select(parent)
+    this.$node = d3.select('.navbar-header')
       .append('div')
       .classed('filter_bar', true);
   }
@@ -41,10 +41,10 @@ class FilterBar implements IAppView {
 
     this.$node.html(` <div id="nav-bar">  
       <div class="btn-group change" role="group" aria-label="...">
-         <button type="button" class="btn btn-default active" id="btn-nochange" data-change-type="${ChangeTypes.NO_CHANGE.type}">No changes</button>
-         <button type="button" class="btn btn-default active" id="btn-removed" data-change-type="${ChangeTypes.REMOVED.type}">Removed</button>
-         <button type="button" class="btn btn-default active" id="btn-added" data-change-type="${ChangeTypes.ADDED.type}">Added</button>
-         <button type="button" class="btn btn-default active" id="btn-content" data-change-type="${ChangeTypes.CONTENT.type}">Content</button>        
+         <button type="button" class="btn btn-default" id="btn-nochange" data-change-type="${ChangeTypes.NO_CHANGE.type}">No changes</button>
+         <button type="button" class="btn btn-default" id="btn-removed" data-change-type="${ChangeTypes.REMOVED.type}">Removed</button>
+         <button type="button" class="btn btn-default" id="btn-added" data-change-type="${ChangeTypes.ADDED.type}">Added</button>
+         <button type="button" class="btn btn-default" id="btn-content" data-change-type="${ChangeTypes.CONTENT.type}">Content</button>        
       </div>          
   
      </div>`);
