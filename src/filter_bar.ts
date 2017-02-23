@@ -69,8 +69,7 @@ class FilterBar implements IAppView {
           button.classed('active', false);
           button.classed('inactive', true);
 
-        }
-        else {
+        } else {
           selectedType.isActive = true;
           events.fire(AppConstants.EVENT_SHOW_CHANGE, selectedType);
           button.classed('active', true);
