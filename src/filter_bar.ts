@@ -15,7 +15,7 @@ class FilterBar implements IAppView {
   private $node;
 
   constructor(parent: Element, private options: any) {
-    this.$node = d3.select(parent)
+    this.$node = d3.select('.navbar-header')
       .append('div')
       .classed('filter_bar', true);
   }
@@ -45,23 +45,13 @@ class FilterBar implements IAppView {
          <button type="button" class="btn btn-default active" id="btn-removed" data-change-type="${ChangeTypes.REMOVED.type}">Removed</button>
          <button type="button" class="btn btn-default active" id="btn-added" data-change-type="${ChangeTypes.ADDED.type}">Added</button>
          <button type="button" class="btn btn-default active" id="btn-content" data-change-type="${ChangeTypes.CONTENT.type}">Content</button>        
-      </div>  
-         
-      <div class="btn-group filter" role="group" aria-label="...">
-        <button type="button" class="btn btn-default toggleTimeline" id="btn-timeline" data-change-type="timefilter">Show/Hide Timeline</button> 
-        <!--<button type="button" class="btn btn-default toggleGroup" id="btn-group">Group Changes</button> 
-        <button type="button" class="btn btn-default" id="btn-stacked">Show as stacked bars</button>-->
-     </div>
+      </div>          
+  
      </div>`);
 
   }
 
   private attachListener() {
-
-    this.$node.select('.toggleTimeline')
-      .on('click', function (e) {
-        events.fire(AppConstants.EVENT_TOGGLE_TIMELINE);
-      });
 
     this.$node.select('.toggleGroup')
       .on('click', function (e) {
@@ -76,13 +66,17 @@ class FilterBar implements IAppView {
         if (button.classed('active')) {
           selectedType.isActive = false;
           events.fire(AppConstants.EVENT_HIDE_CHANGE, selectedType);
+          button.classed('active', false);
+          button.classed('inactive', true);
 
         } else {
           selectedType.isActive = true;
           events.fire(AppConstants.EVENT_SHOW_CHANGE, selectedType);
+          button.classed('active', true);
+          button.classed('inactive', false);
         }
 
-        button.classed('active', selectedType.isActive);
+
       });
   }
 

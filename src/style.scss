@@ -114,10 +114,10 @@ rect {
 
 }
 
-#nav-bar{
-  margin-top:20px;
-  margin-bottom: 20px;
-}
+//#nav-bar{
+//  margin-top:20px;
+//  margin-bottom: 20px;
+//}
 
 @keyframes color_change {
   from { background-color: transparent; }
@@ -162,16 +162,38 @@ button:active, button.active {
   background-color: $no-change-color;
 }
 
-#btn-removed, div.bar.removed{
+#btn-nochange.inactive {
+  background-color: $no-change-color;
+  opacity: 0.5;
+}
+
+#btn-removed.active, div.bar.removed{
   background-color: $struct-delete-color;
 }
 
-#btn-added, div.bar.added {
-background-color: $struct-add-color;
+#btn-removed.inactive {
+  background-color: $struct-delete-color;
+  opacity: 0.5;
 }
 
-#btn-content,div.bar.content {
+#btn-added, div.bar.added {
+  background-color: $struct-add-color;
+}
+
+
+#btn-added.inactive {
+  background-color: $struct-add-color;
+  opacity: 0.5;
+}
+
+
+#btn-content, div.bar.content {
   background-color: $content-change-color;
+}
+
+#btn-content.inactive{
+  background-color: $content-change-color;
+  opacity: 0.5;
 }
 
 .histogram_2d {
@@ -304,4 +326,18 @@ div.tooltip {
   display: none !important;
   margin: 0 !important;
   padding: 0 !important;
+}
+
+.filter_bar {
+  float: left;
+  margin: 6px 0px 6px 0px;
+}
+
+.dataSelector {
+  float: left;
+  margin: 6px 20px 6px 60px;
+}
+
+select.form-control {
+  margin-left: 10px;
 }
