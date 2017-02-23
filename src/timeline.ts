@@ -275,9 +275,8 @@ class Timeline implements IAppView {
           .duration(500)
           .style('opacity', 0);
       });
-  }  
+  }
 }
-
 
 /**
  * Factory method to create a new Timeline instance.
