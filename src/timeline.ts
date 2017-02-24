@@ -18,6 +18,7 @@ class Timeline implements IAppView {
   private $node;
   private $svgTimeline;
   private items;
+  private $placeholder;
 
   // Width of the timeline div element
   private totalWidth: number;
@@ -86,6 +87,15 @@ class Timeline implements IAppView {
     this.tooltipDiv = d3.select('.timeline').append('div')
       .classed('tooltip', true)
       .style('opacity', 0);
+
+    this.$placeholder = this.$node
+      .append('div')
+      .style('width', 300 + 'px')
+      .style('height', 50 + 'px')
+      .classed('placeholder', true)
+      .append('p')
+      .text('Select two time point on the timeline to get more information.' );
+
   }
 
   /**
@@ -124,6 +134,7 @@ class Timeline implements IAppView {
     this.$svgTimeline.selectAll('*').remove();
     this.resize();
     this.drawTimeline();
+
   }
 
   /**
@@ -177,6 +188,7 @@ class Timeline implements IAppView {
       .attr('x2', direction)
       .attr('y2', y + 360);
   }
+
 
   /**
    * This method draws the timeline and also adds the circles.

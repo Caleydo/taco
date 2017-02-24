@@ -196,6 +196,17 @@ button:active, button.active {
   opacity: 0.5;
 }
 
+.placeholder{
+    background-color: $no-change-color;
+    margin: auto;
+    width: 50%;
+
+  p {
+    font-size: 12pt;
+    text-align: center;
+  }
+}
+
 .histogram_2d {
   margin-bottom: 100px;
 }

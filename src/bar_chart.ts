@@ -305,6 +305,7 @@ class BarChart implements IAppView {
       } else {
         events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, ids);
         //events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, ids);
+        d3.selectAll('.placeholder').classed('hidden', true);
         that.openHistogram2D = this.parentNode;
       }
     });
