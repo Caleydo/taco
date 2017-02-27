@@ -34,6 +34,8 @@ class BarChart implements IAppView {
 
   private tooltipDivBar;
 
+
+
   /**
    * Method retrieves data by given parameters TODO: Documentation
    * @param pair
@@ -120,7 +122,7 @@ class BarChart implements IAppView {
 
     for (const i in this.index) {
       if (this.index.hasOwnProperty(i)) {
-        this.leftValue.push((this.index[i] * circleScaling) + 30);
+        this.leftValue.push((this.index[i] * circleScaling));
       }
     }
   }
@@ -198,11 +200,16 @@ class BarChart implements IAppView {
         const ids = pair.map((d: any) => d.item.desc.id);
         return Promise.all([ajax.getAPIJSON(BarChart.getURL(ids)), pair, ids])
           .then((args) => {
+
+            console.log('data', args[0].counts);
+            const counts = args[0].counts;
             const json = args[0];
             const pair = args[1];
             const ids = args[2];
 
-            this.drawBars(json, pair, ids, leftValue.shift(), totalWidth);
+             console.log('json, pair, ids', json, pair, ids);
+
+            this.drawBars(json, pair, ids, leftValue.shift(), totalWidth, counts);
           });
       });
   }
@@ -216,7 +223,7 @@ class BarChart implements IAppView {
    * @param circleScale
    * @param totalWidth
    */
-  private drawBars(data, pair, ids, circleScale, totalWidth) {
+  private drawBars(data, pair, ids, circleScale, totalWidth, counts) {
     // NOTE: WHY THIS HAS TO BE HERE??? NOT IN build() or constructor????
     this.tooltipDivBar = d3.select('.bar_chart').append('div')
       .classed('tooltip', true)
@@ -225,15 +232,27 @@ class BarChart implements IAppView {
     const that = this;
     const posXScale = getPosXScale(this.items, totalWidth);
 
-    const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days'))
-      + 0.5 * (posXScale(moment(pair[1].time).diff(moment(this.items[0].time), 'days'))
-      - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));
+    /*const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days'))
+      + 0.06 * (posXScale(moment(pair[1].time).diff(moment(this.items[0].time), 'days'))
+      - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));*/
+
+   const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')) + 7;
+
+
+   // console.log('counts', data.counts);
+    //console.log('Ratio', data.ratios);
+
 
     const barData = this.getBarData(data.ratios);
+    const barCounts = this.getBarDataCounts(data.counts);
+
+    //console.log('Counts restructured', barCounts);
+    //console.log('Ratio restructured', barData);
 
     const barScaling = d3.scale.log()
-      .domain([0.0000001, 1])
-      .range([0, this.heightBarChart]);
+      .domain([0.0000001, 1000000])
+      .range([0, 80]);
+
 
     let $barsGroup = this.$node;
 
@@ -242,9 +261,10 @@ class BarChart implements IAppView {
         .classed('bars', true)
         .style('left', posX + 'px')
         .style('width', this.widthBarChart + 'px')
-        .style('height', this.heightBarChart + 'px')
+        .style('height', 100 + 'px')
+       // .style('height', this.heightBarChart + 'px')
         .style('position', 'absolute')
-        .style('margin-bottom', 20 + 'px')
+        .style('margin-bottom', 5+ 'px')
         .style('transform', 'scaleY(-1)');
     } else {
 
@@ -254,22 +274,30 @@ class BarChart implements IAppView {
         .classed('bars', true)
         .style('left', circleScale + 'px')
         .style('width', this.widthBarChart + 'px')
-        .style('height', this.heightBarChart + 'px')
+        .style('height', 100 + 'px')
+        //.style('height', this.heightBarChart + 'px')
         .style('position', 'absolute')
-        .style('margin-bottom', 20 + 'px')
+        .style('margin-bottom', 5+ 'px')
         .style('transform', 'scaleY(-1)');
     }
 
-    const $bars = $barsGroup.selectAll('div.bar').data(barData);
+
+    //individual bars in the bar group div
+    const $bars = $barsGroup.selectAll('div.bar').data(barCounts);
     $bars.enter().append('div');
+
+    let added = 0;
+    let content = 0;
+    let nochange = 0;
 
     $bars
       .attr('class', (d) => 'bar ' + d.type)
-      .style('float', 'left')
+      //.style('float', 'left')
       .style('height', (d) => barScaling(d.value) + 'px')
+    //.style('height', (d) => barScaling(d.value) + 'px')
       .style('width', this.widthBar + 'px')
-      .style('position', 'relative')
-      .style('margin-bottom', (d) => barScaling(d.value) - this.heightBarChart + 'px')
+      .style('position', 'absolute')
+      //.style('margin-bottom', (d) => barScaling(d.value) - this.heightBarChart + 'px')
       .on('mouseover', function (d, i) {
         const position = d3.mouse(document.body);
 
@@ -277,7 +305,9 @@ class BarChart implements IAppView {
           .transition()
           .duration(200)
           .style('opacity', .9);
-        that.tooltipDivBar.html((d.value * 100).toFixed(2) + '%')
+
+         that.tooltipDivBar.html((d.value))
+        //that.tooltipDivBar.html((d.value * 100).toFixed(2) + '%')
           .style('left', function (d) {
             if (($(window).innerWidth() - 100) < position[0]) {
               return (position[0] - 30) + 'px';
@@ -323,6 +353,17 @@ class BarChart implements IAppView {
         return {
           type: d.type,
           value: data[d.ratioName]
+        };
+      });
+  }
+
+  private getBarDataCounts(data) {
+    return ChangeTypes.TYPE_ARRAY
+    //.filter((d) => d.isActive === true)
+      .map((d) => {
+        return {
+          type: d.type,
+          value: data[d.countName]
         };
       });
   }

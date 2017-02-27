@@ -53,6 +53,8 @@ export class AppConstants {
 export interface IChangeType {
   type: string;
   ratioName: string;
+  countName: string;
+
   isActive: boolean;
 }
 
@@ -61,24 +63,28 @@ export class ChangeTypes {
   static NO_CHANGE: IChangeType = {
     type: 'nochange',
     ratioName: 'no_ratio',
+    countName: 'no_counts',
     isActive: true
   };
 
   static ADDED: IChangeType = {
     type: 'added',
     ratioName: 'a_ratio',
+    countName: 'a_counts',
     isActive: true
   };
 
   static REMOVED: IChangeType = {
     type: 'removed',
     ratioName: 'd_ratio',
+    countName: 'd_counts',
     isActive: true
   };
 
   static CONTENT: IChangeType = {
     type: 'content',
     ratioName: 'c_ratio',
+    countName: 'c_counts',
     isActive: true
   };
 
