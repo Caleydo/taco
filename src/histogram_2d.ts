@@ -3,11 +3,12 @@
  */
 
 import * as events from 'phovea_core/src/event';
-import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 import * as ajax from 'phovea_core/src/ajax';
+import {AppConstants, IChangeType} from './app_constants';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
+//import {AppConstants} from './app_constants';
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -86,7 +87,7 @@ class Histogram2D implements IAppView {
       .style('width', this.width + 'px')
       .style('height', this.height + 'px')
       .classed('ratio', true)
-      .on('click', function() {
+      .on('click', function () {
         events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
       });
 
@@ -94,14 +95,14 @@ class Histogram2D implements IAppView {
       .append('div')
       .style('width', this.widthRowHistogram + 'px')
       .style('height', this.height + 'px')
-      .classed ('histogram', true);
+      .classed('histogram', true);
 
     this.$histogramCols = this.$node
-       .append('div')
-       .style('width', this.widthRowHistogram + 'px')
-       .style('height', this.height + 'px')
-       .classed ('histogram', true)
-       .classed('rotated', true);
+      .append('div')
+      .style('width', this.widthRowHistogram + 'px')
+      .style('height', this.height + 'px')
+      .classed('histogram', true)
+      .classed('rotated', true);
 
   }
 
@@ -122,6 +123,37 @@ class Histogram2D implements IAppView {
       this.$node.classed('hidden', false);
       this.updateItems(posX, pair);
     });
+
+    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+  }
+
+  private toggleChangeType(changeType) {
+    // console.log('changeType', changeType);
+    if (changeType.type === 'removed') {
+      this.$ratio.selectAll('.struct-del-color').classed('hidden', !changeType.isActive);
+      this.$histogram.selectAll('.struct-del-color').classed('hidden', !changeType.isActive);
+      this.$histogramCols.selectAll('.struct-del-color').classed('hidden', !changeType.isActive);
+    }
+
+    if (changeType.type === 'added') {
+      this.$ratio.selectAll('.struct-add-color').classed('hidden', !changeType.isActive);
+      this.$histogram.selectAll('.struct-add-color').classed('hidden', !changeType.isActive);
+      this.$histogramCols.selectAll('.struct-add-color').classed('hidden', !changeType.isActive);
+    }
+
+    if (changeType.type === 'nochange') {
+      this.$ratio.selectAll('.no-change-color').classed('hidden', !changeType.isActive);
+      this.$histogram.selectAll('.no-change-color').classed('hidden', !changeType.isActive);
+      this.$histogramCols.selectAll('.no-change-color').classed('hidden', !changeType.isActive);
+    }
+    if (changeType.type === 'content') {
+      this.$ratio.selectAll('.content-change-color').classed('hidden', !changeType.isActive);
+      this.$histogram.selectAll('.content-change-color').classed('hidden', !changeType.isActive);
+      this.$histogramCols.selectAll('.content-change-color').classed('hidden', !changeType.isActive);
+    }
+
+    this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('hidden', !changeType.isActive);
   }
 
   private updateItems(posX, pair) {
@@ -133,15 +165,15 @@ class Histogram2D implements IAppView {
       .then((data) => this.showData(data));
 
     this.$histogram
-      .style('left', posX + 'px' );
+      .style('left', posX + 'px');
 
     this.$histogramCols
-      .style('left', posX + 'px' );
+      .style('left', posX + 'px');
 
-   this.requestDataHistogram(pair)
+    this.requestDataHistogram(pair)
       .then((histodata) => this.showHistogram(histodata));
 
-     }
+  }
 
 
   //for the 2D Ratio Chart
@@ -150,36 +182,36 @@ class Histogram2D implements IAppView {
       .then((json) => {
         const data = [];
 
-        const cols = json.cols;
-        const rows = json.rows;
+        const cols = json.cols.ratios;
+        const rows = json.rows.ratios;
 
         data.push({
           type: 'struct-del',
           rows: rows.d_ratio + rows.a_ratio + rows.c_ratio + rows.no_ratio, //todo change to 1
           cols: cols.d_ratio + cols.a_ratio + cols.c_ratio + cols.no_ratio, //todo change to 1
-          rows_text : Math.round((rows.d_ratio * 100)*1000)/1000,
-          cols_text : Math.round((cols.d_ratio * 100)*1000)/1000
+          rows_text: Math.round((rows.d_ratio * 100) * 1000) / 1000,
+          cols_text: Math.round((cols.d_ratio * 100) * 1000) / 1000
         });
         data.push({
           type: 'struct-add',
           rows: rows.a_ratio + rows.c_ratio + rows.no_ratio, // or 1 - d
           cols: cols.a_ratio + cols.c_ratio + cols.no_ratio,
-          rows_text : Math.round((rows.a_ratio * 100)*1000)/1000,
-          cols_text : Math.round((cols.a_ratio * 100)*1000)/1000
+          rows_text: Math.round((rows.a_ratio * 100) * 1000) / 1000,
+          cols_text: Math.round((cols.a_ratio * 100) * 1000) / 1000
         });
         data.push({
           type: 'content-change',
           rows: rows.c_ratio + rows.no_ratio,
           cols: cols.c_ratio + cols.no_ratio,
-          rows_text : Math.round((rows.c_ratio * 100)*1000)/1000,
-          cols_text : Math.round((cols.c_ratio * 100)*1000)/1000
+          rows_text: Math.round((rows.c_ratio * 100) * 1000) / 1000,
+          cols_text: Math.round((cols.c_ratio * 100) * 1000) / 1000
         });
         data.push({
           type: 'no-change',
           rows: rows.no_ratio,
           cols: cols.no_ratio,
-          rows_text : Math.round((rows.no_ratio * 100)*1000)/1000,
-          cols_text : Math.round((cols.no_ratio * 100)*1000)/1000
+          rows_text: Math.round((rows.no_ratio * 100) * 1000) / 1000,
+          cols_text: Math.round((cols.no_ratio * 100) * 1000) / 1000
         });
 
         //console.log('data_list ratio', data);
@@ -188,8 +220,8 @@ class Histogram2D implements IAppView {
       });
   }
 
-    //for the histogram Rows
-    private requestDataHistogram(pair) {
+  //for the histogram Rows
+  private requestDataHistogram(pair) {
     return ajax.getAPIJSON(Histogram2D.getURLHistogram(pair))
       .then((json) => {
 
@@ -204,7 +236,7 @@ class Histogram2D implements IAppView {
   private showData(data) {
     const ratio2d = this.$ratio.selectAll('div').data(data);
 
-   ratio2d.enter()
+    ratio2d.enter()
       .append('div');
 
     ratio2d
@@ -221,15 +253,14 @@ class Histogram2D implements IAppView {
 //Show Histogramm Rows
   private showHistogram(histodata) {
 
-   // console.log('rows' , histodata[0], 'cols' , histodata[1]);
+    // console.log('rows' , histodata[0], 'cols' , histodata[1]);
 
     const rows = histodata[0];
     const cols = histodata[1];
 
 
-
     const xScale = d3.scale.linear()
-      //.domain([0, d3.max(histodata)])
+    //.domain([0, d3.max(histodata)])
       .domain([0, 1])
       .range([0, 50]);
 
@@ -237,7 +268,7 @@ class Histogram2D implements IAppView {
       .domain([0, 20])
       .range([0, this.heightRowHistogram]);
 
-    const gridSize = Math.floor(this.heightRowHistogram/20);
+    const gridSize = Math.floor(this.heightRowHistogram / 20);
 
     const bincontainer = this.$histogram.selectAll('div.bin-container')
       .data(rows, function (d) {
@@ -253,172 +284,165 @@ class Histogram2D implements IAppView {
     bincontainer.enter()
       .append('div')
       .classed('bin-container', true)
-      .attr('title', function(d){ return d.id; });
+      .attr('title', function (d) {
+        return d.id;
+      });
 
     bincontainer
       .append('div')
       .classed('content-change-color', true)
       .style('width', function (d) {
-          //console.log(xScale(d.ratio.c_ratio));
-            return xScale(d.ratio.c_ratio) + 'px';
-          })
-      .style('height', gridSize -1  + 'px')
-      .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratio.c_ratio * 100)*1000)/1000 +'%';
+        //console.log(xScale(d.ratios.c_ratio));
+        return xScale(d.ratios.c_ratio) + 'px';
       })
-     .style('transform', function (d) {
+      .style('height', gridSize - 1 + 'px')
+      .attr('title', function (d) {
+        return 'content: ' + Math.round((d.ratios.c_ratio * 100) * 1000) / 1000 + '%';
+      })
+      .style('transform', function (d) {
         return 'translate(' + 0 + 'px,' + yScale(d.pos) + 'px)';
       })
       .style('display', function (d) {
-        return (d.ratio.c_ratio === 0) ? 'none' : null;
+        return (d.ratios.c_ratio === 0) ? 'none' : null;
       });
 
     bincontainer
       .append('div')
       .classed('struct-del-color', true)
       .style('width', function (d) {
-        return xScale(d.ratio.d_ratio)+ 'px';
+        return xScale(d.ratios.d_ratio) + 'px';
       })
-      .style('height', gridSize -1  + 'px')
+      .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratio.d_ratio * 100)*1000)/1000 +'%';
+        return 'content: ' + Math.round((d.ratios.d_ratio * 100) * 1000) / 1000 + '%';
       })
-     .style('transform', function (d) {
-
-       const content = xScale(d.ratio.d_ratio);
-      // console.log(content);
-
-       let acc = 0;
-
-       if(content === 0) {
-         acc = 0;
-         //console.log('content is 0');
-       } else {
-         acc = xScale(d.ratio.c_ratio);
-       }
-
+      .style('transform', function (d) {
+        const content = xScale(d.ratios.d_ratio);
+        // console.log(content);
+        let acc = 0;
+        if (content === 0) {
+          acc = 0;
+          //console.log('content is 0');
+        } else {
+          acc = xScale(d.ratios.c_ratio);
+        }
         return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
       })
       .style('display', function (d) {
-        return (d.ratio.d_ratio === 0) ? 'none' : null;
+        return (d.ratios.d_ratio === 0) ? 'none' : null;
       });
 
-   bincontainer
+    bincontainer
       .append('div')
       .classed('struct-add-color', true)
       .style('width', function (d) {
-        return xScale(d.ratio.a_ratio)  + 'px';
+        return xScale(d.ratios.a_ratio) + 'px';
       })
-      .style('height', gridSize -1  + 'px')
+      .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratio.a_ratio * 100)*1000)/1000 +'%';
+        return 'content: ' + Math.round((d.ratios.a_ratio * 100) * 1000) / 1000 + '%';
       })
-     .style('transform', function (d) {
-
-       const structure = xScale(d.ratio.a_ratio);
-       //console.log(structure);
-
-       let acc = 0;
-
-       if(structure === 0) {
-         acc = 0;
-         //console.log('content is 0');
-       } else {
-         acc = xScale(d.ratio.c_ratio) + xScale(d.ratio.d_ratio);
-
-       }
-       return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
+      .style('transform', function (d) {
+        const structure = xScale(d.ratios.a_ratio);
+        //console.log(structure);
+        let acc = 0;
+        if (structure === 0) {
+          acc = 0;
+          //console.log('content is 0');
+        } else {
+          acc = xScale(d.ratios.c_ratio) + xScale(d.ratios.d_ratio);
+        }
+        return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
       })
-     .style('display', function (d) {
-        return (d.ratio.a_ratio === 0) ? 'none' : null;
+      .style('display', function (d) {
+        return (d.ratios.a_ratio === 0) ? 'none' : null;
       });
 
     bincontainer.exit().remove();
 
     /*
-    * Draw Cols Histogram  */
+     * Draw Cols Histogram  */
 
 
     bincontainterCols.enter()
       .append('div')
       .classed('bin-container', true)
-      .attr('title', function(d){ return d.id; });
+      .attr('title', function (d) {
+        return d.id;
+      });
 
-   bincontainterCols
+    bincontainterCols
       .append('div')
       .classed('content-change-color', true)
       .style('width', function (d) {
-          //console.log(xScale(d.ratio.c_ratio));
-            return xScale(d.ratio.c_ratio) + 'px';
-          })
-      .style('height', gridSize -1  + 'px')
-      .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratio.c_ratio * 100)*1000)/1000 +'%';
+        //console.log(xScale(d.ratios.c_ratio));
+        return xScale(d.ratios.c_ratio) + 'px';
       })
-     .style('transform', function (d) {
+      .style('height', gridSize - 1 + 'px')
+      .attr('title', function (d) {
+        return 'content: ' + Math.round((d.ratios.c_ratio * 100) * 1000) / 1000 + '%';
+      })
+      .style('transform', function (d) {
         return 'translate(' + 0 + 'px,' + yScale(d.pos) + 'px)';
       })
       .style('display', function (d) {
-        return (d.ratio.c_ratio === 0) ? 'none' : null;
+        return (d.ratios.c_ratio === 0) ? 'none' : null;
       });
 
     bincontainterCols
       .append('div')
       .classed('struct-del-color', true)
       .style('width', function (d) {
-        return xScale(d.ratio.d_ratio)+ 'px';
+        return xScale(d.ratios.d_ratio) + 'px';
       })
-      .style('height', gridSize -1  + 'px')
+      .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratio.d_ratio * 100)*1000)/1000 +'%';
+        return 'content: ' + Math.round((d.ratios.d_ratio * 100) * 1000) / 1000 + '%';
       })
-     .style('transform', function (d) {
-       const content = xScale(d.ratio.d_ratio);
-       //console.log(content);
-
-       let acc = 0;
-
-       if(content === 0) {
-         acc = 0;
-        // console.log('content is 0');
-       } else {
-         acc = xScale(d.ratio.c_ratio);
-       }
-
+      .style('transform', function (d) {
+        const content = xScale(d.ratios.d_ratio);
+        //console.log(content);
+        let acc = 0;
+        if (content === 0) {
+          acc = 0;
+          // console.log('content is 0');
+        } else {
+          acc = xScale(d.ratios.c_ratio);
+        }
         return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
       })
       .style('display', function (d) {
-        return (d.ratio.d_ratio === 0) ? 'none' : null;
+        return (d.ratios.d_ratio === 0) ? 'none' : null;
       });
 
-   bincontainterCols
+    bincontainterCols
       .append('div')
       .classed('struct-add-color', true)
       .style('width', function (d) {
-        return xScale(d.ratio.a_ratio)  + 'px';
+        return xScale(d.ratios.a_ratio) + 'px';
       })
-      .style('height', gridSize -1  + 'px')
+      .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratio.a_ratio * 100)*1000)/1000 +'%';
+        return 'content: ' + Math.round((d.ratios.a_ratio * 100) * 1000) / 1000 + '%';
       })
-     .style('transform', function (d) {
-       const structure = xScale(d.ratio.a_ratio);
-       let acc = 0;
+      .style('transform', function (d) {
+        const structure = xScale(d.ratios.a_ratio);
+        let acc = 0;
 
-       if(structure === 0) {
-         acc = 0;
-         //console.log('content is 0');
-       } else {
-         acc = xScale(d.ratio.c_ratio) + xScale(d.ratio.d_ratio);
+        if (structure === 0) {
+          acc = 0;
+          //console.log('content is 0');
+        } else {
+          acc = xScale(d.ratios.c_ratio) + xScale(d.ratios.d_ratio);
 
-       }
-       return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
+        }
+        return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
       })
-     .style('display', function (d) {
-        return (d.ratio.a_ratio === 0) ? 'none' : null;
+      .style('display', function (d) {
+        return (d.ratios.a_ratio === 0) ? 'none' : null;
       });
 
-   bincontainterCols.exit().remove();
+    bincontainterCols.exit().remove();
   }
 
 }

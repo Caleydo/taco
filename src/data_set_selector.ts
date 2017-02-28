@@ -23,7 +23,7 @@ class DataSetSelector implements IAppView {
   private $select;
 
   constructor(parent:Element, private options:any) {
-    this.$node = d3.select(parent)
+    this.$node = d3.select('.navbar-header')
       .append('div')
       .classed('dataSelector', true)
       .append('form')

@@ -84,12 +84,7 @@ b,
   > .rightHeatmapTitle{
 
   }
-
-
 }
-
-
-
 
 a.active {
   font-weight: 500;
@@ -119,10 +114,10 @@ rect {
 
 }
 
-#nav-bar{
-  margin-top:20px;
-  margin-bottom: 20px;
-}
+//#nav-bar{
+//  margin-top:20px;
+//  margin-bottom: 20px;
+//}
 
 @keyframes color_change {
   from { background-color: transparent; }
@@ -153,7 +148,6 @@ button {
   button:focus, button.focus, button:active:focus, button:active.focus, button.active:focus, button.active.focus {
     outline: 5px auto -webkit-focus-ring-color;
     outline-offset: -2px;
-
   }
 
 button:active, button.active {
@@ -161,7 +155,6 @@ button:active, button.active {
     background-image: none;
     -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
     //box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-
   }
 
 
@@ -169,16 +162,38 @@ button:active, button.active {
   background-color: $no-change-color;
 }
 
-#btn-removed, div.bar.removed{
+#btn-nochange.inactive {
+  background-color: $no-change-color;
+  opacity: 0.5;
+}
+
+#btn-removed.active, div.bar.removed{
   background-color: $struct-delete-color;
 }
 
-#btn-added, div.bar.added {
-background-color: $struct-add-color;
+#btn-removed.inactive {
+  background-color: $struct-delete-color;
+  opacity: 0.5;
 }
 
-#btn-content,div.bar.content {
+#btn-added, div.bar.added {
+  background-color: $struct-add-color;
+}
+
+
+#btn-added.inactive {
+  background-color: $struct-add-color;
+  opacity: 0.5;
+}
+
+
+#btn-content, div.bar.content {
   background-color: $content-change-color;
+}
+
+#btn-content.inactive{
+  background-color: $content-change-color;
+  opacity: 0.5;
 }
 
 .histogram_2d {
@@ -193,11 +208,9 @@ background-color: $struct-add-color;
     color: #fc8d62; //colorblind friendly
     background: transparent;
 
-
     div {
       position: absolute;
       padding: 1px;
-
     }
 
     &.loading {
@@ -238,9 +251,7 @@ background-color: $struct-add-color;
        //margin-top: 1px;
        color: white;
     }
-
   }
-
 
 div.struct-add-color {
   background: $struct-add-color;
@@ -277,9 +288,7 @@ rect.no-change-color {
 #interface{
   //height: 50px;
   margin-bottom: 20px;
-
 }
-
 
 div.struct-add-color, .row-add-color, .col-add-color {
   //background-color: #4daf4a;
@@ -291,8 +300,44 @@ div.struct-del-color, .row-del-color, .col-del-color {
   background-color: $struct-delete-color; //colorblind friendly
 }
 
+.phovea-heatmap {
+  max-height: 1500px;
+}
 
+.phovea-heatmap-data {
+  max-height: 1500px;
+  max-width: 100%;
+}
 
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: auto;
+    padding: 5px;
+    font: 10px sans-serif;
+    background: #e4f0ff;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+    hyphens: auto;
+}
 
+.invisibleClass {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
 
+.filter_bar {
+  float: left;
+  margin: 6px 0px 6px 0px;
+}
 
+.dataSelector {
+  float: left;
+  margin: 6px 20px 6px 60px;
+}
+
+select.form-control {
+  margin-left: 10px;
+}
