@@ -237,6 +237,8 @@ class Timeline implements IAppView {
           //Enable the active class only on clicked circle
           d3.select(this).classed('active', true).attr('fill');
 
+          console.log('d-item', d.item);
+
           // IMPORTANT: Dispatch selected dataset to other views
           //events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
 
@@ -267,12 +269,14 @@ class Timeline implements IAppView {
           //Only perform events and open Histogram if it is not open already
           if(that.openHistogram2D !== this.parentNode) {
             events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, clickedElement);
+
             events.fire(AppConstants.EVENT_DATASET_SELECTED, clickedElement);
 
             that.openHistogram2D = this.parentNode;
             d3.select('#detailViewBtn').attr('disabled', null);
           }
-          //events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
+
+         // events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
 
           that.isClicked = 0;
           clickedElement = [];

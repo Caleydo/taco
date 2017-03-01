@@ -59,12 +59,15 @@ class DetailView implements IAppView {
       .classed('destinationTablePlaceholder', true)
       .append('p')
       .text('Destination Table');
+
   }
 
   private attachListener() {
-    events.on(AppConstants.EVENT_DATASET_SELECTED, (evt, items) => {
-      this.tableData = items;
+    console.log('attachListener');
+    events.on(AppConstants.EVENT_DATASET_SELECTED, (evt, clickedElement) => {
+      this.openEvents(clickedElement);
     });
+
 
 
     /**
@@ -78,17 +81,22 @@ class DetailView implements IAppView {
      * damit man die dann später erst an die anderen klassen schicken kann wenn man den blöden button geklickt hat.
      */
 
+
+  }
+
+  private openEvents (clickedElements){
+
     this.$node.select('#detailViewBtn')
       .on('click', function (e) {
-        if(this.tableData !== void 0) {
-        console.log('this.tableData', this.tableData);
-          // events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, this.tableData[0]);
-          // events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, this.tableData[1]);
-          // events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, this.tableData);
+        if(clickedElements !== void 0) {
+          events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, clickedElements[0]);
+          events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, clickedElements[1]);
+          events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElements);
           d3.select('#detailViewBtn').attr('disabled', true);
           d3.select('.diffPlaceholder').classed('invisibleClass', true);
         }
       });
+
   }
 }
 
