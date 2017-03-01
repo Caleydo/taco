@@ -51,8 +51,10 @@ b,
   align-items: stretch;
   align-content: stretch;
   justify-content: space-between;
+  margin-top:50px;
 
-  &>div {
+
+  &>div{
     width: 33%;
   }
 }
@@ -73,6 +75,7 @@ b,
   align-items: stretch;
   align-content: stretch;
   justify-content: space-between;
+  margin-top:150px;
 
 
   > .leftHeatmapTitle {

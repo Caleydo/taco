@@ -81,7 +81,7 @@ export class App implements IAppView {
     },
     {
       view: 'DiffTitle',
-      parent: 'comparison',
+      parent: 'selector',
       options: {}
     },
     {
