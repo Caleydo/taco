@@ -199,7 +199,6 @@ button:active, button.active {
 .placeholder{
   background-color: $no-change-color;
   margin: auto;
-  width: 50%;
   line-height: 162px;
   border: 0px;
   border-radius: 8px;
@@ -358,3 +357,32 @@ div.tooltip {
 select.form-control {
   margin-left: 10px;
 }
+
+#detailViewBtn {
+  margin: auto;
+  margin-top: 35px;
+}
+
+.diffPlaceholder {
+  margin-top: 100px;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  align-content: stretch;
+  justify-content: space-between;
+
+  &>div {
+    width: 33%;
+    height: 1000px;
+    border: 1px solid black;
+  }
+
+}
+
+.sourceTablePlaceholder, .diffTablePlaceholder, .destinationTablePlaceholder{
+
+  font-size: 14pt;
+  text-align: center;
+}
+
+

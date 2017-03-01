@@ -75,8 +75,13 @@ export class App implements IAppView {
       options: {}
     },
     {
-      view: 'DiffTitle',
+      view: 'DetailView',
       parent: 'selector',
+      options: {}
+    },
+    {
+      view: 'DiffTitle',
+      parent: 'comparison',
       options: {}
     },
     {
