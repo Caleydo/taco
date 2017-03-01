@@ -74,7 +74,6 @@ class Timeline implements IAppView {
     // Call the resize function whenever a resize event occurs
     d3.select(window).on('resize', () => this.resize());
   }
-
   /**
    * Build the basic DOM elements like the svg graph and appends the tooltip div.
    */

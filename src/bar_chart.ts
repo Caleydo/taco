@@ -201,13 +201,13 @@ class BarChart implements IAppView {
         return Promise.all([ajax.getAPIJSON(BarChart.getURL(ids)), pair, ids])
           .then((args) => {
 
-            console.log('data', args[0].counts);
+            //console.log('data', args[0].counts);
             const counts = args[0].counts;
             const json = args[0];
             const pair = args[1];
             const ids = args[2];
 
-             console.log('json, pair, ids', json, pair, ids);
+            //console.log('json, pair, ids', json, pair, ids);
 
             this.drawBars(json, pair, ids, leftValue.shift(), totalWidth, counts);
           });
@@ -233,13 +233,13 @@ class BarChart implements IAppView {
     const posXScale = getPosXScale(this.items, totalWidth);
 
     /*const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days'))
-      + 0.06 * (posXScale(moment(pair[1].time).diff(moment(this.items[0].time), 'days'))
-      - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));*/
+     + 0.06 * (posXScale(moment(pair[1].time).diff(moment(this.items[0].time), 'days'))
+     - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));*/
 
-   const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')) + 7;
+    const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')) + 7;
 
 
-   // console.log('counts', data.counts);
+    // console.log('counts', data.counts);
     //console.log('Ratio', data.ratios);
 
 
@@ -251,7 +251,7 @@ class BarChart implements IAppView {
 
     const barScaling = d3.scale.log()
       .domain([0.0000001, 1000000])
-      .range([0, 80]);
+      .range([0, 30]);
 
 
     let $barsGroup = this.$node;
@@ -262,7 +262,7 @@ class BarChart implements IAppView {
         .style('left', posX + 'px')
         .style('width', this.widthBarChart + 'px')
         .style('height', 100 + 'px')
-       // .style('height', this.heightBarChart + 'px')
+        // .style('height', this.heightBarChart + 'px')
         .style('position', 'absolute')
         .style('margin-bottom', 5+ 'px')
         .style('transform', 'scaleY(-1)');
@@ -289,14 +289,37 @@ class BarChart implements IAppView {
     let added = 0;
     let content = 0;
     let nochange = 0;
+    let removed = 0;
+    let offset = 0;
 
     $bars
       .attr('class', (d) => 'bar ' + d.type)
-      //.style('float', 'left')
       .style('height', (d) => barScaling(d.value) + 'px')
-    //.style('height', (d) => barScaling(d.value) + 'px')
       .style('width', this.widthBar + 'px')
       .style('position', 'absolute')
+      .style('transform', function (d) {
+        console.log('data', barScaling(d.value));
+        if(d.type === "nochange") {
+          nochange = barScaling(d.value);
+          console.log('nochange', nochange);
+          return 'translate(' + 0 + 'px)';
+        }
+        if(d.type === "added") {
+          added = barScaling(d.value);
+          console.log('added', added);
+          return 'translate(' + 0 + 'px,' + (nochange - offset) + 'px)';
+        }
+        if(d.type === "removed") {
+          removed = barScaling(d.value);
+          console.log('removed', removed);
+          return 'translate(' + 0 + 'px,' + (nochange + added - offset) + 'px)';
+        }
+        if(d.type === "content") {
+          content = barScaling(d.value);
+          console.log('content', content);
+          return 'translate(' + 0 + 'px,' + (nochange + added + removed - offset) + 'px)';
+        }
+      })
       //.style('margin-bottom', (d) => barScaling(d.value) - this.heightBarChart + 'px')
       .on('mouseover', function (d, i) {
         const position = d3.mouse(document.body);
@@ -306,7 +329,7 @@ class BarChart implements IAppView {
           .duration(200)
           .style('opacity', .9);
 
-         that.tooltipDivBar.html((d.value))
+        that.tooltipDivBar.html((d.value))
         //that.tooltipDivBar.html((d.value * 100).toFixed(2) + '%')
           .style('left', function (d) {
             if (($(window).innerWidth() - 100) < position[0]) {
