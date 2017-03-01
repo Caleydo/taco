@@ -94,7 +94,7 @@ class Timeline implements IAppView {
       .style('height', 162 + 'px')
       .classed('placeholder', true)
       .append('p')
-      .text('Select two time point on the timeline to get more information.' );
+      .text('Select two time points on the timeline to get more information.' );
 
   }
 
@@ -244,6 +244,8 @@ class Timeline implements IAppView {
           if (that.openHistogram2D === this.parentNode) {
             events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
             that.openHistogram2D = null;
+            d3.select('.diffPlaceholder').classed('invisibleClass', false);
+            d3.select('#detailViewBtn').attr('disabled', true);
           }
 
           clickedElement.push(d.item);
@@ -262,9 +264,13 @@ class Timeline implements IAppView {
           // IMPORTANT: Dispatch selected dataset to other views
           //events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
 
+          //Only perform events and open Histogram if it is not open already
           if(that.openHistogram2D !== this.parentNode) {
             events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, clickedElement);
+            events.fire(AppConstants.EVENT_DATASET_SELECTED, clickedElement);
+
             that.openHistogram2D = this.parentNode;
+            d3.select('#detailViewBtn').attr('disabled', null);
           }
           //events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
 

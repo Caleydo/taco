@@ -14,7 +14,9 @@ import * as ajax from 'phovea_core/src/ajax';
 
 class DetailView implements IAppView {
   private $node;
+
   private diffplaceholder;
+  private tableData;
 
   constructor(public parent:Element, private options:any) {
     this.$node = d3.select(parent)
@@ -23,18 +25,22 @@ class DetailView implements IAppView {
   }
 
   init() {
+    this.build();
+    this.attachListener();
 
-      this.$node.html(`<button type="button" 
+    // return the promise directly as long there is no dynamical data to update
+    return Promise.resolve(this);
+  }
+
+  private build() {
+    this.$node.html(`<button type="button" 
                                id="detailViewBtn" 
                                class="btn btn-primary" 
                                disabled>Load Detail View</button>`);
-    //d3.select('#detailViewBtn').attr('disabled', null);
-
 
     this.diffplaceholder = this.$node
       .append('div')
       .classed('diffPlaceholder', true);
-
 
     this.diffplaceholder
       .append('div')
@@ -53,13 +59,36 @@ class DetailView implements IAppView {
       .classed('destinationTablePlaceholder', true)
       .append('p')
       .text('Destination Table');
+  }
+
+  private attachListener() {
+    events.on(AppConstants.EVENT_DATASET_SELECTED, (evt, items) => {
+      this.tableData = items;
+    });
 
 
+    /**
+     * TODO: REMOVE THIS COMMENT
+     * Also es soll hier die items auslesen. Die items kommen richtig in der events.on methode oben. Das items array
+     * beinhalted wieder eine Matrix mit der Sourcetable und eine mit der Destination table. Das versuch ich zu speichern
+     * in this.tableData, damit ich dann in der unteren sachen hier.... also hier unten gleich bei 'click' die 3 events
+     * feuern kann wo dann die heatmaps und die diffheatmap gezeichnet werden.
+     * In der 'click' muss dann auch die detail view ausgeblendet werden und dann in der timeline wieder ein wenn man neu
+     * klickt aber das is alles leicht. Es geht nur noch drum, dass die blöden daten einfach gespeichert werden in this.tableData
+     * damit man die dann später erst an die anderen klassen schicken kann wenn man den blöden button geklickt hat.
+     */
 
-
-
-    // return the promise directly as long there is no dynamical data to update
-    return Promise.resolve(this);
+    this.$node.select('#detailViewBtn')
+      .on('click', function (e) {
+        if(this.tableData !== void 0) {
+        console.log('this.tableData', this.tableData);
+          // events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, this.tableData[0]);
+          // events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, this.tableData[1]);
+          // events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, this.tableData);
+          d3.select('#detailViewBtn').attr('disabled', true);
+          d3.select('.diffPlaceholder').classed('invisibleClass', true);
+        }
+      });
   }
 }
 

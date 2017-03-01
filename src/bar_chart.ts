@@ -298,25 +298,20 @@ class BarChart implements IAppView {
       .style('width', this.widthBar + 'px')
       .style('position', 'absolute')
       .style('transform', function (d) {
-        console.log('data', barScaling(d.value));
         if(d.type === "nochange") {
           nochange = barScaling(d.value);
-          console.log('nochange', nochange);
           return 'translate(' + 0 + 'px)';
         }
         if(d.type === "added") {
           added = barScaling(d.value);
-          console.log('added', added);
           return 'translate(' + 0 + 'px,' + (nochange - offset) + 'px)';
         }
         if(d.type === "removed") {
           removed = barScaling(d.value);
-          console.log('removed', removed);
           return 'translate(' + 0 + 'px,' + (nochange + added - offset) + 'px)';
         }
         if(d.type === "content") {
           content = barScaling(d.value);
-          console.log('content', content);
           return 'translate(' + 0 + 'px,' + (nochange + added + removed - offset) + 'px)';
         }
       })
@@ -347,21 +342,6 @@ class BarChart implements IAppView {
       });
 
     $bars.exit().remove();
-
-    // $barsGroup.on('click', function (e) {
-    //   const currentPosX = parseFloat(d3.select(this).style('left'));
-    //
-    //   if (that.openHistogram2D === this.parentNode) {
-    //     events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
-    //     that.openHistogram2D = null;
-    //
-    //   } else {
-    //     events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, ids);
-    //     //events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, ids);
-    //     d3.selectAll('.placeholder').classed('hidden', true);
-    //     that.openHistogram2D = this.parentNode;
-    //   }
-    // });
   }
 
   /**

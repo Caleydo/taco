@@ -5,6 +5,8 @@ $struct-add-color: #67C4A7;
 $struct-delete-color: #fc8e62;
 $content-change-color: #8DA1CD;
 $no-change-color: #D8D8D8;
+$gentle-color: rgba(179, 192, 210, 0.54);
+$gentle-color-dark: rgba(79, 84, 101, 0.64);
 
 $boostrapAssetDir: '~phovea_ui/src/assets';
 
@@ -197,10 +199,10 @@ button:active, button.active {
 }
 
 .placeholder{
-  background-color: $no-change-color;
+  background-color: $gentle-color;
   margin: auto;
   line-height: 162px;
-  border: 0px;
+  border: 1px solid $gentle-color-dark;
   border-radius: 8px;
 
   p {
@@ -209,6 +211,7 @@ button:active, button.active {
     font-size: 12pt;
     text-align: center;
     vertical-align: middle;
+    padding: 0 10px 0 10px;
   }
 }
 
@@ -331,7 +334,7 @@ div.tooltip {
   width: auto;
   padding: 5px;
   font: 10px sans-serif;
-  background: #e4f0ff;
+  background: #dfedff;
   border: 0px;
   border-radius: 8px;
   pointer-events: none;
@@ -340,8 +343,6 @@ div.tooltip {
 
 .invisibleClass {
   display: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
 }
 
 .filter_bar {
@@ -358,13 +359,24 @@ select.form-control {
   margin-left: 10px;
 }
 
+/**
+This is the button for the further Details view.
+ */
 #detailViewBtn {
-  margin: auto;
-  margin-top: 35px;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50px);
+  background-color: $gentle-color;
+  color: black;
+  border: 1px solid $gentle-color-dark;
 }
 
+/**
+This placeholder is used for the 3 rectangles which are shown if no
+heatmaps or diffheatmaps are plotted.
+ */
 .diffPlaceholder {
-  margin-top: 100px;
+  margin-top: 140px;
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -374,13 +386,14 @@ select.form-control {
   &>div {
     width: 33%;
     height: 1000px;
-    border: 1px solid black;
+    border: 1.5px solid $gentle-color-dark;
   }
-
 }
 
+/**
+This aligns the text inside the placeholders.
+ */
 .sourceTablePlaceholder, .diffTablePlaceholder, .destinationTablePlaceholder{
-
   font-size: 14pt;
   text-align: center;
 }
