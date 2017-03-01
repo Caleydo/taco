@@ -348,20 +348,20 @@ class BarChart implements IAppView {
 
     $bars.exit().remove();
 
-    $barsGroup.on('click', function (e) {
-      const currentPosX = parseFloat(d3.select(this).style('left'));
-
-      if (that.openHistogram2D === this.parentNode) {
-        events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
-        that.openHistogram2D = null;
-
-      } else {
-        events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, ids);
-        //events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, ids);
-        d3.selectAll('.placeholder').classed('hidden', true);
-        that.openHistogram2D = this.parentNode;
-      }
-    });
+    // $barsGroup.on('click', function (e) {
+    //   const currentPosX = parseFloat(d3.select(this).style('left'));
+    //
+    //   if (that.openHistogram2D === this.parentNode) {
+    //     events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
+    //     that.openHistogram2D = null;
+    //
+    //   } else {
+    //     events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, ids);
+    //     //events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, ids);
+    //     d3.selectAll('.placeholder').classed('hidden', true);
+    //     that.openHistogram2D = this.parentNode;
+    //   }
+    // });
   }
 
   /**

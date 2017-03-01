@@ -16,13 +16,12 @@ import * as $ from 'jquery';
 class Histogram2D implements IAppView {
 
   private $node;
-
   private $ratio;
-
   private $histogram;
-
   private $histogramCols;
 
+  private selectedTables;
+  private posX;
   private borderWidth = 2;
 
   private height = 160 + this.borderWidth;
@@ -119,9 +118,14 @@ class Histogram2D implements IAppView {
       this.$node.classed('hidden', true);
     });
 
-    events.on(AppConstants.EVENT_OPEN_2D_HISTOGRAM, (evt, posX, pair) => {
+    events.on(AppConstants.EVENT_OPEN_2D_HISTOGRAM, (evt, items) => {
+      d3.selectAll('.placeholder').classed('hidden', true);
+
+      this.selectedTables = [items[0].desc.id, items[1].desc.id];
+      this.posX = ($(window).innerWidth() - 220)/2;
+
       this.$node.classed('hidden', false);
-      this.updateItems(posX, pair);
+      this.updateItems(this.posX, this.selectedTables);
     });
 
     events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));

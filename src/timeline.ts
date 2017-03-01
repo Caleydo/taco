@@ -26,6 +26,7 @@ class Timeline implements IAppView {
   private timelineHeight = 200;
   private tooltipDiv;
   private toggledElements: boolean;
+  private openHistogram2D;
 
   // Helper variable for the clicking event
   private isClicked: number = 0;
@@ -89,8 +90,8 @@ class Timeline implements IAppView {
 
     this.$placeholder = this.$node
       .append('div')
-      .style('width', 300 + 'px')
-      .style('height', 50 + 'px')
+      .style('width', 162 + 'px')
+      .style('height', 162 + 'px')
       .classed('placeholder', true)
       .append('p')
       .text('Select two time point on the timeline to get more information.' );
@@ -237,7 +238,13 @@ class Timeline implements IAppView {
           d3.select(this).classed('active', true).attr('fill');
 
           // IMPORTANT: Dispatch selected dataset to other views
-          events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
+          //events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
+
+          // Close Histogram only if its rendered
+          if (that.openHistogram2D === this.parentNode) {
+            events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
+            that.openHistogram2D = null;
+          }
 
           clickedElement.push(d.item);
           that.isClicked = 1;
@@ -253,8 +260,13 @@ class Timeline implements IAppView {
           clickedElement.push(d.item);
 
           // IMPORTANT: Dispatch selected dataset to other views
-          events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
-          events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
+          //events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
+
+          if(that.openHistogram2D !== this.parentNode) {
+            events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, clickedElement);
+            that.openHistogram2D = this.parentNode;
+          }
+          //events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
 
           that.isClicked = 0;
           clickedElement = [];
