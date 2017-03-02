@@ -117,7 +117,6 @@ class Timeline implements IAppView {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         } else {
-          console.log('this.items.length', this.items.length, this.items.size);
           return i * scaleCircles(this.totalWidth, this.items.length);
         }
       });
@@ -247,6 +246,8 @@ class Timeline implements IAppView {
           if (that.openHistogram2D === this.parentNode) {
             events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
             that.openHistogram2D = null;
+            d3.select('.difftitle').classed('hidden', true);
+            d3.select('.comparison').classed('hidden', true);
             d3.select('.diffPlaceholder').classed('invisibleClass', false);
             d3.select('.placeholder').classed('hidden', false);
             d3.select('#detailViewBtn').attr('disabled', true);

@@ -76,6 +76,8 @@ class DetailView implements IAppView {
           events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, clickedElements[0]);
           events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, clickedElements[1]);
           events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElements);
+          d3.select('.difftitle').classed('hidden', false);
+          d3.select('.comparison').classed('hidden', false);
           d3.select('#detailViewBtn').attr('disabled', true);
           d3.select('.diffPlaceholder').classed('invisibleClass', true);
         }

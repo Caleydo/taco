@@ -165,6 +165,11 @@ class BarChart implements IAppView {
    */
   private toggleChangeType(changeType) {
     this.$node.selectAll(`div.bars > .${changeType.type}`).classed('hidden', !changeType.isActive);
+
+    /**
+     * TODO: Reposition bars here
+     * If-clause with change type and then postion them according to the new calculated values.
+     */
   }
 
 
