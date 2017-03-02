@@ -51,12 +51,14 @@ b,
   align-items: stretch;
   align-content: stretch;
   justify-content: space-between;
-  margin-top:50px;
-
 
   &>div{
     width: 33%;
   }
+}
+
+.selector {
+  margin-top: 80px;
 }
 
 .taco-table {
@@ -219,7 +221,7 @@ button:active, button.active {
 }
 
 .histogram_2d {
-  margin-bottom: 100px;
+  margin-bottom: 140px;
 }
 
 .ratio {

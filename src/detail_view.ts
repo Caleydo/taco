@@ -21,7 +21,8 @@ class DetailView implements IAppView {
   constructor(public parent:Element, private options:any) {
     this.$node = d3.select(parent)
       .append('div')
-      .classed('detailview', true);
+      .classed('detailview', true)
+      .classed('invisibleClass', true);
   }
 
   init() {
@@ -63,29 +64,12 @@ class DetailView implements IAppView {
   }
 
   private attachListener() {
-    console.log('attachListener');
     events.on(AppConstants.EVENT_DATASET_SELECTED, (evt, clickedElement) => {
       this.openEvents(clickedElement);
     });
-
-
-
-    /**
-     * TODO: REMOVE THIS COMMENT
-     * Also es soll hier die items auslesen. Die items kommen richtig in der events.on methode oben. Das items array
-     * beinhalted wieder eine Matrix mit der Sourcetable und eine mit der Destination table. Das versuch ich zu speichern
-     * in this.tableData, damit ich dann in der unteren sachen hier.... also hier unten gleich bei 'click' die 3 events
-     * feuern kann wo dann die heatmaps und die diffheatmap gezeichnet werden.
-     * In der 'click' muss dann auch die detail view ausgeblendet werden und dann in der timeline wieder ein wenn man neu
-     * klickt aber das is alles leicht. Es geht nur noch drum, dass die blöden daten einfach gespeichert werden in this.tableData
-     * damit man die dann später erst an die anderen klassen schicken kann wenn man den blöden button geklickt hat.
-     */
-
-
   }
 
   private openEvents (clickedElements){
-
     this.$node.select('#detailViewBtn')
       .on('click', function (e) {
         if(clickedElements !== void 0) {
@@ -96,7 +80,6 @@ class DetailView implements IAppView {
           d3.select('.diffPlaceholder').classed('invisibleClass', true);
         }
       });
-
   }
 }
 

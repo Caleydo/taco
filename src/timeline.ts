@@ -93,6 +93,7 @@ class Timeline implements IAppView {
       .style('width', 162 + 'px')
       .style('height', 162 + 'px')
       .classed('placeholder', true)
+      .classed('invisibleClass', true)
       .append('p')
       .text('Select two time points on the timeline to get more information.' );
 
@@ -103,7 +104,7 @@ class Timeline implements IAppView {
    */
   private resize() {
     this.totalWidth = $(this.$node.node()).width();
-
+   // console.log('timelineWidth', this.totalWidth);
     // Update line
     this.$svgTimeline.attr('width', this.totalWidth);
     d3.select('line').attr('x2', this.totalWidth);
@@ -116,7 +117,8 @@ class Timeline implements IAppView {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         } else {
-          return i * scaleCircles(this.totalWidth);
+          console.log('this.items.length', this.items.length, this.items.size);
+          return i * scaleCircles(this.totalWidth, this.items.length);
         }
       });
   }
@@ -134,7 +136,6 @@ class Timeline implements IAppView {
     this.$svgTimeline.selectAll('*').remove();
     this.resize();
     this.drawTimeline();
-
   }
 
   /**
@@ -223,7 +224,7 @@ class Timeline implements IAppView {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         } else {
-          return i * scaleCircles(this.totalWidth);
+          return (i+1) * (scaleCircles(this.totalWidth, this.items.length));
         }
       })
       .attr('id', (d:any) => 'circle_' + d.item.desc.id)
@@ -247,17 +248,18 @@ class Timeline implements IAppView {
             events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
             that.openHistogram2D = null;
             d3.select('.diffPlaceholder').classed('invisibleClass', false);
+            d3.select('.placeholder').classed('hidden', false);
             d3.select('#detailViewBtn').attr('disabled', true);
           }
 
           clickedElement.push(d.item);
           that.isClicked = 1;
-          that.circleX = parseInt(d3.select(this).attr('cx'), 10);
-          that.circleY = parseInt(d3.select(this).attr('cy'), 10);
-
-          //Remove previous connection line before drawing new one
-          d3.selectAll('#connectionLine').remove();
-          that.drawLine(that.circleX, that.circleY, 'sourceTable');
+          // that.circleX = parseInt(d3.select(this).attr('cx'), 10);
+          // that.circleY = parseInt(d3.select(this).attr('cy'), 10);
+          //
+          // //Remove previous connection line before drawing new one
+          // d3.selectAll('#connectionLine').remove();
+          // that.drawLine(that.circleX, that.circleY, 'sourceTable');
         } else {
 
           d3.select(this).classed('active', true).attr('fill');
@@ -269,7 +271,6 @@ class Timeline implements IAppView {
           //Only perform events and open Histogram if it is not open already
           if(that.openHistogram2D !== this.parentNode) {
             events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, clickedElement);
-
             events.fire(AppConstants.EVENT_DATASET_SELECTED, clickedElement);
 
             that.openHistogram2D = this.parentNode;
@@ -280,10 +281,10 @@ class Timeline implements IAppView {
 
           that.isClicked = 0;
           clickedElement = [];
-          that.circleX = parseInt(d3.select(this).attr('cx'), 10);
-          that.circleY = parseInt(d3.select(this).attr('cy'), 10);
-
-          that.drawLine(that.circleX, that.circleY, 'destinationTable');
+          // that.circleX = parseInt(d3.select(this).attr('cx'), 10);
+          // that.circleY = parseInt(d3.select(this).attr('cy'), 10);
+          //
+          // that.drawLine(that.circleX, that.circleY, 'destinationTable');
         }
       })
       .on('mouseover', function(d, i) {

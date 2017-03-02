@@ -117,8 +117,8 @@ class BarChart implements IAppView {
   private generateIndexArray(items, width) {
     this.items = items;
 
-    this.index = d3.range(0, items.length);
-    const circleScaling = scaleCircles(width);
+    this.index = d3.range(1, items.length);
+    const circleScaling = scaleCircles(width, this.items.length);
 
     for (const i in this.index) {
       if (this.index.hasOwnProperty(i)) {
@@ -134,7 +134,6 @@ class BarChart implements IAppView {
   private updateItems(items) {
     this.items = items;
     const width = $(window).innerWidth();
-
     // Generate the array with positioning numbers
     this.generateIndexArray(this.items, width);
 
