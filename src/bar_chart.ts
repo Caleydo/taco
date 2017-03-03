@@ -115,11 +115,11 @@ class BarChart implements IAppView {
     });
 
     events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType:IChangeType) => {
-      this.updateItems(this.items); // re-use existing items
+      this.scaleBarsHeight(); // just rescale the height of the bars
     });
 
     events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType:IChangeType) => {
-      this.updateItems(this.items); // re-use existing items
+      this.scaleBarsHeight(); // just rescale the height of the bars
     });
   }
 
@@ -204,23 +204,9 @@ class BarChart implements IAppView {
         const ids = pair.map((d: any) => d.item.desc.id);
         return Promise.all([ajax.getAPIJSON(BarChart.getURL(ids)), pair, ids])
           .then((args) => {
-
-            //console.log('data', args[0].counts);
-            const counts = args[0].counts;
             const json = args[0];
             const pair = args[1];
-            const ids = args[2];
-
-            ChangeTypes.TYPE_ARRAY
-              .filter((d) => d.isActive === false)
-              .forEach((changeType:IChangeType) => {
-                json.ratios[changeType.ratioName] = 0;
-                json.counts[changeType.countName] = 0;
-              });
-
-            //console.log('json, pair, ids', json, pair, ids);
-
-            this.drawBars(json, pair, ids, leftValue.shift(), totalWidth, counts);
+            this.drawBars(json, pair, leftValue.shift(), totalWidth);
           });
       });
   }
@@ -230,11 +216,10 @@ class BarChart implements IAppView {
    * TODO: Documentation
    * @param data
    * @param pair
-   * @param ids
    * @param circleScale
    * @param totalWidth
    */
-  private drawBars(data, pair, ids, circleScale, totalWidth, counts) {
+  private drawBars(data, pair, circleScale, totalWidth) {
     const that = this;
     const posXScale = getPosXScale(this.items, totalWidth);
 
@@ -267,7 +252,6 @@ class BarChart implements IAppView {
 
     $bars
       .attr('class', (d) => 'bar ' + d.type)
-      .style('height', (d) => (d.value === 0) ? d.value : (this.barScaling(d.value) + 'px'))
       .style('width', this.widthBar + 'px')
       .on('mouseover', function (d, i) {
         const position = d3.mouse(document.body);
@@ -294,7 +278,20 @@ class BarChart implements IAppView {
       });
 
     $bars.exit().remove();
+
+    this.scaleBarsHeight();
   }
+
+  private scaleBarsHeight() {
+    this.$node.selectAll('.bar')
+      .style('height', (d) => {
+        if(ChangeTypes.TYPE_ARRAY.filter((ct) => ct.type === d.type)[0].isActive) {
+          return this.barScaling(d.value) + 'px';
+        }
+        return 0; // shrink bar to 0 if change is not active
+      });
+  }
+
 
   /**
    *
