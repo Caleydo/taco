@@ -222,6 +222,13 @@ class BarChart implements IAppView {
             const pair = args[1];
             const ids = args[2];
 
+            ChangeTypes.TYPE_ARRAY
+              .filter((d) => d.isActive === false)
+              .forEach((changeType:IChangeType) => {
+                json.ratios[changeType.ratioName] = 0;
+                json.counts[changeType.countName] = 0;
+              });
+
             //console.log('json, pair, ids', json, pair, ids);
 
             this.drawBars(json, pair, ids, leftValue.shift(), totalWidth, counts);

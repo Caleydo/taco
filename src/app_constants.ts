@@ -30,7 +30,6 @@ export class AppConstants {
   static EVENT_OPEN_2D_HISTOGRAM = 'open2DHistogram';
   static EVENT_CLOSE_2D_HISTOGRAM = 'close2DHistogram';
 
-  static EVENT_TOGGLE_TIMELINE = 'toggleTimeline';
   static EVENT_TOGGLE_GROUP = 'toggleGroup';
 
   static EVENT_SHOW_CHANGE = 'showChange';
