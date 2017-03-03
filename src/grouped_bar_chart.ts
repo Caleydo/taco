@@ -3,7 +3,7 @@
  */
 
 import * as events from 'phovea_core/src/event';
-import {AppConstants} from './app_constants';
+import {AppConstants, ChangeTypes} from './app_constants';
 import {IAppView} from './app';
 import * as d3 from 'd3';
 import * as ajax from 'phovea_core/src/ajax';
@@ -26,6 +26,16 @@ class GroupedBarChart implements IAppView {
   private aratio = [];
   private cratio = [];
   private dratio = [];
+
+  /**
+   * Method retrieves data by given parameters TODO: Documentation
+   * @param pair
+   * @returns {Promise<any>}
+   */
+  private static getJSON(pair) {
+    const operations = ChangeTypes.forURL();
+    return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/bar_chart`);
+  }
 
   constructor(parent: Element, private options: any) {
     this.$node = d3.select(parent)
@@ -86,7 +96,7 @@ class GroupedBarChart implements IAppView {
     //console.log(ids);
 
     return d3.pairs(ids).map((pair) => {
-      return Promise.all([ajax.getAPIJSON(`/taco/diff_log/${pair[0]}/${pair[1]}/1/1/2/structure,content`), pair])
+      return Promise.all([GroupedBarChart.getJSON(pair), pair])
         .then((args) => {
           const json = args[0];
           this.noratio.push(json.no_ratio);
