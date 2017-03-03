@@ -45,9 +45,8 @@ class FilterBar implements IAppView {
          <button type="button" class="btn btn-default active" id="btn-content" data-change-type="${ChangeTypes.CONTENT.type}">Content</button>
          <button type="button" class="btn btn-default active" id="btn-added" data-change-type="${ChangeTypes.ADDED.type}">Added</button>
          <button type="button" class="btn btn-default active" id="btn-removed" data-change-type="${ChangeTypes.REMOVED.type}">Removed</button>                 
-      </div>          
-  
-     </div>`);
+      </div>  
+    </div>`);
 
   }
 
