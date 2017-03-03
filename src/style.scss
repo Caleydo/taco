@@ -77,7 +77,7 @@ b,
   align-items: stretch;
   align-content: stretch;
   justify-content: space-between;
-  margin-top:150px;
+  /*margin-top:150px;*/
 
 
   > .leftHeatmapTitle {
@@ -347,7 +347,14 @@ div.tooltip {
 }
 
 .invisibleClass {
-  display: none !important;
+  transition: opacity 1s linear;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.noColorClass {
+  background: white !important;
 }
 
 .filter_bar {
@@ -402,5 +409,4 @@ This aligns the text inside the placeholders.
   font-size: 14pt;
   text-align: center;
 }
-
 

@@ -34,7 +34,9 @@ class BarChart implements IAppView {
 
   private tooltipDivBar;
 
-
+  private barScaling = d3.scale.log()
+    .domain([0.1, 1000000])
+    .range([0, 50]);
 
   /**
    * Method retrieves data by given parameters TODO: Documentation
@@ -79,7 +81,11 @@ class BarChart implements IAppView {
    * Build the basic DOM elements and binds the change function
    */
   private build() {
-    // Nothing
+    this.tooltipDivBar = d3.select('.selector').append('div')
+      .classed('tooltip', true)
+      .attr('id', 'tooltip2')
+      .style('opacity', 0);
+
   }
 
 
@@ -164,12 +170,17 @@ class BarChart implements IAppView {
    * @param changeType
    */
   private toggleChangeType(changeType) {
-    this.$node.selectAll(`div.bars > .${changeType.type}`).classed('hidden', !changeType.isActive);
+    // this.$node.selectAll(`div.bars > .${changeType.type}`).classed('hidden', !changeType.isActive);
 
-    /**
-     * TODO: Reposition bars here
-     * If-clause with change type and then postion them according to the new calculated values.
-     */
+    //Local Copy of current Items which gets changed
+    let itemsAdaption = this.items;
+
+    if(changeType.type === 'nochange' && changeType.isActive) {
+      console.log(itemsAdaption);
+    }
+
+    //Redraw with new values
+    this.updateItems(itemsAdaption);
   }
 
 
@@ -228,11 +239,6 @@ class BarChart implements IAppView {
    * @param totalWidth
    */
   private drawBars(data, pair, ids, circleScale, totalWidth, counts) {
-    // NOTE: WHY THIS HAS TO BE HERE??? NOT IN build() or constructor????
-    this.tooltipDivBar = d3.select('.bar_chart').append('div')
-      .classed('tooltip', true)
-      .style('opacity', 0);
-
     const that = this;
     const posXScale = getPosXScale(this.items, totalWidth);
 
@@ -241,9 +247,6 @@ class BarChart implements IAppView {
      - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));*/
 
     const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')) + 7;
-
-
-    // console.log('counts', data.counts);
     //console.log('Ratio', data.ratios);
 
 
@@ -253,9 +256,6 @@ class BarChart implements IAppView {
     //console.log('Counts restructured', barCounts);
     //console.log('Ratio restructured', barData);
 
-    const barScaling = d3.scale.log()
-      .domain([0.0000001, 1000000])
-      .range([0, 30]);
 
 
     let $barsGroup = this.$node;
@@ -268,7 +268,7 @@ class BarChart implements IAppView {
         .style('height', 100 + 'px')
         // .style('height', this.heightBarChart + 'px')
         .style('position', 'absolute')
-        .style('margin-bottom', 5+ 'px')
+        .style('margin-bottom', 5 + 'px')
         .style('transform', 'scaleY(-1)');
     } else {
 
@@ -281,45 +281,20 @@ class BarChart implements IAppView {
         .style('height', 100 + 'px')
         //.style('height', this.heightBarChart + 'px')
         .style('position', 'absolute')
-        .style('margin-bottom', 5+ 'px')
+        .style('margin-bottom', 5 + 'px')
         .style('transform', 'scaleY(-1)');
     }
 
 
     //individual bars in the bar group div
-    const $bars = $barsGroup.selectAll('div.bar').data(barCounts);
+    let $bars = $barsGroup.selectAll('div.bar').data(barCounts);
     $bars.enter().append('div');
-
-    let added = 0;
-    let content = 0;
-    let nochange = 0;
-    let removed = 0;
-    let offset = 0;
 
     $bars
       .attr('class', (d) => 'bar ' + d.type)
-      .style('height', (d) => barScaling(d.value) + 'px')
+      .style('height', (d) => this.barScaling(d.value) + 'px')
       .style('width', this.widthBar + 'px')
       .style('position', 'absolute')
-      .style('transform', function (d) {
-        if(d.type === "nochange") {
-          nochange = barScaling(d.value);
-          return 'translate(' + 0 + 'px)';
-        }
-        if(d.type === "added") {
-          added = barScaling(d.value);
-          return 'translate(' + 0 + 'px,' + (nochange - offset) + 'px)';
-        }
-        if(d.type === "removed") {
-          removed = barScaling(d.value);
-          return 'translate(' + 0 + 'px,' + (nochange + added - offset) + 'px)';
-        }
-        if(d.type === "content") {
-          content = barScaling(d.value);
-          return 'translate(' + 0 + 'px,' + (nochange + added + removed - offset) + 'px)';
-        }
-      })
-      //.style('margin-bottom', (d) => barScaling(d.value) - this.heightBarChart + 'px')
       .on('mouseover', function (d, i) {
         const position = d3.mouse(document.body);
 
@@ -328,8 +303,7 @@ class BarChart implements IAppView {
           .duration(200)
           .style('opacity', .9);
 
-        that.tooltipDivBar.html((d.value))
-        //that.tooltipDivBar.html((d.value * 100).toFixed(2) + '%')
+        that.tooltipDivBar.html(d.value.toFixed(2))
           .style('left', function (d) {
             if (($(window).innerWidth() - 100) < position[0]) {
               return (position[0] - 30) + 'px';
@@ -344,6 +318,9 @@ class BarChart implements IAppView {
           .duration(500)
           .style('opacity', 0);
       });
+
+    //Here the bars are transformed and positioned for the first time
+    $bars = this.transformElement($bars, barCounts);
 
     $bars.exit().remove();
   }
@@ -373,6 +350,99 @@ class BarChart implements IAppView {
           value: data[d.countName]
         };
       });
+  }
+
+  private transformElement(element, dataTypes) {
+    console.log(dataTypes);
+
+    let nochange = 0;
+    let content = 0;
+    let added = 0;
+    let removed = 0;
+
+    if(dataTypes[0].type === 'nochange') {      //no change
+      nochange = this.barScaling(dataTypes[0].value);
+      if(isNaN(nochange)) {
+        nochange = 0;
+      }
+    }
+    if(dataTypes[3].type === 'content') {   //content change
+      content = this.barScaling(dataTypes[3].value);
+      if(isNaN(content)) {
+        content = 0;
+      }
+
+    }
+    if(dataTypes[1].type == 'added') {    //added
+      added = this.barScaling(dataTypes[1].value);
+      if(isNaN(added)) {
+        added = 0;
+      }
+    }
+    if(dataTypes[2].type == 'removed') {    //removed
+      removed = this.barScaling(dataTypes[2].value);
+      if(isNaN(removed)) {
+        removed = 0;
+      }
+    }
+
+    //Transform the element here depending on data
+    element.style('transform', function(d) {
+      if(d.type === 'nochange') {
+        return 'translate(' + 0 + 'px)';
+      }
+
+      if(d.type === 'content') {
+        return 'translate(' + 0 + 'px,' + nochange + 'px)';
+      }
+
+      if(d.type === 'added') {
+        return 'translate(' + 0 + 'px,' + (nochange + content) + 'px)';
+      }
+
+      if(d.type === 'removed') {
+        return 'translate(' + 0 + 'px,' + (nochange + content + added) + 'px)';
+      }
+    });
+    // element.style('transform', function (d) {
+    //   if(d.type === "nochange" ) {
+    //     nochange = barScaling(d.value);
+    //
+    //     if(isNaN(nochange)) {
+    //       return 'translate(' + 0 + 'px)';
+    //     } else {
+    //       return 'translate(' + 0 + 'px)';
+    //     }
+    //   }
+    //   if(d.type === "added") {
+    //     added = barScaling(d.value);
+    //     if(isNaN(added)) {
+    //       return 'translate(' + 0 + 'px)';
+    //     } else {
+    //       return 'translate(' + 0 + 'px,' + (nochange) + 'px)';
+    //     }
+    //   }
+    //   if(d.type === "removed") {
+    //     removed = barScaling(d.value);
+    //
+    //     if(isNaN(removed)) {
+    //       return 'translate(' + 0 + 'px,' + (nochange) + 'px)';
+    //     } else {
+    //       return 'translate(' + 0 + 'px,' + (nochange + added) + 'px)';
+    //     }
+    //   }
+    //   if(d.type === "content") {
+    //     content = barScaling(d.value);
+    //
+    //     if(isNaN(content)) {
+    //       return 'translate(' + 0 + 'px,' + (nochange + added) + 'px)';
+    //     } else {
+    //       return 'translate(' + 0 + 'px,' + (nochange + added + removed) + 'px)';
+    //     }
+    //   }
+    // });
+
+    return element;
   }
 }
 

@@ -135,29 +135,29 @@ class Histogram2D implements IAppView {
   private toggleChangeType(changeType) {
     // console.log('changeType', changeType);
     if (changeType.type === 'removed') {
-      this.$ratio.selectAll('.struct-del-color').classed('hidden', !changeType.isActive);
-      this.$histogram.selectAll('.struct-del-color').classed('hidden', !changeType.isActive);
-      this.$histogramCols.selectAll('.struct-del-color').classed('hidden', !changeType.isActive);
+      this.$ratio.selectAll('.struct-del-color').classed('noColorClass', !changeType.isActive);
+      this.$histogram.selectAll('.struct-del-color').classed('noColorClass', !changeType.isActive);
+      this.$histogramCols.selectAll('.struct-del-color').classed('noColorClass', !changeType.isActive);
     }
 
     if (changeType.type === 'added') {
-      this.$ratio.selectAll('.struct-add-color').classed('hidden', !changeType.isActive);
-      this.$histogram.selectAll('.struct-add-color').classed('hidden', !changeType.isActive);
-      this.$histogramCols.selectAll('.struct-add-color').classed('hidden', !changeType.isActive);
+      this.$ratio.selectAll('.struct-add-color').classed('noColorClass', !changeType.isActive);
+      this.$histogram.selectAll('.struct-add-color').classed('noColorClass', !changeType.isActive);
+      this.$histogramCols.selectAll('.struct-add-color').classed('noColorClass', !changeType.isActive);
     }
 
     if (changeType.type === 'nochange') {
-      this.$ratio.selectAll('.no-change-color').classed('hidden', !changeType.isActive);
-      this.$histogram.selectAll('.no-change-color').classed('hidden', !changeType.isActive);
-      this.$histogramCols.selectAll('.no-change-color').classed('hidden', !changeType.isActive);
+      this.$ratio.selectAll('.no-change-color').classed('noColorClass', !changeType.isActive);
+      this.$histogram.selectAll('.no-change-color').classed('noColorClass', !changeType.isActive);
+      this.$histogramCols.selectAll('.no-change-color').classed('noColorClass', !changeType.isActive);
     }
     if (changeType.type === 'content') {
-      this.$ratio.selectAll('.content-change-color').classed('hidden', !changeType.isActive);
-      this.$histogram.selectAll('.content-change-color').classed('hidden', !changeType.isActive);
-      this.$histogramCols.selectAll('.content-change-color').classed('hidden', !changeType.isActive);
+      this.$ratio.selectAll('.content-change-color').classed('noColorClass', !changeType.isActive);
+      this.$histogram.selectAll('.content-change-color').classed('noColorClass', !changeType.isActive);
+      this.$histogramCols.selectAll('.content-change-color').classed('noColorClass', !changeType.isActive);
     }
 
-    this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('hidden', !changeType.isActive);
+    this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
   }
 
   private updateItems(posX, pair) {
