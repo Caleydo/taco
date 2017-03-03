@@ -173,7 +173,7 @@ class BarChart implements IAppView {
     // this.$node.selectAll(`div.bars > .${changeType.type}`).classed('hidden', !changeType.isActive);
 
     //Local Copy of current Items which gets changed
-    let itemsAdaption = this.items;
+    const itemsAdaption = this.items;
 
     if(changeType.type === 'nochange' && changeType.isActive) {
       console.log(itemsAdaption);
@@ -380,13 +380,13 @@ class BarChart implements IAppView {
       }
 
     }
-    if(dataTypes[1].type == 'added') {    //added
+    if(dataTypes[1].type === 'added') {    //added
       added = this.barScaling(dataTypes[1].value);
       if(isNaN(added)) {
         added = 0;
       }
     }
-    if(dataTypes[2].type == 'removed') {    //removed
+    if(dataTypes[2].type === 'removed') {    //removed
       removed = this.barScaling(dataTypes[2].value);
       if(isNaN(removed)) {
         removed = 0;
