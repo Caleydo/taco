@@ -410,3 +410,19 @@ This aligns the text inside the placeholders.
   text-align: center;
 }
 
+
+.bar_chart {
+
+  .bars {
+    position: absolute;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column-reverse;
+    align-content: flex-end;
+  }
+
+  .bar {
+    transition: height ease 0.2s;
+  }
+
+}

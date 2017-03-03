@@ -36,7 +36,7 @@ class BarChart implements IAppView {
 
   private barScaling = d3.scale.log()
     .domain([0.1, 1000000])
-    .range([0, 50]);
+    .range([0, 100 / ChangeTypes.TYPE_ARRAY.length]);
 
   /**
    * Method retrieves data by given parameters TODO: Documentation
@@ -109,10 +109,18 @@ class BarChart implements IAppView {
     // Call the resize function whenever a resize event occurs
     //d3.select(window).on('resize', () =>  this.windowResize());
 
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => {
+      this.$node.selectAll('*').remove(); // remove, because we have completely new items
+      this.updateItems(items);
+    });
 
-    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
-    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType:IChangeType) => {
+      this.updateItems(this.items); // re-use existing items
+    });
+
+    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType:IChangeType) => {
+      this.updateItems(this.items); // re-use existing items
+    });
   }
 
   /**
@@ -152,7 +160,6 @@ class BarChart implements IAppView {
 
     if (elements.empty() === false) {
       barPromises = this.requestData(this.totalWidth, this.leftValue);
-      elements.remove();
 
     } else {
       barPromises = this.requestData(this.totalWidth, this.leftValue);
@@ -163,24 +170,6 @@ class BarChart implements IAppView {
     Promise.all(barPromises).then((bars) => {
       console.log('finished loading of all bars');
     });
-  }
-
-  /**
-   * TODO: Documentation
-   * @param changeType
-   */
-  private toggleChangeType(changeType) {
-    // this.$node.selectAll(`div.bars > .${changeType.type}`).classed('hidden', !changeType.isActive);
-
-    //Local Copy of current Items which gets changed
-    let itemsAdaption = this.items;
-
-    if(changeType.type === 'nochange' && changeType.isActive) {
-      console.log(itemsAdaption);
-    }
-
-    //Redraw with new values
-    this.updateItems(itemsAdaption);
   }
 
 
@@ -254,54 +243,32 @@ class BarChart implements IAppView {
      - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));*/
 
     const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')) + 7;
-    //console.log('Ratio', data.ratios);
 
+    //const barData = this.getBarData(data.ratios, 'ratioName');
+    const barData = this.getBarData(data.counts, 'countName');
 
-    const barData = this.getBarData(data.ratios);
-    const barCounts = this.getBarDataCounts(data.counts);
+    const currId = pair.map((d) => d.item.desc.id).join('_');
+    let $barsGroup = this.$node.select(`[data-id="${currId}"]`);
 
-    //console.log('Counts restructured', barCounts);
-    //console.log('Ratio restructured', barData);
-
-
-
-    let $barsGroup = this.$node;
-
-    if (pair[0].time) {
+    // create bar group for id if not exists
+    if($barsGroup.node() === null) {
       $barsGroup = this.$node.append('div')
         .classed('bars', true)
-        .style('left', posX + 'px')
+        .attr('data-id', currId)
         .style('width', this.widthBarChart + 'px')
+        // .style('height', this.heightBarChart + 'px');
         .style('height', 100 + 'px')
-        // .style('height', this.heightBarChart + 'px')
-        .style('position', 'absolute')
-        .style('margin-bottom', 5 + 'px')
-        .style('transform', 'scaleY(-1)');
-    } else {
-
-      $barsGroup = this.$node.append('div');
-
-      $barsGroup
-        .classed('bars', true)
-        .style('left', circleScale + 'px')
-        .style('width', this.widthBarChart + 'px')
-        .style('height', 100 + 'px')
-        //.style('height', this.heightBarChart + 'px')
-        .style('position', 'absolute')
-        .style('margin-bottom', 5 + 'px')
-        .style('transform', 'scaleY(-1)');
+        .style('left', ((pair[0].time) ? posX : circleScale) + 'px');
     }
 
-
     //individual bars in the bar group div
-    let $bars = $barsGroup.selectAll('div.bar').data(barCounts);
+    const $bars = $barsGroup.selectAll('div.bar').data(barData);
     $bars.enter().append('div');
 
     $bars
       .attr('class', (d) => 'bar ' + d.type)
-      .style('height', (d) => this.barScaling(d.value) + 'px')
+      .style('height', (d) => (d.value === 0) ? d.value : (this.barScaling(d.value) + 'px'))
       .style('width', this.widthBar + 'px')
-      .style('position', 'absolute')
       .on('mouseover', function (d, i) {
         const position = d3.mouse(document.body);
 
@@ -326,130 +293,24 @@ class BarChart implements IAppView {
           .style('opacity', 0);
       });
 
-    //Here the bars are transformed and positioned for the first time
-    $bars = this.transformElement($bars, barCounts);
-
     $bars.exit().remove();
   }
 
   /**
-   * TODO: Documentation
+   *
    * @param data
+   * @param propertyName
    * @returns {{type: string, value: any}[]}
    */
-  private getBarData(data) {
+  private getBarData(data, propertyName) {
     return ChangeTypes.TYPE_ARRAY
     //.filter((d) => d.isActive === true)
       .map((d) => {
         return {
           type: d.type,
-          value: data[d.ratioName]
+          value: data[d[propertyName]]
         };
       });
-  }
-
-  private getBarDataCounts(data) {
-    return ChangeTypes.TYPE_ARRAY
-    //.filter((d) => d.isActive === true)
-      .map((d) => {
-        return {
-          type: d.type,
-          value: data[d.countName]
-        };
-      });
-  }
-
-  private transformElement(element, dataTypes) {
-    console.log(dataTypes);
-
-    let nochange = 0;
-    let content = 0;
-    let added = 0;
-    let removed = 0;
-
-    if(dataTypes[0].type === 'nochange') {      //no change
-      nochange = this.barScaling(dataTypes[0].value);
-      if(isNaN(nochange)) {
-        nochange = 0;
-      }
-    }
-    if(dataTypes[3].type === 'content') {   //content change
-      content = this.barScaling(dataTypes[3].value);
-      if(isNaN(content)) {
-        content = 0;
-      }
-
-    }
-    if(dataTypes[1].type == 'added') {    //added
-      added = this.barScaling(dataTypes[1].value);
-      if(isNaN(added)) {
-        added = 0;
-      }
-    }
-    if(dataTypes[2].type == 'removed') {    //removed
-      removed = this.barScaling(dataTypes[2].value);
-      if(isNaN(removed)) {
-        removed = 0;
-      }
-    }
-
-    //Transform the element here depending on data
-    element.style('transform', function(d) {
-      if(d.type === 'nochange') {
-        return 'translate(' + 0 + 'px)';
-      }
-
-      if(d.type === 'content') {
-        return 'translate(' + 0 + 'px,' + nochange + 'px)';
-      }
-
-      if(d.type === 'added') {
-        return 'translate(' + 0 + 'px,' + (nochange + content) + 'px)';
-      }
-
-      if(d.type === 'removed') {
-        return 'translate(' + 0 + 'px,' + (nochange + content + added) + 'px)';
-      }
-    });
-    // element.style('transform', function (d) {
-    //   if(d.type === "nochange" ) {
-    //     nochange = barScaling(d.value);
-    //
-    //     if(isNaN(nochange)) {
-    //       return 'translate(' + 0 + 'px)';
-    //     } else {
-    //       return 'translate(' + 0 + 'px)';
-    //     }
-    //   }
-    //   if(d.type === "added") {
-    //     added = barScaling(d.value);
-    //     if(isNaN(added)) {
-    //       return 'translate(' + 0 + 'px)';
-    //     } else {
-    //       return 'translate(' + 0 + 'px,' + (nochange) + 'px)';
-    //     }
-    //   }
-    //   if(d.type === "removed") {
-    //     removed = barScaling(d.value);
-    //
-    //     if(isNaN(removed)) {
-    //       return 'translate(' + 0 + 'px,' + (nochange) + 'px)';
-    //     } else {
-    //       return 'translate(' + 0 + 'px,' + (nochange + added) + 'px)';
-    //     }
-    //   }
-    //   if(d.type === "content") {
-    //     content = barScaling(d.value);
-    //
-    //     if(isNaN(content)) {
-    //       return 'translate(' + 0 + 'px,' + (nochange + added) + 'px)';
-    //     } else {
-    //       return 'translate(' + 0 + 'px,' + (nochange + added + removed) + 'px)';
-    //     }
-    //   }
-    // });
-
-    return element;
   }
 }
 
