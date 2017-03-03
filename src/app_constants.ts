@@ -66,6 +66,13 @@ export class ChangeTypes {
     isActive: true
   };
 
+  static CONTENT: IChangeType = {
+    type: 'content',
+    ratioName: 'c_ratio',
+    countName: 'c_counts',
+    isActive: true
+  };
+
   static ADDED: IChangeType = {
     type: 'added',
     ratioName: 'a_ratio',
@@ -80,13 +87,6 @@ export class ChangeTypes {
     isActive: true
   };
 
-  static CONTENT: IChangeType = {
-    type: 'content',
-    ratioName: 'c_ratio',
-    countName: 'c_counts',
-    isActive: true
-  };
-
-  static TYPE_ARRAY: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.ADDED, ChangeTypes.REMOVED, ChangeTypes.CONTENT];
+  static TYPE_ARRAY: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED];
 
 }
