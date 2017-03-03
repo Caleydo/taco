@@ -69,7 +69,7 @@ class DetailView implements IAppView {
     });
   }
 
-  private openEvents (clickedElements){
+  private openEvents (clickedElements) {
     this.$node.select('#detailViewBtn')
       .on('click', function (e) {
         if(clickedElements !== void 0) {
