@@ -17,11 +17,11 @@ export function getPosXScale(items, totalWidth, padding = 20) {
 }
 
 
-export function scaleCircles(totalwidth) {
-    //Padding for the circles
-    const padding = 20;
+export function scaleCircles(totalwidth, numberofCircles) {
+    //Bigger value means more compressed points on the time line
+    const padding = 80;
     //showing only 7 circles on the timeline when no time-object is availiable for the specific dataset
     // in the next step -> implement the feature of a scroll bar showing more data points on the timeline
-    const numberofCircles = 7;
+    // const numberofCircles = 7;
     return (totalwidth - padding) / numberofCircles;
   }

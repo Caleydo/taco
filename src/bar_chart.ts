@@ -30,9 +30,13 @@ class BarChart implements IAppView {
 
   // Width and Height for the bar chart between time points
   private widthBarChart: number = 80;
-  private heightBarChart: number = 50;
+  private heightBarChart: number = 100;
 
   private tooltipDivBar;
+
+  private barScaling = d3.scale.log()
+    .domain([0.1, 1000000])
+    .range([0, this.heightBarChart / ChangeTypes.TYPE_ARRAY.length]);
 
   /**
    * Method retrieves data by given parameters TODO: Documentation
@@ -77,7 +81,11 @@ class BarChart implements IAppView {
    * Build the basic DOM elements and binds the change function
    */
   private build() {
-    // Nothing
+    this.tooltipDivBar = d3.select('.selector').append('div')
+      .classed('tooltip', true)
+      .attr('id', 'tooltip2')
+      .style('opacity', 0);
+
   }
 
 
@@ -101,10 +109,18 @@ class BarChart implements IAppView {
     // Call the resize function whenever a resize event occurs
     //d3.select(window).on('resize', () =>  this.windowResize());
 
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => {
+      this.$node.selectAll('*').remove(); // remove, because we have completely new items
+      this.updateItems(items);
+    });
 
-    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
-    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType:IChangeType) => {
+      this.updateItems(this.items); // re-use existing items
+    });
+
+    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType:IChangeType) => {
+      this.updateItems(this.items); // re-use existing items
+    });
   }
 
   /**
@@ -115,12 +131,12 @@ class BarChart implements IAppView {
   private generateIndexArray(items, width) {
     this.items = items;
 
-    this.index = d3.range(0, items.length);
-    const circleScaling = scaleCircles(width);
+    this.index = d3.range(1, items.length);
+    const circleScaling = scaleCircles(width, this.items.length);
 
     for (const i in this.index) {
       if (this.index.hasOwnProperty(i)) {
-        this.leftValue.push((this.index[i] * circleScaling) + 30);
+        this.leftValue.push((this.index[i] * circleScaling));
       }
     }
   }
@@ -132,7 +148,6 @@ class BarChart implements IAppView {
   private updateItems(items) {
     this.items = items;
     const width = $(window).innerWidth();
-
     // Generate the array with positioning numbers
     this.generateIndexArray(this.items, width);
 
@@ -145,7 +160,6 @@ class BarChart implements IAppView {
 
     if (elements.empty() === false) {
       barPromises = this.requestData(this.totalWidth, this.leftValue);
-      elements.remove();
 
     } else {
       barPromises = this.requestData(this.totalWidth, this.leftValue);
@@ -156,14 +170,6 @@ class BarChart implements IAppView {
     Promise.all(barPromises).then((bars) => {
       console.log('finished loading of all bars');
     });
-  }
-
-  /**
-   * TODO: Documentation
-   * @param changeType
-   */
-  private toggleChangeType(changeType) {
-    this.$node.selectAll(`div.bars > .${changeType.type}`).classed('hidden', !changeType.isActive);
   }
 
 
@@ -198,11 +204,23 @@ class BarChart implements IAppView {
         const ids = pair.map((d: any) => d.item.desc.id);
         return Promise.all([ajax.getAPIJSON(BarChart.getURL(ids)), pair, ids])
           .then((args) => {
+
+            //console.log('data', args[0].counts);
+            const counts = args[0].counts;
             const json = args[0];
             const pair = args[1];
             const ids = args[2];
 
-            this.drawBars(json, pair, ids, leftValue.shift(), totalWidth);
+            ChangeTypes.TYPE_ARRAY
+              .filter((d) => d.isActive === false)
+              .forEach((changeType:IChangeType) => {
+                json.ratios[changeType.ratioName] = 0;
+                json.counts[changeType.countName] = 0;
+              });
+
+            //console.log('json, pair, ids', json, pair, ids);
+
+            this.drawBars(json, pair, ids, leftValue.shift(), totalWidth, counts);
           });
       });
   }
@@ -216,60 +234,41 @@ class BarChart implements IAppView {
    * @param circleScale
    * @param totalWidth
    */
-  private drawBars(data, pair, ids, circleScale, totalWidth) {
-    // NOTE: WHY THIS HAS TO BE HERE??? NOT IN build() or constructor????
-    this.tooltipDivBar = d3.select('.bar_chart').append('div')
-      .classed('tooltip', true)
-      .style('opacity', 0);
-
+  private drawBars(data, pair, ids, circleScale, totalWidth, counts) {
     const that = this;
     const posXScale = getPosXScale(this.items, totalWidth);
 
-    const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days'))
-      + 0.5 * (posXScale(moment(pair[1].time).diff(moment(this.items[0].time), 'days'))
-      - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));
+    /*const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days'))
+     + 0.06 * (posXScale(moment(pair[1].time).diff(moment(this.items[0].time), 'days'))
+     - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));*/
 
-    const barData = this.getBarData(data.ratios);
+    const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')) + 7;
 
-    const barScaling = d3.scale.log()
-      .domain([0.0000001, 1])
-      .range([0, this.heightBarChart]);
+    //const barData = this.getBarData(data.ratios, 'ratioName');
+    const barData = this.getBarData(data.counts, 'countName');
 
-    let $barsGroup = this.$node;
+    const currId = pair.map((d) => d.item.desc.id).join('_');
+    let $barsGroup = this.$node.select(`[data-id="${currId}"]`);
 
-    if (pair[0].time) {
+    // create bar group for id if not exists
+    if($barsGroup.node() === null) {
       $barsGroup = this.$node.append('div')
         .classed('bars', true)
-        .style('left', posX + 'px')
+        .attr('data-id', currId)
         .style('width', this.widthBarChart + 'px')
-        .style('height', this.heightBarChart + 'px')
-        .style('position', 'absolute')
-        .style('margin-bottom', 20 + 'px')
-        .style('transform', 'scaleY(-1)');
-    } else {
-
-      $barsGroup = this.$node.append('div');
-
-      $barsGroup
-        .classed('bars', true)
-        .style('left', circleScale + 'px')
-        .style('width', this.widthBarChart + 'px')
-        .style('height', this.heightBarChart + 'px')
-        .style('position', 'absolute')
-        .style('margin-bottom', 20 + 'px')
-        .style('transform', 'scaleY(-1)');
+        // .style('height', this.heightBarChart + 'px');
+        .style('height', 100 + 'px')
+        .style('left', ((pair[0].time) ? posX : circleScale) + 'px');
     }
 
+    //individual bars in the bar group div
     const $bars = $barsGroup.selectAll('div.bar').data(barData);
     $bars.enter().append('div');
 
     $bars
       .attr('class', (d) => 'bar ' + d.type)
-      .style('float', 'left')
-      .style('height', (d) => barScaling(d.value) + 'px')
+      .style('height', (d) => (d.value === 0) ? d.value : (this.barScaling(d.value) + 'px'))
       .style('width', this.widthBar + 'px')
-      .style('position', 'relative')
-      .style('margin-bottom', (d) => barScaling(d.value) - this.heightBarChart + 'px')
       .on('mouseover', function (d, i) {
         const position = d3.mouse(document.body);
 
@@ -277,7 +276,8 @@ class BarChart implements IAppView {
           .transition()
           .duration(200)
           .style('opacity', .9);
-        that.tooltipDivBar.html((d.value * 100).toFixed(2) + '%')
+
+        that.tooltipDivBar.html(d.value.toFixed(2))
           .style('left', function (d) {
             if (($(window).innerWidth() - 100) < position[0]) {
               return (position[0] - 30) + 'px';
@@ -294,34 +294,21 @@ class BarChart implements IAppView {
       });
 
     $bars.exit().remove();
-
-    $barsGroup.on('click', function (e) {
-      const currentPosX = parseFloat(d3.select(this).style('left'));
-
-      if (that.openHistogram2D === this.parentNode) {
-        events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
-        that.openHistogram2D = null;
-
-      } else {
-        events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, currentPosX, ids);
-        //events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, ids);
-        that.openHistogram2D = this.parentNode;
-      }
-    });
   }
 
   /**
-   * TODO: Documentation
+   *
    * @param data
+   * @param propertyName
    * @returns {{type: string, value: any}[]}
    */
-  private getBarData(data) {
+  private getBarData(data, propertyName) {
     return ChangeTypes.TYPE_ARRAY
     //.filter((d) => d.isActive === true)
       .map((d) => {
         return {
           type: d.type,
-          value: data[d.ratioName]
+          value: data[d[propertyName]]
         };
       });
   }

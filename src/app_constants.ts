@@ -30,7 +30,6 @@ export class AppConstants {
   static EVENT_OPEN_2D_HISTOGRAM = 'open2DHistogram';
   static EVENT_CLOSE_2D_HISTOGRAM = 'close2DHistogram';
 
-  static EVENT_TOGGLE_TIMELINE = 'toggleTimeline';
   static EVENT_TOGGLE_GROUP = 'toggleGroup';
 
   static EVENT_SHOW_CHANGE = 'showChange';
@@ -53,6 +52,8 @@ export class AppConstants {
 export interface IChangeType {
   type: string;
   ratioName: string;
+  countName: string;
+
   isActive: boolean;
 }
 
@@ -61,27 +62,31 @@ export class ChangeTypes {
   static NO_CHANGE: IChangeType = {
     type: 'nochange',
     ratioName: 'no_ratio',
-    isActive: true
-  };
-
-  static ADDED: IChangeType = {
-    type: 'added',
-    ratioName: 'a_ratio',
-    isActive: true
-  };
-
-  static REMOVED: IChangeType = {
-    type: 'removed',
-    ratioName: 'd_ratio',
+    countName: 'no_counts',
     isActive: true
   };
 
   static CONTENT: IChangeType = {
     type: 'content',
     ratioName: 'c_ratio',
+    countName: 'c_counts',
     isActive: true
   };
 
-  static TYPE_ARRAY: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.ADDED, ChangeTypes.REMOVED, ChangeTypes.CONTENT];
+  static ADDED: IChangeType = {
+    type: 'added',
+    ratioName: 'a_ratio',
+    countName: 'a_counts',
+    isActive: true
+  };
+
+  static REMOVED: IChangeType = {
+    type: 'removed',
+    ratioName: 'd_ratio',
+    countName: 'd_counts',
+    isActive: true
+  };
+
+  static TYPE_ARRAY: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED];
 
 }

@@ -60,17 +60,22 @@ export class App implements IAppView {
       options: {}
     },
     {
-      view: 'Histogram2D',
-      parent: 'selector',
-      options: {}
-    },
-    {
       view: 'BarChart',
       parent: 'selector',
       options: {}
     },
     {
       view: 'Timeline',
+      parent: 'selector',
+      options: {}
+    },
+    {
+      view: 'Histogram2D',
+      parent: 'selector',
+      options: {}
+    },
+    {
+      view: 'DetailView',
       parent: 'selector',
       options: {}
     },
@@ -148,6 +153,8 @@ export class App implements IAppView {
       .then((viewInstances) => {
         // loading and initialization has finished -> hide loading indicator
         this.setBusy(false);
+        d3.select('.placeholder').classed('invisibleClass', false);
+        d3.select('.detailview').classed('invisibleClass', false);
         return this;
       });
 

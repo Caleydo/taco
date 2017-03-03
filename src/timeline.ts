@@ -18,6 +18,7 @@ class Timeline implements IAppView {
   private $node;
   private $svgTimeline;
   private items;
+  private $placeholder;
 
   // Width of the timeline div element
   private totalWidth: number;
@@ -25,6 +26,7 @@ class Timeline implements IAppView {
   private timelineHeight = 200;
   private tooltipDiv;
   private toggledElements: boolean;
+  private openHistogram2D;
 
   // Helper variable for the clicking event
   private isClicked: number = 0;
@@ -73,7 +75,6 @@ class Timeline implements IAppView {
     // Call the resize function whenever a resize event occurs
     d3.select(window).on('resize', () => this.resize());
   }
-
   /**
    * Build the basic DOM elements like the svg graph and appends the tooltip div.
    */
@@ -86,6 +87,16 @@ class Timeline implements IAppView {
     this.tooltipDiv = d3.select('.timeline').append('div')
       .classed('tooltip', true)
       .style('opacity', 0);
+
+    this.$placeholder = this.$node
+      .append('div')
+      .style('width', 162 + 'px')
+      .style('height', 162 + 'px')
+      .classed('placeholder', true)
+      .classed('invisibleClass', true)
+      .append('p')
+      .text('Select two time points on the timeline to get more information.' );
+
   }
 
   /**
@@ -93,7 +104,7 @@ class Timeline implements IAppView {
    */
   private resize() {
     this.totalWidth = $(this.$node.node()).width();
-
+   // console.log('timelineWidth', this.totalWidth);
     // Update line
     this.$svgTimeline.attr('width', this.totalWidth);
     d3.select('line').attr('x2', this.totalWidth);
@@ -106,7 +117,7 @@ class Timeline implements IAppView {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         } else {
-          return i * scaleCircles(this.totalWidth);
+          return i * scaleCircles(this.totalWidth, this.items.length);
         }
       });
   }
@@ -178,6 +189,7 @@ class Timeline implements IAppView {
       .attr('y2', y + 360);
   }
 
+
   /**
    * This method draws the timeline and also adds the circles.
    * It also handles the click and mouseover events for showing further context.
@@ -211,7 +223,7 @@ class Timeline implements IAppView {
         if (d.time) {
           return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
         } else {
-          return i * scaleCircles(this.totalWidth);
+          return (i+1) * (scaleCircles(this.totalWidth, this.items.length));
         }
       })
       .attr('id', (d:any) => 'circle_' + d.item.desc.id)
@@ -225,32 +237,55 @@ class Timeline implements IAppView {
           //Enable the active class only on clicked circle
           d3.select(this).classed('active', true).attr('fill');
 
+          console.log('d-item', d.item);
+
           // IMPORTANT: Dispatch selected dataset to other views
-          events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
+          //events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
+
+          // Close Histogram only if its rendered
+          if (that.openHistogram2D === this.parentNode) {
+            events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
+            that.openHistogram2D = null;
+            d3.select('.difftitle').classed('hidden', true);
+            d3.select('.comparison').classed('hidden', true);
+            d3.select('.diffPlaceholder').classed('invisibleClass', false);
+            d3.select('.placeholder').classed('hidden', false);
+            d3.select('#detailViewBtn').attr('disabled', true);
+          }
 
           clickedElement.push(d.item);
           that.isClicked = 1;
-          that.circleX = parseInt(d3.select(this).attr('cx'), 10);
-          that.circleY = parseInt(d3.select(this).attr('cy'), 10);
-
-          //Remove previous connection line before drawing new one
-          d3.selectAll('#connectionLine').remove();
-          that.drawLine(that.circleX, that.circleY, 'sourceTable');
+          // that.circleX = parseInt(d3.select(this).attr('cx'), 10);
+          // that.circleY = parseInt(d3.select(this).attr('cy'), 10);
+          //
+          // //Remove previous connection line before drawing new one
+          // d3.selectAll('#connectionLine').remove();
+          // that.drawLine(that.circleX, that.circleY, 'sourceTable');
         } else {
 
           d3.select(this).classed('active', true).attr('fill');
           clickedElement.push(d.item);
 
           // IMPORTANT: Dispatch selected dataset to other views
-          events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
-          events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
+          //events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
+
+          //Only perform events and open Histogram if it is not open already
+          if(that.openHistogram2D !== this.parentNode) {
+            events.fire(AppConstants.EVENT_OPEN_2D_HISTOGRAM, clickedElement);
+            events.fire(AppConstants.EVENT_DATASET_SELECTED, clickedElement);
+
+            that.openHistogram2D = this.parentNode;
+            d3.select('#detailViewBtn').attr('disabled', null);
+          }
+
+         // events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
 
           that.isClicked = 0;
           clickedElement = [];
-          that.circleX = parseInt(d3.select(this).attr('cx'), 10);
-          that.circleY = parseInt(d3.select(this).attr('cy'), 10);
-
-          that.drawLine(that.circleX, that.circleY, 'destinationTable');
+          // that.circleX = parseInt(d3.select(this).attr('cx'), 10);
+          // that.circleY = parseInt(d3.select(this).attr('cy'), 10);
+          //
+          // that.drawLine(that.circleX, that.circleY, 'destinationTable');
         }
       })
       .on('mouseover', function(d, i) {

@@ -19,9 +19,13 @@ module.exports = function(registry) {
   registry.push('tacoView', 'Timeline', function() { return System.import('./src/timeline'); }, {
     'name': 'Timeline'
   });
-  
-   registry.push('tacoView', 'DiffTitle', function() { return System.import('./src/diff_title'); }, {
+
+  registry.push('tacoView', 'DiffTitle', function() { return System.import('./src/diff_title'); }, {
     'name': 'DiffTitle'
+  });
+
+  registry.push('tacoView', 'DetailView', function() { return System.import('./src/detail_view'); }, {
+    'name': 'DetailView'
   });
 
   registry.push('tacoView', 'HeatMap', function() { return System.import('./src/heat_map'); }, {

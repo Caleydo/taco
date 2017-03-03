@@ -16,13 +16,12 @@ import * as $ from 'jquery';
 class Histogram2D implements IAppView {
 
   private $node;
-
   private $ratio;
-
   private $histogram;
-
   private $histogramCols;
 
+  private selectedTables;
+  private posX;
   private borderWidth = 2;
 
   private height = 160 + this.borderWidth;
@@ -119,9 +118,14 @@ class Histogram2D implements IAppView {
       this.$node.classed('hidden', true);
     });
 
-    events.on(AppConstants.EVENT_OPEN_2D_HISTOGRAM, (evt, posX, pair) => {
+    events.on(AppConstants.EVENT_OPEN_2D_HISTOGRAM, (evt, items) => {
+      d3.selectAll('.placeholder').classed('hidden', true);
+
+      this.selectedTables = [items[0].desc.id, items[1].desc.id];
+      this.posX = ($(window).innerWidth() - 220)/2;
+
       this.$node.classed('hidden', false);
-      this.updateItems(posX, pair);
+      this.updateItems(this.posX, this.selectedTables);
     });
 
     events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
@@ -131,29 +135,29 @@ class Histogram2D implements IAppView {
   private toggleChangeType(changeType) {
     // console.log('changeType', changeType);
     if (changeType.type === 'removed') {
-      this.$ratio.selectAll('.struct-del-color').classed('hidden', !changeType.isActive);
-      this.$histogram.selectAll('.struct-del-color').classed('hidden', !changeType.isActive);
-      this.$histogramCols.selectAll('.struct-del-color').classed('hidden', !changeType.isActive);
+      this.$ratio.selectAll('.struct-del-color').classed('noColorClass', !changeType.isActive);
+      this.$histogram.selectAll('.struct-del-color').classed('noColorClass', !changeType.isActive);
+      this.$histogramCols.selectAll('.struct-del-color').classed('noColorClass', !changeType.isActive);
     }
 
     if (changeType.type === 'added') {
-      this.$ratio.selectAll('.struct-add-color').classed('hidden', !changeType.isActive);
-      this.$histogram.selectAll('.struct-add-color').classed('hidden', !changeType.isActive);
-      this.$histogramCols.selectAll('.struct-add-color').classed('hidden', !changeType.isActive);
+      this.$ratio.selectAll('.struct-add-color').classed('noColorClass', !changeType.isActive);
+      this.$histogram.selectAll('.struct-add-color').classed('noColorClass', !changeType.isActive);
+      this.$histogramCols.selectAll('.struct-add-color').classed('noColorClass', !changeType.isActive);
     }
 
     if (changeType.type === 'nochange') {
-      this.$ratio.selectAll('.no-change-color').classed('hidden', !changeType.isActive);
-      this.$histogram.selectAll('.no-change-color').classed('hidden', !changeType.isActive);
-      this.$histogramCols.selectAll('.no-change-color').classed('hidden', !changeType.isActive);
+      this.$ratio.selectAll('.no-change-color').classed('noColorClass', !changeType.isActive);
+      this.$histogram.selectAll('.no-change-color').classed('noColorClass', !changeType.isActive);
+      this.$histogramCols.selectAll('.no-change-color').classed('noColorClass', !changeType.isActive);
     }
     if (changeType.type === 'content') {
-      this.$ratio.selectAll('.content-change-color').classed('hidden', !changeType.isActive);
-      this.$histogram.selectAll('.content-change-color').classed('hidden', !changeType.isActive);
-      this.$histogramCols.selectAll('.content-change-color').classed('hidden', !changeType.isActive);
+      this.$ratio.selectAll('.content-change-color').classed('noColorClass', !changeType.isActive);
+      this.$histogram.selectAll('.content-change-color').classed('noColorClass', !changeType.isActive);
+      this.$histogramCols.selectAll('.content-change-color').classed('noColorClass', !changeType.isActive);
     }
 
-    this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('hidden', !changeType.isActive);
+    this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
   }
 
   private updateItems(posX, pair) {
