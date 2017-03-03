@@ -30,13 +30,13 @@ class BarChart implements IAppView {
 
   // Width and Height for the bar chart between time points
   private widthBarChart: number = 80;
-  private heightBarChart: number = 50;
+  private heightBarChart: number = 100;
 
   private tooltipDivBar;
 
   private barScaling = d3.scale.log()
     .domain([0.1, 1000000])
-    .range([0, 100 / ChangeTypes.TYPE_ARRAY.length]);
+    .range([0, this.heightBarChart / ChangeTypes.TYPE_ARRAY.length]);
 
   /**
    * Method retrieves data by given parameters TODO: Documentation
