@@ -5,7 +5,7 @@
 import {IAppView} from './app';
 import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
-import {AppConstants} from './app_constants';
+import {AppConstants, ChangeTypes} from './app_constants';
 import * as ajax from 'phovea_core/src/ajax';
 
 
@@ -29,12 +29,9 @@ class DiffHeatMap implements IAppView {
   private colorSplit = '#FB9A99'; //light red
 
 
-  private static getURL(pair) {
-    const binCols = 0; // -1 = aggregate the whole table
-    const binRows = 0; // -1 = aggregate the whole table
-    const direction = 2; // 2 = rows + columns
-    const changes = 'structure,content';
-    return `/taco/diff_log/${pair[0]}/${pair[1]}/${binCols}/${binRows}/${direction}/${changes}`;
+  private static getJSON(pair) {
+    const operations = ChangeTypes.forURL();
+    return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/diff_heat_map`);
   }
 
 
@@ -96,7 +93,7 @@ class DiffHeatMap implements IAppView {
         const idsSelectedTable = pair.map((d:any) => d.desc.id);
         //console.log('ids', idsSelectedTable);
         // return Promise.all([ajax.getAPIJSON(DiffHeatMap.getURL(ids)), pair, ids])
-        return ajax.getAPIJSON(DiffHeatMap.getURL(idsSelectedTable))
+        return DiffHeatMap.getJSON(idsSelectedTable)
           .then((args) => {
             // console.log('args', args);
             //this.drawDiffHeatmap(args);

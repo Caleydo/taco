@@ -89,4 +89,15 @@ export class ChangeTypes {
 
   static TYPE_ARRAY: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED];
 
+  /**
+   * Filters only active changes and joins them for the URL
+   * @returns {string}
+   */
+  static forURL():string {
+    return this.TYPE_ARRAY
+      .filter((d) => d.isActive)
+      .map((d) => (d === this.REMOVED || d === this.ADDED) ? 'structure' : d.type)
+      .join(',');
+  }
+
 }
