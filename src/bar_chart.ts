@@ -41,14 +41,11 @@ class BarChart implements IAppView {
   /**
    * Method retrieves data by given parameters TODO: Documentation
    * @param pair
-   * @returns {string}
+   * @returns {Promise<any>}
    */
-  private static getURL(pair) {
-    const binCols = 1; // 1 bin
-    const binRows = 1; // 1 bin
-    const direction = 2; // 2 = rows + columns
-    const changes = 'structure,content';
-    return `/taco/diff_log/${pair[0]}/${pair[1]}/${binCols}/${binRows}/${direction}/${changes}`;
+  private static getJSON(pair) {
+    const operations = ChangeTypes.forURL();
+    return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/bar_chart`);
   }
 
   /**
@@ -202,7 +199,7 @@ class BarChart implements IAppView {
     return d3.pairs(this.items)
       .map((pair) => {
         const ids = pair.map((d: any) => d.item.desc.id);
-        return Promise.all([ajax.getAPIJSON(BarChart.getURL(ids)), pair, ids])
+        return Promise.all([BarChart.getJSON(ids), pair, ids])
           .then((args) => {
             const json = args[0];
             const pair = args[1];

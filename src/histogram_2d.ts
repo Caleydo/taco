@@ -5,7 +5,7 @@
 import * as events from 'phovea_core/src/event';
 import {IAppView} from './app';
 import * as ajax from 'phovea_core/src/ajax';
-import {AppConstants, IChangeType} from './app_constants';
+import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 //import {AppConstants} from './app_constants';
@@ -34,20 +34,16 @@ class Histogram2D implements IAppView {
   private heightRowHistogram = 160;
 
 
-  private static getURL(pair) {
-    const binCols = -1; // -1 = aggregate the whole table
-    const binRows = -1; // -1 = aggregate the whole table
-    const direction = 2; // 2 = rows + columns
-    const changes = 'structure,content';
-    return `/taco/diff_log/${pair[0]}/${pair[1]}/${binCols}/${binRows}/${direction}/${changes}`;
+  private static getJSONRatio2D(pair) {
+    const operations = ChangeTypes.forURL();
+    return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/ratio_2d`);
   }
 
-  private static getURLHistogram(pair) {
-    const binCols = 20; // -1 = aggregate the whole table
-    const binRows = 10; // -1 = aggregate the whole table
-    const direction = 2; // 2 = rows + columns
-    const changes = 'structure,content';
-    return `/taco/diff_log/${pair[0]}/${pair[1]}/${binCols}/${binRows}/${direction}/${changes}`;
+  private static getJSONHistogram(pair) {
+    const binRows = 10;
+    const binCols = 20;
+    const operations = ChangeTypes.forURL();
+    return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${binRows}/${binCols}/${operations}/histogram`);
   }
 
   constructor(parent: Element, private options: any) {
@@ -182,7 +178,7 @@ class Histogram2D implements IAppView {
 
   //for the 2D Ratio Chart
   private requestData(pair) {
-    return ajax.getAPIJSON(Histogram2D.getURL(pair))
+    return Histogram2D.getJSONRatio2D(pair)
       .then((json) => {
         const data = [];
 
@@ -226,7 +222,7 @@ class Histogram2D implements IAppView {
 
   //for the histogram Rows
   private requestDataHistogram(pair) {
-    return ajax.getAPIJSON(Histogram2D.getURLHistogram(pair))
+    return Histogram2D.getJSONHistogram(pair)
       .then((json) => {
 
         const rows = json.rows;
