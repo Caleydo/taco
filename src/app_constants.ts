@@ -87,7 +87,14 @@ export class ChangeTypes {
     isActive: true
   };
 
-  static TYPE_ARRAY: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED];
+  static REORDER: IChangeType = {
+    type: 'reorder',
+    ratioName: 'r_ratio',
+    countName: 'r_counts',
+    isActive: true
+  };
+
+  static TYPE_ARRAY: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED, ChangeTypes.REORDER];
 
   /**
    * Filters only active changes and joins them for the URL
