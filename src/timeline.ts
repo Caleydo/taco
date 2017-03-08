@@ -71,7 +71,6 @@ class Timeline implements IAppView {
    */
   private attachListener() {
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
-
     // Call the resize function whenever a resize event occurs
     d3.select(window).on('resize', () => this.resize());
   }
@@ -82,7 +81,8 @@ class Timeline implements IAppView {
     this.$svgTimeline = this.$node
       .append('svg')
       .attr('width', this.timelineWidth)
-      .attr('height', this.timelineHeight);
+      .attr('height', this.timelineHeight)
+      .attr('id', 'timelineSVG');
 
     this.tooltipDiv = d3.select('.timeline').append('div')
       .classed('tooltip', true)
@@ -90,12 +90,33 @@ class Timeline implements IAppView {
 
     this.$placeholder = this.$node
       .append('div')
+      .classed('placeholderContainer', true)
+      .classed('invisibleClass2', true);
+
+    this.$placeholder
+      .append('div')
+      .style('width', 162 + 'px')
+      .style('height', 162 + 'px')
+      .classed('leftMetaBox', true)
+      .append('p')
+      .text('Select the "Source Table" from the timeline in order to see more meta information.' );
+
+    this.$placeholder
+      .append('div')
       .style('width', 162 + 'px')
       .style('height', 162 + 'px')
       .classed('placeholder', true)
-      .classed('invisibleClass', true)
       .append('p')
       .text('Select two time points on the timeline to get more information.' );
+
+    this.$placeholder
+      .append('div')
+      .style('width', 162 + 'px')
+      .style('height', 162 + 'px')
+      .classed('rightMetaBox', true)
+      .append('p')
+      .text('Select the "Destination Table" from the timeline in order to see more meta information.' );
+
 
   }
 
@@ -104,7 +125,7 @@ class Timeline implements IAppView {
    */
   private resize() {
     this.totalWidth = $(this.$node.node()).width();
-   // console.log('timelineWidth', this.totalWidth);
+    // console.log('timelineWidth', this.totalWidth);
     // Update line
     this.$svgTimeline.attr('width', this.totalWidth);
     d3.select('line').attr('x2', this.totalWidth);
@@ -233,11 +254,9 @@ class Timeline implements IAppView {
 
         if (that.isClicked === 0) {
           // Toggle the active CSS classes
-          that.$svgTimeline.selectAll('circle').classed('active', false);
+          that.$svgTimeline.selectAll('circle').classed('active active2', false);
           //Enable the active class only on clicked circle
           d3.select(this).classed('active', true).attr('fill');
-
-          console.log('d-item', d.item);
 
           // IMPORTANT: Dispatch selected dataset to other views
           //events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
@@ -249,7 +268,7 @@ class Timeline implements IAppView {
             d3.select('.difftitle').classed('hidden', true);
             d3.select('.comparison').classed('hidden', true);
             d3.select('.diffPlaceholder').classed('invisibleClass', false);
-            d3.select('.placeholder').classed('hidden', false);
+            d3.select('.placeholder').classed('invisibleClass', false);
             d3.select('#detailViewBtn').attr('disabled', true);
           }
 
@@ -263,7 +282,7 @@ class Timeline implements IAppView {
           // that.drawLine(that.circleX, that.circleY, 'sourceTable');
         } else {
 
-          d3.select(this).classed('active', true).attr('fill');
+          d3.select(this).classed('active2', true).attr('fill');
           clickedElement.push(d.item);
 
           // IMPORTANT: Dispatch selected dataset to other views
@@ -278,7 +297,7 @@ class Timeline implements IAppView {
             d3.select('#detailViewBtn').attr('disabled', null);
           }
 
-         // events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
+          // events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
 
           that.isClicked = 0;
           clickedElement = [];
@@ -296,14 +315,14 @@ class Timeline implements IAppView {
           .duration(200)
           .style('opacity', .9);
         that.tooltipDiv.html(d.key)
-         .style('left', function(d) {
+          .style('left', function(d) {
             if( ($(window).innerWidth() - 100) < position[0] ) {
               return (position[0] - 50) + 'px';
             } else {
               return (position[0] + 15) + 'px';
             }
-         })
-         .style('top', (position[1] + 20) + 'px');
+          })
+          .style('top', (position[1] + 20) + 'px');
       })
       .on('mouseout', function(d, i) {
         that.tooltipDiv.transition()

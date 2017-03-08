@@ -6,8 +6,11 @@ $struct-delete-color: #fc8e62;
 $content-change-color: #8DA1CD;
 $no-change-color: #D8D8D8;
 $reorder-color: #ffc46b;
+
 $gentle-color: rgba(179, 192, 210, 0.54);
 $gentle-color-dark: rgba(79, 84, 101, 0.64);
+$source-table-color: rgba(86, 66, 101, 0.46);
+$destination-table-color: rgba(101, 91, 31, 0.45);
 
 $boostrapAssetDir: '~phovea_ui/src/assets';
 
@@ -72,26 +75,33 @@ b,
 }
 
 .difftitle {
-  width:100%;
-  display:flex;
+  width: 100%;
+  display: flex;
   flex-direction: row;
   align-items: stretch;
   align-content: stretch;
-  justify-content: space-between;
+  justify-content: space-around;
   /*margin-top:150px;*/
 
 
   > .leftHeatmapTitle {
-
+    > p {
+      font-size: 12pt;
+    }
   }
 
   > .diffHeatmapTitle {
-
+    > p {
+      font-size: 12pt;
+    }
   }
 
   > .rightHeatmapTitle{
-
+    > p {
+      font-size: 12pt;
+    }
   }
+
 }
 
 a.active {
@@ -114,12 +124,15 @@ rect {
     cursor: pointer;
 
     &.active {
-      fill: $select-color;
+      fill: $source-table-color;
+    }
+
+    &.active2 {
+      fill: $destination-table-color;
     }
   }
 
   margin-top: 50px;
-
 }
 
 //#nav-bar{
@@ -191,9 +204,45 @@ button:active, button.active {
   background-color: $reorder-color;
 }
 
-.placeholder{
+.placeholderContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  align-content: stretch;
+  justify-content: space-around;
+
+  &>div{
+    width: 33%;
+  }
+}
+
+.placeholder {
   background-color: $gentle-color;
-  margin: auto;
+  //margin: auto;
+  line-height: 162px;
+  border: 1px solid $gentle-color-dark;
+  border-radius: 8px;
+
+  p {
+    display: inline-block;
+    line-height: normal;
+    font-size: 12pt;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0 10px 0 10px;
+  }
+}
+
+.leftMetaBox  {
+  background: $source-table-color;
+}
+
+.rightMetaBox {
+  background: $destination-table-color;
+}
+
+.leftMetaBox, .rightMetaBox {
+  //margin: auto;
   line-height: 162px;
   border: 1px solid $gentle-color-dark;
   border-radius: 8px;
@@ -210,6 +259,7 @@ button:active, button.active {
 
 .histogram_2d {
   margin-bottom: 140px;
+  margin-top: -162px;       //The height of the 2d histogram ratio
 }
 
 .ratio {
@@ -334,11 +384,21 @@ div.tooltip {
   hyphens: auto;
 }
 
+/**
+This class adds a fading effect and hides the element
+ */
 .invisibleClass {
-  transition: opacity 1s linear;
+  transition: opacity 0.1s linear;
   opacity: 0;
   height: 0;
   overflow: hidden;
+}
+
+/**
+This class hides the element totally;
+ */
+.invisibleClass2 {
+  display: none;
 }
 
 .noColorClass {
@@ -394,13 +454,12 @@ heatmaps or diffheatmaps are plotted.
 This aligns the text inside the placeholders.
  */
 .sourceTablePlaceholder, .diffTablePlaceholder, .destinationTablePlaceholder{
-  font-size: 14pt;
+  font-size: 12pt;
   text-align: center;
 }
 
 
 .bar_chart {
-
   .bars {
     position: absolute;
     margin-bottom: 5px;
@@ -412,5 +471,8 @@ This aligns the text inside the placeholders.
   .bar {
     transition: height ease 0.2s;
   }
+}
 
+#timelineSVG {
+  margin-bottom: -80px;
 }

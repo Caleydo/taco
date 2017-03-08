@@ -65,8 +65,8 @@ class DiffTitle implements IAppView {
 
         d3.select('.difftitle')
           .append('div')
-          .append('p')
           .attr('class', 'diffHeatmapTitle')
+          .append('p')
           .attr('id', 'diffHeatmapTitle')
           .html('DiffTable');
 
