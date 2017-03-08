@@ -74,6 +74,21 @@ b,
   }
 }
 
+#caleydoHeader {
+  position: fixed;
+  z-index: 100000;
+  width: 100%;
+  margin-top: -15px;
+}
+
+.caleydo_app {
+  margin-top: 5px;
+}
+
+.collapse {
+  margin-top: 5px;
+}
+
 .difftitle {
   width: 100%;
   display: flex;
