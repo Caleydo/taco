@@ -106,29 +106,36 @@ class DataProvider {
    * @returns {Promise<U>}
    */
   load() {
-    return data.list((d) => {
-     return d.desc.type === 'matrix' && (<IMatrixDataDescription<IValueTypeDesc>>d.desc).value.type === VALUE_TYPE_REAL; // return numerical matrices only
-    })
+    return data
+      .list((d) => {
+       return d.desc.type === 'matrix' && (<IMatrixDataDescription<IValueTypeDesc>>d.desc).value.type === VALUE_TYPE_REAL; // return numerical matrices only
+      })
       .then((list: INumericalMatrix[]) => {
-        // filter matrices that starts with a number --> assumption: must be a date
+        const dateRegex = new RegExp(/.*(\d{4})[_-](\d{2})[_-](\d{2}).*/); // matches YYYY_MM_DD or YYYY-MM-DD
+
+        // filter matrices that contains numbers --> assumption: must be a date
         const dateData = d3.nest()
-          .key((d: INumericalMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending)
-          .key((d: INumericalMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending)
-          .entries(list.filter((d) => /^\d.*/.test(d.desc.fqname) === true));
+          .key((d: INumericalMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending) // e.g. Copynumber, mRNA
+          .key((d: INumericalMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending) // e.g., TCGA_GBM_2013_02_22
+          .entries(list.filter((d) => dateRegex.test(d.desc.fqname) === true));
 
-        // filter matrices that starts NOT with a number
-        const otherData = d3.nest()
-          .key((d: INumericalMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending)
-          .key((d: INumericalMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending)
-          .entries(list.filter((d) => /^\d.*/.test(d.desc.fqname) === false));
+        const olympicsCats = ['total', 'bronze', 'silver', 'gold'];
+        const olympicsData = olympicsCats
+          .map((cat) => {
+            return d3.nest()
+              .key((d: INumericalMatrix) => d.desc.fqname.match(/([A-Z])\w+/g).join(' ')).sortKeys(d3.ascending) // e.g. "Olympic Games Total Medals"
+              .key((d: INumericalMatrix) => d.desc.fqname.match(/(\d)\w+/g).join(' ')).sortKeys(d3.ascending) // e.g. 1920
+              .entries(list.filter((d) => d.desc.fqname.toLowerCase().search('olympic') > -1 && d.desc.fqname.toLowerCase().search(cat) > -1));
+          })
+          .reduce((prev, curr) => prev.concat(curr), []);
 
-        const r = [].concat(dateData, otherData);
+        const r = [].concat(olympicsData, dateData);
 
         r.forEach((d) => {
           d.values = d.values.map((e) => {
             e.item = e.values[0]; // shortcut reference
 
-            const matches = e.key.match(/^(\d{4})[_-](\d{2})[_-](\d{2}).*/); // matches YYYY_MM_DD or YYYY-MM-DD
+            const matches = e.key.match(dateRegex);
             e.time = (matches === null) ? null : moment(e.key, AppConstants.PARSE_DATE_FORMATS);
 
             return e;

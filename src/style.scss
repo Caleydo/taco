@@ -40,6 +40,14 @@ b,
   left: 0;
 }
 
+.caleydoHeader {
+  position: fixed;
+  top: 0;
+  z-index: 99;
+  left: 0;
+  right: 0;
+}
+
 #app {
   display: flex;
   flex-direction: column;
@@ -59,7 +67,7 @@ b,
 }
 
 .selector {
-  margin-top: 80px;
+  margin-top: 30px;
 }
 
 .taco-table {
