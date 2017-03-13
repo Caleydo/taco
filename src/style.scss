@@ -101,19 +101,19 @@ b,
 
   > .leftHeatmapTitle {
     > p {
-      font-size: 12pt;
+      font-size: 10pt;
     }
   }
 
   > .diffHeatmapTitle {
     > p {
-      font-size: 12pt;
+      font-size: 10pt;
     }
   }
 
   > .rightHeatmapTitle{
     > p {
-      font-size: 12pt;
+      font-size: 10pt;
     }
   }
 
@@ -241,7 +241,7 @@ button:active, button.active {
   p {
     display: inline-block;
     line-height: normal;
-    font-size: 12pt;
+    font-size: 10pt;
     text-align: center;
     vertical-align: middle;
     padding: 0 10px 0 10px;
@@ -265,7 +265,7 @@ button:active, button.active {
   p {
     display: inline-block;
     line-height: normal;
-    font-size: 12pt;
+    font-size: 10pt;
     text-align: center;
     vertical-align: middle;
     padding: 0 10px 0 10px;
@@ -469,7 +469,7 @@ heatmaps or diffheatmaps are plotted.
 This aligns the text inside the placeholders.
  */
 .sourceTablePlaceholder, .diffTablePlaceholder, .destinationTablePlaceholder{
-  font-size: 12pt;
+  font-size: 10pt;
   text-align: center;
 }
 

@@ -17,8 +17,11 @@ class Timeline implements IAppView {
 
   private $node;
   private $svgTimeline;
-  private items;
   private $placeholder;
+  private $leftMetaBox;
+  private $rightMetaBox;
+
+  private items;
 
   // Width of the timeline div element
   private totalWidth: number;
@@ -93,7 +96,7 @@ class Timeline implements IAppView {
       .classed('placeholderContainer', true)
       .classed('invisibleClass2', true);
 
-    this.$placeholder
+    this.$leftMetaBox = this.$placeholder
       .append('div')
       .style('width', 162 + 'px')
       .style('height', 162 + 'px')
@@ -109,7 +112,7 @@ class Timeline implements IAppView {
       .append('p')
       .text('Select two time points on the timeline to get more information.' );
 
-    this.$placeholder
+    this.$rightMetaBox = this.$placeholder
       .append('div')
       .style('width', 162 + 'px')
       .style('height', 162 + 'px')
@@ -258,10 +261,22 @@ class Timeline implements IAppView {
           //Enable the active class only on clicked circle
           d3.select(this).classed('active', true).attr('fill');
 
+          //Fill the meta-information box left
+          if(d.time) {
+            that.$leftMetaBox.html('<strong>Name: </strong>' + d.item.desc.name + '<br>' +
+              '<strong>Date: </strong>' + d.time._d + '<br>' +
+              '<strong>Dimension: </strong>' + d.item.dim[0] + ' X ' + d.item.dim[1] + '<br>' +
+              '<strong>IDTypes: </strong>' +  d.item.desc.coltype + ' X ' + d.item.desc.rowtype + '<br>');
+          } else {
+            that.$leftMetaBox.html('<strong>Name: </strong>' + d.item.desc.name + '<br>' +
+              '<strong>Dimension: </strong>' + d.item.dim[0] + ' X ' + d.item.dim[1] + '<br>' +
+              '<strong>IDTypes: </strong>' +  d.item.desc.coltype + ' X ' + d.item.desc.rowtype + '<br>');
+          }
+
           // IMPORTANT: Dispatch selected dataset to other views
           //events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
 
-          // Close Histogram only if its rendered
+          // Close Histogram only if its rendered and remove also some other elements
           if (that.openHistogram2D === this.parentNode) {
             events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
             that.openHistogram2D = null;
@@ -281,9 +296,20 @@ class Timeline implements IAppView {
           // d3.selectAll('#connectionLine').remove();
           // that.drawLine(that.circleX, that.circleY, 'sourceTable');
         } else {
-
           d3.select(this).classed('active2', true).attr('fill');
           clickedElement.push(d.item);
+
+          //Fill the meta-information box left
+          if(d.time) {
+            that.$rightMetaBox.html('<strong>Name: </strong>' + d.item.desc.name + '<br>' +
+              '<strong>Date: </strong>' + d.time._d + '<br>' +
+              '<strong>Dimension: </strong>' + d.item.dim[0] + ' X ' + d.item.dim[1] + '<br>' +
+              '<strong>IDTypes: </strong>' +  d.item.desc.coltype + ' X ' + d.item.desc.rowtype + '<br>');
+          } else {
+            that.$rightMetaBox.html('<strong>Name: </strong>' + d.item.desc.name + '<br>' +
+              '<strong>Dimension: </strong>' + d.item.dim[0] + ' X ' + d.item.dim[1] + '<br>' +
+              '<strong>IDTypes: </strong>' +  d.item.desc.coltype + ' X ' + d.item.desc.rowtype + '<br>');
+          }
 
           // IMPORTANT: Dispatch selected dataset to other views
           //events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
