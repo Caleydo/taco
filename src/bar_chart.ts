@@ -29,7 +29,7 @@ class BarChart implements IAppView {
   private widthBar: number = 15;
 
   // Width and Height for the bar chart between time points
-  private widthBarChart: number = 80;
+  private widthBarChart: number = 15;
   private heightBarChart: number = 240;
 
   private barScaling = d3.scale.log()

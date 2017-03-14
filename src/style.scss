@@ -7,10 +7,10 @@ $content-change-color: #b3cde3;
 $no-change-color: #D8D8D8;
 $reorder-color: #decbe4;
 
-$gentle-color: rgba(179, 192, 210, 0.54);
-$gentle-color-dark: rgba(79, 84, 101, 0.64);
-$source-table-color: rgba(86, 66, 101, 0.46);
-$destination-table-color: rgba(101, 91, 31, 0.45);
+$gentle-color: #f0f0f0;
+$gentle-color-dark: #f0f0f0;
+$source-table-color: #f0f0f0;
+$destination-table-color: #f0f0f0;
 
 $boostrapAssetDir: '~phovea_ui/src/assets';
 
@@ -156,6 +156,12 @@ rect {
 
   margin-top: 50px;
 
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
 }
 
 //#nav-bar{
@@ -476,9 +482,11 @@ This aligns the text inside the placeholders.
 
 
 .bar_chart {
+  position: relative;
+
   .bars {
     position: absolute;
-    margin-bottom: 5px;
+    bottom: -109px;
     display: flex;
     flex-direction: column-reverse;
     align-content: flex-end;
@@ -490,5 +498,5 @@ This aligns the text inside the placeholders.
 }
 
 #timelineSVG {
-  margin-bottom: -80px;
+  margin-bottom: -105px;
 }

@@ -8,7 +8,7 @@ import * as $ from 'jquery';
 import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
-import {getPosXScale, scaleCircles} from './util';
+import {getPosXScale, scaleCircles, getTimeScale} from './util';
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -231,15 +231,32 @@ class Timeline implements IAppView {
     // Basic scale of the circles and the range
     const circleScale = d3.scale.linear()
       .domain([0, d3.max(this.items, (d: any) => d.item.dim[0])])
-      .range([10, 5]);   //h/100
+      .range([5, 2]);   //h/100
 
     // Append the base line where the circles are drawn onto
     this.$svgTimeline.append('line')
-      .style('stroke', 'black')
+      .style('stroke', '#888')
       .attr('x1', 0)
       .attr('y1', 60)
       .attr('x2', that.totalWidth - 10)
       .attr('y2', 60);
+
+    const timeScale = getTimeScale(this.items, this.totalWidth);
+
+    const xAxis = d3.svg.axis()
+      .scale(timeScale)
+      .ticks(d3.time.years, 1)
+      .tickFormat((d) => {
+          const found = this.items.filter((item) => item.time.isSame(d, 'year'));
+          console.log(found);
+          return (found.length === 0) ? '' : found[0].time.format('YYYY');
+      })
+      .tickPadding(8);
+
+    this.$svgTimeline.append('g')
+      .attr('class', 'x axis')
+      .attr('transform', 'translate(0, 0) ')
+      .call(xAxis);
 
     // Append the circles and add the mouseover and click listeners
     this.$svgTimeline.selectAll('circle')
