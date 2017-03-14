@@ -32,8 +32,6 @@ class BarChart implements IAppView {
   private widthBarChart: number = 80;
   private heightBarChart: number = 100;
 
-  private tooltipDivBar;
-
   private barScaling = d3.scale.log()
     .domain([0.1, 1000000])
     .range([0, this.heightBarChart / ChangeTypes.TYPE_ARRAY.length]);
@@ -78,10 +76,6 @@ class BarChart implements IAppView {
    * Build the basic DOM elements and binds the change function
    */
   private build() {
-    this.tooltipDivBar = d3.select('.selector').append('div')
-      .classed('tooltip', true)
-      .attr('id', 'tooltip2')
-      .style('opacity', 0);
 
   }
 
@@ -250,29 +244,7 @@ class BarChart implements IAppView {
     $bars
       .attr('class', (d) => 'bar ' + d.type)
       .style('width', this.widthBar + 'px')
-      .on('mouseover', function (d, i) {
-        const position = d3.mouse(document.body);
-
-        that.tooltipDivBar
-          .transition()
-          .duration(200)
-          .style('opacity', .9);
-
-        that.tooltipDivBar.html(d.value.toFixed(2))
-          .style('left', function (d) {
-            if (($(window).innerWidth() - 100) < position[0]) {
-              return (position[0] - 30) + 'px';
-            } else {
-              return (position[0] + 10) + 'px';
-            }
-          })
-          .style('top', (position[1] + 10) + 'px');
-      })
-      .on('mouseout', function (d, i) {
-        that.tooltipDivBar.transition()
-          .duration(500)
-          .style('opacity', 0);
-      });
+      .attr('title', (d) => `${ChangeTypes.labelForType(d.type)}: ${d.value.toFixed(2)} cells`);
 
     $bars.exit().remove();
 

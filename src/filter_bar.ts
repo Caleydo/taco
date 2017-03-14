@@ -41,10 +41,10 @@ class FilterBar implements IAppView {
 
     this.$node.html(` <div id="nav-bar">  
       <div class="btn-group change" role="group" aria-label="...">
-         <button type="button" class="btn btn-default active" id="btn-nochange" data-change-type="${ChangeTypes.NO_CHANGE.type}">No changes</button>
-         <button type="button" class="btn btn-default active" id="btn-content" data-change-type="${ChangeTypes.CONTENT.type}">Content</button>
-         <button type="button" class="btn btn-default active" id="btn-added" data-change-type="${ChangeTypes.ADDED.type}">Added</button>
-         <button type="button" class="btn btn-default active" id="btn-removed" data-change-type="${ChangeTypes.REMOVED.type}">Removed</button>                 
+         <button type="button" class="btn btn-default active" id="btn-nochange" data-change-type="${ChangeTypes.NO_CHANGE.type}">${ChangeTypes.NO_CHANGE.label}</button>
+         <button type="button" class="btn btn-default active" id="btn-content" data-change-type="${ChangeTypes.CONTENT.type}">${ChangeTypes.CONTENT.label}</button>
+         <button type="button" class="btn btn-default active" id="btn-added" data-change-type="${ChangeTypes.ADDED.type}">${ChangeTypes.ADDED.label}</button>
+         <button type="button" class="btn btn-default active" id="btn-removed" data-change-type="${ChangeTypes.REMOVED.type}">${ChangeTypes.REMOVED.label}</button>                 
       </div>  
     </div>`);
 

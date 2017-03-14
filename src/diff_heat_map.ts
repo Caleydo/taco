@@ -143,9 +143,7 @@ class DiffHeatMap implements IAppView {
             .append('div')
             .attr('class', 'taco-added-row')
             .attr('class', 'struct-add-color')
-            .attr('title', function (d) {
-              return d.id;
-            })
+            .attr('title', (d) => d.id)
             .style('left', 0 + 'px')
             .style('top', function (d) {
               const y = d.pos;
@@ -207,30 +205,30 @@ class DiffHeatMap implements IAppView {
         }
       }
 
-       if (d.content) {
-       const chCells = root.selectAll('.taco-ch-cell').data(d.content);
-       chCells.enter()
-       .append('div')
-       .attr('class', 'taco-ch-cell')
-       .attr('title', (d) => {
-       return '(' + d.row + ',' + d.col + ': ' + d.diff_data + ')';
-       })
-       .style('top', (d) => {
-       //var y = that.row_ids.indexOf(d.row);
-       const y = d.rpos;
-       return (y !== -1 ? y * h : null) + 'px';
-       })
-       .style('left', (d) => {
-       //var x = that.col_ids.indexOf(d.col);
-       const x = d.cpos;
-       return (x !== -1 ? x * w : null) + 'px';
-       })
-       .style('width', w + 'px')
-       .style('height', h + 'px')
-       .style('background-color', 'red')
-       .style('z-index', 1000)
-       .style('background-color', (d) => colorScale(d.diff_data));
-       }
+      if (d.content) {
+        const chCells = root.selectAll('.taco-ch-cell').data(d.content);
+        chCells.enter()
+          .append('div')
+          .attr('class', 'taco-ch-cell')
+          .attr('title', (d) => {
+            return '(' + d.row + ',' + d.col + ': ' + d.diff_data + ')';
+          })
+          .style('top', (d) => {
+            //var y = that.row_ids.indexOf(d.row);
+            const y = d.rpos;
+            return (y !== -1 ? y * h : null) + 'px';
+          })
+          .style('left', (d) => {
+            //var x = that.col_ids.indexOf(d.col);
+            const x = d.cpos;
+            return (x !== -1 ? x * w : null) + 'px';
+          })
+          .style('width', w + 'px')
+          .style('height', h + 'px')
+          .style('background-color', 'red')
+          .style('z-index', 1000)
+          .style('background-color', (d) => colorScale(d.diff_data));
+      }
     });
   }
 }
