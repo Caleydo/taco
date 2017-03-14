@@ -26,17 +26,12 @@ class Timeline implements IAppView {
   // Width of the timeline div element
   private totalWidth: number;
   private timelineWidth = $(window).innerWidth();
-  private timelineHeight = 200;
-  private tooltipDiv;
+  private timelineHeight = 30;
   private toggledElements: boolean;
   private openHistogram2D;
 
   // Helper variable for the clicking event
   private isClicked: number = 0;
-
-  // Helper variables for saving the circle position
-  private circleX: number;
-  private circleY: number;
 
 
   //TODO: CHECK unused variables here!
@@ -89,12 +84,7 @@ class Timeline implements IAppView {
     this.$svgTimeline = this.$node
       .append('svg')
       .attr('width', this.timelineWidth)
-      .attr('height', this.timelineHeight)
-      .attr('id', 'timelineSVG');
-
-    this.tooltipDiv = d3.select('.timeline').append('div')
-      .classed('tooltip', true)
-      .style('opacity', 0);
+      .attr('height', this.timelineHeight);
 
     this.$placeholder = this.$node
       .append('div')
@@ -225,56 +215,33 @@ class Timeline implements IAppView {
    */
   private drawTimeline() {
     const that = this;
-    const xScaleTimeline = getPosXScale(this.items, this.totalWidth);
     let clickedElement = [];
-
-    // Basic scale of the circles and the range
-    const circleScale = d3.scale.linear()
-      .domain([0, d3.max(this.items, (d: any) => d.item.dim[0])])
-      .range([5, 2]);   //h/100
-
-    // Append the base line where the circles are drawn onto
-    this.$svgTimeline.append('line')
-      .style('stroke', '#888')
-      .attr('x1', 0)
-      .attr('y1', 60)
-      .attr('x2', that.totalWidth - 10)
-      .attr('y2', 60);
 
     const timeScale = getTimeScale(this.items, this.totalWidth);
 
     const xAxis = d3.svg.axis()
       .scale(timeScale)
       .ticks(d3.time.years, 1)
-      .tickFormat((d) => {
-          const found = this.items.filter((item) => item.time.isSame(d, 'year'));
-          console.log(found);
-          return (found.length === 0) ? '' : found[0].time.format('YYYY');
-      })
+      .tickFormat(d3.time.format('%Y'))
       .tickPadding(8);
 
-    this.$svgTimeline.append('g')
+    const $xAxis = this.$svgTimeline.append('g')
       .attr('class', 'x axis')
       .attr('transform', 'translate(0, 0) ')
       .call(xAxis);
 
-    // Append the circles and add the mouseover and click listeners
-    this.$svgTimeline.selectAll('circle')
-      .data(this.items)
-      .enter()
-      .append('circle')
-      .attr('title', (d: any) => (d.time) ? d.time.format(AppConstants.DATE_FORMAT) : d.key)
-      .attr('cy', 60)
-      .attr('cx', (d: any, i) => {
-        if (d.time) {
-          return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
-        } else {
-          return (i+1) * (scaleCircles(this.totalWidth, this.items.length));
-        }
+    $xAxis.selectAll('.tick')
+      .filter((d) => {
+        const found = this.items.filter((item) => item.time.isSame(d, 'year'));
+        return (found.length === 0);
       })
-      .attr('id', (d:any) => 'circle_' + d.item.desc.id)
-      .attr('r', (d:any) => circleScale(d.item.dim[0]))
-      .on('click', function (d:any) {
+      .remove();
+
+    // Append the circles and add the mouseover and click listeners
+    $xAxis.selectAll('.tick text')
+      .on('click', function (date:Date) {
+        const found = that.items.filter((item) => item.time.isSame(date, 'year'));
+        const d = found[0];
         (<MouseEvent>d3.event).preventDefault();
 
         if (that.isClicked === 0) {
@@ -354,28 +321,6 @@ class Timeline implements IAppView {
           //
           // that.drawLine(that.circleX, that.circleY, 'destinationTable');
         }
-      })
-      .on('mouseover', function(d, i) {
-        const position = d3.mouse(document.body);
-
-        that.tooltipDiv
-          .transition()
-          .duration(200)
-          .style('opacity', .9);
-        that.tooltipDiv.html(d.key)
-          .style('left', function(d) {
-            if( ($(window).innerWidth() - 100) < position[0] ) {
-              return (position[0] - 50) + 'px';
-            } else {
-              return (position[0] + 15) + 'px';
-            }
-          })
-          .style('top', (position[1] + 20) + 'px');
-      })
-      .on('mouseout', function(d, i) {
-        that.tooltipDiv.transition()
-          .duration(500)
-          .style('opacity', 0);
       });
   }
 }

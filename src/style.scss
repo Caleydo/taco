@@ -51,10 +51,12 @@ b,
   right: 0;
 }
 
+$app-margin-top: 50;
+
 #app {
   display: flex;
   flex-direction: column;
-  margin: 15px;
+  margin: $app-margin-top+px 20px 20px;
 }
 
 .comparison {
@@ -67,10 +69,6 @@ b,
   &>div{
     width: 33%;
   }
-}
-
-.selector {
-  margin-top: 50px;
 }
 
 .taco-table {
@@ -86,11 +84,7 @@ b,
   position: fixed;
   z-index: 100000;
   width: 100%;
-  margin-top: -15px;
-}
-
-.caleydo_app {
-  margin-top: 5px;
+  margin-top: -$app-margin-top+px; // must match with margin from #app
 }
 
 .collapse {
@@ -153,8 +147,6 @@ rect {
       fill: $destination-table-color;
     }
   }
-
-  margin-top: 50px;
 
   .axis path,
   .axis line {
@@ -482,11 +474,10 @@ This aligns the text inside the placeholders.
 
 
 .bar_chart {
-  position: relative;
+  display: flex;
 
   .bars {
-    position: absolute;
-    bottom: -109px;
+    position: relative;
     display: flex;
     flex-direction: column-reverse;
     align-content: flex-end;
@@ -495,8 +486,4 @@ This aligns the text inside the placeholders.
   .bar {
     transition: height ease 0.2s;
   }
-}
-
-#timelineSVG {
-  margin-bottom: -105px;
 }
