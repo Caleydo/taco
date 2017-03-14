@@ -76,7 +76,7 @@ class BarChart implements IAppView {
    * Build the basic DOM elements and binds the change function
    */
   private build() {
-
+    //
   }
 
 
