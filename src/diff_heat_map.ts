@@ -78,15 +78,15 @@ class DiffHeatMap implements IAppView {
    private toggleChangeType(changeType) {
 
     if (changeType.type === 'removed') {
-      this.$node.selectAll('.struct-del-color').classed('noColorClass', !changeType.isActive);
+      this.$node.selectAll('.removed-color').classed('noColorClass', !changeType.isActive);
     }
 
     if (changeType.type === 'added') {
-      this.$node.selectAll('.struct-add-color').classed('noColorClass', !changeType.isActive);
+      this.$node.selectAll('.added-color').classed('noColorClass', !changeType.isActive);
     }
 
     if (changeType.type === 'content') {
-      this.$node.selectAll('.taco-ch-cell').classed('noColorClass', !changeType.isActive);
+      this.$node.selectAll('.content-color').classed('noColorClass', !changeType.isActive);
     }
 
     this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
@@ -165,7 +165,7 @@ class DiffHeatMap implements IAppView {
             .enter()
             .append('div')
             .attr('class', 'taco-added-row')
-            .attr('class', 'struct-add-color')
+            .attr('class', 'added-color')
             .attr('title', (d) => d.id)
             .style('left', 0 + 'px')
             .style('top', function (d) {
@@ -183,7 +183,7 @@ class DiffHeatMap implements IAppView {
             .append('div')
             .attr('title', (d) => d.id)
             .attr('class', 'taco-added-col')
-            .attr('class', 'struct-add-color')
+            .attr('class', 'added-color')
             .style('top', 0 + 'px')
             .style('left', (d) => {
               const x = d.pos;
@@ -199,7 +199,7 @@ class DiffHeatMap implements IAppView {
             .enter()
             .append('div')
             .attr('class', 'taco-del-row')
-            .attr('class', 'struct-del-color')
+            .attr('class', 'removed-color')
             .attr('title', (d) => d.id)
             .style('left', 0 + 'px')
             .style('top', (d) => {
@@ -216,7 +216,7 @@ class DiffHeatMap implements IAppView {
             .enter()
             .append('div')
             .attr('class', 'taco-del-col')
-            .attr('class', 'struct-del-color')
+            .attr('class', 'removed-color')
             .attr('title', (d) => d.id)
             .style('top', 0 + 'px')
             .style('left', (d) => {
@@ -229,10 +229,10 @@ class DiffHeatMap implements IAppView {
       }
 
       if (d.content) {
-        const chCells = root.selectAll('.taco-ch-cell').data(d.content);
+        const chCells = root.selectAll('.content-color').data(d.content);
         chCells.enter()
           .append('div')
-          .attr('class', 'taco-ch-cell')
+          .attr('class', 'content-color')
           .attr('title', (d) => {
             return '(' + d.row + ',' + d.col + ': ' + d.diff_data + ')';
           })
