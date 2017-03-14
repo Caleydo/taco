@@ -46,7 +46,7 @@ export class AppConstants {
    * Parse the following date formats from strings using moment.js (see http://momentjs.com/docs/#/parsing/)
    * @type {string[]}
    */
-  static PARSE_DATE_FORMATS = ['YYYY_MM_DD', 'YYYY-MM-DD'];
+  static PARSE_DATE_FORMATS = ['YYYY_MM_DD', 'YYYY-MM-DD', 'YYYY'];
 }
 
 export interface IChangeType {
@@ -92,7 +92,14 @@ export class ChangeTypes {
     isActive: true
   };
 
-  static TYPE_ARRAY: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED];
+  static REORDER: IChangeType = {
+    type: 'reorder',
+    ratioName: 'r_ratio',
+    countName: 'r_counts',
+    isActive: true
+  };
+
+  static TYPE_ARRAY: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED, ChangeTypes.REORDER];
 
   static labelForType(type:string) {
     console.log(type);

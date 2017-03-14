@@ -17,8 +17,11 @@ class Timeline implements IAppView {
 
   private $node;
   private $svgTimeline;
-  private items;
   private $placeholder;
+  private $leftMetaBox;
+  private $rightMetaBox;
+
+  private items;
 
   // Width of the timeline div element
   private totalWidth: number;
@@ -70,8 +73,12 @@ class Timeline implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
-
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => {
+     this.$leftMetaBox.html('Select the "Source Table" from the timeline in order to see more meta information.');
+     this.$rightMetaBox.html('Select the "Destination Table" from the timeline in order to see more meta information.');
+     this.$placeholder.classed('invisibleClass', false);
+     this.updateItems(items);
+    });
     // Call the resize function whenever a resize event occurs
     d3.select(window).on('resize', () => this.resize());
   }
@@ -82,7 +89,8 @@ class Timeline implements IAppView {
     this.$svgTimeline = this.$node
       .append('svg')
       .attr('width', this.timelineWidth)
-      .attr('height', this.timelineHeight);
+      .attr('height', this.timelineHeight)
+      .attr('id', 'timelineSVG');
 
     this.tooltipDiv = d3.select('.timeline').append('div')
       .classed('tooltip', true)
@@ -90,12 +98,33 @@ class Timeline implements IAppView {
 
     this.$placeholder = this.$node
       .append('div')
+      .classed('placeholderContainer', true)
+      .classed('invisibleClass2', true);
+
+    this.$leftMetaBox = this.$placeholder
+      .append('div')
+      .style('width', 162 + 'px')
+      .style('height', 162 + 'px')
+      .classed('leftMetaBox', true)
+      .append('p')
+      .html('Select the "Source Table" from the timeline in order to see more meta information.' );
+
+    this.$placeholder
+      .append('div')
       .style('width', 162 + 'px')
       .style('height', 162 + 'px')
       .classed('placeholder', true)
-      .classed('invisibleClass', true)
       .append('p')
       .text('Select two time points on the timeline to get more information.' );
+
+    this.$rightMetaBox = this.$placeholder
+      .append('div')
+      .style('width', 162 + 'px')
+      .style('height', 162 + 'px')
+      .classed('rightMetaBox', true)
+      .append('p')
+      .html('Select the "Destination Table" from the timeline in order to see more meta information.' );
+
 
   }
 
@@ -104,7 +133,7 @@ class Timeline implements IAppView {
    */
   private resize() {
     this.totalWidth = $(this.$node.node()).width();
-   // console.log('timelineWidth', this.totalWidth);
+    // console.log('timelineWidth', this.totalWidth);
     // Update line
     this.$svgTimeline.attr('width', this.totalWidth);
     d3.select('line').attr('x2', this.totalWidth);
@@ -233,23 +262,33 @@ class Timeline implements IAppView {
 
         if (that.isClicked === 0) {
           // Toggle the active CSS classes
-          that.$svgTimeline.selectAll('circle').classed('active', false);
+          that.$svgTimeline.selectAll('circle').classed('active active2', false);
           //Enable the active class only on clicked circle
           d3.select(this).classed('active', true).attr('fill');
 
-          console.log('d-item', d.item);
+          //Fill the meta-information box left
+          if(d.time) {
+            that.$leftMetaBox.html('<strong>Name: </strong>' + d.item.desc.name + '<br>' +
+              '<strong>Date: </strong>' + d.time._d + '<br>' +
+              '<strong>Dimension: </strong>' + d.item.dim[0] + ' X ' + d.item.dim[1] + '<br>' +
+              '<strong>IDTypes: </strong>' +  d.item.desc.coltype + ' X ' + d.item.desc.rowtype + '<br>');
+          } else {
+            that.$leftMetaBox.html('<strong>Name: </strong>' + d.item.desc.name + '<br>' +
+              '<strong>Dimension: </strong>' + d.item.dim[0] + ' X ' + d.item.dim[1] + '<br>' +
+              '<strong>IDTypes: </strong>' +  d.item.desc.coltype + ' X ' + d.item.desc.rowtype + '<br>');
+          }
 
           // IMPORTANT: Dispatch selected dataset to other views
           //events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, d.item);
 
-          // Close Histogram only if its rendered
+          // Close Histogram only if its rendered and remove also some other elements
           if (that.openHistogram2D === this.parentNode) {
             events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
             that.openHistogram2D = null;
             d3.select('.difftitle').classed('hidden', true);
             d3.select('.comparison').classed('hidden', true);
             d3.select('.diffPlaceholder').classed('invisibleClass', false);
-            d3.select('.placeholder').classed('hidden', false);
+            d3.select('.placeholder').classed('invisibleClass', false);
             d3.select('#detailViewBtn').attr('disabled', true);
           }
 
@@ -262,9 +301,20 @@ class Timeline implements IAppView {
           // d3.selectAll('#connectionLine').remove();
           // that.drawLine(that.circleX, that.circleY, 'sourceTable');
         } else {
-
-          d3.select(this).classed('active', true).attr('fill');
+          d3.select(this).classed('active2', true).attr('fill');
           clickedElement.push(d.item);
+
+          //Fill the meta-information box left
+          if(d.time) {
+            that.$rightMetaBox.html('<strong>Name: </strong>' + d.item.desc.name + '<br>' +
+              '<strong>Date: </strong>' + d.time._d + '<br>' +
+              '<strong>Dimension: </strong>' + d.item.dim[0] + ' X ' + d.item.dim[1] + '<br>' +
+              '<strong>IDTypes: </strong>' +  d.item.desc.coltype + ' X ' + d.item.desc.rowtype + '<br>');
+          } else {
+            that.$rightMetaBox.html('<strong>Name: </strong>' + d.item.desc.name + '<br>' +
+              '<strong>Dimension: </strong>' + d.item.dim[0] + ' X ' + d.item.dim[1] + '<br>' +
+              '<strong>IDTypes: </strong>' +  d.item.desc.coltype + ' X ' + d.item.desc.rowtype + '<br>');
+          }
 
           // IMPORTANT: Dispatch selected dataset to other views
           //events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, d.item);
@@ -278,7 +328,7 @@ class Timeline implements IAppView {
             d3.select('#detailViewBtn').attr('disabled', null);
           }
 
-         // events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
+          // events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElement);
 
           that.isClicked = 0;
           clickedElement = [];
@@ -296,14 +346,14 @@ class Timeline implements IAppView {
           .duration(200)
           .style('opacity', .9);
         that.tooltipDiv.html(d.key)
-         .style('left', function(d) {
+          .style('left', function(d) {
             if( ($(window).innerWidth() - 100) < position[0] ) {
               return (position[0] - 50) + 'px';
             } else {
               return (position[0] + 15) + 'px';
             }
-         })
-         .style('top', (position[1] + 20) + 'px');
+          })
+          .style('top', (position[1] + 20) + 'px');
       })
       .on('mouseout', function(d, i) {
         that.tooltipDiv.transition()

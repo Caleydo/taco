@@ -81,10 +81,10 @@ class Histogram2D implements IAppView {
       .append('div')
       .style('width', this.width + 'px')
       .style('height', this.height + 'px')
-      .classed('ratio', true)
-      .on('click', function () {
-        events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
-      });
+      .classed('ratio', true);
+      // .on('click', function () {
+      //   events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
+      // });
 
     this.$histogramRows = this.$node
       .append('div')
@@ -115,7 +115,7 @@ class Histogram2D implements IAppView {
     });
 
     events.on(AppConstants.EVENT_OPEN_2D_HISTOGRAM, (evt, items) => {
-      d3.selectAll('.placeholder').classed('hidden', true);
+      d3.selectAll('.placeholder').classed('invisibleClass', true);
 
       this.selectedTables = [items[0].desc.id, items[1].desc.id];
       this.posX = ($(window).innerWidth() - 220)/2;
