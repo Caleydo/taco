@@ -9,7 +9,7 @@ import * as $ from 'jquery';
 import * as events from 'phovea_core/src/event';
 import {AppConstants, ChangeTypes, IChangeType} from './app_constants';
 import {IAppView} from './app';
-import {getPosXScale, scaleCircles} from './util';
+import {getPosXScale, scaleCircles, getTimeScale} from './util';
 
 /**
  * This class adds a bar chart, that shows bars with click functionality,
@@ -29,12 +29,13 @@ class BarChart implements IAppView {
   private widthBar: number = 15;
 
   // Width and Height for the bar chart between time points
-  private widthBarChart: number = 80;
-  private heightBarChart: number = 240;
+  private widthBarChart: number = 15;
+  private heightBarChart: number = 100;
 
   private barScaling = d3.scale.log()
-    .domain([0.1, 1000000])
-    .range([0, this.heightBarChart / ChangeTypes.TYPE_ARRAY.length]);
+    .domain([0.1, 100000])
+    .range([0, this.heightBarChart / ChangeTypes.TYPE_ARRAY.length])
+    .clamp(true);
 
   /**
    * Method retrieves data by given parameters TODO: Documentation
@@ -87,9 +88,7 @@ class BarChart implements IAppView {
   private resize() {
     this.totalWidth = $(this.$node.node()).width();
 
-    // Update line
-    this.$node.attr('width', this.totalWidth);
-
+    this.$node.style('width', this.totalWidth);
   }
 
   /**
@@ -210,15 +209,8 @@ class BarChart implements IAppView {
    * @param circleScale
    * @param totalWidth
    */
-  private drawBars(data, pair, circleScale, totalWidth) {
-    const that = this;
-    const posXScale = getPosXScale(this.items, totalWidth);
-
-    /*const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days'))
-     + 0.06 * (posXScale(moment(pair[1].time).diff(moment(this.items[0].time), 'days'))
-     - posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')));*/
-
-    const posX = posXScale(moment(pair[0].time).diff(moment(this.items[0].time), 'days')) + 7;
+  private drawBars(data, pair, circleScale:number, totalWidth:number) {
+    const posXScale = getTimeScale(this.items, totalWidth);
 
     //const barData = this.getBarData(data.ratios, 'ratioName');
     const barData = this.getBarData(data.counts, 'countName');
@@ -230,11 +222,10 @@ class BarChart implements IAppView {
     if($barsGroup.node() === null) {
       $barsGroup = this.$node.append('div')
         .classed('bars', true)
-        .attr('data-id', currId)
+        //.attr('data-id', currId)
         .style('width', this.widthBarChart + 'px')
-        // .style('height', this.heightBarChart + 'px');
-        .style('height', 100 + 'px')
-        .style('left', ((pair[0].time) ? posX : circleScale) + 'px');
+        .style('height', this.heightBarChart + 'px')
+        .style('left', ((pair[0].time) ? posXScale(pair[1].time.toDate()) : circleScale) + 'px');
     }
 
     //individual bars in the bar group div

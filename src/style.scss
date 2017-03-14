@@ -1,16 +1,16 @@
 $select-color: orange;
 $hover-color: #ffc46b;
 
-$struct-add-color: #67C4A7;
-$struct-delete-color: #fc8e62;
-$content-change-color: #8DA1CD;
+$struct-add-color: #ccebc5;
+$struct-delete-color: #fbb4ae;
+$content-change-color: #b3cde3;
 $no-change-color: #D8D8D8;
-$reorder-color: #ffc46b;
+$reorder-color: #decbe4;
 
-$gentle-color: rgba(179, 192, 210, 0.54);
-$gentle-color-dark: rgba(79, 84, 101, 0.64);
-$source-table-color: rgba(86, 66, 101, 0.46);
-$destination-table-color: rgba(101, 91, 31, 0.45);
+$gentle-color: #f0f0f0;
+$gentle-color-dark: #f0f0f0;
+$source-table-color: #f0f0f0;
+$destination-table-color: #f0f0f0;
 
 $boostrapAssetDir: '~phovea_ui/src/assets';
 
@@ -51,10 +51,12 @@ b,
   right: 0;
 }
 
+$app-margin-top: 50;
+
 #app {
   display: flex;
   flex-direction: column;
-  margin: 15px;
+  margin: $app-margin-top+px 20px 20px;
 }
 
 .comparison {
@@ -67,10 +69,6 @@ b,
   &>div{
     width: 33%;
   }
-}
-
-.selector {
-  margin-top: 30px;
 }
 
 .taco-table {
@@ -86,11 +84,7 @@ b,
   position: fixed;
   z-index: 100000;
   width: 100%;
-  margin-top: -15px;
-}
-
-.caleydo_app {
-  margin-top: 5px;
+  margin-top: -$app-margin-top+px; // must match with margin from #app
 }
 
 .collapse {
@@ -142,20 +136,20 @@ rect {
 
 
 .timeline {
-  circle{
+  text {
     cursor: pointer;
 
     &.active {
-      fill: $source-table-color;
-    }
-
-    &.active2 {
-      fill: $destination-table-color;
+      fill: $select-color;
     }
   }
 
-  margin-top: 50px;
-
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
 }
 
 //#nav-bar{
@@ -401,7 +395,7 @@ div.tooltip {
   padding: 5px;
   font: 10px sans-serif;
   background: #dfedff;
-  border: 0px;
+  border: 0;
   border-radius: 8px;
   pointer-events: none;
   hyphens: auto;
@@ -476,19 +470,19 @@ This aligns the text inside the placeholders.
 
 
 .bar_chart {
+  display: flex;
+  height: 100px; // height also defined in bar_chart.ts
+
   .bars {
-    position: absolute;
-    margin-bottom: 5px;
+    position: relative;
     display: flex;
     flex-direction: column-reverse;
     align-content: flex-end;
+    margin-left: -15px; // bar width also defined in bar_chart.ts
+    padding-left: 7.5px; // half the bar width to center on timeline tick
   }
 
   .bar {
     transition: height ease 0.2s;
   }
-}
-
-#timelineSVG {
-  margin-bottom: -80px;
 }

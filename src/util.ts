@@ -13,7 +13,16 @@ export function getPosXScale(items, totalWidth, padding = 20) {
 
   return d3.scale.linear()
     .domain([0, timeRange])
-    .range([20, totalWidth - padding]);
+    .range([padding, totalWidth - padding]);
+}
+
+export function getTimeScale(items, totalWidth, padding = 20) {
+  const firstTimePoint = moment(items[0].time).toDate();
+  const lastTimePoint = moment(items[items.length - 1].time).toDate();
+
+  return d3.time.scale()
+    .domain([firstTimePoint, lastTimePoint])
+    .range([padding, totalWidth - padding]);
 }
 
 

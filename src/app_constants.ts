@@ -103,7 +103,6 @@ export class ChangeTypes {
   static TYPE_ARRAY: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED, ChangeTypes.REORDER];
 
   static labelForType(type:string) {
-    console.log(type);
     return this.TYPE_ARRAY.filter((d) => d.type === type)[0].label;
   }
 
