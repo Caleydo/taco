@@ -479,7 +479,7 @@ This aligns the text inside the placeholders.
     flex-direction: column-reverse;
     align-content: flex-end;
     margin-left: -15px; // bar width also defined in bar_chart.ts
-    padding-left: 7.5px; // half the bar width to center on timeline tick
+    transform: translateX(7.5px); // half the bar width to center on timeline tick
   }
 
   .bar {
