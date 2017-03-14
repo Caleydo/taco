@@ -148,6 +148,10 @@ class BarChart implements IAppView {
     let barPromises;
     const elements = this.$node.selectAll('*');
 
+    // draw the first bar manually showing only additions
+    const firstSize = this.items[0].item.desc.size;
+    this.drawBars({counts: {a_counts: firstSize[0] * firstSize[1]}, ratios: {a_ratio: 1.0}}, [this.items[0], this.items[0]], 10, this.totalWidth);
+
     if (elements.empty() === false) {
       barPromises = this.requestData(this.totalWidth, this.leftValue);
 
@@ -222,10 +226,10 @@ class BarChart implements IAppView {
     if($barsGroup.node() === null) {
       $barsGroup = this.$node.append('div')
         .classed('bars', true)
-        //.attr('data-id', currId)
+        .attr('data-id', currId)
         .style('width', this.widthBarChart + 'px')
         .style('height', this.heightBarChart + 'px')
-        .style('left', ((pair[0].time) ? posXScale(pair[1].time.toDate()) : circleScale) + 'px');
+        .style('left', ((pair[1].time) ? posXScale(pair[1].time.toDate()) : circleScale) + 'px');
     }
 
     //individual bars in the bar group div
@@ -265,7 +269,7 @@ class BarChart implements IAppView {
       .map((d) => {
         return {
           type: d.type,
-          value: data[d[propertyName]]
+          value: data[d[propertyName]] || 0
         };
       });
   }
