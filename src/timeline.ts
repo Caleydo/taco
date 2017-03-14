@@ -73,7 +73,12 @@ class Timeline implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => {
+     this.$leftMetaBox.html('Select the "Source Table" from the timeline in order to see more meta information.');
+     this.$rightMetaBox.html('Select the "Destination Table" from the timeline in order to see more meta information.');
+     this.$placeholder.classed('invisibleClass', false);
+     this.updateItems(items);
+    });
     // Call the resize function whenever a resize event occurs
     d3.select(window).on('resize', () => this.resize());
   }
@@ -102,7 +107,7 @@ class Timeline implements IAppView {
       .style('height', 162 + 'px')
       .classed('leftMetaBox', true)
       .append('p')
-      .text('Select the "Source Table" from the timeline in order to see more meta information.' );
+      .html('Select the "Source Table" from the timeline in order to see more meta information.' );
 
     this.$placeholder
       .append('div')
@@ -118,7 +123,7 @@ class Timeline implements IAppView {
       .style('height', 162 + 'px')
       .classed('rightMetaBox', true)
       .append('p')
-      .text('Select the "Destination Table" from the timeline in order to see more meta information.' );
+      .html('Select the "Destination Table" from the timeline in order to see more meta information.' );
 
 
   }
