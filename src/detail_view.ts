@@ -22,7 +22,7 @@ class DetailView implements IAppView {
     this.$node = d3.select(parent)
       .append('div')
       .classed('detailview', true)
-      .classed('invisibleClass', true);
+      .classed('invisibleClass2', true);
   }
 
   init() {

@@ -153,8 +153,8 @@ export class App implements IAppView {
       .then((viewInstances) => {
         // loading and initialization has finished -> hide loading indicator
         this.setBusy(false);
-        d3.select('.placeholder').classed('invisibleClass', false);
-        d3.select('.detailview').classed('invisibleClass', false);
+        d3.select('.placeholderContainer').classed('hidden', false);
+        d3.select('.detailview').classed('hidden', false);
         return this;
       });
 

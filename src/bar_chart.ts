@@ -30,7 +30,7 @@ class BarChart implements IAppView {
 
   // Width and Height for the bar chart between time points
   private widthBarChart: number = 80;
-  private heightBarChart: number = 100;
+  private heightBarChart: number = 240;
 
   private tooltipDivBar;
 
