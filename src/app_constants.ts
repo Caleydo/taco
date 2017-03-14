@@ -53,6 +53,7 @@ export interface IChangeType {
   type: string;
   ratioName: string;
   countName: string;
+  label: string;
 
   isActive: boolean;
 }
@@ -63,6 +64,7 @@ export class ChangeTypes {
     type: 'nochange',
     ratioName: 'no_ratio',
     countName: 'no_counts',
+    label: 'No changes',
     isActive: true
   };
 
@@ -70,6 +72,7 @@ export class ChangeTypes {
     type: 'content',
     ratioName: 'c_ratio',
     countName: 'c_counts',
+    label: 'Content',
     isActive: true
   };
 
@@ -77,6 +80,7 @@ export class ChangeTypes {
     type: 'added',
     ratioName: 'a_ratio',
     countName: 'a_counts',
+    label: 'Added',
     isActive: true
   };
 
@@ -84,6 +88,7 @@ export class ChangeTypes {
     type: 'removed',
     ratioName: 'd_ratio',
     countName: 'd_counts',
+    label: 'Removed',
     isActive: true
   };
 
@@ -91,10 +96,16 @@ export class ChangeTypes {
     type: 'reorder',
     ratioName: 'r_ratio',
     countName: 'r_counts',
+    label: 'Reorder',
     isActive: true
   };
 
   static TYPE_ARRAY: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED, ChangeTypes.REORDER];
+
+  static labelForType(type:string) {
+    console.log(type);
+    return this.TYPE_ARRAY.filter((d) => d.type === type)[0].label;
+  }
 
   /**
    * Filters only active changes and joins them for the URL

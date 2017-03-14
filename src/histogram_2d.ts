@@ -17,7 +17,7 @@ class Histogram2D implements IAppView {
 
   private $node;
   private $ratio;
-  private $histogram;
+  private $histogramRows;
   private $histogramCols;
 
   private selectedTables;
@@ -86,7 +86,7 @@ class Histogram2D implements IAppView {
       //   events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
       // });
 
-    this.$histogram = this.$node
+    this.$histogramRows = this.$node
       .append('div')
       .style('width', this.widthRowHistogram + 'px')
       .style('height', this.height + 'px')
@@ -130,28 +130,11 @@ class Histogram2D implements IAppView {
 
   private toggleChangeType(changeType) {
     // console.log('changeType', changeType);
-    if (changeType.type === 'removed') {
-      this.$ratio.selectAll('.struct-del-color').classed('noColorClass', !changeType.isActive);
-      this.$histogram.selectAll('.struct-del-color').classed('noColorClass', !changeType.isActive);
-      this.$histogramCols.selectAll('.struct-del-color').classed('noColorClass', !changeType.isActive);
-    }
+    const cssClass = `.${changeType.type}-color`;
 
-    if (changeType.type === 'added') {
-      this.$ratio.selectAll('.struct-add-color').classed('noColorClass', !changeType.isActive);
-      this.$histogram.selectAll('.struct-add-color').classed('noColorClass', !changeType.isActive);
-      this.$histogramCols.selectAll('.struct-add-color').classed('noColorClass', !changeType.isActive);
-    }
-
-    if (changeType.type === 'nochange') {
-      this.$ratio.selectAll('.no-change-color').classed('noColorClass', !changeType.isActive);
-      this.$histogram.selectAll('.no-change-color').classed('noColorClass', !changeType.isActive);
-      this.$histogramCols.selectAll('.no-change-color').classed('noColorClass', !changeType.isActive);
-    }
-    if (changeType.type === 'content') {
-      this.$ratio.selectAll('.content-change-color').classed('noColorClass', !changeType.isActive);
-      this.$histogram.selectAll('.content-change-color').classed('noColorClass', !changeType.isActive);
-      this.$histogramCols.selectAll('.content-change-color').classed('noColorClass', !changeType.isActive);
-    }
+    this.$ratio.selectAll(cssClass).classed('noColorClass', !changeType.isActive);
+    this.$histogramRows.selectAll(cssClass).classed('noColorClass', !changeType.isActive);
+    this.$histogramCols.selectAll(cssClass).classed('noColorClass', !changeType.isActive);
 
     this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
   }
@@ -164,7 +147,7 @@ class Histogram2D implements IAppView {
     this.requestData(pair)
       .then((data) => this.showData(data));
 
-    this.$histogram
+    this.$histogramRows
       .style('left', posX + 'px');
 
     this.$histogramCols
@@ -186,28 +169,28 @@ class Histogram2D implements IAppView {
         const rows = json.rows.ratios;
 
         data.push({
-          type: 'struct-del',
+          type: ChangeTypes.REMOVED.type,
           rows: rows.d_ratio + rows.a_ratio + rows.c_ratio + rows.no_ratio, //todo change to 1
           cols: cols.d_ratio + cols.a_ratio + cols.c_ratio + cols.no_ratio, //todo change to 1
           rows_text: Math.round((rows.d_ratio * 100) * 1000) / 1000,
           cols_text: Math.round((cols.d_ratio * 100) * 1000) / 1000
         });
         data.push({
-          type: 'struct-add',
+          type: ChangeTypes.ADDED.type,
           rows: rows.a_ratio + rows.c_ratio + rows.no_ratio, // or 1 - d
           cols: cols.a_ratio + cols.c_ratio + cols.no_ratio,
           rows_text: Math.round((rows.a_ratio * 100) * 1000) / 1000,
           cols_text: Math.round((cols.a_ratio * 100) * 1000) / 1000
         });
         data.push({
-          type: 'content-change',
+          type: ChangeTypes.CONTENT.type,
           rows: rows.c_ratio + rows.no_ratio,
           cols: cols.c_ratio + cols.no_ratio,
           rows_text: Math.round((rows.c_ratio * 100) * 1000) / 1000,
           cols_text: Math.round((cols.c_ratio * 100) * 1000) / 1000
         });
         data.push({
-          type: 'no-change',
+          type: ChangeTypes.NO_CHANGE.type,
           rows: rows.no_ratio,
           cols: cols.no_ratio,
           rows_text: Math.round((rows.no_ratio * 100) * 1000) / 1000,
@@ -243,7 +226,7 @@ class Histogram2D implements IAppView {
       .attr('class', (d) => d.type + '-color')
       .style('width', (d) => this.x(d.cols) + 'px')
       .style('height', (d) => this.y(d.rows) + 'px')
-      .attr('title', (d) => d.type.replace('-', ' ') + '\x0Arows: ' + d.rows_text + '%\x0Acolumns: ' + d.cols_text + '%');
+      .attr('title', (d) => ChangeTypes.labelForType(d.type) + '\x0ARows: ' + d.rows_text + '%\x0AColumns: ' + d.cols_text + '%');
 
     ratio2d.exit().remove();
 
@@ -270,7 +253,7 @@ class Histogram2D implements IAppView {
 
     const gridSize = Math.floor(this.heightRowHistogram / 20);
 
-    const bincontainer = this.$histogram.selectAll('div.bin-container')
+    const bincontainer = this.$histogramRows.selectAll('div.bin-container')
       .data(rows, function (d) {
         return d.id;
       });
@@ -290,14 +273,14 @@ class Histogram2D implements IAppView {
 
     bincontainer
       .append('div')
-      .classed('content-change-color', true)
+      .classed(`${ChangeTypes.CONTENT.type}-color`, true)
       .style('width', function (d) {
         //console.log(xScale(d.ratios.c_ratio));
         return xScale(d.ratios.c_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratios.c_ratio * 100) * 1000) / 1000 + '%';
+        return ChangeTypes.CONTENT.label + ': ' + Math.round((d.ratios.c_ratio * 100) * 1000) / 1000 + '%';
       })
       .style('transform', function (d) {
         return 'translate(' + 0 + 'px,' + yScale(d.pos) + 'px)';
@@ -308,13 +291,13 @@ class Histogram2D implements IAppView {
 
     bincontainer
       .append('div')
-      .classed('struct-del-color', true)
+      .classed(`${ChangeTypes.REMOVED.type}-color`, true)
       .style('width', function (d) {
         return xScale(d.ratios.d_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratios.d_ratio * 100) * 1000) / 1000 + '%';
+        return ChangeTypes.REMOVED.label + ': ' + Math.round((d.ratios.d_ratio * 100) * 1000) / 1000 + '%';
       })
       .style('transform', function (d) {
         const content = xScale(d.ratios.d_ratio);
@@ -334,13 +317,13 @@ class Histogram2D implements IAppView {
 
     bincontainer
       .append('div')
-      .classed('struct-add-color', true)
+      .classed(`${ChangeTypes.ADDED.type}-color`, true)
       .style('width', function (d) {
         return xScale(d.ratios.a_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratios.a_ratio * 100) * 1000) / 1000 + '%';
+        return ChangeTypes.ADDED.label + ': ' + Math.round((d.ratios.a_ratio * 100) * 1000) / 1000 + '%';
       })
       .style('transform', function (d) {
         const structure = xScale(d.ratios.a_ratio);
@@ -373,14 +356,14 @@ class Histogram2D implements IAppView {
 
     bincontainterCols
       .append('div')
-      .classed('content-change-color', true)
+      .classed(`${ChangeTypes.CONTENT.type}-color`, true)
       .style('width', function (d) {
         //console.log(xScale(d.ratios.c_ratio));
         return xScale(d.ratios.c_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratios.c_ratio * 100) * 1000) / 1000 + '%';
+        return ChangeTypes.CONTENT.label + ': ' + Math.round((d.ratios.c_ratio * 100) * 1000) / 1000 + '%';
       })
       .style('transform', function (d) {
         return 'translate(' + 0 + 'px,' + yScale(d.pos) + 'px)';
@@ -391,13 +374,13 @@ class Histogram2D implements IAppView {
 
     bincontainterCols
       .append('div')
-      .classed('struct-del-color', true)
+      .classed(`${ChangeTypes.REMOVED.type}-color`, true)
       .style('width', function (d) {
         return xScale(d.ratios.d_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratios.d_ratio * 100) * 1000) / 1000 + '%';
+        return ChangeTypes.REMOVED.label + ': ' + Math.round((d.ratios.d_ratio * 100) * 1000) / 1000 + '%';
       })
       .style('transform', function (d) {
         const content = xScale(d.ratios.d_ratio);
@@ -417,13 +400,13 @@ class Histogram2D implements IAppView {
 
     bincontainterCols
       .append('div')
-      .classed('struct-add-color', true)
+      .classed(`${ChangeTypes.ADDED.type}-color`, true)
       .style('width', function (d) {
         return xScale(d.ratios.a_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
       .attr('title', function (d) {
-        return 'content: ' + Math.round((d.ratios.a_ratio * 100) * 1000) / 1000 + '%';
+        return ChangeTypes.ADDED.label + ': ' + Math.round((d.ratios.a_ratio * 100) * 1000) / 1000 + '%';
       })
       .style('transform', function (d) {
         const structure = xScale(d.ratios.a_ratio);

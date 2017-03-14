@@ -338,35 +338,35 @@ button:active, button.active {
   }
 }
 
-div.struct-add-color {
+div.added-color {
   background: $struct-add-color;
 }
 
-div.struct-del-color {
+div.removed-color {
   background: $struct-delete-color;
 }
 
-div.content-change-color {
+div.content-color {
   background: $content-change-color;
 }
 
-div.no-change-color {
+div.nochange-color {
   background: $no-change-color;
 }
 
-rect.struct-add-color {
+rect.added-color {
   fill: $struct-add-color;
 }
 
-rect.struct-del-color {
+rect.removed-color {
   fill: $struct-delete-color;
 }
 
-rect.content-change-color {
+rect.content-color {
   fill: $content-change-color;
 }
 
-rect.no-change-color {
+rect.nochange-color {
   fill: $no-change-color;
 }
 
@@ -375,12 +375,12 @@ rect.no-change-color {
   margin-bottom: 20px;
 }
 
-div.struct-add-color, .row-add-color, .col-add-color {
+div.added-color, .row-added-color, .col-added-color {
   //background-color: #4daf4a;
   background-color: $struct-add-color; //colorblind friendly
 }
 
-div.struct-del-color, .row-del-color, .col-del-color {
+div.removed-color, .row-removed-color, .col-removed-color {
   //background-color: #e41a1c;
   background-color: $struct-delete-color; //colorblind friendly
 }
