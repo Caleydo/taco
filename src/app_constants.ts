@@ -46,7 +46,7 @@ export class AppConstants {
    * Parse the following date formats from strings using moment.js (see http://momentjs.com/docs/#/parsing/)
    * @type {string[]}
    */
-  static PARSE_DATE_FORMATS = ['YYYY_MM_DD', 'YYYY-MM-DD'];
+  static PARSE_DATE_FORMATS = ['YYYY_MM_DD', 'YYYY-MM-DD', 'YYYY'];
 }
 
 export interface IChangeType {
