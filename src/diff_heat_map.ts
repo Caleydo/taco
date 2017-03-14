@@ -143,8 +143,7 @@ class DiffHeatMap implements IAppView {
     let h = 0;
     let w = 0;
 
-    
-    const root = this.$node.append('div')// g.margin
+    const root = this.$node.append('div')
       .attr('class', 'taco-table')
       .style('width', width + 'px')
       .style('height', height + 'px')
