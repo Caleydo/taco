@@ -17,11 +17,11 @@ export function getPosXScale(items, totalWidth, padding = 20) {
 }
 
 export function getTimeScale(items, totalWidth, padding = 20) {
-  const firstTimePoint = moment(items[0].time);
-  const lastTimePoint = moment(items[items.length - 1].time);
+  const firstTimePoint = moment(items[0].time).toDate();
+  const lastTimePoint = moment(items[items.length - 1].time).toDate();
 
   return d3.time.scale()
-    .domain([firstTimePoint.toDate(), lastTimePoint.toDate()])
+    .domain([firstTimePoint, lastTimePoint])
     .range([padding, totalWidth - padding]);
 }
 

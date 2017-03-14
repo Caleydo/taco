@@ -481,6 +481,8 @@ This aligns the text inside the placeholders.
     display: flex;
     flex-direction: column-reverse;
     align-content: flex-end;
+    margin-left: -15px; // bar width
+    padding-left: 7.5px; // half the bar width
   }
 
   .bar {
