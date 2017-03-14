@@ -123,22 +123,8 @@ class Timeline implements IAppView {
    */
   private resize() {
     this.totalWidth = $(this.$node.node()).width();
-    // console.log('timelineWidth', this.totalWidth);
-    // Update line
     this.$svgTimeline.attr('width', this.totalWidth);
-    d3.select('line').attr('x2', this.totalWidth);
-
-    // Updating scale for circle position
-    const xScaleTimeline = getPosXScale(this.items, this.totalWidth);
-
-    this.$svgTimeline.selectAll('circle')
-      .attr('cx', (d: any, i) => {
-        if (d.time) {
-          return xScaleTimeline(moment(d.time).diff(moment(this.items[0].time), 'days'));
-        } else {
-          return i * scaleCircles(this.totalWidth, this.items.length);
-        }
-      });
+    this.updateTimelineAxis(this.$svgTimeline.select('g.axis.x'));
   }
 
   /**
@@ -217,25 +203,11 @@ class Timeline implements IAppView {
     const that = this;
     let clickedElement = [];
 
-    const timeScale = getTimeScale(this.items, this.totalWidth);
-
-    const xAxis = d3.svg.axis()
-      .scale(timeScale)
-      .ticks(d3.time.years, 1)
-      .tickFormat(d3.time.format('%Y'))
-      .tickPadding(8);
-
     const $xAxis = this.$svgTimeline.append('g')
       .attr('class', 'x axis')
-      .attr('transform', 'translate(0, 0) ')
-      .call(xAxis);
+      .attr('transform', 'translate(0, 0)');
 
-    $xAxis.selectAll('.tick')
-      .filter((d) => {
-        const found = this.items.filter((item) => item.time.isSame(d, 'year'));
-        return (found.length === 0);
-      })
-      .remove();
+    this.updateTimelineAxis($xAxis);
 
     // Append the circles and add the mouseover and click listeners
     $xAxis.selectAll('.tick text')
@@ -322,6 +294,26 @@ class Timeline implements IAppView {
           // that.drawLine(that.circleX, that.circleY, 'destinationTable');
         }
       });
+  }
+
+  private updateTimelineAxis($node) {
+    const timeScale = getTimeScale(this.items, this.totalWidth);
+    const xAxis = d3.svg.axis()
+      .scale(timeScale)
+      .ticks(d3.time.years, 1)
+      .tickFormat(d3.time.format('%Y'))
+      .tickPadding(8);
+
+    const $xAxis = $node.call(xAxis);
+
+    $xAxis.selectAll('.tick')
+      .filter((d) => {
+        const found = this.items.filter((item) => item.time.isSame(d, 'year'));
+        return (found.length === 0);
+      })
+      .remove();
+
+    return $xAxis;
   }
 }
 
