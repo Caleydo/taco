@@ -111,38 +111,52 @@ class DataProvider {
        return d.desc.type === 'matrix' && (<IMatrixDataDescription<IValueTypeDesc>>d.desc).value.type === VALUE_TYPE_REAL; // return numerical matrices only
       })
       .then((list: INumericalMatrix[]) => {
-        const dateRegex = new RegExp(/.*(\d{4})[_-](\d{2})[_-](\d{2}).*/); // matches YYYY_MM_DD or YYYY-MM-DD
+        const olympicsData = this.prepareOlympicsData(list);
+        const tcgaData = this.prepareTCGAData(list);
+        return [].concat(olympicsData, tcgaData);
+      });
+  }
 
-        // filter matrices that contains numbers --> assumption: must be a date
-        const dateData = d3.nest()
-          .key((d: INumericalMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending) // e.g. Copynumber, mRNA
-          .key((d: INumericalMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending) // e.g., TCGA_GBM_2013_02_22
-          .entries(list.filter((d) => dateRegex.test(d.desc.fqname) === true));
+  prepareTCGAData(matrices:INumericalMatrix[]):any[] {
+    const dateRegex = new RegExp(/.*(\d{4})[_-](\d{2})[_-](\d{2}).*/); // matches YYYY_MM_DD or YYYY-MM-DD
 
-        const olympicsCats = ['total', 'bronze', 'silver', 'gold'];
-        const olympicsData = olympicsCats
-          .map((cat) => {
-            return d3.nest()
-              .key((d: INumericalMatrix) => d.desc.fqname.match(/([A-Z])\w+/g).join(' ')).sortKeys(d3.ascending) // e.g. "Olympic Games Total Medals"
-              .key((d: INumericalMatrix) => d.desc.fqname.match(/(\d)\w+/g).join(' ')).sortKeys(d3.ascending) // e.g. 1920
-              .entries(list.filter((d) => d.desc.fqname.toLowerCase().search('olympic') > -1 && d.desc.fqname.toLowerCase().search(cat) > -1));
-          })
-          .reduce((prev, curr) => prev.concat(curr), []);
+    return d3.nest()
+      .key((d: INumericalMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending) // e.g. Copynumber, mRNA
+      .key((d: INumericalMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending) // e.g., TCGA_GBM_2013_02_22
+      .entries(matrices.filter((d) => dateRegex.test(d.desc.fqname) === true))
+      .map((d) => {
+        d.values = d.values.map((e) => {
+          e.item = e.values[0]; // shortcut reference
 
-        const r = [].concat(olympicsData, dateData);
+          const matches = e.key.match(dateRegex);
+          e.time = (matches === null) ? null : moment(e.key, AppConstants.PARSE_DATE_FORMATS);
 
-        r.forEach((d) => {
-          d.values = d.values.map((e) => {
-            e.item = e.values[0]; // shortcut reference
-
-            const matches = e.key.match(dateRegex);
-            e.time = (matches === null) ? null : moment(e.key, AppConstants.PARSE_DATE_FORMATS);
-
-            return e;
-          });
+          return e;
         });
+        return d;
+      });
+  }
 
-        return r;
+  prepareOlympicsData(matrices:INumericalMatrix[]):any[] {
+    const olympicsCats = ['total', 'bronze', 'silver', 'gold'];
+    return olympicsCats
+      .map((cat) => {
+        return d3.nest()
+          .key((d: INumericalMatrix) => d.desc.fqname.match(/([A-Z])\w+/g).join(' ')).sortKeys(d3.ascending) // e.g. "Olympic Games Total Medals"
+          .key((d: INumericalMatrix) => d.desc.fqname.match(/(\d)\w+/g).join(' ')).sortKeys(d3.ascending) // e.g. 1920
+          .entries(matrices.filter((d) => d.desc.fqname.toLowerCase().search('olympic') > -1 && d.desc.fqname.toLowerCase().search(cat) > -1));
+      })
+      .reduce((prev, curr) => prev.concat(curr), [])
+      .map((d) => {
+        d.values = d.values.map((e) => {
+          e.item = e.values[0]; // shortcut reference
+
+          const matches = e.key.match(/(\d)\w+/g);
+          e.time = (matches === null) ? null : moment(e.key, AppConstants.PARSE_DATE_FORMATS);
+
+          return e;
+        });
+        return d;
       });
   }
 
