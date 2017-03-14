@@ -5,6 +5,7 @@ $struct-add-color: #67C4A7;
 $struct-delete-color: #fc8e62;
 $content-change-color: #8DA1CD;
 $no-change-color: #D8D8D8;
+$reorder-color: #ffc46b;
 $gentle-color: rgba(179, 192, 210, 0.54);
 $gentle-color-dark: rgba(79, 84, 101, 0.64);
 
@@ -172,43 +173,30 @@ button:active, button.active {
   //box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 
+.btn-group.change {
+  button.inactive {
+    opacity: 0.5;
+  }
+}
 
 #btn-nochange, div.bar.nochange {
   background-color: $no-change-color;
-}
-
-#btn-nochange.inactive {
-  background-color: $no-change-color;
-  opacity: 0.5;
 }
 
 #btn-removed.active, div.bar.removed{
   background-color: $struct-delete-color;
 }
 
-#btn-removed.inactive {
-  background-color: $struct-delete-color;
-  opacity: 0.5;
-}
-
 #btn-added, div.bar.added {
   background-color: $struct-add-color;
 }
-
-
-#btn-added.inactive {
-  background-color: $struct-add-color;
-  opacity: 0.5;
-}
-
 
 #btn-content, div.bar.content {
   background-color: $content-change-color;
 }
 
-#btn-content.inactive{
-  background-color: $content-change-color;
-  opacity: 0.5;
+#btn-reorder, div.bar.reorder {
+  background-color: $reorder-color;
 }
 
 .placeholder{
