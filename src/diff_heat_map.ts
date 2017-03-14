@@ -5,8 +5,8 @@
 import {IAppView} from './app';
 import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
-import {AppConstants, ChangeTypes} from './app_constants';
 import * as ajax from 'phovea_core/src/ajax';
+import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
 
 
 /**
@@ -69,7 +69,30 @@ class DiffHeatMap implements IAppView {
       this.diffHeatmap();
       //console.log('selectedTables -- NOW', this.selectedTables);
     });
+
+    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+
   }
+
+   private toggleChangeType(changeType) {
+
+    if (changeType.type === 'removed') {
+      this.$node.selectAll('.struct-del-color').classed('noColorClass', !changeType.isActive);
+    }
+
+    if (changeType.type === 'added') {
+      this.$node.selectAll('.struct-add-color').classed('noColorClass', !changeType.isActive);
+    }
+
+    if (changeType.type === 'content') {
+      this.$node.selectAll('.taco-ch-cell').classed('noColorClass', !changeType.isActive);
+    }
+
+    this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
+  }
+
+
 
   private updateItems(items) {
     this.items = items;
@@ -120,6 +143,7 @@ class DiffHeatMap implements IAppView {
     let h = 0;
     let w = 0;
 
+    console.log('root', root);
     const root = this.$node.append('div')// g.margin
       .attr('class', 'taco-table')
       .style('width', width + 'px')
