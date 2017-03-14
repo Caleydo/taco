@@ -1,11 +1,11 @@
 $select-color: orange;
 $hover-color: #ffc46b;
 
-$struct-add-color: #67C4A7;
-$struct-delete-color: #fc8e62;
-$content-change-color: #8DA1CD;
+$struct-add-color: #ccebc5;
+$struct-delete-color: #fbb4ae;
+$content-change-color: #b3cde3;
 $no-change-color: #D8D8D8;
-$reorder-color: #ffc46b;
+$reorder-color: #decbe4;
 
 $gentle-color: rgba(179, 192, 210, 0.54);
 $gentle-color-dark: rgba(79, 84, 101, 0.64);
@@ -70,7 +70,7 @@ b,
 }
 
 .selector {
-  margin-top: 30px;
+  margin-top: 50px;
 }
 
 .taco-table {
@@ -401,7 +401,7 @@ div.tooltip {
   padding: 5px;
   font: 10px sans-serif;
   background: #dfedff;
-  border: 0px;
+  border: 0;
   border-radius: 8px;
   pointer-events: none;
   hyphens: auto;
