@@ -73,8 +73,8 @@ class DetailView implements IAppView {
     this.$node.select('#detailViewBtn')
       .on('click', function (e) {
         if(clickedElements !== void 0) {
-          events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, clickedElements[0]);
-          events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, clickedElements[1]);
+          events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, clickedElements[0].item);
+          events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, clickedElements[1].item);
           events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElements);
           d3.select('.difftitle').classed('hidden', false);
           d3.select('.comparison').classed('hidden', false);

@@ -47,6 +47,10 @@ module.exports = function(registry) {
   registry.push('tacoView', 'BarChart', function () { return System.import('./src/bar_chart'); }, {
     'name': 'BarChart'
   });
+
+  registry.push('tacoView', 'MetaInfoBox', function () { return System.import('./src/meta_info_box'); }, {
+    'name': 'MetaInfoBox'
+  });
   // generator-phovea:end
 };
 

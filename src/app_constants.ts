@@ -27,8 +27,7 @@ export class AppConstants {
   static EVENT_DATASET_SELECTED_RIGHT = 'eventDataSetSelectedRight';
   static EVENT_OPEN_DIFF_HEATMAP = 'eventDrawDiffDeatmap';
 
-  static EVENT_OPEN_2D_HISTOGRAM = 'open2DHistogram';
-  static EVENT_CLOSE_2D_HISTOGRAM = 'close2DHistogram';
+  static EVENT_TIME_POINTS_SELECTED = 'eventTimePointsSelected';
 
   static EVENT_TOGGLE_GROUP = 'toggleGroup';
 
