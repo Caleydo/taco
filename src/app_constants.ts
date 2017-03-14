@@ -96,6 +96,7 @@ export class ChangeTypes {
     type: 'reorder',
     ratioName: 'r_ratio',
     countName: 'r_counts',
+    label: 'Reorder',
     isActive: true
   };
 
