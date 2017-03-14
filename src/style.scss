@@ -136,15 +136,11 @@ rect {
 
 
 .timeline {
-  circle{
+  text {
     cursor: pointer;
 
     &.active {
-      fill: $source-table-color;
-    }
-
-    &.active2 {
-      fill: $destination-table-color;
+      fill: $select-color;
     }
   }
 

@@ -218,7 +218,7 @@ class Timeline implements IAppView {
 
         if (that.isClicked === 0) {
           // Toggle the active CSS classes
-          that.$svgTimeline.selectAll('circle').classed('active active2', false);
+          that.$svgTimeline.selectAll('circle').classed('active', false);
           //Enable the active class only on clicked circle
           d3.select(this).classed('active', true).attr('fill');
 
@@ -257,7 +257,7 @@ class Timeline implements IAppView {
           // d3.selectAll('#connectionLine').remove();
           // that.drawLine(that.circleX, that.circleY, 'sourceTable');
         } else {
-          d3.select(this).classed('active2', true).attr('fill');
+          d3.select(this).classed('active', true).attr('fill');
           clickedElement.push(d.item);
 
           //Fill the meta-information box left
