@@ -49,8 +49,7 @@ class Histogram2D implements IAppView {
   constructor(parent: Element, private options: any) {
     this.$node = d3.select(parent)
       .append('div')
-      .classed('histogram_2d', true)
-      .classed('hidden', true);
+      .classed('histogram_2d', true);
   }
 
   /**
@@ -74,7 +73,7 @@ class Histogram2D implements IAppView {
     const windowWidth = $(window).innerWidth();
 
     this.$node
-      .style('width', windowWidth + 'px')
+      //.style('width', windowWidth + 'px')
       .style('height', this.height + 'px');
 
     this.$ratio = this.$node
@@ -82,9 +81,6 @@ class Histogram2D implements IAppView {
       .style('width', this.width + 'px')
       .style('height', this.height + 'px')
       .classed('ratio', true);
-      // .on('click', function () {
-      //   events.fire(AppConstants.EVENT_CLOSE_2D_HISTOGRAM);
-      // });
 
     this.$histogramRows = this.$node
       .append('div')
@@ -105,23 +101,14 @@ class Histogram2D implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    // hide when changing the dataset
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
-      this.$node.classed('hidden', true);
-    });
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items) => {
+      if(items.length === 2) {
+        this.selectedTables = [items[0].item.desc.id, items[1].item.desc.id];
+        this.updateItems(this.selectedTables);
 
-    events.on(AppConstants.EVENT_CLOSE_2D_HISTOGRAM, () => {
-      this.$node.classed('hidden', true);
-    });
-
-    events.on(AppConstants.EVENT_OPEN_2D_HISTOGRAM, (evt, items) => {
-      d3.selectAll('.placeholder').classed('invisibleClass', true);
-
-      this.selectedTables = [items[0].desc.id, items[1].desc.id];
-      this.posX = ($(window).innerWidth() - 220)/2;
-
-      this.$node.classed('hidden', false);
-      this.updateItems(this.posX, this.selectedTables);
+      } else {
+        this.clearContent();
+      }
     });
 
     events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
@@ -139,23 +126,14 @@ class Histogram2D implements IAppView {
     this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
   }
 
-  private updateItems(posX, pair) {
-    this.$ratio
-      .classed('loading', true)
-      .style('left', posX + 'px');
+  private updateItems(pair) {
+    this.$ratio.classed('loading', true);
 
     this.requestData(pair)
       .then((data) => this.showData(data));
 
-    this.$histogramRows
-      .style('left', posX + 'px');
-
-    this.$histogramCols
-      .style('left', posX + 'px');
-
     this.requestDataHistogram(pair)
       .then((histodata) => this.showHistogram(histodata));
-
   }
 
 
@@ -426,6 +404,12 @@ class Histogram2D implements IAppView {
       });
 
     bincontainterCols.exit().remove();
+  }
+
+  private clearContent() {
+    this.$ratio.html('');
+    this.$histogramCols.html('');
+    this.$histogramRows.html('');
   }
 
 }

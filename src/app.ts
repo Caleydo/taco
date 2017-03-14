@@ -70,7 +70,7 @@ export class App implements IAppView {
       options: {}
     },
     {
-      view: 'Histogram2D',
+      view: 'MetaInfoBox',
       parent: 'selector',
       options: {}
     },
@@ -153,8 +153,6 @@ export class App implements IAppView {
       .then((viewInstances) => {
         // loading and initialization has finished -> hide loading indicator
         this.setBusy(false);
-        d3.select('.placeholderContainer').classed('hidden', false);
-        d3.select('.detailview').classed('hidden', false);
         return this;
       });
 

@@ -8,9 +8,6 @@ $no-change-color: #D8D8D8;
 $reorder-color: #decbe4;
 
 $gentle-color: #f0f0f0;
-$gentle-color-dark: #f0f0f0;
-$source-table-color: #f0f0f0;
-$destination-table-color: #f0f0f0;
 
 $boostrapAssetDir: '~phovea_ui/src/assets';
 
@@ -221,63 +218,63 @@ button:active, button.active {
   background-color: $reorder-color;
 }
 
-.placeholderContainer {
+.meta_info_box {
+  margin: 20px 0;
   display: flex;
   flex-direction: row;
   align-items: stretch;
   align-content: stretch;
   justify-content: space-around;
 
-  &>div{
+  & > div{
     width: 33%;
   }
-}
 
-.placeholder {
-  background-color: $gentle-color;
-  //margin: auto;
-  line-height: 162px;
-  border: 1px solid $gentle-color-dark;
-  border-radius: 8px;
-
-  p {
-    display: inline-block;
-    line-height: normal;
-    font-size: 10pt;
-    text-align: center;
-    vertical-align: middle;
+  .leftMetaBox, .rightMetaBox {
+    //margin: auto;
+    line-height: 162px;
+    background: $gentle-color;
+    border: 1px solid $gentle-color;
+    border-radius: 5px;
     padding: 0 10px 0 10px;
+
+    // show placeholder text if boxes are empty
+    &:empty:before {
+      content: 'Select two time points on the timeline to get more information.';
+      width: 100%;
+      text-align: center;
+      display: inline-block;
+      line-height: normal;
+      vertical-align: middle;
+    }
+
+    dt {
+      float: left;
+      clear: left;
+      margin-right: 5px;
+      font-weight: bold;
+    }
+
+    dd {
+      margin-left: 0;
+    }
+  }
+
+  .leftMetaBox {
+    order: 1;
+  }
+
+  .histogram_2d {
+    order: 2;
+    text-align: center;
+  }
+
+  .rightMetaBox {
+    order: 3;
   }
 }
 
-.leftMetaBox  {
-  background: $source-table-color;
-}
 
-.rightMetaBox {
-  background: $destination-table-color;
-}
-
-.leftMetaBox, .rightMetaBox {
-  //margin: auto;
-  line-height: 162px;
-  border: 1px solid $gentle-color-dark;
-  border-radius: 8px;
-
-  p {
-    display: inline-block;
-    line-height: normal;
-    font-size: 10pt;
-    text-align: center;
-    vertical-align: middle;
-    padding: 0 10px 0 10px;
-  }
-}
-
-.histogram_2d {
-  margin-bottom: 140px;
-  margin-top: -162px;       //The height of the 2d histogram ratio
-}
 
 .ratio {
   transition: left .2s ease;
@@ -307,20 +304,16 @@ button:active, button.active {
   border: 1px solid #e6e8e4;
   border-left: 1px solid #000000;
   background: transparent;
-  position:relative;
-  margin-left:15px;
+  position: relative;
+  margin-left: 15px;
 
   &.rotated {
+    position: relative;
     display: block;
     margin-top: -45px;
-    margin-left: 50px;
-    //margin-right: 100px;
+    margin-left: calc(50% - 67px);
     transform: rotate(90deg) scaleY(-1);
     //transform-origin: 0 0;
-
-    //margin-bottom:-125px;
-    //margin-left: 20px;
-    position: relative;
   }
 
   div {
@@ -417,12 +410,12 @@ This class adds a fading effect and hides the element
 
 .filter_bar {
   float: left;
-  margin: 6px 0px 6px 0px;
+  margin: 6px 0 6px 0;
 }
 
 .dataSelector {
   float: left;
-  margin: 6px 20px 6px 60px;
+  margin: 6px 20px 6px 20px;
 }
 
 select.form-control {
@@ -436,9 +429,9 @@ This is the button for the further Details view.
   position: absolute;
   left: 50%;
   transform: translate(-50%, -50px);
-  background-color: $gentle-color;
   color: black;
-  border: 1px solid $gentle-color-dark;
+  background-color: $gentle-color;
+  border: 1px solid $gentle-color;
 }
 
 /**
@@ -453,10 +446,10 @@ heatmaps or diffheatmaps are plotted.
   align-content: stretch;
   justify-content: space-between;
 
-  &>div {
+  & > div {
     width: 33%;
     height: 1000px;
-    border: 1.5px solid $gentle-color-dark;
+    border: 1.5px solid $gentle-color;
   }
 }
 
