@@ -30,11 +30,12 @@ class BarChart implements IAppView {
 
   // Width and Height for the bar chart between time points
   private widthBarChart: number = 15;
-  private heightBarChart: number = 240;
+  private heightBarChart: number = 100;
 
   private barScaling = d3.scale.log()
-    .domain([0.1, 1000000])
-    .range([0, this.heightBarChart / ChangeTypes.TYPE_ARRAY.length]);
+    .domain([0.1, 100000])
+    .range([0, this.heightBarChart / ChangeTypes.TYPE_ARRAY.length])
+    .clamp(true);
 
   /**
    * Method retrieves data by given parameters TODO: Documentation
@@ -221,10 +222,9 @@ class BarChart implements IAppView {
     if($barsGroup.node() === null) {
       $barsGroup = this.$node.append('div')
         .classed('bars', true)
-        .attr('data-id', currId)
+        //.attr('data-id', currId)
         .style('width', this.widthBarChart + 'px')
-        // .style('height', this.heightBarChart + 'px');
-        .style('height', 100 + 'px')
+        .style('height', this.heightBarChart + 'px')
         .style('left', ((pair[0].time) ? posXScale(pair[1].time.toDate()) : circleScale) + 'px');
     }
 
