@@ -117,13 +117,15 @@ class Histogram2D implements IAppView {
 
   private toggleChangeType(changeType) {
     // console.log('changeType', changeType);
-    const cssClass = `.${changeType.type}-color`;
-
-    this.$ratio.selectAll(cssClass).classed('noColorClass', !changeType.isActive);
-    this.$histogramRows.selectAll(cssClass).classed('noColorClass', !changeType.isActive);
-    this.$histogramCols.selectAll(cssClass).classed('noColorClass', !changeType.isActive);
-
-    this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
+    this.clearContent();
+    this.updateItems(this.selectedTables);
+    // const cssClass = `.${changeType.type}-color`;
+    //
+    // this.$ratio.selectAll(cssClass).classed('noColorClass', !changeType.isActive);
+    // this.$histogramRows.selectAll(cssClass).classed('noColorClass', !changeType.isActive);
+    // this.$histogramCols.selectAll(cssClass).classed('noColorClass', !changeType.isActive);
+    //
+    // this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
   }
 
   private updateItems(pair) {
@@ -143,34 +145,34 @@ class Histogram2D implements IAppView {
       .then((json) => {
         const data = [];
 
-        const cols = json.cols.ratios;
-        const rows = json.rows.ratios;
+        const cols = json.cols.counts;
+        const rows = json.rows.counts;
 
         data.push({
           type: ChangeTypes.REMOVED.type,
-          rows: rows.d_ratio + rows.a_ratio + rows.c_ratio + rows.no_ratio, //todo change to 1
-          cols: cols.d_ratio + cols.a_ratio + cols.c_ratio + cols.no_ratio, //todo change to 1
+          rows: (this.width - this.borderWidth) / (rows.d_counts + rows.a_counts + rows.c_counts + rows.no_counts), //todo change to 1
+          cols: (this.height - this.borderWidth) / (cols.d_counts + cols.a_counts + cols.c_counts + cols.no_counts), //todo change to 1
           rows_text: Math.round((rows.d_ratio * 100) * 1000) / 1000,
           cols_text: Math.round((cols.d_ratio * 100) * 1000) / 1000
         });
         data.push({
           type: ChangeTypes.ADDED.type,
-          rows: rows.a_ratio + rows.c_ratio + rows.no_ratio, // or 1 - d
-          cols: cols.a_ratio + cols.c_ratio + cols.no_ratio,
+          rows: (this.width - this.borderWidth) / (rows.a_counts + rows.c_counts + rows.no_counts), // or 1 - d
+          cols: (this.height - this.borderWidth) / (cols.a_counts + cols.c_counts + cols.no_counts),
           rows_text: Math.round((rows.a_ratio * 100) * 1000) / 1000,
           cols_text: Math.round((cols.a_ratio * 100) * 1000) / 1000
         });
         data.push({
           type: ChangeTypes.CONTENT.type,
-          rows: rows.c_ratio + rows.no_ratio,
-          cols: cols.c_ratio + cols.no_ratio,
+          rows: (this.width - this.borderWidth) / (rows.c_counts + rows.no_counts),
+          cols: (this.height - this.borderWidth) / (cols.c_counts + cols.no_counts),
           rows_text: Math.round((rows.c_ratio * 100) * 1000) / 1000,
           cols_text: Math.round((cols.c_ratio * 100) * 1000) / 1000
         });
         data.push({
           type: ChangeTypes.NO_CHANGE.type,
-          rows: rows.no_ratio,
-          cols: cols.no_ratio,
+          rows: (this.width - this.borderWidth) / rows.no_ratio,
+          cols: (this.width - this.borderWidth) / cols.no_counts,
           rows_text: Math.round((rows.no_ratio * 100) * 1000) / 1000,
           cols_text: Math.round((cols.no_ratio * 100) * 1000) / 1000
         });
