@@ -8,7 +8,7 @@ import * as $ from 'jquery';
 import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
-import {getTimeScale} from './util';
+import {getTimeScale, selectTimePoint} from './util';
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -60,6 +60,18 @@ class Timeline implements IAppView {
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => {
      this.updateItems(items);
     });
+
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, timePoints) => {
+      // remove all highlights first
+      if(timePoints.length === 1) {
+         this.$svgTimeline.selectAll('text').classed('active', false);
+      }
+      this.$svgTimeline.selectAll('text')[0] // the list is in the first element
+        .map((d) => d3.select(d)) // convert to d3
+        .filter((d) => timePoints.filter((e) => e.time.isSame(d.datum())).length > 0) // check if datum is selected
+        .forEach((d) => d.classed('active', true)); // add .active class
+    });
+
     // Call the resize function whenever a resize event occurs
     d3.select(window).on('resize', () => this.resize());
   }
@@ -105,8 +117,6 @@ class Timeline implements IAppView {
    */
   private drawTimeline() {
     const that = this;
-    let clickedElement = [];
-
     const $xAxis = this.$svgTimeline.append('g')
       .attr('class', 'x axis')
       .attr('transform', 'translate(0, 0)');
@@ -123,28 +133,15 @@ class Timeline implements IAppView {
         if (that.isClicked === 0) {
           // Toggle the active CSS classes
           that.$svgTimeline.selectAll('text').classed('active', false);
-          //Enable the active class only on clicked circle
-          d3.select(this).classed('active', true).attr('fill');
-
-          clickedElement.push(d);
           that.isClicked = 1;
 
-          events.fire(AppConstants.EVENT_TIME_POINTS_SELECTED, []);
-
         } else {
-          d3.select(this).classed('active', true).attr('fill');
-          clickedElement.push(d);
-
-          // sort elements by time -> [0] = earlier = source; [1] = later = destination
-          const sortedItems = clickedElement.sort((a, b) => d3.ascending(a.time, b.time));
-
-          //Only perform events and open Histogram if it is not open already
-          events.fire(AppConstants.EVENT_TIME_POINTS_SELECTED, sortedItems);
           d3.select('#detailViewBtn').attr('disabled', null);
-
           that.isClicked = 0;
-          clickedElement = [];
         }
+
+        selectTimePoint(d);
+        d3.select(this).classed('active', true).attr('fill');
       });
   }
 
