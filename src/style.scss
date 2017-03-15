@@ -223,7 +223,7 @@ button:active, button.active {
 }
 
 .meta_info_box {
-  margin: 20px 0;
+  margin: 20px 0 100px;
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -427,46 +427,6 @@ select.form-control {
   margin-left: 10px;
 }
 
-/**
-This is the button for the further Details view.
- */
-#detailViewBtn {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50px);
-  color: black;
-  background-color: $gentle-color;
-  border: 1px solid $gentle-color;
-}
-
-/**
-This placeholder is used for the 3 rectangles which are shown if no
-heatmaps or diffheatmaps are plotted.
- */
-.diffPlaceholder {
-  margin-top: 140px;
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  align-content: stretch;
-  justify-content: space-between;
-
-  & > div {
-    width: 33%;
-    height: 1000px;
-    border: 1.5px solid $gentle-color;
-  }
-}
-
-/**
-This aligns the text inside the placeholders.
- */
-.sourceTablePlaceholder, .diffTablePlaceholder, .destinationTablePlaceholder{
-  font-size: 10pt;
-  text-align: center;
-}
-
-
 .bar_chart {
   display: flex;
   height: 100px; // height also defined in bar_chart.ts
@@ -482,5 +442,15 @@ This aligns the text inside the placeholders.
 
   .bar {
     transition: height ease 0.2s;
+  }
+}
+
+.detailview {
+  margin: 20px 0;
+  text-align: center;
+
+  button {
+    position: relative;
+    left: -35px;
   }
 }

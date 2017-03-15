@@ -21,19 +21,14 @@ class DiffHeatMap implements IAppView {
 
   private selectedTables = [];
 
-
   private colorLow = '#d8b365';
   private colorMed = 'white';
   private colorHigh = '#8da0cb';
-  private colorMerged = '#B2DF8A';//light green
-  private colorSplit = '#FB9A99'; //light red
-
 
   private static getJSON(pair) {
     const operations = ChangeTypes.forURL();
     return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/diff_heat_map`);
   }
-
 
   constructor(public parent:Element, private options:any) {
     this.$node = d3.select(parent)
@@ -128,25 +123,26 @@ class DiffHeatMap implements IAppView {
   private drawDiffHeatmap(data) {
     const that = this;
     const colorScale = d3.scale.linear<string>()
-     .domain([-1, 0, 1])
-      .clamp(true)
-     .range([this.colorLow, this.colorMed, this.colorHigh]);
+      .domain([-1, 0, 1])
+      .range([this.colorLow, this.colorMed, this.colorHigh])
+      .clamp(true);
 
     const diffParent = that.$node.node();
+    const borderWidth = 2;
 
     const gridHeight = diffParent.getBoundingClientRect().height - 3;
     const gridWidth = diffParent.getBoundingClientRect().width;
 
-    const height = gridHeight;
-    const width = gridWidth ;
+    const height = gridHeight - borderWidth;
+    const width = gridWidth - borderWidth;
 
     let h = 0;
     let w = 0;
 
     const root = this.$node.append('div')
       .attr('class', 'taco-table')
-      .style('width', width + 'px')
-      .style('height', height + 'px')
+      .style('width', (width + borderWidth) + 'px')
+      .style('height', (height + borderWidth) + 'px')
 
       .style('background-color', 'white')
       .style('transform-origin', '0 0');
