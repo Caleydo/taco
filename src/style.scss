@@ -384,7 +384,8 @@ div.removed-color, .row-removed-color, .col-removed-color {
   display: inline-block;
 }
 
-.phovea-heatmap-data {
+.phovea-heatmap-data,
+.phovea-heatmap-selection {
   max-height: 1500px;
   max-width: 100%;
 }
