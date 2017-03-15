@@ -66,6 +66,10 @@ $app-margin-top: 50;
   &>div{
     width: 33%;
   }
+
+  .heatmap:first-child {
+    text-align: right;
+  }
 }
 
 .taco-table {
