@@ -73,18 +73,18 @@ class DiffHeatMap implements IAppView {
    private toggleChangeType(changeType) {
 
     if (changeType.type === 'removed') {
-      this.$node.selectAll('.removed-color').classed('noColorClass', !changeType.isActive);
+      this.$node.selectAll('.removed-color').classed('hidden', !changeType.isActive);
     }
 
     if (changeType.type === 'added') {
-      this.$node.selectAll('.added-color').classed('noColorClass', !changeType.isActive);
+      this.$node.selectAll('.added-color').classed('hidden', !changeType.isActive);
     }
 
     if (changeType.type === 'content') {
-      this.$node.selectAll('.content-color').classed('noColorClass', !changeType.isActive);
+      this.$node.selectAll('.content-color').classed('hidden', !changeType.isActive);
     }
 
-    this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
+    this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('hidden', !changeType.isActive);
   }
 
 
