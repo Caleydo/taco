@@ -64,7 +64,7 @@ class DetailView implements IAppView {
   }
 
   private attachListener() {
-    events.on(AppConstants.EVENT_DATASET_SELECTED, (evt, clickedElement) => {
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, clickedElement) => {
       this.openEvents(clickedElement);
     });
   }
@@ -75,7 +75,7 @@ class DetailView implements IAppView {
         if(clickedElements !== void 0) {
           events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, clickedElements[0].item);
           events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, clickedElements[1].item);
-          events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElements);
+          events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElements.map((d) => d.item));
           d3.select('.difftitle').classed('hidden', false);
           d3.select('.comparison').classed('hidden', false);
           d3.select('#detailViewBtn').attr('disabled', true);
