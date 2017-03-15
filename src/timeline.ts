@@ -136,7 +136,6 @@ class Timeline implements IAppView {
           that.isClicked = 1;
 
         } else {
-          d3.select('#detailViewBtn').attr('disabled', null);
           that.isClicked = 0;
         }
 

@@ -71,6 +71,7 @@ class DetailView implements IAppView {
 
   private openEvents (clickedElements) {
     this.$node.select('#detailViewBtn')
+      .attr('disabled', (clickedElements.length === 2) ? null : 'disabled')
       .on('click', function (e) {
         if(clickedElements !== void 0) {
           events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, clickedElements[0].item);
