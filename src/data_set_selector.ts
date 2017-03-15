@@ -126,6 +126,7 @@ class DataProvider {
       .entries(matrices.filter((d) => dateRegex.test(d.desc.fqname) === true))
       .map((d) => {
         d.values = d.values.map((e) => {
+          e.timeFormat = {d3: '%Y-%m-%d', moment: 'YYYY-MM-DD'};
           e.item = e.values[0]; // shortcut reference
 
           const matches = e.key.match(dateRegex);
@@ -149,6 +150,7 @@ class DataProvider {
       .reduce((prev, curr) => prev.concat(curr), [])
       .map((d) => {
         d.values = d.values.map((e) => {
+          e.timeFormat = {d3: '%Y', moment: 'YYYY'};
           e.item = e.values[0]; // shortcut reference
 
           const matches = e.key.match(/(\d)\w+/g);

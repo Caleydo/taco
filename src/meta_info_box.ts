@@ -110,7 +110,7 @@ class MetaInfoBox implements IAppView {
 
   private generateHTML(item) {
     return `
-      <h3>${item.time.format('YYYY')}</h3>
+      <h3>${item.time.format(item.timeFormat.moment)}</h3>
       <dl>
         <dt>Rows</dt>
         <dd>${item.item.dim[0]} ${(item.item.dim[0] === 1) ? item.item.rowtype.name : item.item.rowtype.names}</dd>

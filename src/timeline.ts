@@ -152,20 +152,11 @@ class Timeline implements IAppView {
     const timeScale = getTimeScale(this.items, this.totalWidth);
     const xAxis = d3.svg.axis()
       .scale(timeScale)
-      .ticks(d3.time.years, 1)
-      .tickFormat(d3.time.format('%Y'))
+      .ticks((startDate, endDate) => this.items.map((item) => item.time.toDate()))
+      .tickFormat(d3.time.format(this.items[0].timeFormat.d3)) // HACK considers only the time format of the first item
       .tickPadding(8);
 
-    const $xAxis = $node.call(xAxis);
-
-    $xAxis.selectAll('.tick')
-      .filter((d) => {
-        const found = this.items.filter((item) => item.time.isSame(d, 'year'));
-        return (found.length === 0);
-      })
-      .remove();
-
-    return $xAxis;
+    return $node.call(xAxis);
   }
 }
 
