@@ -16,7 +16,7 @@ class HeatMap implements IAppView {
 
   private heatMapOptions = {
       initialScale: 5,
-      color: ['black', 'white']
+      color: ['white', 'black']
     };
 
   constructor(parent: Element, private options: any) {
