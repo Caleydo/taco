@@ -234,37 +234,37 @@ button:active, button.active {
     width: 33%;
   }
 
-  .leftMetaBox, .rightMetaBox {
-    //margin: auto;
-    line-height: 162px;
+  .leftMetaBox > div,
+  .rightMetaBox > div {
+    border-radius: 5px;
     background: $gentle-color;
     border: 1px solid $gentle-color;
-    border-radius: 5px;
     padding: 0 10px 0 10px;
+    text-align: center;
 
     // show placeholder text if boxes are empty
-    &:empty:before {
-      content: 'Select two time points on the timeline to get more information.';
-      width: 100%;
-      text-align: center;
-      display: inline-block;
-      line-height: normal;
-      vertical-align: middle;
+    &:empty{
+      display: flex;
+      align-items: center;
+
+      &:before {
+        content: 'Select two time points on the timeline to get more information.';
+        text-align: center;
+      }
+    }
+
+    dl {
+      margin: 0;
     }
 
     dt {
-      float: left;
-      clear: left;
-      margin-right: 5px;
-      font-weight: bold;
-    }
-
-    dd {
-      margin-left: 0;
+      margin-top: 5px;
     }
   }
 
   .leftMetaBox {
+    display: flex;
+    justify-content: flex-end;
     order: 1;
   }
 
@@ -274,6 +274,8 @@ button:active, button.active {
   }
 
   .rightMetaBox {
+    display: flex;
+    justify-content: flex-start;
     order: 3;
   }
 }
