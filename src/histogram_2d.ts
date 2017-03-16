@@ -147,32 +147,34 @@ class Histogram2D implements IAppView {
 
         const cols = json.cols.counts;
         const rows = json.rows.counts;
+        const totalR = rows.d_counts + rows.a_counts + rows.c_counts + rows.no_counts;
+        const totalC = cols.d_counts + cols.a_counts + cols.c_counts + cols.no_counts;
 
         data.push({
           type: ChangeTypes.REMOVED.type,
-          rows: (this.width - this.borderWidth) / (rows.d_counts + rows.a_counts + rows.c_counts + rows.no_counts), //todo change to 1
-          cols: (this.height - this.borderWidth) / (cols.d_counts + cols.a_counts + cols.c_counts + cols.no_counts), //todo change to 1
+          rows: (this.width - this.borderWidth) * (rows.d_counts + rows.a_counts + rows.c_counts + rows.no_counts) / totalR, //todo change to 1
+          cols: (this.height - this.borderWidth) * (cols.d_counts + cols.a_counts + cols.c_counts + cols.no_counts) / totalC, //todo change to 1
           rows_text: Math.round((rows.d_ratio * 100) * 1000) / 1000,
           cols_text: Math.round((cols.d_ratio * 100) * 1000) / 1000
         });
         data.push({
           type: ChangeTypes.ADDED.type,
-          rows: (this.width - this.borderWidth) / (rows.a_counts + rows.c_counts + rows.no_counts), // or 1 - d
-          cols: (this.height - this.borderWidth) / (cols.a_counts + cols.c_counts + cols.no_counts),
+          rows: (this.width - this.borderWidth) * (rows.a_counts + rows.c_counts + rows.no_counts) / totalR, // or 1 - d
+          cols: (this.height - this.borderWidth) * (cols.a_counts + cols.c_counts + cols.no_counts) / totalC,
           rows_text: Math.round((rows.a_ratio * 100) * 1000) / 1000,
           cols_text: Math.round((cols.a_ratio * 100) * 1000) / 1000
         });
         data.push({
           type: ChangeTypes.CONTENT.type,
-          rows: (this.width - this.borderWidth) / (rows.c_counts + rows.no_counts),
-          cols: (this.height - this.borderWidth) / (cols.c_counts + cols.no_counts),
+          rows: (this.width - this.borderWidth) * (rows.c_counts + rows.no_counts) / totalR,
+          cols: (this.height - this.borderWidth) * (cols.c_counts + cols.no_counts) / totalC,
           rows_text: Math.round((rows.c_ratio * 100) * 1000) / 1000,
           cols_text: Math.round((cols.c_ratio * 100) * 1000) / 1000
         });
         data.push({
           type: ChangeTypes.NO_CHANGE.type,
-          rows: (this.width - this.borderWidth) / rows.no_ratio,
-          cols: (this.width - this.borderWidth) / cols.no_counts,
+          rows: (this.width - this.borderWidth) * rows.no_ratio / totalR,
+          cols: (this.width - this.borderWidth) * cols.no_counts / totalC,
           rows_text: Math.round((rows.no_ratio * 100) * 1000) / 1000,
           cols_text: Math.round((cols.no_ratio * 100) * 1000) / 1000
         });
@@ -204,8 +206,8 @@ class Histogram2D implements IAppView {
 
     ratio2d
       .attr('class', (d) => d.type + '-color')
-      .style('width', (d) => this.x(d.cols) + 'px')
-      .style('height', (d) => this.y(d.rows) + 'px')
+      .style('width', (d) => d.cols + 'px')
+      .style('height', (d) => d.rows + 'px')
       .attr('title', (d) => ChangeTypes.labelForType(d.type) + '\x0ARows: ' + d.rows_text + '%\x0AColumns: ' + d.cols_text + '%');
 
     ratio2d.exit().remove();
