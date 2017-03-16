@@ -70,6 +70,7 @@ class MetaInfoBox implements IAppView {
   private build() {
     this.$leftMetaBox = this.$node
       .append('div')
+      .classed('invisibleClass', true)
       .classed('leftMetaBox', true)
       .append('div')
       .style('width', this.boxWidth + 'px')
@@ -77,6 +78,7 @@ class MetaInfoBox implements IAppView {
 
     this.$rightMetaBox = this.$node
       .append('div')
+      .classed('invisibleClass', true)
       .classed('rightMetaBox', true)
       .append('div')
       .style('width', this.boxWidth + 'px')

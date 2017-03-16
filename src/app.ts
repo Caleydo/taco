@@ -159,6 +159,11 @@ export class App implements IAppView {
    * @param isBusy
    */
   setBusy(isBusy) {
+    this.$node.select('.leftMetaBox').classed('invisibleClass', isBusy);
+    this.$node.select('.rightMetaBox').classed('invisibleClass', isBusy);
+    this.$node.select('.detailview').classed('invisibleClass', isBusy);
+    this.$node.select('.histogram_2d').classed('invisibleClass', isBusy);
+
     this.$node.select('.busy').classed('hidden', !isBusy);
   }
 
