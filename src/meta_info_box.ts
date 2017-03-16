@@ -18,13 +18,9 @@ class MetaInfoBox implements IAppView {
   private $leftMetaBox;
   private $rightMetaBox;
 
-  private items;
-
-  // Width of the timeline div element
   private totalWidth: number;
   private boxHeight = 162;
   private boxWidth = 162;
-
 
 
   /**
@@ -74,15 +70,17 @@ class MetaInfoBox implements IAppView {
   private build() {
     this.$leftMetaBox = this.$node
       .append('div')
-      //.style('width', this.boxWidth + 'px')
-      .style('height', this.boxHeight + 'px')
-      .classed('leftMetaBox', true);
+      .classed('leftMetaBox', true)
+      .append('div')
+      .style('width', this.boxWidth + 'px')
+      .style('height', this.boxHeight + 'px');
 
     this.$rightMetaBox = this.$node
       .append('div')
-      //.style('width', this.boxWidth + 'px')
-      .style('height', this.boxHeight + 'px')
-      .classed('rightMetaBox', true);
+      .classed('rightMetaBox', true)
+      .append('div')
+      .style('width', this.boxWidth + 'px')
+      .style('height', this.boxHeight + 'px');
 
     // wrap view ids from package.json as plugin and load the necessary files
     get(AppConstants.VIEW, 'Histogram2D')

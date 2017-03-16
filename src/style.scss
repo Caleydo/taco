@@ -223,7 +223,7 @@ button:active, button.active {
 }
 
 .meta_info_box {
-  margin: 20px 0;
+  margin: 20px 0 100px;
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -234,37 +234,37 @@ button:active, button.active {
     width: 33%;
   }
 
-  .leftMetaBox, .rightMetaBox {
-    //margin: auto;
-    line-height: 162px;
+  .leftMetaBox > div,
+  .rightMetaBox > div {
+    border-radius: 5px;
     background: $gentle-color;
     border: 1px solid $gentle-color;
-    border-radius: 5px;
     padding: 0 10px 0 10px;
+    text-align: center;
 
     // show placeholder text if boxes are empty
-    &:empty:before {
-      content: 'Select two time points on the timeline to get more information.';
-      width: 100%;
-      text-align: center;
-      display: inline-block;
-      line-height: normal;
-      vertical-align: middle;
+    &:empty{
+      display: flex;
+      align-items: center;
+
+      &:before {
+        content: 'Select two time points on the timeline to get more information.';
+        text-align: center;
+      }
+    }
+
+    dl {
+      margin: 0;
     }
 
     dt {
-      float: left;
-      clear: left;
-      margin-right: 5px;
-      font-weight: bold;
-    }
-
-    dd {
-      margin-left: 0;
+      margin-top: 5px;
     }
   }
 
   .leftMetaBox {
+    display: flex;
+    justify-content: flex-end;
     order: 1;
   }
 
@@ -274,6 +274,8 @@ button:active, button.active {
   }
 
   .rightMetaBox {
+    display: flex;
+    justify-content: flex-start;
     order: 3;
   }
 }
@@ -378,9 +380,12 @@ div.removed-color, .row-removed-color, .col-removed-color {
 
 .phovea-heatmap {
   max-height: 1500px;
+  border: 1px solid black;
+  display: inline-block;
 }
 
-.phovea-heatmap-data {
+.phovea-heatmap-data,
+.phovea-heatmap-selection {
   max-height: 1500px;
   max-width: 100%;
 }
@@ -426,46 +431,6 @@ select.form-control {
   margin-left: 10px;
 }
 
-/**
-This is the button for the further Details view.
- */
-#detailViewBtn {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50px);
-  color: black;
-  background-color: $gentle-color;
-  border: 1px solid $gentle-color;
-}
-
-/**
-This placeholder is used for the 3 rectangles which are shown if no
-heatmaps or diffheatmaps are plotted.
- */
-.diffPlaceholder {
-  margin-top: 140px;
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  align-content: stretch;
-  justify-content: space-between;
-
-  & > div {
-    width: 33%;
-    height: 1000px;
-    border: 1.5px solid $gentle-color;
-  }
-}
-
-/**
-This aligns the text inside the placeholders.
- */
-.sourceTablePlaceholder, .diffTablePlaceholder, .destinationTablePlaceholder{
-  font-size: 10pt;
-  text-align: center;
-}
-
-
 .bar_chart {
   display: flex;
   height: 100px; // height also defined in bar_chart.ts
@@ -481,5 +446,15 @@ This aligns the text inside the placeholders.
 
   .bar {
     transition: height ease 0.2s;
+  }
+}
+
+.detailview {
+  margin: 20px 0;
+  text-align: center;
+
+  button {
+    position: relative;
+    left: -35px;
   }
 }

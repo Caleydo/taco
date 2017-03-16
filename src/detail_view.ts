@@ -15,14 +15,10 @@ import * as ajax from 'phovea_core/src/ajax';
 class DetailView implements IAppView {
   private $node;
 
-  private diffplaceholder;
-  private tableData;
-
   constructor(public parent:Element, private options:any) {
     this.$node = d3.select(parent)
       .append('div')
-      .classed('detailview', true)
-      .classed('invisibleClass2', true);
+      .classed('detailview', true);
   }
 
   init() {
@@ -34,33 +30,7 @@ class DetailView implements IAppView {
   }
 
   private build() {
-    this.$node.html(`<button type="button" 
-                               id="detailViewBtn" 
-                               class="btn btn-primary" 
-                               disabled>Load Detail View</button>`);
-
-    this.diffplaceholder = this.$node
-      .append('div')
-      .classed('diffPlaceholder', true);
-
-    this.diffplaceholder
-      .append('div')
-      .classed('sourceTablePlaceholder', true)
-      .append('p')
-      .text('Source Table');
-
-    this.diffplaceholder
-      .append('div')
-      .classed('diffTablePlaceholder', true)
-      .append('p')
-      .text('Diff Table');
-
-    this.diffplaceholder
-      .append('div')
-      .classed('destinationTablePlaceholder', true)
-      .append('p')
-      .text('Destination Table');
-
+    this.$node.html(`<button type="button" class="btn btn-default" disabled>Load Detail View</button>`);
   }
 
   private attachListener() {
@@ -70,17 +40,16 @@ class DetailView implements IAppView {
   }
 
   private openEvents (clickedElements) {
-    this.$node.select('#detailViewBtn')
-      .on('click', function (e) {
-        if(clickedElements !== void 0) {
-          events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, clickedElements[0].item);
-          events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, clickedElements[1].item);
-          events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElements.map((d) => d.item));
-          d3.select('.difftitle').classed('hidden', false);
-          d3.select('.comparison').classed('hidden', false);
-          d3.select('#detailViewBtn').attr('disabled', true);
-          d3.select('.diffPlaceholder').classed('invisibleClass', true);
+    this.$node.select('button')
+      .attr('disabled', (clickedElements.length === 2) ? null : 'disabled')
+      .on('click', (e) => {
+        if(clickedElements.length !== 2) {
+          return;
         }
+        events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, clickedElements[0].item);
+        events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, clickedElements[1].item);
+        events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElements.map((d) => d.item));
+        this.$node.select('button').attr('disabled', 'disabled');
       });
   }
 }

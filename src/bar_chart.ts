@@ -4,12 +4,11 @@
 
 import * as d3 from 'd3';
 import * as ajax from 'phovea_core/src/ajax';
-import * as moment from 'moment';
 import * as $ from 'jquery';
 import * as events from 'phovea_core/src/event';
 import {AppConstants, ChangeTypes, IChangeType} from './app_constants';
 import {IAppView} from './app';
-import {getPosXScale, scaleCircles, getTimeScale} from './util';
+import {scaleCircles, getTimeScale, selectTimePoint} from './util';
 
 /**
  * This class adds a bar chart, that shows bars with click functionality,
@@ -21,7 +20,6 @@ class BarChart implements IAppView {
   private items;
 
   private totalWidth: number = 0;
-  private openHistogram2D;
   private index = [];
   private leftValue = [];
 
@@ -229,7 +227,10 @@ class BarChart implements IAppView {
         .attr('data-id', currId)
         .style('width', this.widthBarChart + 'px')
         .style('height', this.heightBarChart + 'px')
-        .style('left', ((pair[1].time) ? posXScale(pair[1].time.toDate()) : circleScale) + 'px');
+        .style('left', ((pair[1].time) ? posXScale(pair[1].time.toDate()) : circleScale) + 'px')
+        .on('click', () => {
+          selectTimePoint(pair[1]);
+        });
     }
 
     //individual bars in the bar group div

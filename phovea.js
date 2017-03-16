@@ -20,10 +20,6 @@ module.exports = function(registry) {
     'name': 'Timeline'
   });
 
-  registry.push('tacoView', 'DiffTitle', function() { return System.import('./src/diff_title'); }, {
-    'name': 'DiffTitle'
-  });
-
   registry.push('tacoView', 'DetailView', function() { return System.import('./src/detail_view'); }, {
     'name': 'DetailView'
   });
