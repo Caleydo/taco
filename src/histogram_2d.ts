@@ -150,8 +150,6 @@ class Histogram2D implements IAppView {
         const totalR = rows.d_counts + rows.a_counts + rows.c_counts + rows.no_counts;
         const totalC = cols.d_counts + cols.a_counts + cols.c_counts + cols.no_counts;
 
-        console.log("cols", cols, "rows", rows);
-
         data.push({
           type: ChangeTypes.REMOVED.type,
           rows: (this.width - this.borderWidth) * (rows.d_counts + rows.a_counts + rows.c_counts + rows.no_counts) / totalR, //todo change to 1
@@ -202,7 +200,6 @@ class Histogram2D implements IAppView {
   //Show 2d Ratio chart
   private showData(data) {
     const ratio2d = this.$ratio.selectAll('div').data(data);
-    console.log("data", data);
 
     ratio2d.enter()
       .append('div');
