@@ -49,6 +49,7 @@ class Histogram2D implements IAppView {
   constructor(parent: Element, private options: any) {
     this.$node = d3.select(parent)
       .append('div')
+      .classed('invisibleClass', true)
       .classed('histogram_2d', true);
   }
 
