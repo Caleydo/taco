@@ -18,6 +18,7 @@ class DetailView implements IAppView {
   constructor(public parent:Element, private options:any) {
     this.$node = d3.select(parent)
       .append('div')
+      .classed('invisibleClass', true)
       .classed('detailview', true);
   }
 
