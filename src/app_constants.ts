@@ -26,6 +26,9 @@ export class AppConstants {
   static EVENT_DATASET_SELECTED_LEFT = 'eventDataSetSelectedLeft';
   static EVENT_DATASET_SELECTED_RIGHT = 'eventDataSetSelectedRight';
   static EVENT_OPEN_DIFF_HEATMAP = 'eventDrawDiffHeatmap';
+
+  static EVENT_OPEN_DETAIL_VIEW = 'eventOpenDetailView';
+
   static EVENT_DIFF_HEATMAP_LOADED = 'eventDiffHeatmapLoaded';
 
   static EVENT_TIME_POINTS_SELECTED = 'eventTimePointsSelected';

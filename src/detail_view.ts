@@ -35,26 +35,34 @@ class DetailView implements IAppView {
       this.$node.select('button').attr('disabled', 'disabled');
     });
 
-    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, clickedElement) => {
-      this.openEvents(clickedElement);
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items) => {
+      this.openEvents(items);
+    });
+
+    events.on(AppConstants.EVENT_OPEN_DETAIL_VIEW, (evt, items) => {
+      this.loadDetailView(items);
     });
   }
 
-  private openEvents (clickedElements) {
+  private openEvents (items) {
     this.$node.select('button')
-      .attr('disabled', (clickedElements.length === 2) ? null : 'disabled')
+      .attr('disabled', (items.length === 2) ? null : 'disabled')
       .on('click', (e) => {
-        if(clickedElements.length !== 2) {
-          return;
-        }
-
-        hash.setInt(AppConstants.HASH_PROPS.DETAIL_VIEW, 1);
-
-        events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, clickedElements[0].item);
-        events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, clickedElements[1].item);
-        events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElements.map((d) => d.item));
-        this.$node.select('button').attr('disabled', 'disabled');
+        this.loadDetailView(items);
       });
+  }
+
+  private loadDetailView(selection) {
+    if(selection.length !== 2) {
+      return;
+    }
+
+    hash.setInt(AppConstants.HASH_PROPS.DETAIL_VIEW, 1);
+
+    events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, selection[0].item);
+    events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, selection[1].item);
+    events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, selection.map((d) => d.item));
+    this.$node.select('button').attr('disabled', 'disabled');
   }
 }
 

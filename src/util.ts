@@ -43,16 +43,16 @@ let selectedTimePoints = [];
 /**
  * Stores a selected time point and sends an event with all stored time points
  * If two time points are stored, the array is cleared
- *
- * @param timepoint
+ * @param timepoints
  */
-export function selectTimePoint(timepoint) {
-  selectedTimePoints.push(timepoint);
+export function selectTimePoint(...timepoints) {
+  selectedTimePoints.push(...timepoints);
 
   // sort elements by time -> [0] = earlier = source; [1] = later = destination
   selectedTimePoints = selectedTimePoints.sort((a, b) => d3.ascending(a.time, b.time));
 
   hash.setProp(AppConstants.HASH_PROPS.TIME_POINTS, selectedTimePoints.map((d) => d.key).join(','));
+  hash.removeProp(AppConstants.HASH_PROPS.DETAIL_VIEW);
 
   events.fire(AppConstants.EVENT_TIME_POINTS_SELECTED, selectedTimePoints);
 
@@ -73,15 +73,14 @@ export function selectTimePointFromHash(timepoints) {
 
   const selectedTPKeys:string[] = hash.getProp(AppConstants.HASH_PROPS.TIME_POINTS).split(',');
   const selectedTimePoints = timepoints.filter((d) => selectedTPKeys.indexOf(d.key) > -1);
+  const showDetailView = hash.getInt(AppConstants.HASH_PROPS.DETAIL_VIEW);
 
-  selectedTimePoints.forEach((d) => {
-    selectTimePoint(d);
-  });
+  selectTimePoint(...selectedTimePoints);
 
-  if(selectedTimePoints.length === 2 && hash.getInt(AppConstants.HASH_PROPS.DETAIL_VIEW) === 1) {
-    events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, selectedTimePoints[0].item);
-    events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, selectedTimePoints[1].item);
-    events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, selectedTimePoints.map((d) => d.item));
+  if(selectedTimePoints.length === 2 && showDetailView === 1) {
+    hash.setInt(AppConstants.HASH_PROPS.DETAIL_VIEW, showDetailView);
+    events.fire(AppConstants.EVENT_OPEN_DETAIL_VIEW, selectedTimePoints);
+
   } else {
     hash.removeProp(AppConstants.HASH_PROPS.DETAIL_VIEW);
   }
