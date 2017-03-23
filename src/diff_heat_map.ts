@@ -18,11 +18,14 @@ class DiffHeatMap implements IAppView {
   //main div
   private $node;
 
-  private initialSize = AppConstants.HEATMAP_CELL_SIZE;
-
   private colorLow = '#d8b365';
   private colorMed = 'white';
   private colorHigh = '#8da0cb';
+
+  private borderWidth = 2;
+  private margin = 2 * 50;
+
+  private scaleFactor = 1;
 
   private static getJSON(pair) {
     const operations = ChangeTypes.forURL();
@@ -84,7 +87,7 @@ class DiffHeatMap implements IAppView {
       DiffHeatMap.getJSON(idsSelectedTable)
         .then((data) => {
           this.drawDiffHeatmap(data);
-          events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, items, data);
+          events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, items, data, this.scaleFactor);
         });
     });
 
@@ -116,16 +119,23 @@ class DiffHeatMap implements IAppView {
       .range([this.colorLow, this.colorMed, this.colorHigh])
       .clamp(true);
 
-    const borderWidth = 2;
-    const width = this.initialSize * data.union.uc_ids.length;
-    const height = this.initialSize * data.union.ur_ids.length;
+    const dataWidth = AppConstants.HEATMAP_CELL_SIZE * data.union.uc_ids.length;
+    const dataHeight = AppConstants.HEATMAP_CELL_SIZE * data.union.ur_ids.length;
+
+    this.scaleFactor = (this.$node.property('clientWidth') - this.margin) / dataWidth;
+
+    const cellSize = AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor;
+    const width = dataWidth * this.scaleFactor;
+    const height = dataHeight * this.scaleFactor;
 
     const root = this.$node.append('div')
       .attr('class', 'taco-table')
-      //.style('width', (width + borderWidth) + 'px')
-      .style('height', (height + borderWidth) + 'px')
-      .style('background-color', 'white')
-      .style('transform-origin', '0 0');
+      .style('width', (width + this.borderWidth) + 'px')
+      .style('height', (height + this.borderWidth) + 'px')
+      .append('div')
+      //.style('transform-origin', '0 0')
+      //.style('transform', `scale(${scaleFactor})`)
+      .classed('transform', true);
 
     if (data.structure) {
 
@@ -140,10 +150,10 @@ class DiffHeatMap implements IAppView {
           .style('left', 0 + 'px')
           .style('top', function (d) {
             const y = d.pos;
-            return (y !== -1 ? y * this.cellHeight : null) + 'px';
+            return (y !== -1 ? y * cellSize : null) + 'px';
           })
           .style('width', width + 'px')
-          .style('height', this.initialSize + 'px');
+          .style('height', cellSize + 'px');
       }
 
       if(data.structure.added_cols) {
@@ -157,9 +167,9 @@ class DiffHeatMap implements IAppView {
           .style('top', 0 + 'px')
           .style('left', (d) => {
             const x = d.pos;
-            return (x !== -1 ? x * this.initialSize : null) + 'px';
+            return (x !== -1 ? x * cellSize : null) + 'px';
           })
-          .style('width', this.initialSize + 'px')
+          .style('width', cellSize + 'px')
           .style('height', height + 'px');
       }
 
@@ -174,10 +184,10 @@ class DiffHeatMap implements IAppView {
           .style('left', 0 + 'px')
           .style('top', (d) => {
             const y = d.pos;
-            return (y !== -1 ? y * this.initialSize : null) + 'px';
+            return (y !== -1 ? y * cellSize : null) + 'px';
           })
           .style('width', width + 'px')
-          .style('height', this.initialSize + 'px');
+          .style('height', cellSize + 'px');
       }
 
       if(data.structure.deleted_cols) {
@@ -191,9 +201,9 @@ class DiffHeatMap implements IAppView {
           .style('top', 0 + 'px')
           .style('left', (d) => {
             const x = d.pos;
-            return (x !== -1 ? x * this.initialSize : null) + 'px';
+            return (x !== -1 ? x * cellSize : null) + 'px';
           })
-          .style('width', this.initialSize + 'px')
+          .style('width', cellSize + 'px')
           .style('height', height + 'px');
       }
     }
@@ -209,15 +219,15 @@ class DiffHeatMap implements IAppView {
         .style('top', (d) => {
           //var y = that.row_ids.indexOf(d.row);
           const y = d.rpos;
-          return (y !== -1 ? y * this.initialSize : null) + 'px';
+          return (y !== -1 ? y * cellSize : null) + 'px';
         })
         .style('left', (d) => {
           //var x = that.col_ids.indexOf(d.col);
           const x = d.cpos;
-          return (x !== -1 ? x * this.initialSize : null) + 'px';
+          return (x !== -1 ? x * cellSize : null) + 'px';
         })
-        .style('width', this.initialSize + 'px')
-        .style('height', this.initialSize + 'px')
+        .style('width', cellSize + 'px')
+        .style('height', cellSize + 'px')
         .style('background-color', 'red')
         .style('z-index', 1000)
         .style('background-color', (d) => colorScale(d.diff_data));

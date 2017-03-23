@@ -14,6 +14,7 @@ $boostrapAssetDir: '~phovea_ui/src/assets';
 body, html {
   font-family: Yantramanav, 'Helvetica Neue', Helvetica, sans-serif !important;
   font-weight: 400 !important;
+  height: auto !important;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -245,6 +246,7 @@ button:active, button.active {
 
   .histogram_2d {
     order: 2;
+    width: calc(33% + 100px);
     text-align: center;
   }
 
@@ -462,8 +464,9 @@ select.form-control {
   border: 1px solid black;
   margin: 0 50px;
   width: calc(100% - 100px);
+  background: white;
 
-  & > div {
+  & div.transform > div {
     position: absolute;
   }
 }

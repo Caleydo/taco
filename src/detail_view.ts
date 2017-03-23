@@ -59,9 +59,9 @@ class DetailView implements IAppView {
 
     hash.setInt(AppConstants.HASH_PROPS.DETAIL_VIEW, 1);
 
+    events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, selection.map((d) => d.item));
     events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, selection[0].item);
     events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, selection[1].item);
-    events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, selection.map((d) => d.item));
     this.$node.select('button').attr('disabled', 'disabled');
   }
 }

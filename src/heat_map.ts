@@ -7,6 +7,7 @@ import * as events from 'phovea_core/src/event';
 import {IAppView} from './app';
 import * as d3 from 'd3';
 import {AppConstants} from './app_constants';
+import {mixin} from 'phovea_core/src';
 
 /**
  * Shows a simple heat map for a given data set.
@@ -14,6 +15,8 @@ import {AppConstants} from './app_constants';
 class HeatMap implements IAppView {
 
   private $node;
+
+  private dataset;
 
   private heatMapOptions = {
       initialScale: AppConstants.HEATMAP_CELL_SIZE,
@@ -50,15 +53,20 @@ class HeatMap implements IAppView {
       this.clearContent();
     });
 
-    events.on(this.options.eventName, (evt, dataset) => this.update(dataset));
+    events.on(this.options.eventName, (evt, dataset) => this.dataset = dataset);
+
+    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor) => {
+      this.update(this.dataset, scaleFactor);
+    });
   }
 
   /**
    * Loads a Caleydo heat map visualization plugin and hands the given data set over for visualizing it
    * @param dataset
+   * @param scaleFactor
    * @returns {Promise<HeatMap>}
    */
-  private update(dataset) {
+  private update(dataset, scaleFactor) {
 
     if(dataset.desc.type !== 'matrix') {
       console.warn(`Data set is not of type matrix and cannot be visualized from heat map plugin`);
@@ -74,6 +82,8 @@ class HeatMap implements IAppView {
       return;
     }
 
+    const options = mixin(this.heatMapOptions, {initialScale: this.heatMapOptions.initialScale * scaleFactor});
+
     return Promise.all([plugins[0].load()])
       .then((args) => {
         this.clearContent();
@@ -84,7 +94,7 @@ class HeatMap implements IAppView {
         plugin.factory(
           dataset,
           this.$node.node(),
-          this.heatMapOptions
+          options
         );
         return this;
       });

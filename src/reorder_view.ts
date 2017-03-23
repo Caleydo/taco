@@ -72,33 +72,32 @@ class ReorderView implements IAppView {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData) => {
+    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor:number) => {
       if(pair.length === 2) {
-        this.draw(pair[0], pair[1], diffData);
+        this.draw(pair[0], pair[1], diffData, scaleFactor);
       }
     });
   }
 
-  private draw(src, dst, diffData) {
-    console.log(src, dst);
+  private draw(src, dst, diffData, scaleFactor:number) {
     switch (this.options.orientation) {
       case EOrientation.COLUMN:
         this.scale.domain([0, Math.max(src.desc.size[1], dst.desc.size[1])]);
-        this.drawRows(src.desc.size[1], dst.desc.size[1], diffData.reorder.cols);
+        this.drawRows(diffData.reorder.cols, scaleFactor);
         break;
 
       case EOrientation.ROW:
-        this.scale.domain([0, Math.max(src.desc.size[0], dst.desc.size[0])]);
-        this.drawRows(src.desc.size[0], dst.desc.size[0], diffData.reorder.rows);
+        this.scale.domain([0, Math.max(src.desc.size[0], dst.desc.size[0]) * scaleFactor]);
+        this.drawRows(diffData.reorder.rows, scaleFactor);
         break;
     }
   }
 
-  private drawColumns(srcSize, dstSize, reorders:IReorderChange[]) {
+  private drawColumns(reorders:IReorderChange[], scaleFactor:number) {
     //
   }
 
-  private drawRows(srcSize, dstSize, reorders:IReorderChange[]) {
+  private drawRows(reorders:IReorderChange[], scaleFactor:number) {
     const width = this.$node.property('clientWidth')-1;
 
     const $slopes = this.$slopes.selectAll('line').data(reorders, (d) => d.id);
