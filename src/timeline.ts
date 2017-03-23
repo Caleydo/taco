@@ -73,7 +73,7 @@ class Timeline implements IAppView {
     });
 
     // Call the resize function whenever a resize event occurs
-    d3.select(window).on('resize', () => this.resize());
+    $(window).on('resize', () => this.resize());
   }
 
   /**
@@ -131,10 +131,13 @@ class Timeline implements IAppView {
         (<MouseEvent>d3.event).preventDefault();
 
         if (that.isClicked === 0) {
+          //Clear heatmaps and DiffHeatmap
+          d3.selectAll('.heatmap').selectAll('*').remove();
+          d3.select('.diffheatmap').selectAll('*').remove();
+
           // Toggle the active CSS classes
           that.$svgTimeline.selectAll('text').classed('active', false);
           that.isClicked = 1;
-
         } else {
           that.isClicked = 0;
         }
