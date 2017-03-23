@@ -63,7 +63,7 @@ $app-margin-top: 50;
   align-content: stretch;
   justify-content: space-between;
 
-  &>div{
+  & > div{
     width: 33%;
   }
 
@@ -75,8 +75,9 @@ $app-margin-top: 50;
 .taco-table {
   position: relative;
   border: 1px solid black;
+  margin: 0 50px;
 
-  &>div {
+  & > div {
     position: absolute;
   }
 }
@@ -456,5 +457,24 @@ select.form-control {
   button {
     position: relative;
     left: -35px;
+  }
+}
+
+.diffheatmap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.reorderView {
+  position: absolute;
+  width: 100%;
+
+  line {
+    fill: none;
+    stroke: darken($reorder-color, 30%);
+  }
+  & > line {
+    shape-rendering: crispEdges;
   }
 }

@@ -1,16 +1,11 @@
 /**
- * Created by cniederer on 01.03.17.
- */
-/**
  * Created by cniederer on 20.01.17.
  */
 
-//import * as events from 'phovea_core/src/event';
 import {IAppView} from './app';
 import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
-import * as ajax from 'phovea_core/src/ajax';
 
 class DetailView implements IAppView {
   private $node;

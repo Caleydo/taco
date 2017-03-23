@@ -6,6 +6,7 @@ import * as vis from 'phovea_core/src/vis';
 import * as events from 'phovea_core/src/event';
 import {IAppView} from './app';
 import * as d3 from 'd3';
+import {AppConstants} from './app_constants';
 
 /**
  * Shows a simple heat map for a given data set.
@@ -15,7 +16,7 @@ class HeatMap implements IAppView {
   private $node;
 
   private heatMapOptions = {
-      initialScale: 5,
+      initialScale: AppConstants.HEATMAP_CELL_SIZE,
       color: ['white', 'black']
     };
 
