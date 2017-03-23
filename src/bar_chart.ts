@@ -172,7 +172,7 @@ class BarChart implements IAppView {
    */
   private windowResize(items) {
     this.items = items;
-    const width = $(window).innerWidth();
+    const width = $(this.$node.node()).width();
 
     this.generateIndexArray(this.items, width);
 
