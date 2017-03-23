@@ -102,6 +102,10 @@ class Histogram2D implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+      this.clearContent();
+    });
+
     events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items) => {
       if(items.length === 2) {
         this.selectedTables = [items[0].item.desc.id, items[1].item.desc.id];

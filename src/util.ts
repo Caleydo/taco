@@ -54,10 +54,6 @@ export function selectTimePoint(timepoint) {
 
   hash.setProp(AppConstants.HASH_PROPS.TIME_POINTS, selectedTimePoints.map((d) => d.key).join(','));
 
-  if(selectedTimePoints.length === 1) {
-    hash.removeProp(AppConstants.HASH_PROPS.DETAIL_VIEW); // remove detail view prop
-  }
-
   events.fire(AppConstants.EVENT_TIME_POINTS_SELECTED, selectedTimePoints);
 
   // clear after 2 selected time points

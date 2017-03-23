@@ -64,6 +64,14 @@ class DiffHeatMap implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+      this.clearContent();
+    });
+
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
+      this.clearContent();
+    });
+
     //attach event listener
     events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items) => {
       if(items.length !== 2) {
@@ -114,7 +122,7 @@ class DiffHeatMap implements IAppView {
 
     const root = this.$node.append('div')
       .attr('class', 'taco-table')
-      .style('width', (width + borderWidth) + 'px')
+      //.style('width', (width + borderWidth) + 'px')
       .style('height', (height + borderWidth) + 'px')
       .style('background-color', 'white')
       .style('transform-origin', '0 0');
@@ -214,6 +222,10 @@ class DiffHeatMap implements IAppView {
         .style('z-index', 1000)
         .style('background-color', (d) => colorScale(d.diff_data));
     }
+  }
+
+  private clearContent() {
+    this.$node.select('.taco-table').remove();
   }
 }
 

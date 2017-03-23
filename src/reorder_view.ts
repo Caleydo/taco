@@ -35,8 +35,6 @@ interface IReorderChange {
 class ReorderView implements IAppView {
 
   private $node;
-  private $srcAxis;
-  private $destAxis;
   private $slopes;
 
   private options = {
@@ -62,13 +60,18 @@ class ReorderView implements IAppView {
   }
 
   private build() {
-
-    this.$srcAxis = this.$node.append('line').classed('src', true);
-    this.$destAxis = this.$node.append('line').classed('dest', true);
     this.$slopes = this.$node.append('g').classed('slopes', true);
   }
 
   private attachListener() {
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+      this.clearContent();
+    });
+
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
+      this.clearContent();
+    });
+
     events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData) => {
       if(pair.length === 2) {
         this.draw(pair[0], pair[1], diffData);
@@ -98,18 +101,6 @@ class ReorderView implements IAppView {
   private drawRows(srcSize, dstSize, reorders:IReorderChange[]) {
     const width = this.$node.property('clientWidth')-1;
 
-    /*this.$srcAxis
-      .attr('x1', 0)
-      .attr('x2', 0)
-      .attr('y1', this.scale(0))
-      .attr('y2', this.scale(srcSize));
-
-    this.$destAxis
-      .attr('x1', width)
-      .attr('x2', width)
-      .attr('y1', this.scale(0))
-      .attr('y2', this.scale(dstSize));*/
-
     const $slopes = this.$slopes.selectAll('line').data(reorders, (d) => d.id);
 
     $slopes.enter().append('line');
@@ -122,6 +113,10 @@ class ReorderView implements IAppView {
       .attr('y2', (d) => this.scale(d.to));
 
     $slopes.exit().remove();
+  }
+
+  private clearContent() {
+    this.$slopes.selectAll('*').remove();
   }
 
 }

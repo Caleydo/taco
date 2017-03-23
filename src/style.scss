@@ -56,32 +56,6 @@ $app-margin-top: 50;
   margin: $app-margin-top+px 20px 20px;
 }
 
-.comparison {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  align-content: stretch;
-  justify-content: space-between;
-
-  & > div{
-    width: 33%;
-  }
-
-  .heatmap:first-child {
-    text-align: right;
-  }
-}
-
-.taco-table {
-  position: relative;
-  border: 1px solid black;
-  margin: 0 50px;
-
-  & > div {
-    position: absolute;
-  }
-}
-
 #caleydoHeader {
   position: fixed;
   z-index: 100000;
@@ -460,10 +434,38 @@ select.form-control {
   }
 }
 
+.comparison {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  align-content: stretch;
+  justify-content: space-between;
+
+  .heatmap {
+    width: 33%;
+  }
+
+  .heatmap:first-child {
+    text-align: right;
+  }
+}
+
 .diffheatmap {
   position: relative;
   display: flex;
   justify-content: center;
+  width: calc(33% + 100px);
+}
+
+.taco-table {
+  position: relative;
+  border: 1px solid black;
+  margin: 0 50px;
+  width: calc(100% - 100px);
+
+  & > div {
+    position: absolute;
+  }
 }
 
 .reorderView {

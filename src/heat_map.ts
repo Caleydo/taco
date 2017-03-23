@@ -42,8 +42,15 @@ class HeatMap implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(this.options.eventName, (evt, dataset) => this.update(dataset));
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+      this.clearContent();
+    });
 
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
+      this.clearContent();
+    });
+
+    events.on(this.options.eventName, (evt, dataset) => this.update(dataset));
   }
 
   /**
@@ -69,8 +76,7 @@ class HeatMap implements IAppView {
 
     return Promise.all([plugins[0].load()])
       .then((args) => {
-        // remove the previous heat map
-        this.$node.selectAll('*').remove();
+        this.clearContent();
 
        // console.log('args from plugins', args);
         const plugin = args[0];
@@ -82,6 +88,13 @@ class HeatMap implements IAppView {
         );
         return this;
       });
+  }
+
+  /**
+   * Remove the previous heatmap
+   */
+  private clearContent() {
+    this.$node.selectAll('*').remove();
   }
 
 }

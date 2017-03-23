@@ -31,6 +31,10 @@ class DetailView implements IAppView {
   }
 
   private attachListener() {
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+      this.$node.select('button').attr('disabled', 'disabled');
+    });
+
     events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, clickedElement) => {
       this.openEvents(clickedElement);
     });
