@@ -5,6 +5,7 @@
 import {IAppView} from './app';
 import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
+import * as $ from 'jquery';
 import * as ajax from 'phovea_core/src/ajax';
 import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
 
@@ -48,7 +49,6 @@ class DiffHeatMap implements IAppView {
   }
 
 
-
   /**
    * Attach event handler for broadcasted events
    */
@@ -57,6 +57,7 @@ class DiffHeatMap implements IAppView {
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
 
     events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items) => {
+      this.selectedTables = [];
       //console.log('übergebene items', items[0], items[1]);
       this.selectedTables = items;
       //console.log('selected Tables', this.selectedTables);
@@ -68,9 +69,13 @@ class DiffHeatMap implements IAppView {
     events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
     events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
 
+    // $(window).on('resize', () => {
+    //   d3.select('.taco-table').remove();
+    //   this.diffHeatmap();
+    // });
   }
 
-   private toggleChangeType(changeType) {
+  private toggleChangeType(changeType) {
 
     if (changeType.type === 'removed') {
       this.$node.selectAll('.removed-color').classed('noColorClass', !changeType.isActive);
@@ -98,7 +103,6 @@ class DiffHeatMap implements IAppView {
     Promise.all(dataPromise).then((data) => {
       this.drawDiffHeatmap(data);
     });
-    this.selectedTables = [];
   }
 
   private requestData() {
