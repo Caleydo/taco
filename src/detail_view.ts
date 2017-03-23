@@ -6,6 +6,7 @@ import {IAppView} from './app';
 import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
+import {hash} from 'phovea_core/src';
 
 class DetailView implements IAppView {
   private $node;
@@ -42,6 +43,9 @@ class DetailView implements IAppView {
         if(clickedElements.length !== 2) {
           return;
         }
+
+        hash.setInt(AppConstants.HASH_PROPS.DETAIL_VIEW, 1);
+
         events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, clickedElements[0].item);
         events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, clickedElements[1].item);
         events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, clickedElements.map((d) => d.item));

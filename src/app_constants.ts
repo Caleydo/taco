@@ -46,6 +46,16 @@ export class AppConstants {
    * @type {number}
    */
   static HEATMAP_CELL_SIZE = 5;
+
+  /**
+   * Property for the URL hash
+   * @type {{DATASET: string; TIME_POINTS: string; DETAIL_VIEW: string}}
+   */
+  static HASH_PROPS = {
+    DATASET: 'ds',
+    TIME_POINTS: 'tp',
+    DETAIL_VIEW: 'detail'
+  };
 }
 
 export interface IChangeType {

@@ -12,6 +12,8 @@ import {Language} from './language';
 import {IValueTypeDesc, VALUE_TYPE_REAL} from 'phovea_core/src/datatype';
 import {INumericalMatrix, IMatrixDataDescription} from 'phovea_core/src/matrix';
 import * as d3 from 'd3';
+import {hash} from 'phovea_core/src';
+import {selectTimePointFromHash} from './util';
 
 /**
  * Shows a list of available datasets and lets the user choose one.
@@ -56,8 +58,12 @@ class DataSetSelector implements IAppView {
       .classed('form-control', true)
       .on('change', () => {
         const selectedData = this.$select.selectAll('option')
-          .filter((d, i) => i === this.$select.property('selectedIndex'))
-          .data();
+            .filter((d, i) => i === this.$select.property('selectedIndex'))
+            .data();
+
+        hash.setProp(AppConstants.HASH_PROPS.DATASET, selectedData[0].key);
+        hash.removeProp(AppConstants.HASH_PROPS.TIME_POINTS);
+        hash.removeProp(AppConstants.HASH_PROPS.DETAIL_VIEW);
 
         if(selectedData.length > 0) {
           events.fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
@@ -83,8 +89,20 @@ class DataSetSelector implements IAppView {
 
         $options.exit().remove();
 
-        // invoke change function once to broadcast event
-        this.$select.on('change')();
+        if(hash.has(AppConstants.HASH_PROPS.DATASET)) {
+          const selectedData = data.filter((d, i) => d.key === hash.getProp(AppConstants.HASH_PROPS.DATASET));
+
+          if(selectedData.length > 0) {
+            this.$select.property('selectedIndex', data.indexOf(selectedData[0]));
+            events.fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
+
+            selectTimePointFromHash(selectedData[0].values);
+          }
+
+        } else {
+          // invoke change function once to broadcast event
+          this.$select.on('change')();
+        }
 
         // show form element
         this.$node.classed('hidden', false);
