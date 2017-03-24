@@ -7,6 +7,7 @@ import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
 import * as ajax from 'phovea_core/src/ajax';
 import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
+import {get} from 'phovea_core/src/plugin';
 
 
 /**
@@ -17,13 +18,18 @@ class DiffHeatMap implements IAppView {
   //main div
   private $node;
 
-  private items;
-
-  private selectedTables = [];
+  // cached data
+  private data;
+  private selectedTables;
 
   private colorLow = '#d8b365';
   private colorMed = 'white';
   private colorHigh = '#8da0cb';
+
+  private borderWidth = 2;
+  private margin = 2 * 50;
+
+  private scaleFactor = 1;
 
   private static getJSON(pair) {
     const operations = ChangeTypes.forURL();
@@ -42,213 +48,181 @@ class DiffHeatMap implements IAppView {
    * @returns {Promise<HeatMap>}
    */
   init() {
+    this.build();
     this.attachListener();
     // return the promise directly as long there is no dynamical data to update
     return Promise.resolve(this);
   }
 
-
+  private build() {
+    // wrap view ids from package.json as plugin and load the necessary files
+    get(AppConstants.VIEW, 'ReorderView')
+      .load()
+      .then((plugin) => {
+        const view = plugin.factory(
+          this.$node.node(), // parent node
+          {} // options
+        );
+        return view.init();
+      });
+  }
 
   /**
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    //attach event listener
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => this.updateItems(items));
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+      this.clearContent();
+    });
 
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
+      this.clearContent();
+    });
+
+    //attach event listener
     events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items) => {
-      //console.log('übergebene items', items[0], items[1]);
-      this.selectedTables = items;
-      //console.log('selected Tables', this.selectedTables);
+      if(items.length !== 2) {
+        return;
+      }
+
       this.$node.selectAll('div').remove();
-      this.diffHeatmap();
-      //console.log('selectedTables -- NOW', this.selectedTables);
+
+      const idsSelectedTable = items.map((d:any) => d.desc.id);
+      DiffHeatMap.getJSON(idsSelectedTable)
+        .then((data) => {
+          this.data = data;
+          this.selectedTables = items;
+          this.drawDiffHeatmap(this.data);
+          events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
+        });
     });
 
     events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
     events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
 
+    events.on(AppConstants.EVENT_RESIZE, () => {
+      if(this.data) {
+        this.drawDiffHeatmap(this.data);
+        events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
+      }
+    });
   }
 
-   private toggleChangeType(changeType) {
+  private toggleChangeType(changeType:IChangeType) {
+    switch(changeType.type) {
+      case ChangeTypes.REMOVED.type:
+        this.$node.selectAll('.removed-color').classed('noColorClass', !changeType.isActive);
+        break;
 
-    if (changeType.type === 'removed') {
-      this.$node.selectAll('.removed-color').classed('noColorClass', !changeType.isActive);
-    }
+      case ChangeTypes.ADDED.type:
+        this.$node.selectAll('.added-color').classed('noColorClass', !changeType.isActive);
+        break;
 
-    if (changeType.type === 'added') {
-      this.$node.selectAll('.added-color').classed('noColorClass', !changeType.isActive);
-    }
-
-    if (changeType.type === 'content') {
-      this.$node.selectAll('.content-color').classed('noColorClass', !changeType.isActive);
+      case ChangeTypes.CONTENT.type:
+        this.$node.selectAll('.added-color').classed('noColorClass', !changeType.isActive);
+        break;
     }
 
     this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
   }
 
-
-
-  private updateItems(items) {
-    this.items = items;
-  }
-
-  private diffHeatmap() {
-    const dataPromise = this.requestData();
-    Promise.all(dataPromise).then((data) => {
-      this.drawDiffHeatmap(data);
-    });
-    this.selectedTables = [];
-  }
-
-  private requestData() {
-    //console.log('seletedTable -- Request data', this.selectedTables);
-    return d3.pairs(this.selectedTables)
-      .map((pair) => {
-        //console.log('pair', pair);
-        // const ids = pair.map((d:any) => d.item.desc.id);
-        //console.log('ids', ids);
-        const idsSelectedTable = pair.map((d:any) => d.desc.id);
-        //console.log('ids', idsSelectedTable);
-        // return Promise.all([ajax.getAPIJSON(DiffHeatMap.getURL(ids)), pair, ids])
-        return DiffHeatMap.getJSON(idsSelectedTable)
-          .then((args) => {
-            // console.log('args', args);
-            //this.drawDiffHeatmap(args);
-            return args;
-          });
-      });
-  }
-
   private drawDiffHeatmap(data) {
-    const that = this;
     const colorScale = d3.scale.linear<string>()
       .domain([-1, 0, 1])
       .range([this.colorLow, this.colorMed, this.colorHigh])
       .clamp(true);
 
-    const diffParent = that.$node.node();
-    const borderWidth = 2;
+    const dataWidth = AppConstants.HEATMAP_CELL_SIZE * data.union.uc_ids.length;
+    const dataHeight = AppConstants.HEATMAP_CELL_SIZE * data.union.ur_ids.length;
 
-    const gridHeight = diffParent.getBoundingClientRect().height - 3;
-    const gridWidth = diffParent.getBoundingClientRect().width;
+    this.scaleFactor = (this.$node.property('clientWidth') - this.margin) / dataWidth;
 
-    const height = gridHeight - borderWidth;
-    const width = gridWidth - borderWidth;
+    const cellSize = AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor;
+    const width = dataWidth * this.scaleFactor;
+    const height = dataHeight * this.scaleFactor;
 
-    let h = 0;
-    let w = 0;
+    let $root = this.$node.select('div.taco-table > div');
 
-    const root = this.$node.append('div')
-      .attr('class', 'taco-table')
-      .style('width', (width + borderWidth) + 'px')
-      .style('height', (height + borderWidth) + 'px')
+    if($root.size() === 0) {
+      $root = this.$node.append('div')
+        .attr('class', 'taco-table')
+        .append('div')
+        .classed('transform', true);
+    }
 
-      .style('background-color', 'white')
-      .style('transform-origin', '0 0');
+    this.$node.select('div.taco-table')
+      .style('width', (width + this.borderWidth) + 'px')
+      .style('height', (height + this.borderWidth) + 'px');
 
-    //visualizing the diff
-    data.forEach(function (d) {
-      h = height / d.union.ur_ids.length;
-      //width of each column in the heatmap
-      w = width / d.union.uc_ids.length;
+    if (data.structure) {
+      this.drawRows($root, data.structure.added_rows, cellSize, width, 'taco-added-row', 'added-color');
+      this.drawCols($root, data.structure.added_cols, cellSize, height, 'taco-added-col', 'added-color');
 
-      if (d.structure) {
+      this.drawRows($root, data.structure.deleted_rows, cellSize, width, 'taco-del-row', 'removed-color');
+      this.drawCols($root, data.structure.deleted_cols, cellSize, height, 'taco-del-col', 'removed-color');
+    }
 
-        if(d.structure.added_rows) {
-          const addedRows = root.selectAll('.taco-added-row')
-            .data(d.structure.added_rows)
-            .enter()
-            .append('div')
-            .attr('class', 'taco-added-row')
-            .attr('class', 'added-color')
-            .attr('title', (d) => d.id)
-            .style('left', 0 + 'px')
-            .style('top', function (d) {
-              const y = d.pos;
-              return (y !== -1 ? y * h : null) + 'px';
-            })
-            .style('width', width + 'px')
-            .style('height', h + 'px');
-        }
+    if (data.content) {
+      const chCells = $root.selectAll('.content-color').data(data.content);
 
-        if(d.structure.added_cols) {
-          const addedCols = root.selectAll('.taco-added-col')
-            .data(d.structure.added_cols)
-            .enter()
-            .append('div')
-            .attr('title', (d) => d.id)
-            .attr('class', 'taco-added-col')
-            .attr('class', 'added-color')
-            .style('top', 0 + 'px')
-            .style('left', (d) => {
-              const x = d.pos;
-              return (x !== -1 ? x * w : null) + 'px';
-            })
-            .style('width', w + 'px')
-            .style('height', height + 'px');
-        }
+      chCells.enter().append('div')
+        .classed('content-color', true)
+        .attr('title', (d) => {
+          return '(' + d.row + ',' + d.col + ': ' + d.diff_data + ')';
+        })
+        .style('z-index', 1000)
+        .style('background-color', (d) => colorScale(d.diff_data));
 
-        if(d.structure.deleted_rows) {
-          const deletedRows = root.selectAll('.taco-del-row')
-            .data(d.structure.deleted_rows)
-            .enter()
-            .append('div')
-            .attr('class', 'taco-del-row')
-            .attr('class', 'removed-color')
-            .attr('title', (d) => d.id)
-            .style('left', 0 + 'px')
-            .style('top', (d) => {
-              const y = d.pos;
-              return (y !== -1 ? y * h : null) + 'px';
-            })
-            .style('width', width + 'px')
-            .style('height', h + 'px');
-        }
+      chCells
+        .style('top', (d) => (d.rpos !== -1 ? d.rpos * cellSize : null) + 'px')
+        .style('left', (d) => (d.cpos !== -1 ? d.cpos * cellSize : null) + 'px')
+        .style('width', cellSize + 'px')
+        .style('height', cellSize + 'px');
+    }
+  }
 
-        if(d.structure.deleted_cols) {
-          const deletedCols = root.selectAll('.taco-del-col')
-            .data(d.structure.deleted_cols)
-            .enter()
-            .append('div')
-            .attr('class', 'taco-del-col')
-            .attr('class', 'removed-color')
-            .attr('title', (d) => d.id)
-            .style('top', 0 + 'px')
-            .style('left', (d) => {
-              const x = d.pos;
-              return (x !== -1 ? x * w : null) + 'px';
-            })
-            .style('width', w + 'px')
-            .style('height', height + 'px');
-        }
-      }
+  private drawCols($root, data, cellSize:number, height:number, cssClass:string, colorClass:string) {
+    if(data === undefined) {
+      return;
+    }
 
-      if (d.content) {
-        const chCells = root.selectAll('.content-color').data(d.content);
-        chCells.enter()
-          .append('div')
-          .attr('class', 'content-color')
-          .attr('title', (d) => {
-            return '(' + d.row + ',' + d.col + ': ' + d.diff_data + ')';
-          })
-          .style('top', (d) => {
-            //var y = that.row_ids.indexOf(d.row);
-            const y = d.rpos;
-            return (y !== -1 ? y * h : null) + 'px';
-          })
-          .style('left', (d) => {
-            //var x = that.col_ids.indexOf(d.col);
-            const x = d.cpos;
-            return (x !== -1 ? x * w : null) + 'px';
-          })
-          .style('width', w + 'px')
-          .style('height', h + 'px')
-          .style('background-color', 'red')
-          .style('z-index', 1000)
-          .style('background-color', (d) => colorScale(d.diff_data));
-      }
-    });
+    const $cols = $root.selectAll('.' + cssClass)
+      .data(data, (d) => d.id);
+
+    $cols.enter().append('div')
+      .attr('title', (d) => d.id)
+      .classed(cssClass, true)
+      .classed(colorClass, true)
+      .style('top', 0);
+
+    $cols
+      .style('left', (d) => (d.pos !== -1 ? d.pos * cellSize : null) + 'px')
+      .style('width', cellSize + 'px')
+      .style('height', height + 'px');
+  }
+
+  private drawRows($root, data, cellSize:number, width:number, cssClass:string, colorClass:string) {
+    if(data === undefined) {
+      return;
+    }
+
+    const $rows = $root.selectAll('.' + cssClass)
+          .data(data, (d) => d.id);
+
+    $rows.enter().append('div')
+      .classed(cssClass, true)
+      .classed(colorClass, true)
+      .attr('title', (d) => d.id)
+      .style('left', 0);
+
+    $rows
+      .style('top', (d) => (d.pos !== -1 ? d.pos * cellSize : null) + 'px')
+      .style('width', width + 'px')
+      .style('height', cellSize + 'px');
+  }
+
+  private clearContent() {
+    this.$node.select('.taco-table').remove();
   }
 }
 

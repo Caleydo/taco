@@ -47,6 +47,10 @@ module.exports = function(registry) {
   registry.push('tacoView', 'MetaInfoBox', function () { return System.import('./src/meta_info_box'); }, {
     'name': 'MetaInfoBox'
   });
+
+  registry.push('tacoView', 'ReorderView', function() { return System.import('./src/reorder_view'); }, {
+    'name': 'Re-Order View'
+  });
   // generator-phovea:end
 };
 

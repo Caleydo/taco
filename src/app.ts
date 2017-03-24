@@ -5,6 +5,7 @@
 import * as plugins from 'phovea_core/src/plugin';
 import * as d3 from 'd3';
 import {AppConstants} from './app_constants';
+import * as events from 'phovea_core/src/event';
 
 /**
  * Interface for all TaCo Views
@@ -113,7 +114,14 @@ export class App implements IAppView {
    * @returns {Promise<App>}
    */
   init() {
+    this.attachListener();
     return this.build();
+  }
+
+  private attachListener() {
+    window.addEventListener('resize', () => {
+      events.fire(AppConstants.EVENT_RESIZE);
+    });
   }
 
   /**
