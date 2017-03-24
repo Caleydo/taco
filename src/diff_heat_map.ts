@@ -101,8 +101,10 @@ class DiffHeatMap implements IAppView {
     events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
 
     events.on(AppConstants.EVENT_RESIZE, () => {
-      this.drawDiffHeatmap(this.data);
-      events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
+      if(this.data) {
+        this.drawDiffHeatmap(this.data);
+        events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
+      }
     });
   }
 
