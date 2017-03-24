@@ -317,51 +317,53 @@ button:active, button.active {
   }
 }
 
+.row-added-color,
+.col-added-color,
 div.added-color {
-  background: $struct-add-color;
+  transition: background-color ease 0.2s;
+  background-color: $struct-add-color;
 }
 
+.row-removed-color,
+.col-removed-color,
 div.removed-color {
-  background: $struct-delete-color;
+  transition: background-color ease 0.2s;
+  background-color: $struct-delete-color;
 }
 
 div.content-color {
-  background: $content-change-color;
+  transition: background-color ease 0.2s;
+  background-color: $content-change-color;
 }
 
 div.nochange-color {
-  background: $no-change-color;
+  transition: background-color ease 0.2s;
+  background-color: $no-change-color;
 }
 
 rect.added-color {
   fill: $struct-add-color;
+  transition: fill ease 0.2s;
 }
 
 rect.removed-color {
   fill: $struct-delete-color;
+  transition: fill ease 0.2s;
 }
 
 rect.content-color {
   fill: $content-change-color;
+  transition: fill ease 0.2s;
 }
 
 rect.nochange-color {
   fill: $no-change-color;
+  transition: fill ease 0.2s;
 }
 
 #interface{
   //height: 50px;
   margin-bottom: 20px;
-}
-
-div.added-color, .row-added-color, .col-added-color {
-  //background-color: #4daf4a;
-  background-color: $struct-add-color; //colorblind friendly
-}
-
-div.removed-color, .row-removed-color, .col-removed-color {
-  //background-color: #e41a1c;
-  background-color: $struct-delete-color; //colorblind friendly
 }
 
 .phovea-heatmap {
