@@ -20,6 +20,7 @@ class DiffHeatMap implements IAppView {
 
   // cached data
   private data;
+  private selectedTables;
 
   private colorLow = '#d8b365';
   private colorMed = 'white';
@@ -90,8 +91,9 @@ class DiffHeatMap implements IAppView {
       DiffHeatMap.getJSON(idsSelectedTable)
         .then((data) => {
           this.data = data;
+          this.selectedTables = items;
           this.drawDiffHeatmap(this.data);
-          events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, items, data, this.scaleFactor);
+          events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
         });
     });
 
@@ -99,7 +101,10 @@ class DiffHeatMap implements IAppView {
     events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
 
     // Call the resize function whenever a resize event occurs
-    d3.select(window).on('resize', () => this.drawDiffHeatmap(this.data));
+    d3.select(window).on('resize', () => {
+      this.drawDiffHeatmap(this.data);
+      events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
+    });
   }
 
   private toggleChangeType(changeType:IChangeType) {
