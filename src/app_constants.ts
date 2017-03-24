@@ -110,7 +110,7 @@ export class ChangeTypes {
     ratioName: 'r_ratio',
     countName: 'r_counts',
     label: 'Reorder',
-    isActive: true
+    isActive: false
   };
 
   static TYPE_ARRAY: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED, ChangeTypes.REORDER];
