@@ -141,6 +141,7 @@ class Histogram2D implements IAppView {
     this.$ratio.classed('loading', true);
 
     this.requestData(pair)
+      .then((data) => this.prepareRatioData(data))
       .then((data) => this.showData(data));
 
     this.requestDataHistogram(pair)
@@ -153,58 +154,61 @@ class Histogram2D implements IAppView {
 
   //for the 2D Ratio Chart
   private requestData(pair) {
-    return Histogram2D.getJSONRatio2D(pair)
-      .then((json) => {
-        const data = [];
-
-        const cols = json.cols.ratios;
-        const rows = json.rows.ratios;
-
-        data.push({
-          type: ChangeTypes.REMOVED.type,
-          rows: rows.d_ratio + rows.a_ratio + rows.c_ratio + rows.no_ratio, //todo change to 1
-          cols: cols.d_ratio + cols.a_ratio + cols.c_ratio + cols.no_ratio, //todo change to 1
-          rows_text: Math.round((rows.d_ratio * 100) * 1000) / 1000,
-          cols_text: Math.round((cols.d_ratio * 100) * 1000) / 1000
-        });
-        data.push({
-          type: ChangeTypes.ADDED.type,
-          rows: rows.a_ratio + rows.c_ratio + rows.no_ratio, // or 1 - d
-          cols: cols.a_ratio + cols.c_ratio + cols.no_ratio,
-          rows_text: Math.round((rows.a_ratio * 100) * 1000) / 1000,
-          cols_text: Math.round((cols.a_ratio * 100) * 1000) / 1000
-        });
-        data.push({
-          type: ChangeTypes.CONTENT.type,
-          rows: rows.c_ratio + rows.no_ratio,
-          cols: cols.c_ratio + cols.no_ratio,
-          rows_text: Math.round((rows.c_ratio * 100) * 1000) / 1000,
-          cols_text: Math.round((cols.c_ratio * 100) * 1000) / 1000
-        });
-        data.push({
-          type: ChangeTypes.NO_CHANGE.type,
-          rows: rows.no_ratio,
-          cols: cols.no_ratio,
-          rows_text: Math.round((rows.no_ratio * 100) * 1000) / 1000,
-          cols_text: Math.round((cols.no_ratio * 100) * 1000) / 1000
-        });
-
-        //console.log('data_list ratio', data);
-
-        return data;
-      });
+    return Histogram2D.getJSONRatio2D(pair);
   }
 
   //for the histogram Rows
   private requestDataHistogram(pair) {
     return Histogram2D.getJSONHistogram(pair)
       .then((json) => {
-
         const rows = json.rows;
         const cols = json.cols;
         //console.log(rows, cols);
         return [rows, cols];
       });
+  }
+
+  private prepareRatioData(data) {
+    const cols = data.cols.ratios;
+    const rows = data.rows.ratios;
+
+    const r = [];
+
+    r.push({
+      type: ChangeTypes.REMOVED.type,
+      rows: rows.d_ratio + rows.a_ratio + rows.c_ratio + rows.no_ratio, //todo change to 1
+      cols: cols.d_ratio + cols.a_ratio + cols.c_ratio + cols.no_ratio, //todo change to 1
+      rows_text: Math.round((rows.d_ratio * 100) * 1000) / 1000,
+      cols_text: Math.round((cols.d_ratio * 100) * 1000) / 1000
+    });
+
+    r.push({
+      type: ChangeTypes.ADDED.type,
+      rows: rows.a_ratio + rows.c_ratio + rows.no_ratio, // or 1 - d
+      cols: cols.a_ratio + cols.c_ratio + cols.no_ratio,
+      rows_text: Math.round((rows.a_ratio * 100) * 1000) / 1000,
+      cols_text: Math.round((cols.a_ratio * 100) * 1000) / 1000
+    });
+
+    r.push({
+      type: ChangeTypes.CONTENT.type,
+      rows: rows.c_ratio + rows.no_ratio,
+      cols: cols.c_ratio + cols.no_ratio,
+      rows_text: Math.round((rows.c_ratio * 100) * 1000) / 1000,
+      cols_text: Math.round((cols.c_ratio * 100) * 1000) / 1000
+    });
+
+    r.push({
+      type: ChangeTypes.NO_CHANGE.type,
+      rows: rows.no_ratio,
+      cols: cols.no_ratio,
+      rows_text: Math.round((rows.no_ratio * 100) * 1000) / 1000,
+      cols_text: Math.round((cols.no_ratio * 100) * 1000) / 1000
+    });
+
+    //console.log('ratio data', data, r);
+
+    return r;
   }
 
   //Show 2d Ratio chart
