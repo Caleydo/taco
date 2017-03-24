@@ -40,7 +40,7 @@ class Histogram2D implements IAppView {
   }
 
   private static getJSONHistogram(pair) {
-    const binRows = 10;
+    const binRows = 20;
     const binCols = 20;
     const operations = ChangeTypes.forURL();
     return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${binRows}/${binCols}/${operations}/histogram`);
@@ -262,9 +262,7 @@ class Histogram2D implements IAppView {
         return xScale(d.ratios.c_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
-      .attr('title', function (d) {
-        return ChangeTypes.CONTENT.label + ': ' + Math.round((d.ratios.c_ratio * 100) * 1000) / 1000 + '%';
-      })
+      .attr('title', (d) => `${ChangeTypes.CONTENT.label}: ${Math.round((d.ratios.c_ratio * 100) * 1000) / 1000}% (${d.id})`)
       .style('transform', function (d) {
         return 'translate(' + 0 + 'px,' + yScale(d.pos) + 'px)';
       })
@@ -279,9 +277,7 @@ class Histogram2D implements IAppView {
         return xScale(d.ratios.d_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
-      .attr('title', function (d) {
-        return ChangeTypes.REMOVED.label + ': ' + Math.round((d.ratios.d_ratio * 100) * 1000) / 1000 + '%';
-      })
+      .attr('title', (d) => `${ChangeTypes.REMOVED.label}: ${Math.round((d.ratios.d_ratio * 100) * 1000) / 1000}% (${d.id})`)
       .style('transform', function (d) {
         const content = xScale(d.ratios.d_ratio);
         // console.log(content);
@@ -305,9 +301,7 @@ class Histogram2D implements IAppView {
         return xScale(d.ratios.a_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
-      .attr('title', function (d) {
-        return ChangeTypes.ADDED.label + ': ' + Math.round((d.ratios.a_ratio * 100) * 1000) / 1000 + '%';
-      })
+      .attr('title', (d) => `${ChangeTypes.ADDED.label}: ${Math.round((d.ratios.a_ratio * 100) * 1000) / 1000}% (${d.id})`)
       .style('transform', function (d) {
         const structure = xScale(d.ratios.a_ratio);
         //console.log(structure);
@@ -345,9 +339,7 @@ class Histogram2D implements IAppView {
         return xScale(d.ratios.c_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
-      .attr('title', function (d) {
-        return ChangeTypes.CONTENT.label + ': ' + Math.round((d.ratios.c_ratio * 100) * 1000) / 1000 + '%';
-      })
+      .attr('title', (d) => `${ChangeTypes.CONTENT.label}: ${Math.round((d.ratios.c_ratio * 100) * 1000) / 1000}% (${d.id})`)
       .style('transform', function (d) {
         return 'translate(' + 0 + 'px,' + yScale(d.pos) + 'px)';
       })
@@ -362,9 +354,7 @@ class Histogram2D implements IAppView {
         return xScale(d.ratios.d_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
-      .attr('title', function (d) {
-        return ChangeTypes.REMOVED.label + ': ' + Math.round((d.ratios.d_ratio * 100) * 1000) / 1000 + '%';
-      })
+      .attr('title', (d) => `${ChangeTypes.REMOVED.label}: ${Math.round((d.ratios.r_ratio * 100) * 1000) / 1000}% (${d.id})`)
       .style('transform', function (d) {
         const content = xScale(d.ratios.d_ratio);
         //console.log(content);
@@ -388,9 +378,7 @@ class Histogram2D implements IAppView {
         return xScale(d.ratios.a_ratio) + 'px';
       })
       .style('height', gridSize - 1 + 'px')
-      .attr('title', function (d) {
-        return ChangeTypes.ADDED.label + ': ' + Math.round((d.ratios.a_ratio * 100) * 1000) / 1000 + '%';
-      })
+      .attr('title', (d) => `${ChangeTypes.ADDED.label}: ${Math.round((d.ratios.a_ratio * 100) * 1000) / 1000}% (${d.id})`)
       .style('transform', function (d) {
         const structure = xScale(d.ratios.a_ratio);
         let acc = 0;
