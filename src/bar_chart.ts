@@ -8,7 +8,7 @@ import * as $ from 'jquery';
 import * as events from 'phovea_core/src/event';
 import {AppConstants, ChangeTypes, IChangeType} from './app_constants';
 import {IAppView} from './app';
-import {scaleCircles, getTimeScale, selectTimePoint} from './util';
+import {getTimeScale, selectTimePoint} from './util';
 
 /**
  * This class adds a bar chart, that shows bars with click functionality,
@@ -20,8 +20,6 @@ class BarChart implements IAppView {
   private items;
 
   private totalWidth: number = 0;
-  private index = [];
-  private leftValue = [];
 
   // Width of the bars in the bar chart
   private widthBar: number = 15;
