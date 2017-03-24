@@ -6,6 +6,8 @@ import * as vis from 'phovea_core/src/vis';
 import * as events from 'phovea_core/src/event';
 import {IAppView} from './app';
 import * as d3 from 'd3';
+import {AppConstants} from './app_constants';
+import {mixin} from 'phovea_core/src';
 
 /**
  * Shows a simple heat map for a given data set.
@@ -14,8 +16,10 @@ class HeatMap implements IAppView {
 
   private $node;
 
+  private dataset;
+
   private heatMapOptions = {
-      initialScale: 5,
+      initialScale: AppConstants.HEATMAP_CELL_SIZE,
       color: ['white', 'black']
     };
 
@@ -41,16 +45,28 @@ class HeatMap implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(this.options.eventName, (evt, dataset) => this.update(dataset));
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+      this.clearContent();
+    });
 
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
+      this.clearContent();
+    });
+
+    events.on(this.options.eventName, (evt, dataset) => this.dataset = dataset);
+
+    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor) => {
+      this.update(this.dataset, scaleFactor);
+    });
   }
 
   /**
    * Loads a Caleydo heat map visualization plugin and hands the given data set over for visualizing it
    * @param dataset
+   * @param scaleFactor
    * @returns {Promise<HeatMap>}
    */
-  private update(dataset) {
+  private update(dataset, scaleFactor) {
 
     if(dataset.desc.type !== 'matrix') {
       console.warn(`Data set is not of type matrix and cannot be visualized from heat map plugin`);
@@ -66,10 +82,14 @@ class HeatMap implements IAppView {
       return;
     }
 
+    const options = {
+      initialScale: this.heatMapOptions.initialScale * scaleFactor,
+      color: this.heatMapOptions.color
+    };
+
     return Promise.all([plugins[0].load()])
       .then((args) => {
-        // remove the previous heat map
-        this.$node.selectAll('*').remove();
+        this.clearContent();
 
        // console.log('args from plugins', args);
         const plugin = args[0];
@@ -77,10 +97,17 @@ class HeatMap implements IAppView {
         plugin.factory(
           dataset,
           this.$node.node(),
-          this.heatMapOptions
+          options
         );
         return this;
       });
+  }
+
+  /**
+   * Remove the previous heatmap
+   */
+  private clearContent() {
+    this.$node.html('');
   }
 
 }

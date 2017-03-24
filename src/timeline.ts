@@ -2,7 +2,6 @@
  * Created by Holger Stitz on 29.08.2016.
  */
 
-import * as moment from 'moment';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 import * as events from 'phovea_core/src/event';
@@ -72,8 +71,7 @@ class Timeline implements IAppView {
         .forEach((d) => d.classed('active', true)); // add .active class
     });
 
-    // Call the resize function whenever a resize event occurs
-    d3.select(window).on('resize', () => this.resize());
+    events.on(AppConstants.EVENT_RESIZE, () => this.resize());
   }
 
   /**
@@ -126,7 +124,7 @@ class Timeline implements IAppView {
     // Append the circles and add the mouseover and click listeners
     $xAxis.selectAll('.tick text')
       .on('click', function (date:Date) {
-        const found = that.items.filter((item) => item.time.isSame(date, 'year'));
+        const found = that.items.filter((item) => item.time.isSame(date, item.timeFormat.momentIsSame));
         const d = found[0];
         (<MouseEvent>d3.event).preventDefault();
 

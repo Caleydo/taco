@@ -11,6 +11,7 @@ export class AppConstants {
    */
   static VIEW = 'tacoView';
 
+  static EVENT_RESIZE = 'eventResize';
 
   /**
    * Event that is fired when a data set collection has been selected
@@ -25,7 +26,11 @@ export class AppConstants {
   static EVENT_DATASET_SELECTED = 'eventDataSetSelected';
   static EVENT_DATASET_SELECTED_LEFT = 'eventDataSetSelectedLeft';
   static EVENT_DATASET_SELECTED_RIGHT = 'eventDataSetSelectedRight';
-  static EVENT_OPEN_DIFF_HEATMAP = 'eventDrawDiffDeatmap';
+  static EVENT_OPEN_DIFF_HEATMAP = 'eventDrawDiffHeatmap';
+
+  static EVENT_OPEN_DETAIL_VIEW = 'eventOpenDetailView';
+
+  static EVENT_DIFF_HEATMAP_LOADED = 'eventDiffHeatmapLoaded';
 
   static EVENT_TIME_POINTS_SELECTED = 'eventTimePointsSelected';
 
@@ -34,18 +39,27 @@ export class AppConstants {
   static EVENT_SHOW_CHANGE = 'showChange';
   static EVENT_HIDE_CHANGE = 'hideChange';
 
-
-  /**
-   * Format the date output (see http://momentjs.com/docs/#/displaying/)
-   * @type {string}
-   */
-  static DATE_FORMAT = 'YYYY-MM-DD';
-
   /**
    * Parse the following date formats from strings using moment.js (see http://momentjs.com/docs/#/parsing/)
    * @type {string[]}
    */
   static PARSE_DATE_FORMATS = ['YYYY_MM_DD', 'YYYY-MM-DD', 'YYYY'];
+
+  /**
+   * Initial size of a heatmap cell
+   * @type {number}
+   */
+  static HEATMAP_CELL_SIZE = 5;
+
+  /**
+   * Property for the URL hash
+   * @type {{DATASET: string; TIME_POINTS: string; DETAIL_VIEW: string}}
+   */
+  static HASH_PROPS = {
+    DATASET: 'ds',
+    TIME_POINTS: 'tp',
+    DETAIL_VIEW: 'detail'
+  };
 }
 
 export interface IChangeType {
