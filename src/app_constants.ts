@@ -11,6 +11,7 @@ export class AppConstants {
    */
   static VIEW = 'tacoView';
 
+  static EVENT_RESIZE = 'eventResize';
 
   /**
    * Event that is fired when a data set collection has been selected

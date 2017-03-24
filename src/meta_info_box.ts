@@ -49,7 +49,7 @@ class MetaInfoBox implements IAppView {
    */
   private attachListener() {
     // Call the resize function whenever a resize event occurs
-    d3.select(window).on('resize', () => this.resize());
+    events.on(AppConstants.EVENT_RESIZE, () => this.resize());
 
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
       this.clearContent();

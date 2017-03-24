@@ -95,7 +95,7 @@ class BarChart implements IAppView {
    */
   private attachListener() {
     // Call the resize function whenever a resize event occurs
-    //d3.select(window).on('resize', () =>  this.windowResize());
+    //events.on(AppConstants.EVENT_RESIZE, () =>  this.windowResize());
 
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => {
       this.$node.selectAll('*').remove(); // remove, because we have completely new items
@@ -141,7 +141,7 @@ class BarChart implements IAppView {
 
     // Initialize the width
     this.resize();
-    $(window).on('resize', () => this.windowResize(this.items));
+    events.on(AppConstants.EVENT_RESIZE, () => this.windowResize(this.items));
 
     let barPromises;
     const elements = this.$node.selectAll('*');
