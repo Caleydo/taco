@@ -39,29 +39,26 @@ class FilterBar implements IAppView {
    */
   private build() {
 
-    this.$node.html(` <div id="nav-bar">  
+    this.$node.html(`<div id="nav-bar">  
       <div class="btn-group change" role="group" aria-label="...">
-         <button type="button" class="btn btn-default active" id="btn-nochange" data-change-type="${ChangeTypes.NO_CHANGE.type}">${ChangeTypes.NO_CHANGE.label}</button>
-         <button type="button" class="btn btn-default active" id="btn-content" data-change-type="${ChangeTypes.CONTENT.type}">${ChangeTypes.CONTENT.label}</button>
-         <button type="button" class="btn btn-default active" id="btn-added" data-change-type="${ChangeTypes.ADDED.type}">${ChangeTypes.ADDED.label}</button>
-         <button type="button" class="btn btn-default active" id="btn-removed" data-change-type="${ChangeTypes.REMOVED.type}">${ChangeTypes.REMOVED.label}</button>                          
-         <button type="button" class="btn btn-default active" id="btn-reorder" data-change-type="${ChangeTypes.REORDER.type}">${ChangeTypes.REORDER.label}</button>                 
       </div>  
     </div>`);
+
+    const $buttons = this.$node.select('.btn-group.change')
+      .selectAll('button').data(ChangeTypes.TYPE_ARRAY);
+
+    $buttons.enter().append('button')
+      .attr('type', 'button')
+      .attr('class', (d) => (d.isActive) ? 'btn btn-default active' : 'btn btn-default inactive')
+      .attr('id', (d) => `btn-${d.type}`)
+      .text((d) => d.label);
 
   }
 
   private attachListener() {
-
-    this.$node.select('.toggleGroup')
-      .on('click', function (e) {
-        events.fire(AppConstants.EVENT_TOGGLE_GROUP);
-      });
-
     this.$node.selectAll('.btn-group.change button')
-      .on('click', function (e) {
+      .on('click', function (selectedType) {
         const button = d3.select(this);
-        const selectedType = ChangeTypes.TYPE_ARRAY.filter((d) => d.type === button.attr('data-change-type'))[0];
 
         if (button.classed('active')) {
           selectedType.isActive = false;
@@ -75,8 +72,6 @@ class FilterBar implements IAppView {
           button.classed('active', true);
           button.classed('inactive', false);
         }
-
-
       });
   }
 

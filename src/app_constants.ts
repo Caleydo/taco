@@ -34,8 +34,6 @@ export class AppConstants {
 
   static EVENT_TIME_POINTS_SELECTED = 'eventTimePointsSelected';
 
-  static EVENT_TOGGLE_GROUP = 'toggleGroup';
-
   static EVENT_SHOW_CHANGE = 'showChange';
   static EVENT_HIDE_CHANGE = 'hideChange';
 
