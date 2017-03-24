@@ -125,9 +125,10 @@ class DataProvider {
    */
   load() {
     return data
-      .list((d) => {
-       return d.desc.type === 'matrix' && (<IMatrixDataDescription<IValueTypeDesc>>d.desc).value.type === VALUE_TYPE_REAL; // return numerical matrices only
-      })
+      //.list((d) => {
+      //  return d.desc.type === 'matrix' && (<IMatrixDataDescription<IValueTypeDesc>>d.desc).value.type === VALUE_TYPE_REAL; // return numerical matrices only
+      //})
+      .list({'type': 'matrix'}) // use server-side filtering
       .then((list: INumericalMatrix[]) => {
         const olympicsData = this.prepareOlympicsData(list);
         const tcgaData = this.prepareTCGAData(list);
