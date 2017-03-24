@@ -18,6 +18,9 @@ class DiffHeatMap implements IAppView {
   //main div
   private $node;
 
+  // cached data
+  private data;
+
   private colorLow = '#d8b365';
   private colorMed = 'white';
   private colorHigh = '#8da0cb';
@@ -86,13 +89,17 @@ class DiffHeatMap implements IAppView {
       const idsSelectedTable = items.map((d:any) => d.desc.id);
       DiffHeatMap.getJSON(idsSelectedTable)
         .then((data) => {
-          this.drawDiffHeatmap(data);
+          this.data = data;
+          this.drawDiffHeatmap(this.data);
           events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, items, data, this.scaleFactor);
         });
     });
 
     events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
     events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+
+    // Call the resize function whenever a resize event occurs
+    d3.select(window).on('resize', () => this.drawDiffHeatmap(this.data));
   }
 
   private toggleChangeType(changeType:IChangeType) {
@@ -128,110 +135,84 @@ class DiffHeatMap implements IAppView {
     const width = dataWidth * this.scaleFactor;
     const height = dataHeight * this.scaleFactor;
 
-    const root = this.$node.append('div')
-      .attr('class', 'taco-table')
+    let $root = this.$node.select('div.taco-table > div');
+
+    if($root.size() === 0) {
+      $root = this.$node.append('div')
+        .attr('class', 'taco-table')
+        .append('div')
+        .classed('transform', true);
+    }
+
+    this.$node.select('div.taco-table')
       .style('width', (width + this.borderWidth) + 'px')
-      .style('height', (height + this.borderWidth) + 'px')
-      .append('div')
-      //.style('transform-origin', '0 0')
-      //.style('transform', `scale(${scaleFactor})`)
-      .classed('transform', true);
+      .style('height', (height + this.borderWidth) + 'px');
 
     if (data.structure) {
+      this.drawRows($root, data.structure.added_rows, cellSize, width, 'taco-added-row', 'added-color');
+      this.drawCols($root, data.structure.added_cols, cellSize, height, 'taco-added-col', 'added-color');
 
-      if(data.structure.added_rows) {
-        const addedRows = root.selectAll('.taco-added-row')
-          .data(data.structure.added_rows)
-          .enter()
-          .append('div')
-          .attr('class', 'taco-added-row')
-          .attr('class', 'added-color')
-          .attr('title', (d) => d.id)
-          .style('left', 0 + 'px')
-          .style('top', function (d) {
-            const y = d.pos;
-            return (y !== -1 ? y * cellSize : null) + 'px';
-          })
-          .style('width', width + 'px')
-          .style('height', cellSize + 'px');
-      }
-
-      if(data.structure.added_cols) {
-        const addedCols = root.selectAll('.taco-added-col')
-          .data(data.structure.added_cols)
-          .enter()
-          .append('div')
-          .attr('title', (d) => d.id)
-          .attr('class', 'taco-added-col')
-          .attr('class', 'added-color')
-          .style('top', 0 + 'px')
-          .style('left', (d) => {
-            const x = d.pos;
-            return (x !== -1 ? x * cellSize : null) + 'px';
-          })
-          .style('width', cellSize + 'px')
-          .style('height', height + 'px');
-      }
-
-      if(data.structure.deleted_rows) {
-        const deletedRows = root.selectAll('.taco-del-row')
-          .data(data.structure.deleted_rows)
-          .enter()
-          .append('div')
-          .attr('class', 'taco-del-row')
-          .attr('class', 'removed-color')
-          .attr('title', (d) => d.id)
-          .style('left', 0 + 'px')
-          .style('top', (d) => {
-            const y = d.pos;
-            return (y !== -1 ? y * cellSize : null) + 'px';
-          })
-          .style('width', width + 'px')
-          .style('height', cellSize + 'px');
-      }
-
-      if(data.structure.deleted_cols) {
-        const deletedCols = root.selectAll('.taco-del-col')
-          .data(data.structure.deleted_cols)
-          .enter()
-          .append('div')
-          .attr('class', 'taco-del-col')
-          .attr('class', 'removed-color')
-          .attr('title', (d) => d.id)
-          .style('top', 0 + 'px')
-          .style('left', (d) => {
-            const x = d.pos;
-            return (x !== -1 ? x * cellSize : null) + 'px';
-          })
-          .style('width', cellSize + 'px')
-          .style('height', height + 'px');
-      }
+      this.drawRows($root, data.structure.deleted_rows, cellSize, width, 'taco-del-row', 'removed-color');
+      this.drawCols($root, data.structure.deleted_cols, cellSize, height, 'taco-del-col', 'removed-color');
     }
 
     if (data.content) {
-      const chCells = root.selectAll('.content-color').data(data.content);
-      chCells.enter()
-        .append('div')
-        .attr('class', 'content-color')
+      const chCells = $root.selectAll('.content-color').data(data.content);
+
+      chCells.enter().append('div')
+        .classed('content-color', true)
         .attr('title', (d) => {
           return '(' + d.row + ',' + d.col + ': ' + d.diff_data + ')';
         })
-        .style('top', (d) => {
-          //var y = that.row_ids.indexOf(d.row);
-          const y = d.rpos;
-          return (y !== -1 ? y * cellSize : null) + 'px';
-        })
-        .style('left', (d) => {
-          //var x = that.col_ids.indexOf(d.col);
-          const x = d.cpos;
-          return (x !== -1 ? x * cellSize : null) + 'px';
-        })
-        .style('width', cellSize + 'px')
-        .style('height', cellSize + 'px')
-        .style('background-color', 'red')
         .style('z-index', 1000)
         .style('background-color', (d) => colorScale(d.diff_data));
+
+      chCells
+        .style('top', (d) => (d.rpos !== -1 ? d.rpos * cellSize : null) + 'px')
+        .style('left', (d) => (d.cpos !== -1 ? d.cpos * cellSize : null) + 'px')
+        .style('width', cellSize + 'px')
+        .style('height', cellSize + 'px');
     }
+  }
+
+  private drawCols($root, data, cellSize:number, height:number, cssClass:string, colorClass:string) {
+    if(data === undefined) {
+      return;
+    }
+
+    const $cols = $root.selectAll('.' + cssClass)
+      .data(data, (d) => d.id);
+
+    $cols.enter().append('div')
+      .attr('title', (d) => d.id)
+      .classed(cssClass, true)
+      .classed(colorClass, true)
+      .style('top', 0);
+
+    $cols
+      .style('left', (d) => (d.pos !== -1 ? d.pos * cellSize : null) + 'px')
+      .style('width', cellSize + 'px')
+      .style('height', height + 'px');
+  }
+
+  private drawRows($root, data, cellSize:number, width:number, cssClass:string, colorClass:string) {
+    if(data === undefined) {
+      return;
+    }
+
+    const $rows = $root.selectAll('.' + cssClass)
+          .data(data, (d) => d.id);
+
+    $rows.enter().append('div')
+      .classed(cssClass, true)
+      .classed(colorClass, true)
+      .attr('title', (d) => d.id)
+      .style('left', 0);
+
+    $rows
+      .style('top', (d) => (d.pos !== -1 ? d.pos * cellSize : null) + 'px')
+      .style('width', width + 'px')
+      .style('height', cellSize + 'px');
   }
 
   private clearContent() {
