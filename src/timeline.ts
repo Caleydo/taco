@@ -126,7 +126,7 @@ class Timeline implements IAppView {
     // Append the circles and add the mouseover and click listeners
     $xAxis.selectAll('.tick text')
       .on('click', function (date:Date) {
-        const found = that.items.filter((item) => item.time.isSame(date, 'year'));
+        const found = that.items.filter((item) => item.time.isSame(date, item.timeFormat.momentIsSame));
         const d = found[0];
         (<MouseEvent>d3.event).preventDefault();
 
