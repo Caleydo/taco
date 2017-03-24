@@ -298,9 +298,9 @@ class Histogram2D implements IAppView {
     $bars.exit().remove();
 
     // move the reorder bar into the content change element
-    $parent.selectAll(`.bar.${ChangeTypes.REORDER.type}`)[0]
+    $parent.selectAll(`.bar.${ChangeTypes.REORDER.type}-color`)[0]
       .forEach((d:HTMLElement) => {
-        d.parentElement.querySelector(`.bar.${ChangeTypes.CONTENT.type}`).appendChild(d);
+        d.parentElement.querySelector(`.bar.${ChangeTypes.CONTENT.type}-color`).appendChild(d);
       });
 
     this.scaleHistogramWidth();
