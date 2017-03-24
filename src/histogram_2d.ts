@@ -33,6 +33,14 @@ class Histogram2D implements IAppView {
   private widthRowHistogram = 60;
   private heightRowHistogram = 160;
 
+  private histogramScale = d3.scale.linear()
+    //.domain([0, d3.max(histodata)])
+      .domain([0, 1])
+      .range([0, 50]);
+
+  // Width of the bars in the bar chart
+  private heightBar:number = Math.floor(this.heightRowHistogram / 20) - 1; // -1 = border
+
 
   private static getJSONRatio2D(pair) {
     const operations = ChangeTypes.forURL();
@@ -87,14 +95,18 @@ class Histogram2D implements IAppView {
       .append('div')
       .style('width', this.widthRowHistogram + 'px')
       .style('height', this.height + 'px')
-      .classed('histogram', true);
+      .classed('histogram', true)
+      .append('div')
+      .classed('wrapper', true);
 
     this.$histogramCols = this.$node
       .append('div')
       .style('width', this.widthRowHistogram + 'px')
       .style('height', this.height + 'px')
       .classed('histogram', true)
-      .classed('rotated', true);
+      .classed('rotated', true)
+      .append('div')
+      .classed('wrapper', true);
 
   }
 
@@ -116,19 +128,13 @@ class Histogram2D implements IAppView {
       }
     });
 
-    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
-    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
-  }
+    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
+      this.scaleHistogramWidth(); // just rescale the height of the bars
+    });
 
-  private toggleChangeType(changeType) {
-    // console.log('changeType', changeType);
-    const cssClass = `.${changeType.type}-color`;
-
-    this.$ratio.selectAll(cssClass).classed('noColorClass', !changeType.isActive);
-    this.$histogramRows.selectAll(cssClass).classed('noColorClass', !changeType.isActive);
-    this.$histogramCols.selectAll(cssClass).classed('noColorClass', !changeType.isActive);
-
-    this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
+    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
+      this.scaleHistogramWidth(); // just rescale the height of the bars
+    });
   }
 
   private updateItems(pair) {
@@ -138,7 +144,10 @@ class Histogram2D implements IAppView {
       .then((data) => this.showData(data));
 
     this.requestDataHistogram(pair)
-      .then((histodata) => this.showHistogram(histodata));
+      .then((histodata) => {
+        this.showHistogram(this.$histogramRows, histodata[0]);
+        this.showHistogram(this.$histogramCols, histodata[1]);
+      });
   }
 
 
@@ -216,188 +225,82 @@ class Histogram2D implements IAppView {
     this.$ratio.classed('loading', false);
   }
 
-//Show Histogramm Rows
-  private showHistogram(histodata) {
+  private showHistogram($parent, data) {
+    const that = this;
 
-    // console.log('rows' , histodata[0], 'cols' , histodata[1]);
+    const $containers = $parent.selectAll('div.bin-container')
+      .data(data, (d) => d.id);
 
-    const rows = histodata[0];
-    const cols = histodata[1];
-
-
-    const xScale = d3.scale.linear()
-    //.domain([0, d3.max(histodata)])
-      .domain([0, 1])
-      .range([0, 50]);
-
-    const yScale = d3.scale.linear()
-      .domain([0, 20])
-      .range([0, this.heightRowHistogram]);
-
-    const gridSize = Math.floor(this.heightRowHistogram / 20);
-
-    const bincontainer = this.$histogramRows.selectAll('div.bin-container')
-      .data(rows, function (d) {
-        return d.id;
-      });
-
-    const bincontainterCols = this.$histogramCols.selectAll('div.bin-container')
-      .data(cols, function (d) {
-        return d.id;
-      });
-
-
-    bincontainer.enter()
-      .append('div')
+    $containers.enter().append('div')
       .classed('bin-container', true)
-      .attr('title', function (d) {
-        return d.id;
+      .each(function(d) {
+        that.drawBar(d3.select(this), d);
       });
 
-    bincontainer
-      .append('div')
-      .classed(`${ChangeTypes.CONTENT.type}-color`, true)
-      .style('width', function (d) {
-        //console.log(xScale(d.ratios.c_ratio));
-        return xScale(d.ratios.c_ratio) + 'px';
-      })
-      .style('height', gridSize - 1 + 'px')
-      .attr('title', (d) => `${ChangeTypes.CONTENT.label}: ${Math.round((d.ratios.c_ratio * 100) * 1000) / 1000}% (${d.id})`)
-      .style('transform', function (d) {
-        return 'translate(' + 0 + 'px,' + yScale(d.pos) + 'px)';
-      })
-      .style('display', function (d) {
-        return (d.ratios.c_ratio === 0) ? 'none' : null;
-      });
-
-    bincontainer
-      .append('div')
-      .classed(`${ChangeTypes.REMOVED.type}-color`, true)
-      .style('width', function (d) {
-        return xScale(d.ratios.d_ratio) + 'px';
-      })
-      .style('height', gridSize - 1 + 'px')
-      .attr('title', (d) => `${ChangeTypes.REMOVED.label}: ${Math.round((d.ratios.d_ratio * 100) * 1000) / 1000}% (${d.id})`)
-      .style('transform', function (d) {
-        const content = xScale(d.ratios.d_ratio);
-        // console.log(content);
-        let acc = 0;
-        if (content === 0) {
-          acc = 0;
-          //console.log('content is 0');
-        } else {
-          acc = xScale(d.ratios.c_ratio);
-        }
-        return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
-      })
-      .style('display', function (d) {
-        return (d.ratios.d_ratio === 0) ? 'none' : null;
-      });
-
-    bincontainer
-      .append('div')
-      .classed(`${ChangeTypes.ADDED.type}-color`, true)
-      .style('width', function (d) {
-        return xScale(d.ratios.a_ratio) + 'px';
-      })
-      .style('height', gridSize - 1 + 'px')
-      .attr('title', (d) => `${ChangeTypes.ADDED.label}: ${Math.round((d.ratios.a_ratio * 100) * 1000) / 1000}% (${d.id})`)
-      .style('transform', function (d) {
-        const structure = xScale(d.ratios.a_ratio);
-        //console.log(structure);
-        let acc = 0;
-        if (structure === 0) {
-          acc = 0;
-          //console.log('content is 0');
-        } else {
-          acc = xScale(d.ratios.c_ratio) + xScale(d.ratios.d_ratio);
-        }
-        return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
-      })
-      .style('display', function (d) {
-        return (d.ratios.a_ratio === 0) ? 'none' : null;
-      });
-
-    bincontainer.exit().remove();
-
-    /*
-     * Draw Cols Histogram  */
-
-
-    bincontainterCols.enter()
-      .append('div')
-      .classed('bin-container', true)
-      .attr('title', function (d) {
-        return d.id;
-      });
-
-    bincontainterCols
-      .append('div')
-      .classed(`${ChangeTypes.CONTENT.type}-color`, true)
-      .style('width', function (d) {
-        //console.log(xScale(d.ratios.c_ratio));
-        return xScale(d.ratios.c_ratio) + 'px';
-      })
-      .style('height', gridSize - 1 + 'px')
-      .attr('title', (d) => `${ChangeTypes.CONTENT.label}: ${Math.round((d.ratios.c_ratio * 100) * 1000) / 1000}% (${d.id})`)
-      .style('transform', function (d) {
-        return 'translate(' + 0 + 'px,' + yScale(d.pos) + 'px)';
-      })
-      .style('display', function (d) {
-        return (d.ratios.c_ratio === 0) ? 'none' : null;
-      });
-
-    bincontainterCols
-      .append('div')
-      .classed(`${ChangeTypes.REMOVED.type}-color`, true)
-      .style('width', function (d) {
-        return xScale(d.ratios.d_ratio) + 'px';
-      })
-      .style('height', gridSize - 1 + 'px')
-      .attr('title', (d) => `${ChangeTypes.REMOVED.label}: ${Math.round((d.ratios.r_ratio * 100) * 1000) / 1000}% (${d.id})`)
-      .style('transform', function (d) {
-        const content = xScale(d.ratios.d_ratio);
-        //console.log(content);
-        let acc = 0;
-        if (content === 0) {
-          acc = 0;
-          // console.log('content is 0');
-        } else {
-          acc = xScale(d.ratios.c_ratio);
-        }
-        return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
-      })
-      .style('display', function (d) {
-        return (d.ratios.d_ratio === 0) ? 'none' : null;
-      });
-
-    bincontainterCols
-      .append('div')
-      .classed(`${ChangeTypes.ADDED.type}-color`, true)
-      .style('width', function (d) {
-        return xScale(d.ratios.a_ratio) + 'px';
-      })
-      .style('height', gridSize - 1 + 'px')
-      .attr('title', (d) => `${ChangeTypes.ADDED.label}: ${Math.round((d.ratios.a_ratio * 100) * 1000) / 1000}% (${d.id})`)
-      .style('transform', function (d) {
-        const structure = xScale(d.ratios.a_ratio);
-        let acc = 0;
-
-        if (structure === 0) {
-          acc = 0;
-          //console.log('content is 0');
-        } else {
-          acc = xScale(d.ratios.c_ratio) + xScale(d.ratios.d_ratio);
-
-        }
-        return 'translate(' + acc + 'px,' + yScale(d.pos) + 'px)';
-      })
-      .style('display', function (d) {
-        return (d.ratios.a_ratio === 0) ? 'none' : null;
-      });
-
-    bincontainterCols.exit().remove();
+    $containers.exit().remove();
   }
+
+  /**
+   * This method draws the bars on the timeline or above the timeline.
+   * TODO: Documentation
+   * @param $parent
+   * @param data
+   * @param pair
+   */
+  private drawBar($parent, data) {
+    const barData = this.getBarData(data, 'ratioName');
+    //const barData = this.getBarData(data.counts, 'countName');
+
+    //individual bars in the bar group div
+    const $bars = $parent.selectAll('div.bar').data(barData);
+    $bars.enter().append('div');
+
+    $bars
+      .attr('class', (d) => 'bar ' + d.type)
+      .style('height', this.heightBar + 'px')
+      .attr('title', (d) => `${ChangeTypes.labelForType(d.type)}: ${Math.round((d.value * 100) * 1000) / 1000}% (${d.id})`);
+
+    $bars.exit().remove();
+
+    // move the reorder bar into the content change element
+    $parent.selectAll(`.bar.${ChangeTypes.REORDER.type}`)[0]
+      .forEach((d:HTMLElement) => {
+        d.parentElement.querySelector(`.bar.${ChangeTypes.CONTENT.type}`).appendChild(d);
+      });
+
+    this.scaleHistogramWidth();
+  }
+
+  private scaleHistogramWidth() {
+    this.$node.selectAll('.bar')
+      .style('width', (d) => {
+        if(ChangeTypes.TYPE_ARRAY.filter((ct) => ct.type === d.type)[0].isActive) {
+          return this.histogramScale(d.value) + 'px';
+        }
+        return 0; // shrink bar to 0 if change is not active
+      });
+  }
+
+  /**
+   *
+   * @param data
+   * @param propertyName
+   * @returns {{type: string, value: number, id: string, pos: number}[]}
+   */
+  private getBarData(data, propertyName) {
+    return ChangeTypes.TYPE_ARRAY
+      //.filter((d) => d.isActive === true)
+      .filter((d) => d !== ChangeTypes.NO_CHANGE)
+      .map((ct) => {
+        return {
+          type: ct.type,
+          id: data.id,
+          pos: data.pos,
+          value: data.ratios[ct[propertyName]] || 0
+        };
+      });
+  }
+
 
   private clearContent() {
     this.$ratio.html('');

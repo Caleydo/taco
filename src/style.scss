@@ -247,7 +247,9 @@ button:active, button.active {
   .histogram_2d {
     order: 2;
     width: calc(33% + 100px);
-    text-align: center;
+    //text-align: center;
+    display: flex;
+    justify-content: center;
   }
 
   .rightMetaBox {
@@ -261,7 +263,7 @@ button:active, button.active {
 
 .ratio {
   transition: left .2s ease;
-  display: inline-block;
+  //display: inline-block;
   border: 1px solid darkslategray;
   position: relative;
   color: #fc8d62; //colorblind friendly
@@ -282,29 +284,36 @@ button:active, button.active {
 }
 
 .histogram {
-  transition: left .2s ease;
-  display: inline-block;
-  border: 1px solid #e6e8e4;
-  border-left: 1px solid #000000;
-  background: transparent;
   position: relative;
   margin-left: 15px;
 
   &.rotated {
-    position: relative;
-    display: block;
-    margin-top: -45px;
-    margin-left: calc(50% - 67px);
+    position: absolute;
     transform: rotate(90deg) scaleY(-1);
-    //transform-origin: 0 0;
+    transform-origin: 0 0;
+    margin-left: -88px;
+    margin-top: 178px;
   }
 
-  div {
-    position: absolute;
-    text-align: right;
-    padding: 1px;
-    //margin-top: 1px;
-    color: white;
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+    border: 1px solid #e6e8e4;
+    border-left: 1px solid #000000;
+    background: transparent;
+  }
+
+  .bin-container {
+    display: flex;
+
+    > div {
+      transition: width ease 0.2s;
+      display: flex;
+      flex-direction: column-reverse;
+    }
   }
 }
 
