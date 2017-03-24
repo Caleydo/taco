@@ -423,6 +423,8 @@ select.form-control {
 
   .bar {
     transition: height ease 0.2s;
+    display: flex;
+    flex-direction: column-reverse;
   }
 }
 

@@ -30,7 +30,7 @@ class BarChart implements IAppView {
 
   private barScaling = d3.scale.log()
     .domain([0.1, 100000])
-    .range([0, this.heightBarChart / ChangeTypes.TYPE_ARRAY.length])
+    .range([0, this.heightBarChart / ChangeTypes.TYPE_ARRAY.filter((d) => d !== ChangeTypes.REORDER).length]) // without reorder changes
     .clamp(true);
 
   /**
@@ -168,6 +168,12 @@ class BarChart implements IAppView {
 
     $bars.exit().remove();
 
+    // move the reorder bar into the content change element
+    $parent.selectAll(`.bar.${ChangeTypes.REORDER.type}`)[0]
+      .forEach((d:HTMLElement) => {
+        d.parentElement.querySelector(`.bar.${ChangeTypes.CONTENT.type}`).appendChild(d);
+      });
+
     this.scaleBarsHeight();
   }
 
@@ -189,7 +195,7 @@ class BarChart implements IAppView {
    */
   private getBarData(data, propertyName) {
     return ChangeTypes.TYPE_ARRAY
-    //.filter((d) => d.isActive === true)
+      //.filter((d) => d.isActive === true)
       .map((d) => {
         return {
           type: d.type,
