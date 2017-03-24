@@ -87,7 +87,8 @@ class ReorderView implements IAppView {
         break;
 
       case EOrientation.ROW:
-        this.scale.domain([0, Math.max(src.desc.size[0], dst.desc.size[0]) * scaleFactor]);
+        this.scale.domain([0, Math.max(src.desc.size[0], dst.desc.size[0])]);
+        this.scale.range([0, Math.max(src.desc.size[0], dst.desc.size[0]) * AppConstants.HEATMAP_CELL_SIZE * scaleFactor]);
         this.drawRows(diffData.reorder.rows, scaleFactor);
         break;
     }
@@ -98,6 +99,8 @@ class ReorderView implements IAppView {
   }
 
   private drawRows(reorders:IReorderChange[], scaleFactor:number) {
+
+    this.$node.attr('height', this.scale.range()[1]);
     const width = this.$node.property('clientWidth')-1;
 
     const $slopes = this.$slopes.selectAll('line').data(reorders, (d) => d.id);
@@ -108,8 +111,9 @@ class ReorderView implements IAppView {
       .transition()
       .attr('x1', 0)
       .attr('x2', width)
-      .attr('y1', (d) => this.scale(d.from))
-      .attr('y2', (d) => this.scale(d.to));
+      .attr('title', (d) => `${d.id}: ${d.diff}`)
+      .attr('y1', (d) => this.scale(d.from) - (AppConstants.HEATMAP_CELL_SIZE * scaleFactor * 0.5))
+      .attr('y2', (d) => this.scale(d.to) - (AppConstants.HEATMAP_CELL_SIZE * scaleFactor * 0.5));
 
     $slopes.exit().remove();
   }

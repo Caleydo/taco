@@ -478,8 +478,10 @@ select.form-control {
   line {
     fill: none;
     stroke: darken($reorder-color, 30%);
-  }
-  & > line {
-    shape-rendering: crispEdges;
+    stroke-width: 2;
+
+    &:hover {
+      stroke: $select-color;
+    }
   }
 }
