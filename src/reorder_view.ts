@@ -83,7 +83,8 @@ class ReorderView implements IAppView {
     switch (this.options.orientation) {
       case EOrientation.COLUMN:
         this.scale.domain([0, Math.max(src.desc.size[1], dst.desc.size[1])]);
-        this.drawRows(diffData.reorder.cols, scaleFactor);
+        this.scale.range([0, Math.max(src.desc.size[1], dst.desc.size[1]) * AppConstants.HEATMAP_CELL_SIZE * scaleFactor]);
+        this.drawColumns(diffData.reorder.cols, scaleFactor);
         break;
 
       case EOrientation.ROW:
@@ -111,7 +112,7 @@ class ReorderView implements IAppView {
       .transition()
       .attr('x1', 0)
       .attr('x2', width)
-      .attr('title', (d) => `${d.id}: ${d.diff}`)
+      .attr('title', (d) => `${d.id}: ${d.diff} (src: ${d.from}, dest: ${d.to})`)
       .attr('y1', (d) => this.scale(d.from) - (AppConstants.HEATMAP_CELL_SIZE * scaleFactor * 0.5))
       .attr('y2', (d) => this.scale(d.to) - (AppConstants.HEATMAP_CELL_SIZE * scaleFactor * 0.5));
 
