@@ -119,7 +119,7 @@ class DiffHeatMap implements IAppView {
         break;
 
       case ChangeTypes.CONTENT.type:
-        this.$node.selectAll('.added-color').classed('noColorClass', !changeType.isActive);
+        this.$node.selectAll('.content-color').classed('noColorClass', !changeType.isActive);
         break;
     }
 
