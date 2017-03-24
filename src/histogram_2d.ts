@@ -21,7 +21,6 @@ class Histogram2D implements IAppView {
   private $histogramCols;
 
   private selectedTables;
-  private posX;
   private borderWidth = 2;
 
   private height = 160 + this.borderWidth;
@@ -40,6 +39,8 @@ class Histogram2D implements IAppView {
 
   // Width of the bars in the bar chart
   private heightBar:number = Math.floor(this.heightRowHistogram / 20) - 1; // -1 = border
+
+  private ratioData;
 
 
   private static getJSONRatio2D(pair) {
@@ -129,10 +130,12 @@ class Histogram2D implements IAppView {
     });
 
     events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
+      this.show2DRatio(this.ratioData);
       this.scaleHistogramWidth(); // just rescale the height of the bars
     });
 
     events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
+      this.show2DRatio(this.ratioData);
       this.scaleHistogramWidth(); // just rescale the height of the bars
     });
   }
@@ -141,8 +144,10 @@ class Histogram2D implements IAppView {
     this.$ratio.classed('loading', true);
 
     this.requestData(pair)
-      .then((data) => this.prepareRatioData(data))
-      .then((data) => this.showData(data));
+      .then((data) => {
+        this.ratioData = data;
+        this.show2DRatio(data);
+      });
 
     this.requestDataHistogram(pair)
       .then((histodata) => {
@@ -172,51 +177,77 @@ class Histogram2D implements IAppView {
     const cols = data.cols.ratios;
     const rows = data.rows.ratios;
 
+    // consider and show only active change types
+    const activeTypes = ChangeTypes.TYPE_ARRAY
+      .filter((d) => d !== ChangeTypes.REORDER)
+      .filter((d) => d.isActive === true);
+
+    // calculate the row and col domain
+    const rowDomain = activeTypes
+      .map((ct) => rows[ct.ratioName])
+      .reduce((a, b) => a + b, 0);
+
+    const colDomain = activeTypes
+      .map((ct) => cols[ct.ratioName])
+      .reduce((a, b) => a + b, 0);
+
+    const scaleRows = d3.scale.linear().domain([0, rowDomain]).range([0, 1]);
+    const scaleCols = d3.scale.linear().domain([0, colDomain]).range([0, 1]);
+
+    // reverse the order because of DOM stacking
+    const reverseTypes = activeTypes.reverse();
+
+    const rowRatios = reverseTypes.map((ct) => {
+      return {ratio: rows[ct.ratioName], ct};
+    });
+
+    const colRatios = reverseTypes.map((ct) => {
+      return {ratio: cols[ct.ratioName], ct};
+    });
+
     const r = [];
 
-    r.push({
-      type: ChangeTypes.REMOVED.type,
-      rows: rows.d_ratio + rows.a_ratio + rows.c_ratio + rows.no_ratio, //todo change to 1
-      cols: cols.d_ratio + cols.a_ratio + cols.c_ratio + cols.no_ratio, //todo change to 1
-      rows_text: Math.round((rows.d_ratio * 100) * 1000) / 1000,
-      cols_text: Math.round((cols.d_ratio * 100) * 1000) / 1000
-    });
+    // calculate the ratio for each content type
+    while(colRatios.length > 0) {
+      const rowRatio = rowRatios.map((d) => scaleRows(d.ratio)).reduce((a, b) => a + b, 0);
+      const colRatio = colRatios.map((d) => scaleCols(d.ratio)).reduce((a, b) => a + b, 0);
 
-    r.push({
-      type: ChangeTypes.ADDED.type,
-      rows: rows.a_ratio + rows.c_ratio + rows.no_ratio, // or 1 - d
-      cols: cols.a_ratio + cols.c_ratio + cols.no_ratio,
-      rows_text: Math.round((rows.a_ratio * 100) * 1000) / 1000,
-      cols_text: Math.round((cols.a_ratio * 100) * 1000) / 1000
-    });
+      // remove the first element
+      const rowElem = rowRatios.shift();
+      const colElem = colRatios.shift();
 
-    r.push({
-      type: ChangeTypes.CONTENT.type,
-      rows: rows.c_ratio + rows.no_ratio,
-      cols: cols.c_ratio + cols.no_ratio,
-      rows_text: Math.round((rows.c_ratio * 100) * 1000) / 1000,
-      cols_text: Math.round((cols.c_ratio * 100) * 1000) / 1000
-    });
+      r.push({
+        type: colElem.ct.type,
+        rows: rowRatio,
+        cols: colRatio,
+        rows_text: Math.round((scaleRows(rowElem.ratio) * 100) * 1000) / 1000,
+        cols_text: Math.round((scaleCols(colElem.ratio) * 100) * 1000) / 1000
+      });
+    }
 
-    r.push({
-      type: ChangeTypes.NO_CHANGE.type,
-      rows: rows.no_ratio,
-      cols: cols.no_ratio,
-      rows_text: Math.round((rows.no_ratio * 100) * 1000) / 1000,
-      cols_text: Math.round((cols.no_ratio * 100) * 1000) / 1000
-    });
-
-    //console.log('ratio data', data, r);
+    // add inactive values as 0 values
+    ChangeTypes.TYPE_ARRAY
+      .filter((d) => d !== ChangeTypes.REORDER)
+      .filter((d) => d.isActive === false)
+      .forEach((d) => {
+        r.push({
+          type: d.type,
+          rows: 0,
+          cols: 0,
+          rows_text: 0,
+          cols_text: 0
+        });
+      });
 
     return r;
   }
 
-  //Show 2d Ratio chart
-  private showData(data) {
-    const ratio2d = this.$ratio.selectAll('div').data(data);
+  private show2DRatio(data) {
+    data = this.prepareRatioData(data);
 
-    ratio2d.enter()
-      .append('div');
+    const ratio2d = this.$ratio.selectAll('div').data(data, (d) => d.type);
+
+    ratio2d.enter().append('div');
 
     ratio2d
       .attr('class', (d) => d.type + '-color')

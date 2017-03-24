@@ -162,7 +162,7 @@ class BarChart implements IAppView {
     $bars.enter().append('div');
 
     $bars
-      .attr('class', (d) => 'bar ' + d.type)
+      .attr('class', (d) => `bar ${d.type}-color`)
       .style('width', this.widthBar + 'px')
       .attr('title', (d) => `${ChangeTypes.labelForType(d.type)}: ${d.value.toFixed(2)} cells`);
 

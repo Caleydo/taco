@@ -68,35 +68,6 @@ $app-margin-top: 50;
   margin-top: 5px;
 }
 
-.difftitle {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  align-content: stretch;
-  justify-content: space-around;
-  /*margin-top:150px;*/
-
-
-  > .leftHeatmapTitle {
-    > p {
-      font-size: 10pt;
-    }
-  }
-
-  > .diffHeatmapTitle {
-    > p {
-      font-size: 10pt;
-    }
-  }
-
-  > .rightHeatmapTitle{
-    > p {
-      font-size: 10pt;
-    }
-  }
-}
-
 a.active {
   font-weight: 500;
   color: $select-color;
@@ -110,6 +81,58 @@ rect {
     fill: $hover-color;
   }
 }
+
+
+#btn-added,
+div.added-color {
+  transition: background-color ease 0.2s;
+  background-color: $struct-add-color;
+}
+
+#btn-removed.active,
+div.removed-color {
+  transition: background-color ease 0.2s;
+  background-color: $struct-delete-color;
+}
+
+#btn-content,
+div.content-color {
+  transition: background-color ease 0.2s;
+  background-color: $content-change-color;
+}
+
+#btn-nochange,
+div.nochange-color {
+  transition: background-color ease 0.2s;
+  background-color: $no-change-color;
+}
+
+#btn-reorder,
+div.reorder-color {
+  transition: background-color ease 0.2s;
+  background-color: $reorder-color;
+}
+
+rect.added-color {
+  fill: $struct-add-color;
+  transition: fill ease 0.2s;
+}
+
+rect.removed-color {
+  fill: $struct-delete-color;
+  transition: fill ease 0.2s;
+}
+
+rect.content-color {
+  fill: $content-change-color;
+  transition: fill ease 0.2s;
+}
+
+rect.nochange-color {
+  fill: $no-change-color;
+  transition: fill ease 0.2s;
+}
+
 
 
 .timeline {
@@ -129,47 +152,10 @@ rect {
   }
 }
 
-//#nav-bar{
-//  margin-top:20px;
-//  margin-bottom: 20px;
-//}
-
 @keyframes color_change {
   from { background-color: transparent; }
   to { background-color: $hover-color; }
 
-}
-button {
-  display: inline-block;
-  margin-bottom: 0;
-  font-weight: normal;
-  text-align: center;
-  vertical-align: middle;
-  touch-action: manipulation;
-  cursor: pointer;
-  background-image: none;
-  border: 1px solid transparent;
-  white-space: nowrap;
-  padding: 6px 12px;
-  font-size: 14px;
-  line-height: 1.42857;
-  border-radius: 4px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-
-}
-button:focus, button.focus, button:active:focus, button:active.focus, button.active:focus, button.active.focus {
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
-}
-
-button:active, button.active {
-  outline: 0;
-  background-image: none;
-  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  //box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 
 .btn-group.change {
@@ -178,25 +164,6 @@ button:active, button.active {
   }
 }
 
-#btn-nochange, div.bar.nochange {
-  background-color: $no-change-color;
-}
-
-#btn-removed.active, div.bar.removed{
-  background-color: $struct-delete-color;
-}
-
-#btn-added, div.bar.added {
-  background-color: $struct-add-color;
-}
-
-#btn-content, div.bar.content {
-  background-color: $content-change-color;
-}
-
-#btn-reorder, div.bar.reorder {
-  background-color: $reorder-color;
-}
 
 .meta_info_box {
   margin: 20px 0 100px;
@@ -259,19 +226,31 @@ button:active, button.active {
   }
 }
 
-
-
 .ratio {
-  transition: left .2s ease;
-  //display: inline-block;
-  border: 1px solid darkslategray;
+  border: 1px solid black;
   position: relative;
-  color: #fc8d62; //colorblind friendly
-  background: transparent;
+  background: white;
 
   div {
+    transition: width .2s ease, height .2s ease;
     position: absolute;
     padding: 1px;
+  }
+
+  .nochange-color {
+    z-index: 3;
+  }
+
+  .content-color {
+    z-index: 2;
+  }
+
+  .added-color {
+    z-index: 1;
+  }
+
+  .removed-color {
+    z-index: 0;
   }
 
   &.loading {
@@ -315,50 +294,6 @@ button:active, button.active {
       flex-direction: column-reverse;
     }
   }
-}
-
-.row-added-color,
-.col-added-color,
-div.added-color {
-  transition: background-color ease 0.2s;
-  background-color: $struct-add-color;
-}
-
-.row-removed-color,
-.col-removed-color,
-div.removed-color {
-  transition: background-color ease 0.2s;
-  background-color: $struct-delete-color;
-}
-
-div.content-color {
-  transition: background-color ease 0.2s;
-  background-color: $content-change-color;
-}
-
-div.nochange-color {
-  transition: background-color ease 0.2s;
-  background-color: $no-change-color;
-}
-
-rect.added-color {
-  fill: $struct-add-color;
-  transition: fill ease 0.2s;
-}
-
-rect.removed-color {
-  fill: $struct-delete-color;
-  transition: fill ease 0.2s;
-}
-
-rect.content-color {
-  fill: $content-change-color;
-  transition: fill ease 0.2s;
-}
-
-rect.nochange-color {
-  fill: $no-change-color;
-  transition: fill ease 0.2s;
 }
 
 #interface{
