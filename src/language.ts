@@ -3,7 +3,7 @@
  */
 
 export class Language {
-  static APP_NAME = 'TaCo';
+  static APP_NAME = 'TACO';
   static DATA_SET = 'Dataset';
   static TIMELINE = 'Timeline';
 }
