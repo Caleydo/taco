@@ -82,7 +82,10 @@ class HeatMap implements IAppView {
       return;
     }
 
-    const options = mixin(this.heatMapOptions, {initialScale: this.heatMapOptions.initialScale * scaleFactor});
+    const options = {
+      initialScale: this.heatMapOptions.initialScale * scaleFactor,
+      color: this.heatMapOptions.color
+    };
 
     return Promise.all([plugins[0].load()])
       .then((args) => {
@@ -104,7 +107,7 @@ class HeatMap implements IAppView {
    * Remove the previous heatmap
    */
   private clearContent() {
-    this.$node.selectAll('*').remove();
+    this.$node.html('');
   }
 
 }
