@@ -130,13 +130,17 @@ class Histogram2D implements IAppView {
     });
 
     events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
-      this.show2DRatio(this.ratioData);
-      this.scaleHistogramWidth(); // just rescale the height of the bars
+      if(this.ratioData) {
+        this.show2DRatio(this.ratioData);
+        this.scaleHistogramWidth(); // just rescale the height of the bars
+      }
     });
 
     events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
-      this.show2DRatio(this.ratioData);
-      this.scaleHistogramWidth(); // just rescale the height of the bars
+      if(this.ratioData) {
+        this.show2DRatio(this.ratioData);
+        this.scaleHistogramWidth(); // just rescale the height of the bars
+      }
     });
   }
 
@@ -338,6 +342,7 @@ class Histogram2D implements IAppView {
 
 
   private clearContent() {
+    this.ratioData = null;
     this.$ratio.html('');
     this.$histogramCols.html('');
     this.$histogramRows.html('');
