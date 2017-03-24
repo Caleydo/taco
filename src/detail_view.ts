@@ -32,7 +32,7 @@ class DetailView implements IAppView {
 
   private attachListener() {
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
-      this.$node.select('button').attr('disabled', 'disabled');
+      this.$node.select('button').attr('disabled', 'disabled').classed('loading', false);
     });
 
     events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items) => {
@@ -41,6 +41,22 @@ class DetailView implements IAppView {
 
     events.on(AppConstants.EVENT_OPEN_DETAIL_VIEW, (evt, items) => {
       this.loadDetailView(items);
+    });
+
+    let heatmapsLoaded = 0;
+    events.on(AppConstants.EVENT_HEATMAP_LOADED, () => {
+      heatmapsLoaded++;
+      if(heatmapsLoaded === 3) {
+        this.$node.select('button').classed('loading', false);
+        heatmapsLoaded = 0;
+      }
+    });
+    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, () => {
+      heatmapsLoaded++;
+      if(heatmapsLoaded === 3) {
+        this.$node.select('button').classed('loading', false);
+        heatmapsLoaded = 0;
+      }
     });
   }
 
@@ -62,7 +78,7 @@ class DetailView implements IAppView {
     events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, selection.map((d) => d.item));
     events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, selection[0].item);
     events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, selection[1].item);
-    this.$node.select('button').attr('disabled', 'disabled');
+    this.$node.select('button').attr('disabled', 'disabled').classed('loading', true);
   }
 }
 

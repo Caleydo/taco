@@ -100,6 +100,10 @@ class HeatMap implements IAppView {
           options
         );
         return this;
+      })
+      .then((instance) => {
+        events.fire(AppConstants.EVENT_HEATMAP_LOADED);
+        return instance;
       });
   }
 

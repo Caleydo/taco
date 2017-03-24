@@ -31,6 +31,7 @@ export class AppConstants {
   static EVENT_OPEN_DETAIL_VIEW = 'eventOpenDetailView';
 
   static EVENT_DIFF_HEATMAP_LOADED = 'eventDiffHeatmapLoaded';
+  static EVENT_HEATMAP_LOADED = 'eventHeatmapLoaded';
 
   static EVENT_TIME_POINTS_SELECTED = 'eventTimePointsSelected';
 

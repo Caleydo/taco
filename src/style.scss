@@ -374,6 +374,10 @@ select.form-control {
   button {
     position: relative;
     left: -35px;
+
+    &.loading {
+      animation: color_change 1s ease-out infinite alternate;
+    }
   }
 }
 
