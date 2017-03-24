@@ -83,7 +83,7 @@ rect {
 }
 
 
-#btn-added,
+#btn-added.active,
 div.added-color {
   transition: background-color ease 0.2s;
   background-color: $struct-add-color;
@@ -95,19 +95,19 @@ div.removed-color {
   background-color: $struct-delete-color;
 }
 
-#btn-content,
+#btn-content.active,
 div.content-color {
   transition: background-color ease 0.2s;
   background-color: $content-change-color;
 }
 
-#btn-nochange,
+#btn-nochange.active,
 div.nochange-color {
   transition: background-color ease 0.2s;
   background-color: $no-change-color;
 }
 
-#btn-reorder,
+#btn-reorder.active,
 div.reorder-color {
   transition: background-color ease 0.2s;
   background-color: $reorder-color;
@@ -422,6 +422,12 @@ select.form-control {
 .reorderView {
   position: absolute;
   width: 100%;
+  opacity: 1;
+  transition: opacity ease 0.2s;
+
+  &.fadeout {
+    opacity: 0;
+  }
 
   line {
     fill: none;

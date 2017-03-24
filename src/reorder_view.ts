@@ -5,7 +5,7 @@
 import {IAppView} from './app';
 import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
-import {AppConstants} from './app_constants';
+import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
 import {mixin} from 'phovea_core/src';
 
 export enum EOrientation {
@@ -75,6 +75,18 @@ class ReorderView implements IAppView {
     events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor:number) => {
       if(pair.length === 2) {
         this.draw(pair[0], pair[1], diffData, scaleFactor);
+      }
+    });
+
+    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
+      if(changeType === ChangeTypes.REORDER) {
+        this.$node.classed('fadeout', !changeType.isActive);
+      }
+    });
+
+    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
+      if(changeType === ChangeTypes.REORDER) {
+        this.$node.classed('fadeout', !changeType.isActive);
       }
     });
   }
