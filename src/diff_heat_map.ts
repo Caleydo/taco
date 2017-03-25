@@ -23,7 +23,7 @@ class DiffHeatMap implements IAppView {
   private selectedTables;
 
   private colorLow = '#d8b365';
-  private colorMed = 'white';
+  private colorMed = '#d8d8d8';
   private colorHigh = '#8da0cb';
 
   private borderWidth = 2;

@@ -409,7 +409,7 @@ select.form-control {
   border: 1px solid black;
   margin: 0 50px;
   width: calc(100% - 100px);
-  background: white;
+  background: $no-change-color;
 
   & div.transform > div {
     position: absolute;
