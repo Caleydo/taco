@@ -28,10 +28,9 @@ class BarChart implements IAppView {
   private widthBarChart: number = 15;
   private heightBarChart: number = 100;
 
-  private barScaling = d3.scale.log()
-    .domain([0.1, 100000])
-    .range([0, this.heightBarChart / ChangeTypes.TYPE_ARRAY.filter((d) => d !== ChangeTypes.REORDER).length]) // without reorder changes
-    .clamp(true);
+  private barScaling = d3.scale.linear()
+    .domain([0, 1])
+    .range([0, this.heightBarChart]);
 
   /**
    * Method retrieves data by given parameters TODO: Documentation
@@ -84,12 +83,15 @@ class BarChart implements IAppView {
   private attachListener() {
     // Call the resize function whenever a resize event occurs
     events.on(AppConstants.EVENT_RESIZE, () => {
-      this.resize();
-      this.updateItems(this.items);
+      if(this.items) {
+        this.resize();
+        this.updateItems(this.items);
+      }
     });
 
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => {
       this.items = items;
+      this.barScaling.domain([0,1]);
       this.updateItems(items);
     });
 
@@ -156,6 +158,10 @@ class BarChart implements IAppView {
   private drawBar($parent, data, pair) {
     //const barData = this.getBarData(data.ratios, 'ratioName');
     const barData = this.getBarData(data.counts, 'countName');
+
+    // update the maximum bar height
+    const maxDomain = Math.max(this.barScaling.domain()[1], barData.map((d) => d.value).reduce((a,b) => a+b, 0));
+    this.barScaling.domain([this.barScaling.domain()[0], maxDomain]);
 
     //individual bars in the bar group div
     const $bars = $parent.selectAll('div.bar').data(barData);
