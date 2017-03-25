@@ -48,7 +48,8 @@ class ReorderView implements IAppView {
 
     this.$node = d3.select(parent)
       .append('svg')
-      .classed('reorderView', true);
+      .classed('reorderView', true)
+      .classed('fadeout', !ChangeTypes.REORDER.isActive);
   }
 
   init() {
