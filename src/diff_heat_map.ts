@@ -348,7 +348,22 @@ class DiffHeatMap implements IAppView {
 
     selections.forEach((cell) => {
       if (cell.isUnbound) {
-        return; // TODO
+        const rowIds = cell.dim(0);
+        const colIds = cell.dim(1);
+        if (rowIds.isUnbound && colIds.isUnbound) {
+          // just support all for now
+          ctx.fillRect(0, 0, data.union.c_ids.length, data.union.r_ids.length);
+        } else if (rowIds.isUnbound) {
+          colIds.forEach((colId) => {
+            const col = colLookup.get(colId);
+            ctx.fillRect(col, 0, 1, data.union.r_ids.length);
+          });
+        } else if (colIds.isUnbound) {
+          rowIds.forEach((rowId) => {
+            const row = rowLookup.get(rowId);
+            ctx.fillRect(0, row, data.union.c_ids.length, 1);
+          });
+        }
       }
       cell.product((ids) => {
         const [i, j] = ids;
