@@ -184,18 +184,44 @@ class DiffHeatMap implements IAppView {
   }
 
   private handleTooltip($root: d3.Selection<any>, data: IDiffData, scaleFactor: number) {
-    let timer = -1;
     const toIndices = (x: number, y: number) => {
       const col = Math.round(x / scaleFactor + 0.5) - 1;
       const row = Math.round(y / scaleFactor + 0.5) - 1;
       return {col, row};
     };
+
+    const findValue = (col: number, row: number) => {
+      if (data.structure) {
+        // inverse order of rendering
+        if (data.structure.deleted_cols.some((a) => a.pos === col)) {
+          return `column deleted`;
+        }
+        if (data.structure.deleted_rows.some((a) => a.pos === row)) {
+          return `row deleted`;
+        }
+        if (data.structure.added_cols.some((a) => a.pos === col)) {
+          return `column added`;
+        }
+        if (data.structure.added_rows.some((a) => a.pos === row)) {
+          return `row added`;
+        }
+      }
+      if (data.content) {
+        const item = data.content.find((d) => d.cpos === col && d.rpos === row);
+        if (item) {
+          return 'content change: ' + item.diff_data;
+        }
+      }
+      return 'no change';
+    };
     const updateTooltip = (x: number, y: number) => {
       const {col, row} = toIndices(x, y);
       const rowName = data.union.ur_ids[row];
       const colName = data.union.uc_ids[col];
-      $root.attr('title', `${rowName} / ${colName}: ${col} ${x} ${row} ${y}`);
+      $root.attr('title', `${rowName} / ${colName}: ${findValue(col, row)}`);
     };
+
+    let timer = -1;
     $root.on('mousemove', () => {
       const evt = <MouseEvent>d3.event;
       clearTimeout(timer);
@@ -203,6 +229,9 @@ class DiffHeatMap implements IAppView {
     }).on('mouseleave', () => {
       clearTimeout(timer);
       timer = -1;
+    }).on('click', () => {
+      const evt = <MouseEvent>d3.event;
+      const {col, row} = toIndices(evt.offsetX, evt.offsetY);
     });
 
   }
