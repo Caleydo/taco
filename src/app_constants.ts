@@ -44,6 +44,8 @@ export class AppConstants {
    */
   static PARSE_DATE_FORMATS = ['YYYY_MM_DD', 'YYYY-MM-DD', 'YYYY'];
 
+  static MAXIMAL_HEATMAP_LABEL_SIZE = 100;
+
   /**
    * Initial size of a heatmap cell
    * @type {number}
