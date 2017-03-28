@@ -8,17 +8,6 @@ import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {hash} from 'phovea_core/src';
 
-
-export function getPosXScale(items, totalWidth, padding = 20) {
-  const firstTimePoint = moment(items[0].time);
-  const lastTimePoint = moment(items[items.length - 1].time);
-  const timeRange = lastTimePoint.diff(firstTimePoint, 'days');
-
-  return d3.scale.linear()
-    .domain([0, timeRange])
-    .range([padding, totalWidth - padding]);
-}
-
 export function getTimeScale(items, totalWidth, padding = 20) {
   const firstTimePoint = moment(items[0].time).toDate();
   const lastTimePoint = moment(items[items.length - 1].time).toDate();
@@ -36,6 +25,9 @@ let selectedTimePoints = [];
  * @param timepoints
  */
 export function selectTimePoint(...timepoints) {
+  // remove timepoints that are already selected
+  timepoints = timepoints.filter((d) => selectedTimePoints.indexOf(d) === -1);
+
   selectedTimePoints.push(...timepoints);
 
   // sort elements by time -> [0] = earlier = source; [1] = later = destination

@@ -124,6 +124,12 @@ class BarChart implements IAppView {
       .classed('bars', true)
       .style('width', this.widthBarChart + 'px')
       .style('height', this.heightBarChart + 'px')
+      .on('mouseenter', (d) => {
+        events.fire(AppConstants.EVENT_TIME_POINT_HOVERED, d[1].time.toDate(), true);
+      })
+      .on('mouseleave', (d) => {
+        events.fire(AppConstants.EVENT_TIME_POINT_HOVERED, d[1].time.toDate(), false);
+      })
       .on('click', (d) => {
         selectTimePoint(d[1]);
       })
@@ -170,7 +176,7 @@ class BarChart implements IAppView {
     $bars
       .attr('class', (d) => `bar ${d.type}-color`)
       .style('width', this.widthBar + 'px')
-      .attr('title', (d) => `${ChangeTypes.labelForType(d.type)}: ${d.value.toFixed(2)} cells`);
+      .attr('title', (d) => `${ChangeTypes.labelForType(d.type)}: ${d.value} cells`);
 
     $bars.exit().remove();
 
