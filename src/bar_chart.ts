@@ -170,7 +170,7 @@ class BarChart implements IAppView {
     $bars
       .attr('class', (d) => `bar ${d.type}-color`)
       .style('width', this.widthBar + 'px')
-      .attr('title', (d) => `${ChangeTypes.labelForType(d.type)}: ${d.value.toFixed(2)} cells`);
+      .attr('title', (d) => `${ChangeTypes.labelForType(d.type)}: ${d.value} cells`);
 
     $bars.exit().remove();
 
