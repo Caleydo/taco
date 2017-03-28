@@ -61,6 +61,9 @@ export class AppConstants {
   };
 }
 
+export const COLOR_ADDED = '#ccebc5';
+export const COLOR_DELETED = '#fbb4ae';
+
 export interface IChangeType {
   type: string;
   ratioName: string;
