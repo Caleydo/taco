@@ -6,6 +6,9 @@ import {IAppView} from './app';
 import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
 import * as ajax from 'phovea_core/src/ajax';
+import {toSelectOperation, ProductIDType} from 'phovea_core/src/idtype';
+import {list as rlist, cell} from 'phovea_core/src/range';
+import {onDOMNodeRemoved} from 'phovea_core/src';
 import {IAnyMatrix} from 'phovea_core/src/matrix';
 import {AppConstants, IChangeType, ChangeTypes, COLOR_ADDED, COLOR_DELETED} from './app_constants';
 import {get} from 'phovea_core/src/plugin';
@@ -63,6 +66,8 @@ class DiffHeatMap implements IAppView {
 
   private scaleFactor = 1;
 
+  private selectionListener = (evt: any) => this.update();
+
   private static getJSON(pair: string[]) {
     const operations = ChangeTypes.forURL();
     return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/diff_heat_map`);
@@ -111,10 +116,23 @@ class DiffHeatMap implements IAppView {
       this.clearContent();
     });
 
+    onDOMNodeRemoved(<HTMLElement>this.$node.node(), () => {
+      const old = this.getProductIDType();
+      if (old) {
+        old.off(ProductIDType.EVENT_SELECT_PRODUCT, this.selectionListener);
+      }
+    });
+
     //attach event listener
     events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items: IAnyMatrix[]) => {
       if(items.length !== 2) {
         return;
+      }
+
+      // cleanup
+      const old = this.getProductIDType();
+      if (old) {
+        old.off(ProductIDType.EVENT_SELECT_PRODUCT, this.selectionListener);
       }
 
       this.$node.selectAll('*').remove();
@@ -124,6 +142,10 @@ class DiffHeatMap implements IAppView {
         .then((data) => {
           this.data = data;
           this.selectedTables = items;
+          const idType = this.getProductIDType();
+          if (idType) {
+            idType.on(ProductIDType.EVENT_SELECT_PRODUCT, this.selectionListener);
+          }
           this.drawDiffHeatmap(this.data);
           events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
         });
@@ -156,6 +178,13 @@ class DiffHeatMap implements IAppView {
     }
 
     this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
+  }
+
+  private getProductIDType(): ProductIDType {
+    if (this.selectedTables) {
+      return this.selectedTables[0].producttype;
+    }
+    return null;
   }
 
   private drawDiffHeatmap(data: IDiffData) {
@@ -232,12 +261,27 @@ class DiffHeatMap implements IAppView {
     }).on('click', () => {
       const evt = <MouseEvent>d3.event;
       const {col, row} = toIndices(evt.offsetX, evt.offsetY);
+      const colId = data.union.c_ids[col];
+      const rowId = data.union.r_ids[row];
+      const idType = this.getProductIDType();
+      if (idType) {
+        idType.select([cell(rowId, colId)], toSelectOperation(evt));
+      }
     });
 
   }
 
+  private update() {
+    this.render(<HTMLCanvasElement>this.$node.select('canvas').node(), this.data);
+  }
+
   private render(canvas: HTMLCanvasElement, data: IDiffData) {
     const ctx = canvas.getContext('2d');
+
+    ctx.msImageSmoothingEnabled = false;
+    //if (context.hasOwnProperty('imageSmoothingEnabled')) {
+    (<any>ctx).imageSmoothingEnabled = false;
+
     ctx.clearRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
 
     ctx.save();
@@ -280,6 +324,41 @@ class DiffHeatMap implements IAppView {
         ctx.fillRect(cell.cpos, cell.rpos, 1, 1);
       });
     }
+
+    this.renderSelections(ctx, data);
+
+    ctx.restore();
+  }
+
+  private renderSelections(ctx: CanvasRenderingContext2D, data: IDiffData) {
+    const selections = this.selectedTables[0].producttype.productSelections();
+    ctx.save();
+
+    ctx.fillStyle = 'orange';
+    if (selections.some((a) => a.isAll)) {
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.restore();
+      return;
+    }
+
+    const rowLookup = new Map<number, number>();
+    data.union.r_ids.map((d,i) => rowLookup.set(d,i));
+    const colLookup = new Map<number, number>();
+    data.union.c_ids.map((d,i) => colLookup.set(d,i));
+
+    selections.forEach((cell) => {
+      if (cell.isUnbound) {
+        return; // TODO
+      }
+      cell.product((ids) => {
+        const [i, j] = ids;
+        const row = rowLookup.get(i);
+        const col = colLookup.get(j);
+        ctx.fillRect(col, row, 1, 1);
+      }, [0,0]);
+    });
+
+    ctx.restore();
   }
 
   private clearContent() {
