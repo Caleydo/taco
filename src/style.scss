@@ -139,8 +139,13 @@ rect.nochange-color {
   text {
     cursor: pointer;
 
+    &.hovered {
+      fill: $hover-color;
+    }
+
     &.active {
       fill: $select-color;
+      font-weight: 500;
     }
   }
 

@@ -124,6 +124,12 @@ class BarChart implements IAppView {
       .classed('bars', true)
       .style('width', this.widthBarChart + 'px')
       .style('height', this.heightBarChart + 'px')
+      .on('mouseenter', (d) => {
+        events.fire(AppConstants.EVENT_TIME_POINT_HOVERED, d[1].time.toDate(), true);
+      })
+      .on('mouseleave', (d) => {
+        events.fire(AppConstants.EVENT_TIME_POINT_HOVERED, d[1].time.toDate(), false);
+      })
       .on('click', (d) => {
         selectTimePoint(d[1]);
       })
