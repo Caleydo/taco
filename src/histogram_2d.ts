@@ -224,8 +224,8 @@ class Histogram2D implements IAppView {
         type: colElem.ct.type,
         rows: rowRatio,
         cols: colRatio,
-        rows_text: Math.round((scaleRows(rowElem.ratio) * 100) * 1000) / 1000,
-        cols_text: Math.round((scaleCols(colElem.ratio) * 100) * 1000) / 1000
+        rows_text: Math.round((scaleRows(rowElem.ratio) * 100) * 100) / 100,
+        cols_text: Math.round((scaleCols(colElem.ratio) * 100) * 100) / 100
       });
     }
 
@@ -297,11 +297,11 @@ class Histogram2D implements IAppView {
     $bars
       .attr('class', (d) => `bar ${d.type}-color`)
       .style('height', this.heightBar + 'px')
-      .attr('title', (d) => `${ChangeTypes.labelForType(d.type)}: ${Math.round((d.value * 100) * 1000) / 1000}% (${d.id})`);
+      .attr('title', (d) => `${ChangeTypes.labelForType(d.type)}: ${Math.round((d.value * 100) * 100) / 100}% (${d.id})`);
 
     $bars.exit().remove();
 
-    // move the reorder bar into the content change element
+    // move the reorder bar into the content change  element
     $parent.selectAll(`.bar.${ChangeTypes.REORDER.type}-color`)[0]
       .forEach((d:HTMLElement) => {
         d.parentElement.querySelector(`.bar.${ChangeTypes.CONTENT.type}-color`).appendChild(d);
