@@ -441,3 +441,19 @@ select.form-control {
     }
   }
 }
+
+div.phovea-heatmap .phovea-heatmap-labels {
+  &.row-labels {
+    padding-right: 0.2em;
+  }
+  &.column-labels {
+    padding-left: 0.2em;
+    text-align: left;
+    overflow: visible;
+
+    > div {
+      transform: rotate(30deg);
+      transform-origin: bottom left;
+    }
+  }
+}
