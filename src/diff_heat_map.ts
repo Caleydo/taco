@@ -287,7 +287,10 @@ class DiffHeatMap implements IAppView {
     //if (context.hasOwnProperty('imageSmoothingEnabled')) {
     (<any>ctx).imageSmoothingEnabled = false;
 
-    ctx.clearRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
+    const totalWidth = AppConstants.HEATMAP_CELL_SIZE * data.union.uc_ids.length * this.scaleFactor.x;
+    const totalHeight = AppConstants.HEATMAP_CELL_SIZE * data.union.ur_ids.length * this.scaleFactor.y;
+
+    ctx.clearRect(0, 0, totalWidth, totalHeight);
 
     ctx.save();
     const scaleFactorX = AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor.x;
