@@ -3,7 +3,8 @@ $hover-color: #ffc46b;
 
 $struct-add-color: #ccebc5;
 $struct-delete-color: #fbb4ae;
-$content-change-color: #b3cde3;
+$pos-content-change-color: #8da0cb;
+$neg-content-change-color: #d8b365;
 $no-change-color: #ffffff;
 $reorder-color: #decbe4;
 
@@ -100,7 +101,7 @@ div.removed-color {
 #btn-content.active,
 div.content-color {
   transition: background-color ease 0.2s;
-  background-color: $content-change-color;
+  background-color: $pos-content-change-color;
 }
 
 #btn-nochange.active,
@@ -126,7 +127,7 @@ rect.removed-color {
 }
 
 rect.content-color {
-  fill: $content-change-color;
+  fill: $pos-content-change-color;
   transition: fill ease 0.2s;
 }
 
@@ -420,6 +421,34 @@ select.form-control {
   justify-content: center;
   align-items: flex-start;
   width: calc(33% + 100px);
+
+  .legend {
+    position: absolute;
+    width: 100px;
+    top: -20px;
+
+    .content-change {
+      width: 100%;
+      height: 10px;
+      background: linear-gradient(to right, $neg-content-change-color, $no-change-color, $pos-content-change-color);
+
+      &:before {
+        content: '-1';
+        position: absolute;
+        margin-right: 100%;
+        right: 5px;
+        top: -3px;
+      }
+
+      &:after {
+        content: '1';
+        position: absolute;
+        margin-left: 100%;
+        left: 5px;
+        top: -3px;
+      }
+    }
+  }
 }
 
 .taco-table {

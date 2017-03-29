@@ -191,6 +191,7 @@ class DiffHeatMap implements IAppView {
   }
 
   private drawDiffHeatmap(data: IDiffData) {
+    this.drawLegend(data);
 
     const dataWidth = AppConstants.HEATMAP_CELL_SIZE * data.union.uc_ids.length;
     const dataHeight = AppConstants.HEATMAP_CELL_SIZE * data.union.ur_ids.length;
@@ -436,9 +437,15 @@ class DiffHeatMap implements IAppView {
     ctx.restore();
   }
 
+  private drawLegend(data:IDiffData) {
+    const $legend = this.$node.append('div').classed('legend', true);
+    $legend.append('div').classed('content-change', true);
+  }
+
   private clearContent() {
     this.data = null;
     this.$node.select('.taco-table').remove();
+    this.$node.select('.legend').remove();
   }
 }
 
