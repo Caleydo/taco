@@ -7,7 +7,7 @@ import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
 import * as ajax from 'phovea_core/src/ajax';
 import {toSelectOperation, ProductIDType} from 'phovea_core/src/idtype';
-import {list as rlist, cell} from 'phovea_core/src/range';
+import {cell} from 'phovea_core/src/range';
 import {onDOMNodeRemoved} from 'phovea_core/src';
 import {IAnyMatrix} from 'phovea_core/src/matrix';
 import {AppConstants, IChangeType, ChangeTypes, COLOR_ADDED, COLOR_DELETED} from './app_constants';
@@ -67,6 +67,8 @@ class DiffHeatMap implements IAppView {
   private scaleFactor = { x: 1, y: 1};
 
   private selectionListener = (evt: any) => this.update();
+
+  private activeChangeTypes = new Set<string>([ChangeTypes.ADDED.type, ChangeTypes.CONTENT.type, ChangeTypes.REMOVED.type]);
 
   private static getJSON(pair: string[]) {
     const operations = ChangeTypes.forURL();
@@ -163,21 +165,14 @@ class DiffHeatMap implements IAppView {
   }
 
   private toggleChangeType(changeType:IChangeType) {
-    switch(changeType.type) {
-      case ChangeTypes.REMOVED.type:
-        this.$node.selectAll('.removed-color').classed('noColorClass', !changeType.isActive);
-        break;
-
-      case ChangeTypes.ADDED.type:
-        this.$node.selectAll('.added-color').classed('noColorClass', !changeType.isActive);
-        break;
-
-      case ChangeTypes.CONTENT.type:
-        this.$node.selectAll('.content-color').classed('noColorClass', !changeType.isActive);
-        break;
+    if (changeType.isActive) {
+      this.activeChangeTypes.add(changeType.type);
+    } else {
+      this.activeChangeTypes.delete(changeType.type);
     }
+    this.update();
 
-    this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
+    //this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
   }
 
   private getProductIDType(): ProductIDType {
@@ -315,13 +310,17 @@ class DiffHeatMap implements IAppView {
     };
 
     if (data.structure) {
-      drawRows(data.structure.added_rows, COLOR_ADDED);
-      drawCols(data.structure.added_cols, COLOR_ADDED);
-      drawRows(data.structure.deleted_rows, COLOR_DELETED);
-      drawCols(data.structure.deleted_cols, COLOR_DELETED);
+      if (this.activeChangeTypes.has(ChangeTypes.ADDED.type)) {
+        drawRows(data.structure.added_rows, COLOR_ADDED);
+        drawCols(data.structure.added_cols, COLOR_ADDED);
+      }
+      if (this.activeChangeTypes.has(ChangeTypes.REMOVED.type)) {
+        drawRows(data.structure.deleted_rows, COLOR_DELETED);
+        drawCols(data.structure.deleted_cols, COLOR_DELETED);
+      }
     }
 
-    if (data.content) {
+    if (data.content && this.activeChangeTypes.has(ChangeTypes.CONTENT.type)) {
       data.content.forEach((cell) => {
         ctx.fillStyle = this.contentScale(cell.diff_data);
         ctx.fillRect(cell.cpos, cell.rpos, 1, 1);
