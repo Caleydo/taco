@@ -55,6 +55,7 @@ $app-margin-top: 50;
   display: flex;
   flex-direction: column;
   margin: $app-margin-top+px 20px 20px;
+  height: calc(100vh - 70px);
 }
 
 #caleydoHeader {
@@ -293,7 +294,6 @@ rect.nochange-color {
   .bin-container {
     display: flex;
     height: 100%;
-    margin: 2px 0;
 
     > div {
       transition: width ease 0.2s;
@@ -389,11 +389,16 @@ select.form-control {
 }
 
 .comparison {
+  flex: 1 1 auto;
   display: flex;
   flex-direction: row;
   align-items: stretch;
   align-content: stretch;
   justify-content: space-between;
+
+  &.heatmap-has-column-labels {
+    margin-top: 110px;
+  }
 
   .heatmap {
     width: 33%;
@@ -445,6 +450,14 @@ select.form-control {
 }
 
 div.phovea-heatmap .phovea-heatmap-labels {
+  //font-size: 14px;
+  line-height: 1;
+
+  > div {
+    cursor: pointer;
+    font-size: 60%;
+  }
+
   &.row-labels {
     padding-right: 0.2em;
   }
@@ -457,5 +470,15 @@ div.phovea-heatmap .phovea-heatmap-labels {
       transform: rotate(30deg);
       transform-origin: bottom left;
     }
+  }
+}
+
+
+.heatmap-dst {
+  .row-labels {
+    right: auto !important;
+    margin-left: 100%;
+    padding-right: 0;
+    padding-left: 0.2em;
   }
 }

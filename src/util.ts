@@ -28,6 +28,10 @@ export function selectTimePoint(...timepoints) {
   // remove timepoints that are already selected
   timepoints = timepoints.filter((d) => selectedTimePoints.indexOf(d) === -1);
 
+  if(timepoints.length > 2) {
+    timepoints = timepoints.slice(0, 2);
+  }
+
   selectedTimePoints.push(...timepoints);
 
   // sort elements by time -> [0] = earlier = source; [1] = later = destination

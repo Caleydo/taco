@@ -84,6 +84,7 @@ export class App implements IAppView {
       view: 'HeatMap',
       parent: 'comparison',
       options: {
+        cssClass: 'heatmap-src',
         eventName: AppConstants.EVENT_DATASET_SELECTED_LEFT
       }
     },
@@ -96,6 +97,7 @@ export class App implements IAppView {
       view: 'HeatMap',
       parent: 'comparison',
       options: {
+        cssClass: 'heatmap-dst',
         eventName: AppConstants.EVENT_DATASET_SELECTED_RIGHT
       }
     }

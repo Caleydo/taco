@@ -7,6 +7,7 @@ import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
 import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
 import {mixin} from 'phovea_core/src';
+import {IAnyMatrix} from 'phovea_core/src/matrix';
 
 export enum EOrientation {
   COLUMN,
@@ -73,7 +74,7 @@ class ReorderView implements IAppView {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor:number) => {
+    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor:{x: number, y: number}) => {
       if(pair.length === 2) {
         this.draw(pair[0], pair[1], diffData, scaleFactor);
       }
@@ -92,18 +93,18 @@ class ReorderView implements IAppView {
     });
   }
 
-  private draw(src, dst, diffData, scaleFactor:number) {
+  private draw(src: IAnyMatrix, dst: IAnyMatrix, diffData, scaleFactor: {x: number, y: number}) {
     switch (this.options.orientation) {
       case EOrientation.COLUMN:
         this.scale.domain([0, Math.max(src.desc.size[1], dst.desc.size[1])]);
-        this.scale.range([0, Math.max(src.desc.size[1], dst.desc.size[1]) * AppConstants.HEATMAP_CELL_SIZE * scaleFactor]);
-        this.drawColumns(diffData.reorder.cols, scaleFactor);
+        this.scale.range([0, Math.max(src.desc.size[1], dst.desc.size[1]) * AppConstants.HEATMAP_CELL_SIZE * scaleFactor.x]);
+        this.drawColumns(diffData.reorder.cols, scaleFactor.x);
         break;
 
       case EOrientation.ROW:
         this.scale.domain([0, Math.max(src.desc.size[0], dst.desc.size[0])]);
-        this.scale.range([0, Math.max(src.desc.size[0], dst.desc.size[0]) * AppConstants.HEATMAP_CELL_SIZE * scaleFactor]);
-        this.drawRows(diffData.reorder.rows, scaleFactor);
+        this.scale.range([0, Math.max(src.desc.size[0], dst.desc.size[0]) * AppConstants.HEATMAP_CELL_SIZE * scaleFactor.y]);
+        this.drawRows(diffData.reorder.rows, scaleFactor.y);
         break;
     }
   }
@@ -121,13 +122,15 @@ class ReorderView implements IAppView {
 
     $slopes.enter().append('line');
 
+    const centerShift = (AppConstants.HEATMAP_CELL_SIZE * scaleFactor * 0.5);
+
     $slopes
       .transition()
       .attr('x1', 0)
       .attr('x2', width)
       .attr('title', (d) => `${d.id}: ${d.diff} (src: ${d.from}, dest: ${d.to})`)
-      .attr('y1', (d) => this.scale(d.from) - (AppConstants.HEATMAP_CELL_SIZE * scaleFactor * 0.5))
-      .attr('y2', (d) => this.scale(d.to) - (AppConstants.HEATMAP_CELL_SIZE * scaleFactor * 0.5));
+      .attr('y1', (d) => this.scale(d.from) + centerShift)
+      .attr('y2', (d) => this.scale(d.to) + centerShift);
 
     $slopes.exit().remove();
   }

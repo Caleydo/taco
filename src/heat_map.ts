@@ -7,6 +7,7 @@ import * as events from 'phovea_core/src/event';
 import {IAppView} from './app';
 import * as d3 from 'd3';
 import {AppConstants} from './app_constants';
+import {IAnyMatrix} from 'phovea_core/src/matrix';
 import {mixin} from 'phovea_core/src';
 
 /**
@@ -26,7 +27,8 @@ class HeatMap implements IAppView {
   constructor(parent: Element, private options: any) {
     this.$node = d3.select(parent)
       .append('div')
-      .classed('heatmap', true);
+      .classed('heatmap', true)
+      .classed(options.cssClass, true);
   }
 
   /**
@@ -66,7 +68,7 @@ class HeatMap implements IAppView {
    * @param scaleFactor
    * @returns {Promise<HeatMap>}
    */
-  private update(dataset, scaleFactor) {
+  private update(dataset: IAnyMatrix, scaleFactor: {x: number, y: number}) {
 
     if(dataset.desc.type !== 'matrix') {
       console.warn(`Data set is not of type matrix and cannot be visualized from heat map plugin`);
@@ -82,9 +84,28 @@ class HeatMap implements IAppView {
       return;
     }
 
+    const showLabels = chooseLabel(dataset.nrow, dataset.ncol);
+    const scale = [this.heatMapOptions.initialScale * scaleFactor.x, this.heatMapOptions.initialScale * scaleFactor.y];
+
+    switch(showLabels) {
+      case 'CELL':
+        d3.select(this.$node.node().parentElement).classed('heatmap-has-column-labels', true);
+        this.$node.classed('heatmap-row-labels', true).classed('heatmap-column-labels', true);
+        scale[0] -= 0.65; // decrease width of heat map to show row labels TODO make it flexible based on the longest label
+        break;
+      case 'ROW':
+        this.$node.classed('heatmap-row-labels', true);
+        scale[0] -= 0.65; // decrease width of heat map to show row labels TODO make it flexible based on the longest label
+        break;
+      case 'COLUMN':
+        d3.select(this.$node.node().parentElement).classed('column-labels', true);
+        this.$node.classed('heatmap-column-labels', true);
+        break;
+    }
+
     const options = mixin({}, this.heatMapOptions, {
-      initialScale: this.heatMapOptions.initialScale * scaleFactor,
-      labels: chooseLabel(dataset.nrow, dataset.ncol)
+      scale,
+      labels: showLabels
     });
 
     return Promise.all([plugins[0].load()])
@@ -115,7 +136,6 @@ class HeatMap implements IAppView {
   }
 
 }
-
 
 function chooseLabel(nrow: number, ncol: number) {
   if (nrow < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE && ncol < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE) {

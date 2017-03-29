@@ -45,7 +45,7 @@ export class AppConstants {
    */
   static PARSE_DATE_FORMATS = ['YYYY_MM_DD', 'YYYY-MM-DD', 'YYYY'];
 
-  static MAXIMAL_HEATMAP_LABEL_SIZE = 100;
+  static MAXIMAL_HEATMAP_LABEL_SIZE = 70;
 
   /**
    * Initial size of a heatmap cell
@@ -63,6 +63,9 @@ export class AppConstants {
     DETAIL_VIEW: 'detail'
   };
 }
+
+export const COLOR_ADDED = '#ccebc5';
+export const COLOR_DELETED = '#fbb4ae';
 
 export interface IChangeType {
   type: string;

@@ -6,9 +6,43 @@ import {IAppView} from './app';
 import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
 import * as ajax from 'phovea_core/src/ajax';
-import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
+import {toSelectOperation, ProductIDType} from 'phovea_core/src/idtype';
+import {cell} from 'phovea_core/src/range';
+import {onDOMNodeRemoved} from 'phovea_core/src';
+import {IAnyMatrix} from 'phovea_core/src/matrix';
+import {AppConstants, IChangeType, ChangeTypes, COLOR_ADDED, COLOR_DELETED} from './app_constants';
 import {get} from 'phovea_core/src/plugin';
 
+interface IDiffRow {
+  id: string;
+  pos: number;
+}
+
+interface IDiffData {
+  union: {
+    // uids of the columns, ala colids()
+    c_ids: number[];
+    r_ids: number[];
+    //names of the columsn, ala cols()
+    uc_ids: string[];
+    ur_ids: string[];
+  };
+
+  structure: {
+    added_rows: IDiffRow[];
+    added_cols: IDiffRow[];
+    deleted_rows: IDiffRow[];
+    deleted_cols: IDiffRow[];
+  };
+
+  content: {
+    cpos: number;
+    rpos: number;
+    row: string;
+    col: string;
+    diff_data: number;
+  }[];
+}
 
 /**
  * Shows a simple heat map for a given data set.
@@ -16,22 +50,27 @@ import {get} from 'phovea_core/src/plugin';
 class DiffHeatMap implements IAppView {
 
   //main div
-  private $node;
+  private $node: d3.Selection<any>;
 
   // cached data
-  private data;
-  private selectedTables;
+  private data: IDiffData;
+  private selectedTables: IAnyMatrix[];
 
-  private colorLow = '#d8b365';
-  private colorMed = '#d8d8d8';
-  private colorHigh = '#8da0cb';
+  private readonly contentScale = d3.scale.linear<string>()
+      .domain([-1, 0, 1])
+      .range(['#d8b365', '#d8d8d8', '#8da0cb'])
+      .clamp(true);
 
   private borderWidth = 2;
   private margin = 2 * 50;
 
-  private scaleFactor = 1;
+  private scaleFactor = { x: 1, y: 1};
 
-  private static getJSON(pair) {
+  private selectionListener = (evt: any) => this.update();
+
+  private activeChangeTypes = new Set<string>([ChangeTypes.ADDED.type, ChangeTypes.CONTENT.type, ChangeTypes.REMOVED.type]);
+
+  private static getJSON(pair: string[]) {
     const operations = ChangeTypes.forURL();
     return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/diff_heat_map`);
   }
@@ -79,19 +118,37 @@ class DiffHeatMap implements IAppView {
       this.clearContent();
     });
 
+    onDOMNodeRemoved(<HTMLElement>this.$node.node(), () => {
+      const old = this.getProductIDType();
+      if (old) {
+        old.off(ProductIDType.EVENT_SELECT_PRODUCT, this.selectionListener);
+      }
+    });
+
     //attach event listener
-    events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items) => {
+    events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items: IAnyMatrix[]) => {
       if(items.length !== 2) {
         return;
       }
 
-      this.$node.selectAll('div').remove();
+      // cleanup
+      const old = this.getProductIDType();
+      if (old) {
+        old.off(ProductIDType.EVENT_SELECT_PRODUCT, this.selectionListener);
+      }
 
-      const idsSelectedTable = items.map((d:any) => d.desc.id);
+      this.$node.selectAll('canvas').remove();
+
+      const idsSelectedTable = items.map((d) => d.desc.id);
       DiffHeatMap.getJSON(idsSelectedTable)
         .then((data) => {
+          d3.select(this.$node.node().parentElement).classed('heatmap-has-column-labels', false);
           this.data = data;
           this.selectedTables = items;
+          const idType = this.getProductIDType();
+          if (idType) {
+            idType.on(ProductIDType.EVENT_SELECT_PRODUCT, this.selectionListener);
+          }
           this.drawDiffHeatmap(this.data);
           events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
         });
@@ -109,119 +166,225 @@ class DiffHeatMap implements IAppView {
   }
 
   private toggleChangeType(changeType:IChangeType) {
-    switch(changeType.type) {
-      case ChangeTypes.REMOVED.type:
-        this.$node.selectAll('.removed-color').classed('noColorClass', !changeType.isActive);
-        break;
-
-      case ChangeTypes.ADDED.type:
-        this.$node.selectAll('.added-color').classed('noColorClass', !changeType.isActive);
-        break;
-
-      case ChangeTypes.CONTENT.type:
-        this.$node.selectAll('.content-color').classed('noColorClass', !changeType.isActive);
-        break;
+    if(!this.data) {
+      return;
     }
 
-    this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
+    if (changeType.isActive) {
+      this.activeChangeTypes.add(changeType.type);
+    } else {
+      this.activeChangeTypes.delete(changeType.type);
+    }
+    this.update();
+
+    //this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
   }
 
-  private drawDiffHeatmap(data) {
-    const colorScale = d3.scale.linear<string>()
-      .domain([-1, 0, 1])
-      .range([this.colorLow, this.colorMed, this.colorHigh])
-      .clamp(true);
+  private getProductIDType(): ProductIDType {
+    if (this.selectedTables) {
+      return this.selectedTables[0].producttype;
+    }
+    return null;
+  }
+
+  private drawDiffHeatmap(data: IDiffData) {
 
     const dataWidth = AppConstants.HEATMAP_CELL_SIZE * data.union.uc_ids.length;
     const dataHeight = AppConstants.HEATMAP_CELL_SIZE * data.union.ur_ids.length;
 
-    this.scaleFactor = (this.$node.property('clientWidth') - this.margin) / dataWidth;
+    this.scaleFactor.x = (this.$node.property('clientWidth') - this.margin) / dataWidth;
+    this.scaleFactor.y = (this.$node.property('clientHeight')) / dataHeight;
 
-    const cellSize = AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor;
-    const width = dataWidth * this.scaleFactor;
-    const height = dataHeight * this.scaleFactor;
 
-    let $root = this.$node.select('div.taco-table > div');
+    const width = dataWidth * this.scaleFactor.x;
+    const height = dataHeight * this.scaleFactor.y;
 
-    if($root.size() === 0) {
-      $root = this.$node.append('div')
-        .attr('class', 'taco-table')
-        .append('div')
-        .classed('transform', true);
+    let $root = this.$node.select('canvas.taco-table');
+
+    if($root.empty()) {
+      $root = this.$node.append('canvas')
+        .attr('class', 'taco-table');
     }
 
-    this.$node.select('div.taco-table')
-      .style('width', (width + this.borderWidth) + 'px')
-      .style('height', (height + this.borderWidth) + 'px');
+    $root
+      .attr('width', width)
+      .attr('height', height);
+
+    this.handleTooltip($root, data, AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor.x, AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor.y);
+    this.render(<HTMLCanvasElement>$root.node(), data);
+  }
+
+  private handleTooltip($root: d3.Selection<any>, data: IDiffData, scaleFactorX: number, scaleFactorY: number) {
+    const toIndices = (x: number, y: number) => {
+      const col = Math.round(x / scaleFactorX + 0.5) - 1;
+      const row = Math.round(y / scaleFactorY + 0.5) - 1;
+      return {col, row};
+    };
+
+    const findValue = (col: number, row: number) => {
+      if (data.structure) {
+        // inverse order of rendering
+        if (data.structure.deleted_cols.some((a) => a.pos === col)) {
+          return `column deleted`;
+        }
+        if (data.structure.deleted_rows.some((a) => a.pos === row)) {
+          return `row deleted`;
+        }
+        if (data.structure.added_cols.some((a) => a.pos === col)) {
+          return `column added`;
+        }
+        if (data.structure.added_rows.some((a) => a.pos === row)) {
+          return `row added`;
+        }
+      }
+      if (data.content) {
+        const item = data.content.find((d) => d.cpos === col && d.rpos === row);
+        if (item) {
+          return 'content change: ' + item.diff_data;
+        }
+      }
+      return 'no change';
+    };
+    const updateTooltip = (x: number, y: number) => {
+      const {col, row} = toIndices(x, y);
+      const rowName = data.union.ur_ids[row];
+      const colName = data.union.uc_ids[col];
+      $root.attr('title', `${rowName} / ${colName}: ${findValue(col, row)}`);
+    };
+
+    let timer = -1;
+    $root.on('mousemove', () => {
+      const evt = <MouseEvent>d3.event;
+      clearTimeout(timer);
+      timer = setTimeout(updateTooltip.bind(this, evt.offsetX, evt.offsetY), 100);
+    }).on('mouseleave', () => {
+      clearTimeout(timer);
+      timer = -1;
+    }).on('click', () => {
+      const evt = <MouseEvent>d3.event;
+      const {col, row} = toIndices(evt.offsetX, evt.offsetY);
+      const colId = data.union.c_ids[col];
+      const rowId = data.union.r_ids[row];
+      const idType = this.getProductIDType();
+      if (idType) {
+        idType.select([cell(rowId, colId)], toSelectOperation(evt));
+      }
+    });
+
+  }
+
+  private update() {
+    this.render(<HTMLCanvasElement>this.$node.select('canvas').node(), this.data);
+  }
+
+  private render(canvas: HTMLCanvasElement, data: IDiffData) {
+    const ctx = canvas.getContext('2d');
+
+    ctx.msImageSmoothingEnabled = false;
+    //if (context.hasOwnProperty('imageSmoothingEnabled')) {
+    (<any>ctx).imageSmoothingEnabled = false;
+
+    ctx.clearRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
+
+    ctx.save();
+    const scaleFactorX = AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor.x;
+    const scaleFactorY = AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor.y;
+    const width = data.union.uc_ids.length;
+    const height = data.union.ur_ids.length;
+    ctx.scale(scaleFactorX, scaleFactorY);
+
+    const drawRows = (rows: IDiffRow[], style: string) => {
+      ctx.beginPath();
+      rows.forEach((row) => {
+        if (row.pos >= 0) {
+          ctx.rect(0, row.pos, width, 1);
+        }
+      });
+      ctx.fillStyle = style;
+      ctx.fill();
+    };
+    const drawCols = (cols: IDiffRow[], style: string) => {
+      ctx.beginPath();
+      cols.forEach((row) => {
+        if (row.pos >= 0) {
+          ctx.rect(row.pos, 0, 1, height);
+        }
+      });
+      ctx.fillStyle = style;
+      ctx.fill();
+    };
 
     if (data.structure) {
-      this.drawRows($root, data.structure.added_rows, cellSize, width, 'taco-added-row', 'added-color');
-      this.drawCols($root, data.structure.added_cols, cellSize, height, 'taco-added-col', 'added-color');
-
-      this.drawRows($root, data.structure.deleted_rows, cellSize, width, 'taco-del-row', 'removed-color');
-      this.drawCols($root, data.structure.deleted_cols, cellSize, height, 'taco-del-col', 'removed-color');
+      if (this.activeChangeTypes.has(ChangeTypes.ADDED.type)) {
+        drawRows(data.structure.added_rows, COLOR_ADDED);
+        drawCols(data.structure.added_cols, COLOR_ADDED);
+      }
+      if (this.activeChangeTypes.has(ChangeTypes.REMOVED.type)) {
+        drawRows(data.structure.deleted_rows, COLOR_DELETED);
+        drawCols(data.structure.deleted_cols, COLOR_DELETED);
+      }
     }
 
-    if (data.content) {
-      const chCells = $root.selectAll('.content-color').data(data.content);
-
-      chCells.enter().append('div')
-        .classed('content-color', true)
-        .attr('title', (d) => {
-          return '(' + d.row + ',' + d.col + ': ' + d.diff_data + ')';
-        })
-        .style('z-index', 1000)
-        .style('background-color', (d) => colorScale(d.diff_data));
-
-      chCells
-        .style('top', (d) => (d.rpos !== -1 ? d.rpos * cellSize : null) + 'px')
-        .style('left', (d) => (d.cpos !== -1 ? d.cpos * cellSize : null) + 'px')
-        .style('width', cellSize + 'px')
-        .style('height', cellSize + 'px');
+    if (data.content && this.activeChangeTypes.has(ChangeTypes.CONTENT.type)) {
+      data.content.forEach((cell) => {
+        ctx.fillStyle = this.contentScale(cell.diff_data);
+        ctx.fillRect(cell.cpos, cell.rpos, 1, 1);
+      });
     }
+
+    this.renderSelections(ctx, data);
+
+    ctx.restore();
   }
 
-  private drawCols($root, data, cellSize:number, height:number, cssClass:string, colorClass:string) {
-    if(data === undefined) {
+  private renderSelections(ctx: CanvasRenderingContext2D, data: IDiffData) {
+    const selections = this.selectedTables[0].producttype.productSelections();
+    ctx.save();
+
+    ctx.fillStyle = 'orange';
+    if (selections.some((a) => a.isAll)) {
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.restore();
       return;
     }
 
-    const $cols = $root.selectAll('.' + cssClass)
-      .data(data, (d) => d.id);
+    const rowLookup = new Map<number, number>();
+    data.union.r_ids.map((d,i) => rowLookup.set(d,i));
+    const colLookup = new Map<number, number>();
+    data.union.c_ids.map((d,i) => colLookup.set(d,i));
 
-    $cols.enter().append('div')
-      .attr('title', (d) => d.id)
-      .classed(cssClass, true)
-      .classed(colorClass, true)
-      .style('top', 0);
+    selections.forEach((cell) => {
+      if (cell.isUnbound) {
+        const rowIds = cell.dim(0);
+        const colIds = cell.dim(1);
+        if (rowIds.isUnbound && colIds.isUnbound) {
+          // just support all for now
+          ctx.fillRect(0, 0, data.union.c_ids.length, data.union.r_ids.length);
+        } else if (rowIds.isUnbound) {
+          colIds.forEach((colId) => {
+            const col = colLookup.get(colId);
+            ctx.fillRect(col, 0, 1, data.union.r_ids.length);
+          });
+        } else if (colIds.isUnbound) {
+          rowIds.forEach((rowId) => {
+            const row = rowLookup.get(rowId);
+            ctx.fillRect(0, row, data.union.c_ids.length, 1);
+          });
+        }
+      }
+      cell.product((ids) => {
+        const [i, j] = ids;
+        const row = rowLookup.get(i);
+        const col = colLookup.get(j);
+        ctx.fillRect(col, row, 1, 1);
+      }, [0,0]);
+    });
 
-    $cols
-      .style('left', (d) => (d.pos !== -1 ? d.pos * cellSize : null) + 'px')
-      .style('width', cellSize + 'px')
-      .style('height', height + 'px');
-  }
-
-  private drawRows($root, data, cellSize:number, width:number, cssClass:string, colorClass:string) {
-    if(data === undefined) {
-      return;
-    }
-
-    const $rows = $root.selectAll('.' + cssClass)
-          .data(data, (d) => d.id);
-
-    $rows.enter().append('div')
-      .classed(cssClass, true)
-      .classed(colorClass, true)
-      .attr('title', (d) => d.id)
-      .style('left', 0);
-
-    $rows
-      .style('top', (d) => (d.pos !== -1 ? d.pos * cellSize : null) + 'px')
-      .style('width', width + 'px')
-      .style('height', cellSize + 'px');
+    ctx.restore();
   }
 
   private clearContent() {
+    this.data = null;
     this.$node.select('.taco-table').remove();
   }
 }
