@@ -4,10 +4,11 @@ $hover-color: #ffc46b;
 $struct-add-color: #ccebc5;
 $struct-delete-color: #fbb4ae;
 $content-change-color: #b3cde3;
-$no-change-color: #D8D8D8;
+$no-change-color: #ffffff;
 $reorder-color: #decbe4;
 
 $gentle-color: #f0f0f0;
+$no-change-border-color: #ddd;
 
 $boostrapAssetDir: '~phovea_ui/src/assets';
 
@@ -363,14 +364,18 @@ select.form-control {
     display: flex;
     flex-direction: column-reverse;
     align-content: flex-end;
-    margin-left: -15px; // bar width also defined in bar_chart.ts
-    transform: translateX(7.5px); // half the bar width to center on timeline tick
+    margin-left: -16px; // bar width also defined in bar_chart.ts
+    transform: translateX(8px); // half the bar width to center on timeline tick
   }
 
   .bar {
-    transition: height ease 0.2s;
+    transition: height ease 0.2s, border-width ease 0.2s;
     display: flex;
     flex-direction: column-reverse;
+
+    &.nochange-color {
+      border: 1px solid $no-change-border-color;
+    }
   }
 }
 

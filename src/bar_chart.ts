@@ -22,10 +22,10 @@ class BarChart implements IAppView {
   private totalWidth: number = 0;
 
   // Width of the bars in the bar chart
-  private widthBar: number = 15;
+  private widthBar: number = 16;
 
   // Width and Height for the bar chart between time points
-  private widthBarChart: number = 15;
+  private widthBarChart: number = 16;
   private heightBarChart: number = 100;
 
   private barScaling = d3.scale.linear()
@@ -190,11 +190,14 @@ class BarChart implements IAppView {
   }
 
   private scaleBarsHeight() {
+    const that = this;
     this.$node.selectAll('.bar')
-      .style('height', (d) => {
+      .style('height', function(d) {
         if(ChangeTypes.TYPE_ARRAY.filter((ct) => ct.type === d.type)[0].isActive) {
-          return this.barScaling(d.value) + 'px';
+          d3.select(this).style('border-width', null);
+          return that.barScaling(d.value) + 'px';
         }
+        d3.select(this).style('border-width', 0);
         return 0; // shrink bar to 0 if change is not active
       });
   }

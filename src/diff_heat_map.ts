@@ -10,7 +10,10 @@ import {toSelectOperation, ProductIDType} from 'phovea_core/src/idtype';
 import {cell} from 'phovea_core/src/range';
 import {onDOMNodeRemoved} from 'phovea_core/src';
 import {IAnyMatrix} from 'phovea_core/src/matrix';
-import {AppConstants, IChangeType, ChangeTypes, COLOR_ADDED, COLOR_DELETED} from './app_constants';
+import {
+  AppConstants, IChangeType, ChangeTypes, COLOR_ADDED, COLOR_DELETED,
+  COLOR_CONTENT_NEGATIVE, COLOR_CONTENT_POSITIVE, COLOR_NO_CHANGE
+} from './app_constants';
 import {get} from 'phovea_core/src/plugin';
 
 interface IDiffRow {
@@ -58,7 +61,7 @@ class DiffHeatMap implements IAppView {
 
   private readonly contentScale = d3.scale.linear<string>()
       .domain([-1, 0, 1])
-      .range(['#d8b365', '#d8d8d8', '#8da0cb'])
+      .range([COLOR_CONTENT_NEGATIVE, COLOR_NO_CHANGE, COLOR_CONTENT_POSITIVE])
       .clamp(true);
 
   private borderWidth = 2;

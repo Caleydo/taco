@@ -66,6 +66,9 @@ export class AppConstants {
 
 export const COLOR_ADDED = '#ccebc5';
 export const COLOR_DELETED = '#fbb4ae';
+export const COLOR_NO_CHANGE = '#fff';
+export const COLOR_CONTENT_NEGATIVE = '#d8b365';
+export const COLOR_CONTENT_POSITIVE = '#8da0cb';
 
 export interface IChangeType {
   type: string;
