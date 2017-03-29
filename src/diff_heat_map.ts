@@ -142,6 +142,7 @@ class DiffHeatMap implements IAppView {
       const idsSelectedTable = items.map((d) => d.desc.id);
       DiffHeatMap.getJSON(idsSelectedTable)
         .then((data) => {
+          d3.select(this.$node.node().parentElement).classed('heatmap-has-column-labels', false);
           this.data = data;
           this.selectedTables = items;
           const idType = this.getProductIDType();

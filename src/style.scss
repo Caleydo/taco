@@ -396,6 +396,10 @@ select.form-control {
   align-content: stretch;
   justify-content: space-between;
 
+  &.heatmap-has-column-labels {
+    margin-top: 110px;
+  }
+
   .heatmap {
     width: 33%;
   }
@@ -446,6 +450,14 @@ select.form-control {
 }
 
 div.phovea-heatmap .phovea-heatmap-labels {
+  //font-size: 14px;
+  line-height: 1;
+
+  > div {
+    cursor: pointer;
+    font-size: 60%;
+  }
+
   &.row-labels {
     padding-right: 0.2em;
   }
@@ -458,5 +470,15 @@ div.phovea-heatmap .phovea-heatmap-labels {
       transform: rotate(30deg);
       transform-origin: bottom left;
     }
+  }
+}
+
+
+.heatmap-dst {
+  .row-labels {
+    right: auto !important;
+    margin-left: 100%;
+    padding-right: 0;
+    padding-left: 0.2em;
   }
 }
