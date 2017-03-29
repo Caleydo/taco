@@ -30,15 +30,11 @@ class Histogram2D implements IAppView {
   private y = d3.scale.linear().domain([0, 1]).range([0, this.height - this.borderWidth]);
 
   private widthRowHistogram = 60;
-  private heightRowHistogram = 160;
 
   private histogramScale = d3.scale.linear()
     //.domain([0, d3.max(histodata)])
       .domain([0, 1])
-      .range([0, 50]);
-
-  // Width of the bars in the bar chart
-  private heightBar:number = Math.floor(this.heightRowHistogram / 20) - 1; // -1 = border
+      .range([0, this.widthRowHistogram]);
 
   private ratioData;
 
@@ -48,9 +44,7 @@ class Histogram2D implements IAppView {
     return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/ratio_2d`);
   }
 
-  private static getJSONHistogram(pair) {
-    const binRows = 20;
-    const binCols = 20;
+  private static getJSONHistogram(pair, binRows, binCols) {
     const operations = ChangeTypes.forURL();
     return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${binRows}/${binCols}/${operations}/histogram`);
   }
@@ -168,7 +162,8 @@ class Histogram2D implements IAppView {
 
   //for the histogram Rows
   private requestDataHistogram(pair) {
-    return Histogram2D.getJSONHistogram(pair)
+    // use width as number of bins => 1 bin = 1px
+    return Histogram2D.getJSONHistogram(pair, this.widthRowHistogram, this.widthRowHistogram)
       .then((json) => {
         const rows = json.rows;
         const cols = json.cols;
