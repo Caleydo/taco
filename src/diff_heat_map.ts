@@ -137,7 +137,7 @@ class DiffHeatMap implements IAppView {
         old.off(ProductIDType.EVENT_SELECT_PRODUCT, this.selectionListener);
       }
 
-      this.$node.selectAll('*').remove();
+      this.$node.selectAll('canvas').remove();
 
       const idsSelectedTable = items.map((d) => d.desc.id);
       DiffHeatMap.getJSON(idsSelectedTable)
