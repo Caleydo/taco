@@ -7,6 +7,7 @@ import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
 import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
 import {mixin} from 'phovea_core/src';
+import {IAnyMatrix} from 'phovea_core/src/matrix';
 
 export enum EOrientation {
   COLUMN,
@@ -92,7 +93,7 @@ class ReorderView implements IAppView {
     });
   }
 
-  private draw(src, dst, diffData, scaleFactor: {x: number, y: number}) {
+  private draw(src: IAnyMatrix, dst: IAnyMatrix, diffData, scaleFactor: {x: number, y: number}) {
     switch (this.options.orientation) {
       case EOrientation.COLUMN:
         this.scale.domain([0, Math.max(src.desc.size[1], dst.desc.size[1])]);
@@ -121,13 +122,15 @@ class ReorderView implements IAppView {
 
     $slopes.enter().append('line');
 
+    const centerShift = (AppConstants.HEATMAP_CELL_SIZE * scaleFactor * 0.5);
+
     $slopes
       .transition()
       .attr('x1', 0)
       .attr('x2', width)
       .attr('title', (d) => `${d.id}: ${d.diff} (src: ${d.from}, dest: ${d.to})`)
-      .attr('y1', (d) => this.scale(d.from) - (AppConstants.HEATMAP_CELL_SIZE * scaleFactor * 0.5))
-      .attr('y2', (d) => this.scale(d.to) - (AppConstants.HEATMAP_CELL_SIZE * scaleFactor * 0.5));
+      .attr('y1', (d) => this.scale(d.from) + centerShift)
+      .attr('y2', (d) => this.scale(d.to) + centerShift);
 
     $slopes.exit().remove();
   }
