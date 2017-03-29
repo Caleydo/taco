@@ -295,25 +295,72 @@ class DiffHeatMap implements IAppView {
     ctx.save();
     const scaleFactorX = AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor.x;
     const scaleFactorY = AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor.y;
-    const width = data.union.uc_ids.length;
-    const height = data.union.ur_ids.length;
+
+    let width = data.union.uc_ids.length;
+    let height = data.union.ur_ids.length;
+
+    // substract rows and cols for invisible change types
+    if(this.activeChangeTypes.has(ChangeTypes.ADDED.type) === false) {
+      width -= data.structure.added_cols.length;
+    }
+
+    if(this.activeChangeTypes.has(ChangeTypes.REMOVED.type) === false) {
+      width -= data.structure.deleted_cols.length;
+    }
+
+    if(this.activeChangeTypes.has(ChangeTypes.ADDED.type) === false) {
+      height -= data.structure.added_rows.length;
+    }
+
+    if(this.activeChangeTypes.has(ChangeTypes.REMOVED.type) === false) {
+      height -= data.structure.deleted_rows.length;
+    }
+
+    // set new width and height as attr and style (for transition)
+    d3.select(canvas)
+      .attr('width', width * scaleFactorX)
+      .attr('height', height * scaleFactorY)
+      .style('width', width * scaleFactorX + 'px')
+      .style('height', height * scaleFactorY + 'px');
+
     ctx.scale(scaleFactorX, scaleFactorY);
+
+    const calcColPos = (pos:number) => {
+      if(this.activeChangeTypes.has(ChangeTypes.ADDED.type) === false) {
+        pos -= data.structure.added_cols.filter((d) => d.pos <= pos).length;
+      }
+      if(this.activeChangeTypes.has(ChangeTypes.REMOVED.type) === false) {
+        pos -= data.structure.deleted_cols.filter((d) => d.pos <= pos).length;
+      }
+      return pos;
+    };
+
+    const calcRowPos = (pos:number) => {
+      if(this.activeChangeTypes.has(ChangeTypes.ADDED.type) === false) {
+        pos -= data.structure.added_rows.filter((d) => d.pos <= pos).length;
+      }
+      if(this.activeChangeTypes.has(ChangeTypes.REMOVED.type) === false) {
+        pos -= data.structure.deleted_rows.filter((d) => d.pos <= pos).length;
+      }
+      return pos;
+    };
 
     const drawRows = (rows: IDiffRow[], style: string) => {
       ctx.beginPath();
       rows.forEach((row) => {
         if (row.pos >= 0) {
-          ctx.rect(0, row.pos, width, 1);
+          ctx.rect(0, calcRowPos(row.pos), width, 1);
         }
       });
       ctx.fillStyle = style;
       ctx.fill();
     };
+
     const drawCols = (cols: IDiffRow[], style: string) => {
       ctx.beginPath();
-      cols.forEach((row) => {
-        if (row.pos >= 0) {
-          ctx.rect(row.pos, 0, 1, height);
+      cols.forEach((col) => {
+        if (col.pos >= 0) {
+          ctx.rect(calcColPos(col.pos), 0, 1, height);
         }
       });
       ctx.fillStyle = style;
@@ -334,7 +381,7 @@ class DiffHeatMap implements IAppView {
     if (data.content && this.activeChangeTypes.has(ChangeTypes.CONTENT.type)) {
       data.content.forEach((cell) => {
         ctx.fillStyle = this.contentScale(cell.diff_data);
-        ctx.fillRect(cell.cpos, cell.rpos, 1, 1);
+        ctx.fillRect(calcColPos(cell.cpos), calcRowPos(cell.rpos), 1, 1);
       });
     }
 
