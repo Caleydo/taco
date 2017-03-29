@@ -173,6 +173,10 @@ class DiffHeatMap implements IAppView {
       return;
     }
 
+    if(changeType === ChangeTypes.CONTENT) {
+      this.$node.select('div.legend').classed('hidden', !changeType.isActive);
+    }
+
     if (changeType.isActive) {
       this.activeChangeTypes.add(changeType.type);
     } else {
