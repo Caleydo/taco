@@ -296,7 +296,8 @@ class Histogram2D implements IAppView {
 
     $bars
       .attr('class', (d) => `bar ${d.type}-color`)
-      .style('height', this.heightBar + 'px')
+      //.style('height', this.heightBar + 'px')
+      .style('height', '100%')
       .attr('title', (d) => `${ChangeTypes.labelForType(d.type)}: ${Math.round((d.value * 100) * 100) / 100}% (${d.id})`);
 
     $bars.exit().remove();

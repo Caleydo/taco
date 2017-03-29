@@ -293,6 +293,8 @@ rect.nochange-color {
 
   .bin-container {
     display: flex;
+    height: 100%;
+    margin: 2px 0;
 
     > div {
       transition: width ease 0.2s;
