@@ -71,6 +71,13 @@ class Timeline implements IAppView {
         .forEach((d) => d.classed('active', true)); // add .active class
     });
 
+    events.on(AppConstants.EVENT_TIME_POINT_HOVERED, (evt, timePoint:Date, isActive:boolean) => {
+      this.$svgTimeline.selectAll('text')[0] // the list is in the first element
+        .map((d) => d3.select(d)) // convert to d3
+        .filter((d) => timePoint.getTime() === d.datum().getTime()) // check if datum is selected
+        .forEach((d) => d.classed('hovered', isActive)); // add .active class
+    });
+
     events.on(AppConstants.EVENT_RESIZE, () => this.resize());
   }
 
@@ -123,6 +130,12 @@ class Timeline implements IAppView {
 
     // Append the circles and add the mouseover and click listeners
     $xAxis.selectAll('.tick text')
+      .on('mouseenter', (date:Date) => {
+        events.fire(AppConstants.EVENT_TIME_POINT_HOVERED, date, true);
+      })
+      .on('mouseleave', (date:Date) => {
+        events.fire(AppConstants.EVENT_TIME_POINT_HOVERED, date, false);
+      })
       .on('click', function (date:Date) {
         const found = that.items.filter((item) => item.time.isSame(date, item.timeFormat.momentIsSame));
         const d = found[0];

@@ -83,10 +83,10 @@ class HeatMap implements IAppView {
       return;
     }
 
-    const options = {
+    const options = mixin({}, this.heatMapOptions, {
       scale: [this.heatMapOptions.initialScale * scaleFactor.x, this.heatMapOptions.initialScale * scaleFactor.y],
-      color: this.heatMapOptions.color
-    };
+      labels: chooseLabel(dataset.nrow, dataset.ncol)
+    });
 
     return Promise.all([plugins[0].load()])
       .then((args) => {
@@ -117,6 +117,19 @@ class HeatMap implements IAppView {
 
 }
 
+
+function chooseLabel(nrow: number, ncol: number) {
+  if (nrow < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE && ncol < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE) {
+    return 'CELL';
+  }
+  if (nrow < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE) {
+    return 'ROW';
+  }
+  if (ncol < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE) {
+    return 'COLUMN';
+  }
+  return 'NONE';
+}
 
 /**
  * Factory method to create a new HeatMap instance

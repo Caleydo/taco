@@ -34,6 +34,7 @@ export class AppConstants {
   static EVENT_HEATMAP_LOADED = 'eventHeatmapLoaded';
 
   static EVENT_TIME_POINTS_SELECTED = 'eventTimePointsSelected';
+  static EVENT_TIME_POINT_HOVERED = 'eventTimePointHovered';
 
   static EVENT_SHOW_CHANGE = 'showChange';
   static EVENT_HIDE_CHANGE = 'hideChange';
@@ -43,6 +44,8 @@ export class AppConstants {
    * @type {string[]}
    */
   static PARSE_DATE_FORMATS = ['YYYY_MM_DD', 'YYYY-MM-DD', 'YYYY'];
+
+  static MAXIMAL_HEATMAP_LABEL_SIZE = 100;
 
   /**
    * Initial size of a heatmap cell
