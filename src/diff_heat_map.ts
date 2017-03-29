@@ -165,6 +165,10 @@ class DiffHeatMap implements IAppView {
   }
 
   private toggleChangeType(changeType:IChangeType) {
+    if(!this.data) {
+      return;
+    }
+
     if (changeType.isActive) {
       this.activeChangeTypes.add(changeType.type);
     } else {
@@ -379,6 +383,7 @@ class DiffHeatMap implements IAppView {
   }
 
   private clearContent() {
+    this.data = null;
     this.$node.select('.taco-table').remove();
   }
 }
