@@ -64,7 +64,7 @@ class DiffHeatMap implements IAppView {
   private borderWidth = 2;
   private margin = 2 * 50;
 
-  private scaleFactor = 1;
+  private scaleFactor = { x: 1, y: 1};
 
   private selectionListener = (evt: any) => this.update();
 
@@ -192,10 +192,12 @@ class DiffHeatMap implements IAppView {
     const dataWidth = AppConstants.HEATMAP_CELL_SIZE * data.union.uc_ids.length;
     const dataHeight = AppConstants.HEATMAP_CELL_SIZE * data.union.ur_ids.length;
 
-    this.scaleFactor = (this.$node.property('clientWidth') - this.margin) / dataWidth;
+    this.scaleFactor.x = (this.$node.property('clientWidth') - this.margin) / dataWidth;
+    this.scaleFactor.y = (this.$node.property('clientHeight')) / dataHeight;
 
-    const width = dataWidth * this.scaleFactor;
-    const height = dataHeight * this.scaleFactor;
+
+    const width = dataWidth * this.scaleFactor.x;
+    const height = dataHeight * this.scaleFactor.y;
 
     let $root = this.$node.select('canvas.taco-table');
 
@@ -208,14 +210,14 @@ class DiffHeatMap implements IAppView {
       .attr('width', width)
       .attr('height', height);
 
-    this.handleTooltip($root, data, AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor);
+    this.handleTooltip($root, data, AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor.x, AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor.y);
     this.render(<HTMLCanvasElement>$root.node(), data);
   }
 
-  private handleTooltip($root: d3.Selection<any>, data: IDiffData, scaleFactor: number) {
+  private handleTooltip($root: d3.Selection<any>, data: IDiffData, scaleFactorX: number, scaleFactorY: number) {
     const toIndices = (x: number, y: number) => {
-      const col = Math.round(x / scaleFactor + 0.5) - 1;
-      const row = Math.round(y / scaleFactor + 0.5) - 1;
+      const col = Math.round(x / scaleFactorX + 0.5) - 1;
+      const row = Math.round(y / scaleFactorY + 0.5) - 1;
       return {col, row};
     };
 
@@ -285,10 +287,11 @@ class DiffHeatMap implements IAppView {
     ctx.clearRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
 
     ctx.save();
-    const scaleFactor = AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor;
+    const scaleFactorX = AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor.x;
+    const scaleFactorY = AppConstants.HEATMAP_CELL_SIZE * this.scaleFactor.y;
     const width = data.union.uc_ids.length;
     const height = data.union.ur_ids.length;
-    ctx.scale(scaleFactor, scaleFactor);
+    ctx.scale(scaleFactorX, scaleFactorY);
 
     const drawRows = (rows: IDiffRow[], style: string) => {
       ctx.beginPath();

@@ -7,6 +7,7 @@ import * as events from 'phovea_core/src/event';
 import {IAppView} from './app';
 import * as d3 from 'd3';
 import {AppConstants} from './app_constants';
+import {IAnyMatrix} from 'phovea_core/src/matrix';
 import {mixin} from 'phovea_core/src';
 
 /**
@@ -66,7 +67,7 @@ class HeatMap implements IAppView {
    * @param scaleFactor
    * @returns {Promise<HeatMap>}
    */
-  private update(dataset, scaleFactor) {
+  private update(dataset: IAnyMatrix, scaleFactor: {x: number, y: number}) {
 
     if(dataset.desc.type !== 'matrix') {
       console.warn(`Data set is not of type matrix and cannot be visualized from heat map plugin`);
@@ -83,7 +84,7 @@ class HeatMap implements IAppView {
     }
 
     const options = {
-      initialScale: this.heatMapOptions.initialScale * scaleFactor,
+      scale: [this.heatMapOptions.initialScale * scaleFactor.x, this.heatMapOptions.initialScale * scaleFactor.y],
       color: this.heatMapOptions.color
     };
 

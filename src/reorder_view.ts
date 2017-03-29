@@ -73,7 +73,7 @@ class ReorderView implements IAppView {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor:number) => {
+    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor:{x: number, y: number}) => {
       if(pair.length === 2) {
         this.draw(pair[0], pair[1], diffData, scaleFactor);
       }
@@ -92,18 +92,18 @@ class ReorderView implements IAppView {
     });
   }
 
-  private draw(src, dst, diffData, scaleFactor:number) {
+  private draw(src, dst, diffData, scaleFactor: {x: number, y: number}) {
     switch (this.options.orientation) {
       case EOrientation.COLUMN:
         this.scale.domain([0, Math.max(src.desc.size[1], dst.desc.size[1])]);
-        this.scale.range([0, Math.max(src.desc.size[1], dst.desc.size[1]) * AppConstants.HEATMAP_CELL_SIZE * scaleFactor]);
-        this.drawColumns(diffData.reorder.cols, scaleFactor);
+        this.scale.range([0, Math.max(src.desc.size[1], dst.desc.size[1]) * AppConstants.HEATMAP_CELL_SIZE * scaleFactor.x]);
+        this.drawColumns(diffData.reorder.cols, scaleFactor.x);
         break;
 
       case EOrientation.ROW:
         this.scale.domain([0, Math.max(src.desc.size[0], dst.desc.size[0])]);
-        this.scale.range([0, Math.max(src.desc.size[0], dst.desc.size[0]) * AppConstants.HEATMAP_CELL_SIZE * scaleFactor]);
-        this.drawRows(diffData.reorder.rows, scaleFactor);
+        this.scale.range([0, Math.max(src.desc.size[0], dst.desc.size[0]) * AppConstants.HEATMAP_CELL_SIZE * scaleFactor.y]);
+        this.drawRows(diffData.reorder.rows, scaleFactor.y);
         break;
     }
   }
