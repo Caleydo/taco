@@ -1,6 +1,8 @@
 /**
  * Created by Holger Stitz on 26.08.2016.
  */
+import {hash} from 'phovea_core/src';
+import {App} from 'taco/src/app';
 
 export class AppConstants {
 
@@ -60,7 +62,9 @@ export class AppConstants {
   static HASH_PROPS = {
     DATASET: 'ds',
     TIME_POINTS: 'tp',
-    DETAIL_VIEW: 'detail'
+    DETAIL_VIEW: 'detail',
+    FILTER: 'f',
+    SELECTION: 's'
   };
 }
 
@@ -68,7 +72,7 @@ export const COLOR_ADDED = '#a1d76a';
 export const COLOR_DELETED = '#e9a3c9';
 export const COLOR_NO_CHANGE = '#fff';
 export const COLOR_CONTENT_NEGATIVE = '#d8b365';
-export const COLOR_CONTENT_POSITIVE = '#b3cde3';
+export const COLOR_CONTENT_POSITIVE = '#8da0cb';
 
 export interface IChangeType {
   type: string;
@@ -77,7 +81,11 @@ export interface IChangeType {
   label: string;
 
   isActive: boolean;
+
+  abbr: string;
 }
+
+const defaultFilter = hash.getProp(AppConstants.HASH_PROPS.FILTER, 'NCAR');
 
 export class ChangeTypes {
 
@@ -86,7 +94,8 @@ export class ChangeTypes {
     ratioName: 'no_ratio',
     countName: 'no_counts',
     label: 'No changes',
-    isActive: true
+    abbr: 'N',
+    isActive: defaultFilter.includes('N')
   };
 
   static CONTENT: IChangeType = {
@@ -94,7 +103,8 @@ export class ChangeTypes {
     ratioName: 'c_ratio',
     countName: 'c_counts',
     label: 'Content',
-    isActive: true
+    abbr: 'C',
+    isActive: defaultFilter.includes('C')
   };
 
   static ADDED: IChangeType = {
@@ -102,7 +112,8 @@ export class ChangeTypes {
     ratioName: 'a_ratio',
     countName: 'a_counts',
     label: 'Added',
-    isActive: true
+    abbr: 'A',
+    isActive: defaultFilter.includes('A')
   };
 
   static REMOVED: IChangeType = {
@@ -110,7 +121,8 @@ export class ChangeTypes {
     ratioName: 'd_ratio',
     countName: 'd_counts',
     label: 'Removed',
-    isActive: true
+    abbr: 'R',
+    isActive: defaultFilter.includes('R')
   };
 
   static REORDER: IChangeType = {
@@ -118,7 +130,8 @@ export class ChangeTypes {
     ratioName: 'r_ratio',
     countName: 'r_counts',
     label: 'Reorder',
-    isActive: false
+    abbr: 'O',
+    isActive: defaultFilter.includes('O')
   };
 
   static TYPE_ARRAY: IChangeType[] = [ChangeTypes.ADDED, ChangeTypes.REMOVED, ChangeTypes.CONTENT, ChangeTypes.REORDER, ChangeTypes.NO_CHANGE];
@@ -138,4 +151,9 @@ export class ChangeTypes {
       .join(',');
   }
 
+  static updateFilterHash() {
+    hash.setProp(AppConstants.HASH_PROPS.FILTER, ChangeTypes.TYPE_ARRAY.filter((d) => d.isActive).map((d) => d.abbr).join(''));
+  }
 }
+
+

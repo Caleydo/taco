@@ -77,7 +77,7 @@ class DiffHeatMap implements IAppView {
 
   private selectionListener = (evt: any) => this.update();
 
-  private activeChangeTypes = new Set<string>([ChangeTypes.ADDED.type, ChangeTypes.CONTENT.type, ChangeTypes.REMOVED.type]);
+  private activeChangeTypes = new Set<string>(ChangeTypes.TYPE_ARRAY.filter((d) =>d.isActive).map((d) => d.type));
 
   private static getJSON(pair: string[]) {
     const operations = ChangeTypes.forURL();
@@ -448,8 +448,13 @@ class DiffHeatMap implements IAppView {
   }
 
   private drawLegend(data:IDiffData) {
-    const $legend = this.$node.append('div').classed('legend', true);
-    $legend.append('div').classed('content-change', true).append('div');
+    const $legend = this.$node.append('div')
+      .classed('legend', true)
+      .classed('hidden', !ChangeTypes.REORDER.isActive);
+
+    $legend.append('div')
+      .classed('content-change', true)
+      .append('div');
   }
 
   private clearContent() {
