@@ -443,7 +443,7 @@ class DiffHeatMap implements IAppView {
 
   private drawLegend(data:IDiffData) {
     const $legend = this.$node.append('div').classed('legend', true);
-    $legend.append('div').classed('content-change', true);
+    $legend.append('div').classed('content-change', true).append('div');
   }
 
   private clearContent() {

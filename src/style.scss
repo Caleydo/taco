@@ -401,6 +401,7 @@ select.form-control {
   align-items: stretch;
   align-content: stretch;
   justify-content: space-between;
+  margin-top: 50px;
 
   &.heatmap-has-column-labels {
     margin-top: 110px;
@@ -425,27 +426,36 @@ select.form-control {
   .legend {
     position: absolute;
     width: 100px;
-    top: -20px;
+    top: -35px;
 
     .content-change {
-      width: 100%;
-      height: 10px;
-      background: linear-gradient(to right, $neg-content-change-color, $no-change-color, $pos-content-change-color);
+      text-align: center;
 
       &:before {
-        content: '-1';
-        position: absolute;
-        margin-right: 100%;
-        right: 5px;
-        top: -3px;
+        content: 'Content Change';
       }
 
-      &:after {
-        content: '1';
-        position: absolute;
-        margin-left: 100%;
-        left: 5px;
-        top: -3px;
+      div {
+        position: relative;
+        width: 100%;
+        height: 10px;
+        background: linear-gradient(to right, $neg-content-change-color, $no-change-color, $pos-content-change-color);
+
+        &:before {
+          content: '-1';
+          position: absolute;
+          margin-right: 100%;
+          right: 5px;
+          top: -3px;
+        }
+
+        &:after {
+          content: '1';
+          position: absolute;
+          margin-left: 100%;
+          left: 5px;
+          top: -3px;
+        }
       }
     }
   }
