@@ -122,6 +122,7 @@ class BarChart implements IAppView {
 
     $bars.enter().append('div')
       .classed('bars', true)
+      .classed('loading', true)
       .style('width', this.widthBarChart + 'px')
       .style('height', this.heightBarChart + 'px')
       .on('mouseenter', (d) => {
@@ -145,7 +146,8 @@ class BarChart implements IAppView {
               json.ratios.no_a_ratio = 0;
             }
 
-            that.drawBar(d3.select(this), json, pair);
+            const $bars = d3.select(this).classed('loading', false);
+            that.drawBar($bars, json, pair);
           });
       });
 

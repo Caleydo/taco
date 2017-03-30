@@ -140,6 +140,8 @@ class Histogram2D implements IAppView {
 
   private updateItems(pair) {
     this.$ratio.classed('loading', true);
+    this.$histogramRows.classed('loading', true);
+    this.$histogramCols.classed('loading', true);
 
     this.requestData(pair)
       .then((data) => {
@@ -176,8 +178,11 @@ class Histogram2D implements IAppView {
     const cols = data.cols.ratios;
     const rows = data.rows.ratios;
 
+    // custom order because of special width/height calucation of 2d ratio
+    const orderOfChangeTypes = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED, ChangeTypes.REORDER];
+
     // consider and show only active change types
-    const activeTypes = ChangeTypes.TYPE_ARRAY
+    const activeTypes = orderOfChangeTypes
       .filter((d) => d !== ChangeTypes.REORDER)
       .filter((d) => d.isActive === true);
 
@@ -225,7 +230,7 @@ class Histogram2D implements IAppView {
     }
 
     // add inactive values as 0 values
-    ChangeTypes.TYPE_ARRAY
+    orderOfChangeTypes
       .filter((d) => d !== ChangeTypes.REORDER)
       .filter((d) => d.isActive === false)
       .forEach((d) => {
@@ -272,6 +277,8 @@ class Histogram2D implements IAppView {
       });
 
     $containers.exit().remove();
+
+    $parent.classed('loading', false);
   }
 
   /**

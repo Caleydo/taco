@@ -3,7 +3,7 @@ $hover-color: #ffc46b;
 
 $struct-add-color: #ccebc5;
 $struct-delete-color: #fbb4ae;
-$pos-content-change-color: #8da0cb;
+$pos-content-change-color: #b3cde3;
 $neg-content-change-color: #d8b365;
 $no-change-color: #ffffff;
 $reorder-color: #decbe4;
@@ -43,6 +43,10 @@ b,
   left: 0;
 }
 
+.loading {
+  animation: color_change 1s ease-out infinite alternate;
+}
+
 .caleydoHeader {
   position: fixed;
   top: 0;
@@ -51,7 +55,7 @@ b,
   right: 0;
 }
 
-$app-margin-top: 50;
+$app-margin-top: 55;
 
 #app {
   display: flex;
@@ -245,6 +249,12 @@ rect.nochange-color {
     padding: 1px;
   }
 
+  &.loading {
+    div {
+      display: none;
+    }
+  }
+
   .nochange-color {
     z-index: 3;
   }
@@ -259,14 +269,6 @@ rect.nochange-color {
 
   .removed-color {
     z-index: 0;
-  }
-
-  &.loading {
-    animation: color_change 1s ease-out infinite alternate;
-
-    div {
-      display: none;
-    }
   }
 }
 
@@ -387,10 +389,6 @@ select.form-control {
   button {
     position: relative;
     left: -35px;
-
-    &.loading {
-      animation: color_change 1s ease-out infinite alternate;
-    }
   }
 }
 
@@ -427,6 +425,7 @@ select.form-control {
     position: absolute;
     width: 100px;
     top: -35px;
+    margin-left: -35px;
 
     .content-change {
       text-align: center;
@@ -521,8 +520,9 @@ div.phovea-heatmap .phovea-heatmap-labels {
 }
 
 
-.heatmap-dst {
+.heatmap-dst div.phovea-heatmap {
   .row-labels {
+    text-align: left;
     right: auto !important;
     margin-left: 100%;
     padding-right: 0;

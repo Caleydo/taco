@@ -68,7 +68,7 @@ export const COLOR_ADDED = '#ccebc5';
 export const COLOR_DELETED = '#fbb4ae';
 export const COLOR_NO_CHANGE = '#fff';
 export const COLOR_CONTENT_NEGATIVE = '#d8b365';
-export const COLOR_CONTENT_POSITIVE = '#8da0cb';
+export const COLOR_CONTENT_POSITIVE = '#b3cde3';
 
 export interface IChangeType {
   type: string;
@@ -121,7 +121,7 @@ export class ChangeTypes {
     isActive: false
   };
 
-  static TYPE_ARRAY: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED, ChangeTypes.REORDER];
+  static TYPE_ARRAY: IChangeType[] = [ChangeTypes.ADDED, ChangeTypes.REMOVED, ChangeTypes.CONTENT, ChangeTypes.REORDER, ChangeTypes.NO_CHANGE];
 
   static labelForType(type:string) {
     return this.TYPE_ARRAY.filter((d) => d.type === type)[0].label;
