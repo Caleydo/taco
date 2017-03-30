@@ -72,7 +72,7 @@ export const COLOR_ADDED = '#a1d76a';
 export const COLOR_DELETED = '#e9a3c9';
 export const COLOR_NO_CHANGE = '#fff';
 export const COLOR_CONTENT_NEGATIVE = '#d8b365';
-export const COLOR_CONTENT_POSITIVE = '#b3cde3';
+export const COLOR_CONTENT_POSITIVE = '#8da0cb';
 
 export interface IChangeType {
   type: string;
