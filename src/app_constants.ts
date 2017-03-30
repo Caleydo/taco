@@ -63,7 +63,8 @@ export class AppConstants {
     DATASET: 'ds',
     TIME_POINTS: 'tp',
     DETAIL_VIEW: 'detail',
-    FILTER: 'f'
+    FILTER: 'f',
+    SELECTION: 's'
   };
 }
 

@@ -7,13 +7,15 @@ import * as moment from 'moment';
 import * as data from 'phovea_core/src/data';
 import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
-import {IAppView} from './app';
+import {App, IAppView} from './app';
 import {Language} from './language';
 import {IValueTypeDesc, VALUE_TYPE_REAL} from 'phovea_core/src/datatype';
 import {INumericalMatrix, IMatrixDataDescription} from 'phovea_core/src/matrix';
 import * as d3 from 'd3';
 import {hash} from 'phovea_core/src';
 import {selectTimePointFromHash} from './util';
+import {ProductIDType} from 'phovea_core/src/idtype';
+import {parse} from 'phovea_core/src/range';
 
 /**
  * Shows a list of available datasets and lets the user choose one.
@@ -23,6 +25,9 @@ class DataSetSelector implements IAppView {
 
   private $node;
   private $select;
+
+  private trackedSelections: ProductIDType = null;
+  private onSelectionChanged = () => this.updateSelectionHash();
 
   constructor(parent:Element, private options:any) {
     this.$node = d3.select('.navbar-header')
@@ -64,11 +69,42 @@ class DataSetSelector implements IAppView {
         hash.setProp(AppConstants.HASH_PROPS.DATASET, selectedData[0].key);
         hash.removeProp(AppConstants.HASH_PROPS.TIME_POINTS);
         hash.removeProp(AppConstants.HASH_PROPS.DETAIL_VIEW);
+        hash.removeProp(AppConstants.HASH_PROPS.SELECTION);
 
         if(selectedData.length > 0) {
           events.fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
+          this.trackSelections(selectedData[0].values[0].item);
         }
       });
+  }
+
+  private trackSelections(matrix: INumericalMatrix) {
+    if (this.trackedSelections) {
+      this.trackedSelections.off(ProductIDType.EVENT_SELECT_PRODUCT, this.onSelectionChanged);
+    }
+    this.trackedSelections = matrix.producttype;
+    this.trackedSelections.on(ProductIDType.EVENT_SELECT_PRODUCT, this.onSelectionChanged);
+  }
+
+  private updateSelectionHash() {
+    if (!this.trackedSelections) {
+      return;
+    }
+    const ranges = this.trackedSelections.productSelections();
+    const value = ranges.map((r) => r.toString()).join(';');
+    hash.setProp(AppConstants.HASH_PROPS.SELECTION, value);
+  }
+
+  private restoreSelections() {
+    if (!this.trackedSelections) {
+      return;
+    }
+    const value = hash.getProp(AppConstants.HASH_PROPS.SELECTION, '');
+    if (value === '') {
+      return;
+    }
+    const ranges = value.split(';').map((s) => parse(s));
+    this.trackedSelections.select(ranges);
   }
 
   /**
@@ -96,6 +132,8 @@ class DataSetSelector implements IAppView {
             this.$select.property('selectedIndex', data.indexOf(selectedData[0]));
             events.fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
 
+            this.trackSelections(selectedData[0].values[0].item);
+            this.restoreSelections();
             selectTimePointFromHash(selectedData[0].values);
           }
 
