@@ -60,8 +60,8 @@ $app-margin-top: 55;
 #app {
   display: flex;
   flex-direction: column;
-  margin: $app-margin-top+px 20px 20px;
-  height: calc(100vh - 70px);
+  margin: $app-margin-top+px 20px 50px;
+  min-height: 100vh;
 }
 
 #caleydoHeader {

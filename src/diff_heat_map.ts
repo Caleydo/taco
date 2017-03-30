@@ -67,6 +67,12 @@ class DiffHeatMap implements IAppView {
   private borderWidth = 2;
   private margin = 2 * 50;
 
+  /**
+   * The height that should be used, if the height of the container is 0
+   * @type {number}
+   */
+  private minimumHeight = 300;
+
   private scaleFactor = { x: 1, y: 1};
 
   private selectionListener = (evt: any) => this.update();
@@ -201,7 +207,7 @@ class DiffHeatMap implements IAppView {
     const dataHeight = AppConstants.HEATMAP_CELL_SIZE * data.union.ur_ids.length;
 
     this.scaleFactor.x = (this.$node.property('clientWidth') - this.margin) / dataWidth;
-    this.scaleFactor.y = (this.$node.property('clientHeight')) / dataHeight;
+    this.scaleFactor.y = (Math.max(this.$node.property('clientHeight'), this.minimumHeight)) / dataHeight;
 
 
     const width = dataWidth * this.scaleFactor.x;
