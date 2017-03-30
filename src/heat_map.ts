@@ -108,6 +108,8 @@ class HeatMap implements IAppView {
       labels: showLabels
     });
 
+    this.$node.classed('loading', true);
+
     return Promise.all([plugins[0].load()])
       .then((args) => {
         this.clearContent();
@@ -123,6 +125,7 @@ class HeatMap implements IAppView {
         return this;
       })
       .then((instance) => {
+        this.$node.classed('loading', false);
         events.fire(AppConstants.EVENT_HEATMAP_LOADED);
         return instance;
       });
