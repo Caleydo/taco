@@ -77,7 +77,7 @@ class DiffHeatMap implements IAppView {
 
   private selectionListener = (evt: any) => this.update();
 
-  private activeChangeTypes = new Set<string>([ChangeTypes.ADDED.type, ChangeTypes.CONTENT.type, ChangeTypes.REMOVED.type]);
+  private activeChangeTypes = new Set<string>(ChangeTypes.TYPE_ARRAY.filter((d) =>d.isActive).map((d) => d.type));
 
   private static getJSON(pair: string[]) {
     const operations = ChangeTypes.forURL();
