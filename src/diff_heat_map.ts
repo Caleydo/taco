@@ -16,12 +16,12 @@ import {
 } from './app_constants';
 import {get} from 'phovea_core/src/plugin';
 
-interface IDiffRow {
+export interface IDiffRow {
   id: string;
   pos: number;
 }
 
-interface IDiffData {
+export interface IDiffData {
   union: {
     // uids of the columns, ala colids()
     c_ids: number[];

@@ -484,14 +484,26 @@ select.form-control {
     opacity: 0;
   }
 
-  line {
+  line.slope {
     fill: none;
     stroke: darken($reorder-color, 30%);
-    stroke-width: 2;
+    stroke-width: 1;
 
+    &.hovered,
     &:hover {
+      stroke: $hover-color;
+    }
+
+    &.selected {
       stroke: $select-color;
     }
+  }
+
+  line.axis {
+    fill: none;
+    stroke: black;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
   }
 }
 
