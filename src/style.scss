@@ -1,12 +1,12 @@
 $select-color: orange;
 $hover-color: #ffc46b;
 
-$struct-add-color: #ccebc5;
-$struct-delete-color: #fbb4ae;
+$struct-add-color: #a1d76a;
+$struct-delete-color: #e9a3c9;
 $pos-content-change-color: #b3cde3;
 $neg-content-change-color: #d8b365;
 $no-change-color: #ffffff;
-$reorder-color: #decbe4;
+$reorder-color: #beaed4;
 
 $gentle-color: #f0f0f0;
 $no-change-border-color: #ddd;
@@ -159,7 +159,7 @@ rect.nochange-color {
   .axis path,
   .axis line {
     fill: none;
-    stroke: #000;
+    stroke: black;
     shape-rendering: crispEdges;
   }
 }
