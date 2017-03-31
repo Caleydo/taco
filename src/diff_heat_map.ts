@@ -448,13 +448,17 @@ class DiffHeatMap implements IAppView {
   }
 
   private drawLegend(data:IDiffData) {
-    const $legend = this.$node.append('div')
-      .classed('legend', true)
-      .classed('hidden', ChangeTypes.REORDER.isActive);
+    let $legend = this.$node.select('div.legend');
 
-    $legend.append('div')
-      .classed('content-change', true)
-      .append('div');
+    if($legend.empty()) {
+      $legend = this.$node.append('div')
+        .classed('legend', true)
+        .classed('hidden', ChangeTypes.REORDER.isActive);
+
+      $legend.append('div')
+        .classed('content-change', true)
+        .append('div');
+    }
   }
 
   private clearContent() {
