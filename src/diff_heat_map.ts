@@ -450,7 +450,7 @@ class DiffHeatMap implements IAppView {
   private drawLegend(data:IDiffData) {
     const $legend = this.$node.append('div')
       .classed('legend', true)
-      .classed('hidden', !ChangeTypes.REORDER.isActive);
+      .classed('hidden', ChangeTypes.REORDER.isActive);
 
     $legend.append('div')
       .classed('content-change', true)
