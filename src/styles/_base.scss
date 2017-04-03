@@ -1,0 +1,96 @@
+body, html {
+  font-family: Yantramanav, 'Helvetica Neue', Helvetica, sans-serif !important;
+  font-weight: 400 !important;
+  //height: auto !important;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: Yantramanav, 'Helvetica Neue', Helvetica, sans-serif !important;
+}
+
+th,
+label,
+strong,
+b,
+.label {
+  font-weight: 500 !important;
+}
+
+.busy {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.26) url('#{$boostrapAssetDir}/caleydo_c_anim.svg') no-repeat fixed center;
+  z-index: 999;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+/**
+ * Animation for loading
+ * @usage: `animation: color_change 1s ease-out infinite alternate;`
+ */
+@keyframes color_change {
+  from { background-color: transparent; }
+  to { background-color: $hover-color; }
+}
+
+.loading {
+  animation: color_change 1s ease-out infinite alternate;
+}
+
+/**
+ * Push app a bit to the bottom, because of the sticky header
+ */
+#app {
+  display: flex;
+  flex-direction: column;
+  margin: $app-margin-top+px 20px 50px;
+  min-height: 100vh;
+}
+
+/**
+ * Fix the caleydo header that it sticks always on top
+ */
+#caleydoHeader {
+  position: fixed;
+  z-index: 100000;
+  width: 100%;
+  margin-top: -$app-margin-top+px; // must match with margin from #app
+}
+
+/**
+ * This class adds a fading effect and hides the element
+ */
+.invisibleClass {
+  transition: opacity 0.1s linear;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/**
+ * Bootstrap .navbar-collapse (buttons to the right)
+ */
+.collapse {
+  margin-top: 5px;
+}
+
+/**
+ * Style of the active links
+ */
+a.active {
+  font-weight: 500;
+  color: $select-color;
+}
+
+rect {
+  &.phovea-select-selected {
+    fill: $select-color;
+  }
+  &.phovea-select-hovered {
+    fill: $hover-color;
+  }
+}

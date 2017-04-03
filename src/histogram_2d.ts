@@ -225,7 +225,7 @@ class Histogram2D implements IAppView {
       .append('div')
       .style('width', this.width + 'px')
       .style('height', this.height + 'px')
-      .classed('ratio', true);
+      .classed('ratio2d', true);
 
     this.$histogramRows = this.$node
       .append('div')

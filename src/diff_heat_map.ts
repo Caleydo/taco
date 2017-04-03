@@ -230,8 +230,6 @@ class DiffHeatMap implements IAppView {
       this.activeChangeTypes.delete(changeType.type);
     }
     this.update();
-
-    //this.$node.selectAll(`div.ratio > .${changeType.type}`).classed('noColorClass', !changeType.isActive);
   }
 
   private getProductIDType(): ProductIDType {

@@ -1,0 +1,69 @@
+
+.ratio2d {
+  border: 1px solid black;
+  position: relative;
+  background: white;
+
+  div {
+    transition: width .2s ease, height .2s ease;
+    position: absolute;
+  }
+
+  &.loading {
+    div {
+      display: none;
+    }
+  }
+
+  .nochange-color {
+    z-index: 3;
+  }
+
+  .content-color {
+    z-index: 2;
+  }
+
+  .added-color {
+    z-index: 1;
+  }
+
+  .removed-color {
+    z-index: 0;
+  }
+}
+
+
+.histogram {
+  position: relative;
+  margin-left: 15px;
+
+  &.rotated {
+    position: absolute;
+    transform: rotate(90deg) scaleY(-1);
+    transform-origin: 0 0;
+    margin-left: -88px;
+    margin-top: 178px;
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+    border: 1px solid #e6e8e4;
+    border-left: 1px solid #000000;
+    background: transparent;
+  }
+
+  .bin-container {
+    display: flex;
+    height: 100%;
+
+    > div {
+      transition: width ease 0.2s;
+      display: flex;
+      flex-direction: column-reverse;
+    }
+  }
+}

@@ -1,0 +1,60 @@
+
+.diffheatmap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: calc(33% + 100px);
+
+  .legend {
+    position: absolute;
+    width: 100px;
+    top: -35px;
+    margin-left: -35px;
+
+    .content-change {
+      text-align: center;
+
+      &:before {
+        content: 'Content Change';
+      }
+
+      div {
+        position: relative;
+        width: 100%;
+        height: 10px;
+        background: linear-gradient(to right, $neg-content-change-color, $no-change-color, $pos-content-change-color);
+
+        &:before {
+          content: '-1';
+          position: absolute;
+          margin-right: 100%;
+          right: 5px;
+          top: -3px;
+        }
+
+        &:after {
+          content: '1';
+          position: absolute;
+          margin-left: 100%;
+          left: 5px;
+          top: -3px;
+        }
+      }
+    }
+  }
+}
+
+.taco-table {
+  position: relative;
+  border: 1px solid black;
+  margin: 0 50px;
+  //width: calc(100% - 100px);
+  background: $no-change-color;
+
+  transition: height 0.2s ease, width 0.2s ease;
+
+  & div.transform > div {
+    position: absolute;
+  }
+}
