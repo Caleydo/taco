@@ -7,9 +7,12 @@ import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {hash} from 'phovea_core/src';
+import {ITacoTimePoint} from './data_set_selector';
+import {Language} from './language';
 
 class DetailView implements IAppView {
-  private $node;
+
+  private $node:d3.Selection<any>;
 
   constructor(public parent:Element, private options:any) {
     this.$node = d3.select(parent)
@@ -18,6 +21,10 @@ class DetailView implements IAppView {
       .classed('detailview', true);
   }
 
+  /**
+   * Initialize this view
+   * @returns {Promise<DetailView>}
+   */
   init() {
     this.build();
     this.attachListener();
@@ -26,20 +33,26 @@ class DetailView implements IAppView {
     return Promise.resolve(this);
   }
 
+  /**
+   * Build DOM node
+   */
   private build() {
-    this.$node.html(`<button type="button" class="btn btn-default" disabled>Load Detail View</button>`);
+    this.$node.html(`<button type="button" class="btn btn-default" disabled>${Language.LOAD_DETAILS}</button>`);
   }
 
+  /**
+   * Attach event handler for broadcasted events
+   */
   private attachListener() {
     events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
       this.$node.select('button').attr('disabled', 'disabled').classed('loading', false);
     });
 
-    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items) => {
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items:ITacoTimePoint[]) => {
       this.openEvents(items);
     });
 
-    events.on(AppConstants.EVENT_OPEN_DETAIL_VIEW, (evt, items) => {
+    events.on(AppConstants.EVENT_OPEN_DETAIL_VIEW, (evt, items:ITacoTimePoint[]) => {
       this.loadDetailView(items);
     });
 
@@ -60,7 +73,7 @@ class DetailView implements IAppView {
     });
   }
 
-  private openEvents (items) {
+  private openEvents (items:ITacoTimePoint[]) {
     this.$node.select('button')
       .attr('disabled', (items.length === 2) ? null : 'disabled')
       .on('click', (e) => {
@@ -68,7 +81,11 @@ class DetailView implements IAppView {
       });
   }
 
-  private loadDetailView(selection) {
+  /**
+   * Fire events to load detail view based on the selected time points
+   * @param selection
+   */
+  private loadDetailView(selection:ITacoTimePoint[]) {
     if(selection.length !== 2) {
       return;
     }

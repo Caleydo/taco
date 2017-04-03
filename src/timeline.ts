@@ -8,21 +8,22 @@ import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 import {getTimeScale, selectTimePoint} from './util';
+import {ITacoTimePoint} from './data_set_selector';
 
 /**
  * Shows a timeline with all available data points for a selected data set
  */
 class Timeline implements IAppView {
 
-  private $node;
-  private $svgTimeline;
+  private $node:d3.Selection<any>;
+  private $svgTimeline:d3.Selection<any>;
 
-  private items;
+  private items:ITacoTimePoint[];
 
   // Width of the timeline div element
   private totalWidth: number;
-  private timelineWidth = $(window).innerWidth();
-  private timelineHeight = 25;
+  private timelineWidth: number = $(window).innerWidth();
+  private timelineHeight: number = 25;
   private toggledElements: boolean;
 
   // Helper variable for the clicking event
@@ -56,11 +57,11 @@ class Timeline implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => {
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items:ITacoTimePoint[]) => {
      this.updateItems(items);
     });
 
-    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, timePoints) => {
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, timePoints:ITacoTimePoint[]) => {
       // remove all highlights first
       if(timePoints.length === 1) {
          this.$svgTimeline.selectAll('text').classed('active', false);
@@ -71,10 +72,10 @@ class Timeline implements IAppView {
         .forEach((d) => d.classed('active', true)); // add .active class
     });
 
-    events.on(AppConstants.EVENT_TIME_POINT_HOVERED, (evt, timePoint:Date, isActive:boolean) => {
+    events.on(AppConstants.EVENT_TIME_POINT_HOVERED, (evt, timePointDate:Date, isActive:boolean) => {
       this.$svgTimeline.selectAll('text')[0] // the list is in the first element
         .map((d) => d3.select(d)) // convert to d3
-        .filter((d) => timePoint.getTime() === d.datum().getTime()) // check if datum is selected
+        .filter((d) => timePointDate.getTime() === d.datum().getTime()) // check if datum is selected
         .forEach((d) => d.classed('hovered', isActive)); // add .active class
     });
 
@@ -105,7 +106,7 @@ class Timeline implements IAppView {
    * @param items The new items which should be displayed.
    */
 
-  private updateItems(items) {
+  private updateItems(items:ITacoTimePoint[]) {
     // Store new items in class variable
     this.items = items;
 
@@ -155,6 +156,10 @@ class Timeline implements IAppView {
       });
   }
 
+  /**
+   * Update the x-axis representation based on the items and width
+   * @param $node
+   */
   private updateTimelineAxis($node) {
     const timeScale = getTimeScale(this.items, this.totalWidth);
     const xAxis = d3.svg.axis()
@@ -163,7 +168,7 @@ class Timeline implements IAppView {
       .tickFormat(d3.time.format(this.items[0].timeFormat.d3)) // HACK considers only the time format of the first item
       .tickPadding(8);
 
-    return $node.call(xAxis);
+    $node.call(xAxis);
   }
 }
 

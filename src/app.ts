@@ -8,7 +8,7 @@ import {AppConstants} from './app_constants';
 import * as events from 'phovea_core/src/event';
 
 /**
- * Interface for all TaCo Views
+ * Interface for all TACO Views
  */
 export interface IAppView {
 
@@ -43,7 +43,7 @@ interface IAppViewDesc {
 }
 
 /**
- * The main class for the TaCo app
+ * The main class for the TACO app
  */
 export class App implements IAppView {
 
@@ -180,7 +180,7 @@ export class App implements IAppView {
 }
 
 /**
- * Factory method to create a new TaCo instance
+ * Factory method to create a new TACO instance
  * @param parent
  * @returns {App}
  */

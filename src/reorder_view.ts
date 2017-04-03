@@ -7,7 +7,7 @@ import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
 import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
 import {mixin, onDOMNodeRemoved} from 'phovea_core/src';
-import {IAnyMatrix} from 'phovea_core/src/matrix';
+import {INumericalMatrix} from 'phovea_core/src/matrix';
 import {ProductIDType} from 'phovea_core/src/idtype';
 import {IDiffData} from './diff_heat_map';
 
@@ -37,21 +37,21 @@ interface IReorderChange {
 
 class ReorderView implements IAppView {
 
-  private $node;
-  private $srcSlopes;
-  private $dstSlopes;
+  private $node:d3.Selection<any>;
+  private $srcSlopes:d3.Selection<any>;
+  private $dstSlopes:d3.Selection<any>;
 
   // cached data
   private data: IDiffData;
-  private selectedTables: IAnyMatrix[];
+  private selectedTables: INumericalMatrix[];
 
   private options = {
     orientation: EOrientation.ROW
   };
 
-  private slopeWidth = 30;
+  private slopeWidth:number = 30;
 
-  private scale = d3.scale.linear().range([0, 200]);
+  private scale:d3.scale.Linear<number, number> = d3.scale.linear().range([0, 200]);
 
   private selectionListener = (evt: any) => this.selectLine();
 
@@ -64,6 +64,11 @@ class ReorderView implements IAppView {
       .classed('fadeout', !ChangeTypes.REORDER.isActive);
   }
 
+  /**
+   * Initialize the view and return a promise
+   * that is resolved as soon the view is completely initialized.
+   * @returns {Promise<ReorderView>}
+   */
   init() {
     this.build();
     this.attachListener();
@@ -72,11 +77,17 @@ class ReorderView implements IAppView {
     return Promise.resolve(this);
   }
 
+  /**
+   * Build the basic DOM elements like the svg graph.
+   */
   private build() {
     this.$srcSlopes = this.$node.append('g').classed('src slopes', true);
     this.$dstSlopes = this.$node.append('g').classed('dst slopes', true);
   }
 
+  /**
+   * Attach event handler for broadcasted events
+   */
   private attachListener() {
     onDOMNodeRemoved(<HTMLElement>this.$node.node(), () => {
       const old = this.getProductIDType();
@@ -92,7 +103,7 @@ class ReorderView implements IAppView {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor:{x: number, y: number}) => {
+    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair:INumericalMatrix[], diffData:IDiffData, scaleFactor:{x: number, y: number}) => {
       if(pair.length === 2) {
         this.data = diffData;
         this.selectedTables = pair;
@@ -117,12 +128,20 @@ class ReorderView implements IAppView {
     });
   }
 
-  private draw(src: IAnyMatrix, dst: IAnyMatrix, diffData, scaleFactor: {x: number, y: number}) {
+  /**
+   * Draw the reorder view based on the given orientation in the view options
+   * @param src
+   * @param dst
+   * @param diffData
+   * @param scaleFactor
+   */
+  private draw(src: INumericalMatrix, dst: INumericalMatrix, diffData:IDiffData, scaleFactor: {x: number, y: number}) {
     switch (this.options.orientation) {
       case EOrientation.COLUMN:
         this.scale.domain([0, Math.max(src.desc.size[1], dst.desc.size[1])]);
         this.scale.range([0, Math.max(src.desc.size[1], dst.desc.size[1]) * AppConstants.HEATMAP_CELL_SIZE * scaleFactor.x]);
-        this.drawColumns(diffData.reorder.cols, scaleFactor.x);
+        this.drawColumns(this.$srcSlopes, diffData.reorder.cols, scaleFactor.x);
+        this.drawColumns(this.$dstSlopes, diffData.reorder.cols, scaleFactor.x);
         break;
 
       case EOrientation.ROW:
@@ -156,11 +175,21 @@ class ReorderView implements IAppView {
     }
   }
 
-  private drawColumns(reorders:IReorderChange[], scaleFactor:number) {
-    //
+  /**
+   * Draw reorder view in column direction
+   * @param reorders
+   * @param scaleFactor
+   */
+  private drawColumns($parent:d3.Selection<any>, reorders:IReorderChange[], scaleFactor:number) {
+    throw new Error('Drawing reorder view in column direction is not implemented yet!');
   }
 
-  private drawRows($parent, reorders:IReorderChange[], scaleFactor:number) {
+  /**
+   * Draw reorder view in row direction
+   * @param reorders
+   * @param scaleFactor
+   */
+  private drawRows($parent:d3.Selection<any>, reorders:IReorderChange[], scaleFactor:number) {
 
     this.$node.attr('height', this.scale.range()[1]);
 
@@ -187,6 +216,12 @@ class ReorderView implements IAppView {
     $slopes.exit().remove();
   }
 
+  /**
+   * Mark a line with a given id and CSS class
+   * @param id
+   * @param isActive
+   * @param cssClass
+   */
   private markLine(id:string, isActive:boolean, cssClass:string = 'hovered') {
     this.$srcSlopes.selectAll('line.slope')
       .each(function(d){
@@ -203,6 +238,10 @@ class ReorderView implements IAppView {
       });
   }
 
+  /**
+   * Get selections from phovea product IDType
+   * @returns {any}
+   */
   private getProductIDType(): ProductIDType {
     if (this.selectedTables) {
       return this.selectedTables[0].producttype;
@@ -210,6 +249,9 @@ class ReorderView implements IAppView {
     return null;
   }
 
+  /**
+   * Select one reorder line
+   */
   private selectLine() {
     const cssClass = 'selected';
     const selections = this.selectedTables[0].producttype.productSelections();
@@ -249,6 +291,9 @@ class ReorderView implements IAppView {
     });
   }
 
+  /**
+   * Clear the content and reset this view
+   */
   private clearContent() {
     this.$srcSlopes.selectAll('*').remove();
     this.$dstSlopes.selectAll('*').remove();

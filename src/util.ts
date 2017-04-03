@@ -7,8 +7,9 @@ import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {hash} from 'phovea_core/src';
+import {ITacoTimePoint} from './data_set_selector';
 
-export function getTimeScale(items, totalWidth, padding = 20) {
+export function getTimeScale(items:ITacoTimePoint[], totalWidth:number, padding:number = 20) {
   const firstTimePoint = moment(items[0].time).toDate();
   const lastTimePoint = moment(items[items.length - 1].time).toDate();
 
@@ -17,14 +18,14 @@ export function getTimeScale(items, totalWidth, padding = 20) {
     .range([padding, totalWidth - padding]);
 }
 
-let selectedTimePoints = [];
+let selectedTimePoints:ITacoTimePoint[] = [];
 
 /**
  * Stores a selected time point and sends an event with all stored time points
  * If two time points are stored, the array is cleared
  * @param timepoints
  */
-export function selectTimePoint(...timepoints) {
+export function selectTimePoint(...timepoints:ITacoTimePoint[]) {
   // remove timepoints that are already selected
   timepoints = timepoints.filter((d) => selectedTimePoints.indexOf(d) === -1);
 
@@ -35,7 +36,7 @@ export function selectTimePoint(...timepoints) {
   selectedTimePoints.push(...timepoints);
 
   // sort elements by time -> [0] = earlier = source; [1] = later = destination
-  selectedTimePoints = selectedTimePoints.sort((a, b) => d3.ascending(a.time, b.time));
+  selectedTimePoints = selectedTimePoints.sort((a, b) => d3.ascending(a.time.toISOString(), b.time.toISOString()));
 
   hash.setProp(AppConstants.HASH_PROPS.TIME_POINTS, selectedTimePoints.map((d) => d.key).join(','));
   hash.removeProp(AppConstants.HASH_PROPS.DETAIL_VIEW);
@@ -52,7 +53,7 @@ export function selectTimePoint(...timepoints) {
  * Filters list of time points from given keys in the URL hash and fires the event
  * @param timepoints
  */
-export function selectTimePointFromHash(timepoints) {
+export function selectTimePointFromHash(timepoints:ITacoTimePoint[]) {
   if(hash.has(AppConstants.HASH_PROPS.TIME_POINTS) === false) {
     return;
   }

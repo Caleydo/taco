@@ -9,7 +9,7 @@ module.exports = function(registry) {
   //registry.push('extension-type', 'extension-id', function() { return System.import('./src/extension_impl'); }, {});
   // generator-phovea:begin
   registry.push('app', 'taco', function() { return System.import('./src/'); }, {
-    'name': 'TaCo'
+    'name': 'TACO'
   });
 
   registry.push('tacoView', 'DataSetSelector', function() { return System.import('./src/data_set_selector'); }, {

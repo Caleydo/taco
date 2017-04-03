@@ -8,19 +8,21 @@ import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 import {getTimeScale} from './util';
 import {get} from 'phovea_core/src/plugin';
+import {ITacoTimePoint} from './data_set_selector';
+import {Language} from './language';
 
 /**
  * Shows a timeline with all available data points for a selected data set
  */
 class MetaInfoBox implements IAppView {
 
-  private $node;
-  private $leftMetaBox;
-  private $rightMetaBox;
+  private $node:d3.Selection<any>;
+  private $leftMetaBox:d3.Selection<any>;
+  private $rightMetaBox:d3.Selection<any>;
 
   private totalWidth: number;
-  private boxHeight = 162;
-  private boxWidth = 162;
+  private boxHeight:number = 162;
+  private boxWidth:number = 162;
 
 
   /**
@@ -55,7 +57,7 @@ class MetaInfoBox implements IAppView {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items) => {
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items:ITacoTimePoint[]) => {
       if(items.length === 2) {
         this.updateItems(items);
       } else {
@@ -63,7 +65,7 @@ class MetaInfoBox implements IAppView {
       }
     });
 
-    events.on(AppConstants.EVENT_DATASET_SELECTED, (evt, items) => {
+    events.on(AppConstants.EVENT_DATASET_SELECTED, (evt, items:ITacoTimePoint[]) => {
       this.clearContent();
     });
   }
@@ -107,23 +109,35 @@ class MetaInfoBox implements IAppView {
     this.totalWidth = $(this.$node.node()).width();
   }
 
-  private updateItems(items) {
+  /**
+   * Show content for the given items in the left and right meta box
+   * @param items
+   */
+  private updateItems(items:ITacoTimePoint[]) {
     this.$leftMetaBox.html(this.generateHTML(items[0]));
     this.$rightMetaBox.html(this.generateHTML(items[1]));
   }
 
-  private generateHTML(item) {
+  /**
+   * Generate the HTML template for one metabox
+   * @param item
+   * @returns {string}
+   */
+  private generateHTML(item:ITacoTimePoint) {
     return `
       <h3>${item.time.format(item.timeFormat.moment)}</h3>
       <dl>
-        <dt>Rows</dt>
+        <dt>${Language.ROWS}</dt>
         <dd>${item.item.dim[0]} ${(item.item.dim[0] === 1) ? item.item.rowtype.name : item.item.rowtype.names}</dd>
-        <dt>Columns</dt>
+        <dt>${Language.COLUMNS}</dt>
         <dd>${item.item.dim[1]} ${(item.item.dim[1] === 1) ? item.item.coltype.name : item.item.coltype.names}</dd>
       </dl>
     `;
   }
 
+  /**
+   * Clear the content and reset this view
+   */
   private clearContent() {
     this.$leftMetaBox.html('');
     this.$rightMetaBox.html('');

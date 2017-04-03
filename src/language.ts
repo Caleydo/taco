@@ -5,5 +5,7 @@
 export class Language {
   static APP_NAME = 'TACO';
   static DATA_SET = 'Dataset';
-  static TIMELINE = 'Timeline';
+  static ROWS = 'Rows';
+  static COLUMNS = 'Columns';
+  static LOAD_DETAILS = 'Load Detail View';
 }

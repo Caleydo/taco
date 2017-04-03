@@ -3,19 +3,37 @@
  */
 
 import * as moment from 'moment';
-
 import * as data from 'phovea_core/src/data';
 import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
-import {App, IAppView} from './app';
+import {IAppView} from './app';
 import {Language} from './language';
-import {IValueTypeDesc, VALUE_TYPE_REAL} from 'phovea_core/src/datatype';
-import {INumericalMatrix, IMatrixDataDescription} from 'phovea_core/src/matrix';
+import {INumericalMatrix} from 'phovea_core/src/matrix';
 import * as d3 from 'd3';
 import {hash} from 'phovea_core/src';
 import {selectTimePointFromHash} from './util';
 import {ProductIDType} from 'phovea_core/src/idtype';
 import {parse} from 'phovea_core/src/range';
+import {Moment} from 'moment';
+
+export interface ITacoDataset {
+  key: string;
+  values: ITacoTimePoint[];
+}
+
+export interface ITacoTimePoint {
+  item: INumericalMatrix;
+  key: string;
+  time: Moment;
+  timeFormat: ITacoTimeFormat;
+  values: INumericalMatrix[];
+}
+
+export interface ITacoTimeFormat {
+  d3: string;
+  moment: string;
+  momentIsSame: string;
+}
 
 /**
  * Shows a list of available datasets and lets the user choose one.
@@ -58,6 +76,7 @@ class DataSetSelector implements IAppView {
       .attr('for', 'ds')
       .text(Language.DATA_SET);
 
+    // create select and update hash on property change
     this.$select = this.$node.append('select')
       .attr('id', 'ds')
       .classed('form-control', true)
@@ -78,6 +97,10 @@ class DataSetSelector implements IAppView {
       });
   }
 
+  /**
+   * Toggle tracking of selection of rows/columns/cells for the given dataset
+   * @param matrix selected dataset
+   */
   private trackSelections(matrix: INumericalMatrix) {
     if (this.trackedSelections) {
       this.trackedSelections.off(ProductIDType.EVENT_SELECT_PRODUCT, this.onSelectionChanged);
@@ -86,6 +109,9 @@ class DataSetSelector implements IAppView {
     this.trackedSelections.on(ProductIDType.EVENT_SELECT_PRODUCT, this.onSelectionChanged);
   }
 
+  /**
+   * Update the URL hash based on the selections
+   */
   private updateSelectionHash() {
     if (!this.trackedSelections) {
       return;
@@ -95,6 +121,9 @@ class DataSetSelector implements IAppView {
     hash.setProp(AppConstants.HASH_PROPS.SELECTION, value);
   }
 
+  /**
+   * Restore the selections based on the URL hash
+   */
   private restoreSelections() {
     if (!this.trackedSelections) {
       return;
@@ -114,7 +143,7 @@ class DataSetSelector implements IAppView {
   private update() {
     const dataprovider = new DataProvider();
     return dataprovider.load()
-      .then((data) => {
+      .then((data:ITacoDataset[]) => {
         const $options = this.$select.selectAll('option').data(data);
 
         $options.enter().append('option');
@@ -159,7 +188,7 @@ class DataProvider {
 
   /**
    * Loads the data and retruns a promise
-   * @returns {Promise<U>}
+   * @returns {Promise<ITacoDataset[]>}
    */
   load() {
     return data
@@ -168,21 +197,21 @@ class DataProvider {
       //})
       .list({'type': 'matrix'}) // use server-side filtering
       .then((list: INumericalMatrix[]) => {
-        const olympicsData = this.prepareOlympicsData(list);
-        const tcgaData = this.prepareTCGAData(list);
+        const olympicsData:ITacoDataset[] = this.prepareOlympicsData(list);
+        const tcgaData:ITacoDataset[] = this.prepareTCGAData(list);
         return [].concat(olympicsData, tcgaData);
       });
   }
 
-  prepareTCGAData(matrices:INumericalMatrix[]):any[] {
+  prepareTCGAData(matrices:INumericalMatrix[]):ITacoDataset[] {
     const dateRegex = new RegExp(/.*(\d{4})[_-](\d{2})[_-](\d{2}).*/); // matches YYYY_MM_DD or YYYY-MM-DD
 
     return d3.nest()
       .key((d: INumericalMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending) // e.g. Copynumber, mRNA
       .key((d: INumericalMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending) // e.g., TCGA_GBM_2013_02_22
       .entries(matrices.filter((d) => dateRegex.test(d.desc.fqname) === true))
-      .map((d) => {
-        d.values = d.values.map((e) => {
+      .map((d:ITacoDataset) => {
+        d.values = d.values.map((e:ITacoTimePoint) => {
           e.timeFormat = {d3: '%Y-%m-%d', moment: 'YYYY-MM-DD', momentIsSame: 'day'};
           e.item = e.values[0]; // shortcut reference
 
@@ -195,7 +224,7 @@ class DataProvider {
       });
   }
 
-  prepareOlympicsData(matrices:INumericalMatrix[]):any[] {
+  prepareOlympicsData(matrices:INumericalMatrix[]):ITacoDataset[] {
     const olympicsCats = ['total', 'bronze', 'silver', 'gold'];
     return olympicsCats
       .map((cat) => {
@@ -205,8 +234,8 @@ class DataProvider {
           .entries(matrices.filter((d) => d.desc.fqname.toLowerCase().search('olympic') > -1 && d.desc.fqname.toLowerCase().search(cat) > -1));
       })
       .reduce((prev, curr) => prev.concat(curr), [])
-      .map((d) => {
-        d.values = d.values.map((e) => {
+      .map((d:ITacoDataset) => {
+        d.values = d.values.map((e:ITacoTimePoint) => {
           e.timeFormat = {d3: '%Y', moment: 'YYYY', momentIsSame: 'year'};
           e.item = e.values[0]; // shortcut reference
 
@@ -218,19 +247,6 @@ class DataProvider {
         return d;
       });
   }
-
-  /*load() {
-    return data.tree((d) => d.desc.type === 'matrix')
-      .then((tree) => {
-        // Convert tree structure (uses only level 1 + 2)
-        return tree.children.map((d) {
-          return {
-            name: d.name,
-            items: d.children.map((c) => c.data)
-          };
-        });
-      });
-  }*/
 
 }
 

@@ -9,6 +9,7 @@ import * as events from 'phovea_core/src/event';
 import {AppConstants, ChangeTypes, IChangeType} from './app_constants';
 import {IAppView} from './app';
 import {getTimeScale, selectTimePoint} from './util';
+import {ITacoTimePoint} from './data_set_selector';
 
 /**
  * This class adds a bar chart, that shows bars with click functionality,
@@ -16,8 +17,8 @@ import {getTimeScale, selectTimePoint} from './util';
  */
 class BarChart implements IAppView {
 
-  private $node;
-  private items;
+  private $node:d3.Selection<any>;
+  private items:ITacoTimePoint[];
 
   private totalWidth: number = 0;
 
@@ -37,7 +38,7 @@ class BarChart implements IAppView {
    * @param pair
    * @returns {Promise<any>}
    */
-  private static getJSON(pair) {
+  private static getJSON(pair):Promise<any> {
     const operations = ChangeTypes.forURL();
     return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/bar_chart`);
   }
@@ -89,7 +90,7 @@ class BarChart implements IAppView {
       }
     });
 
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => {
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items:ITacoTimePoint[]) => {
       this.items = items;
       this.barScaling.domain([0,1]);
       this.updateItems(items);
@@ -108,7 +109,7 @@ class BarChart implements IAppView {
    * This method updates the chart upon changing the data or if new data arrives.
    * @param items which are used for the chart
    */
-  private updateItems(items) {
+  private updateItems(items:ITacoTimePoint[]) {
     const that = this;
 
     // duplicate the first entry to show a bar for the first timestep

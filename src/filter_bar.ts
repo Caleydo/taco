@@ -40,7 +40,7 @@ class FilterBar implements IAppView {
   private build() {
 
     this.$node.html(`<div id="nav-bar">  
-      <div class="btn-group change" role="group" aria-label="...">
+      <div class="btn-group change" role="group" aria-label="Toggle visibility of changes by type">
       </div>  
     </div>`);
 
@@ -55,6 +55,9 @@ class FilterBar implements IAppView {
 
   }
 
+  /**
+   * Attach listener to change type buttons
+   */
   private attachListener() {
     this.$node.selectAll('.btn-group.change button')
       .on('click', function (selectedType) {
@@ -64,15 +67,17 @@ class FilterBar implements IAppView {
           selectedType.isActive = false;
           events.fire(AppConstants.EVENT_HIDE_CHANGE, selectedType);
           ChangeTypes.updateFilterHash();
-          button.classed('active', false);
-          button.classed('inactive', true);
+          button
+            .classed('active', false)
+            .classed('inactive', true);
 
         } else {
           selectedType.isActive = true;
           events.fire(AppConstants.EVENT_SHOW_CHANGE, selectedType);
           ChangeTypes.updateFilterHash();
-          button.classed('active', true);
-          button.classed('inactive', false);
+          button
+            .classed('active', true)
+            .classed('inactive', false);
         }
       });
   }

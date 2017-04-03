@@ -7,7 +7,7 @@ import {App} from 'taco/src/app';
 export class AppConstants {
 
   /**
-   * Static constant as identification for TaCo views
+   * Static constant as identification for TACO views
    * Note: the string value is referenced for multiple view definitions in the package.json,
    *       i.e. be careful when refactor the value
    */

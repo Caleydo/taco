@@ -15,9 +15,9 @@ import {mixin} from 'phovea_core/src';
  */
 class HeatMap implements IAppView {
 
-  private $node;
+  private $node:d3.Selection<any>;
 
-  private dataset;
+  private matrix:IAnyMatrix;
 
   private heatMapOptions = {
       initialScale: AppConstants.HEATMAP_CELL_SIZE,
@@ -55,10 +55,10 @@ class HeatMap implements IAppView {
       this.clearContent();
     });
 
-    events.on(this.options.eventName, (evt, dataset) => this.dataset = dataset);
+    events.on(this.options.eventName, (evt, dataset:IAnyMatrix) => this.matrix = dataset);
 
     events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor) => {
-      this.update(this.dataset, scaleFactor);
+      this.update(this.matrix, scaleFactor);
     });
   }
 
@@ -132,7 +132,7 @@ class HeatMap implements IAppView {
   }
 
   /**
-   * Remove the previous heatmap
+   * Clear the content and reset this view
    */
   private clearContent() {
     this.$node.html('');
@@ -140,7 +140,13 @@ class HeatMap implements IAppView {
 
 }
 
-function chooseLabel(nrow: number, ncol: number) {
+/**
+ * Decided based on the number of rows and columns if and if yes, which labels should be shown for the heatmap
+ * @param nrow
+ * @param ncol
+ * @returns {string}
+ */
+function chooseLabel(nrow: number, ncol: number):string {
   if (nrow < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE && ncol < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE) {
     return 'CELL';
   }

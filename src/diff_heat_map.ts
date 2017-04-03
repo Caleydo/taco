@@ -9,7 +9,7 @@ import * as ajax from 'phovea_core/src/ajax';
 import {toSelectOperation, ProductIDType} from 'phovea_core/src/idtype';
 import {cell} from 'phovea_core/src/range';
 import {onDOMNodeRemoved} from 'phovea_core/src';
-import {IAnyMatrix} from 'phovea_core/src/matrix';
+import {INumericalMatrix} from 'phovea_core/src/matrix';
 import {
   AppConstants, IChangeType, ChangeTypes, COLOR_ADDED, COLOR_DELETED,
   COLOR_CONTENT_NEGATIVE, COLOR_CONTENT_POSITIVE, COLOR_NO_CHANGE
@@ -22,6 +22,9 @@ export interface IDiffRow {
 }
 
 export interface IDiffData {
+  /**
+   * Information about the union table
+   */
   union: {
     // uids of the columns, ala colids()
     c_ids: number[];
@@ -31,6 +34,9 @@ export interface IDiffData {
     ur_ids: string[];
   };
 
+  /**
+   * Structural changes
+   */
   structure: {
     added_rows: IDiffRow[];
     added_cols: IDiffRow[];
@@ -38,6 +44,9 @@ export interface IDiffData {
     deleted_cols: IDiffRow[];
   };
 
+  /**
+   * Content Changes
+   */
   content: {
     cpos: number;
     rpos: number;
@@ -45,6 +54,32 @@ export interface IDiffData {
     col: string;
     diff_data: number;
   }[];
+
+  /**
+   * Reorder changes
+   */
+  reorder: {
+    rows: IDiffReorderChange[];
+    cols: IDiffReorderChange[];
+  };
+
+  /**
+   * Merge changes
+   * Not further used or specified
+   */
+  merge: {
+    merged_cols:any[];
+    merged_rows:any[];
+    split_cols:any[];
+    split_rows:any[];
+  };
+}
+
+export interface IDiffReorderChange {
+  to:number;
+  from: number;
+  id: string;
+  diff: number; // distance from-to
 }
 
 /**
@@ -57,27 +92,26 @@ class DiffHeatMap implements IAppView {
 
   // cached data
   private data: IDiffData;
-  private selectedTables: IAnyMatrix[];
+  private selectedTables: INumericalMatrix[];
 
   private readonly contentScale = d3.scale.linear<string>()
       .domain([-1, 0, 1])
       .range([COLOR_CONTENT_NEGATIVE, COLOR_NO_CHANGE, COLOR_CONTENT_POSITIVE])
       .clamp(true);
 
-  private borderWidth = 2;
-  private margin = 2 * 50;
+  private margin:number = 2 * 50;
 
   /**
    * The height that should be used, if the height of the container is 0
    * @type {number}
    */
-  private minimumHeight = 300;
+  private minimumHeight:number = 300;
 
   private scaleFactor = { x: 1, y: 1};
 
   private selectionListener = (evt: any) => this.update();
 
-  private activeChangeTypes = new Set<string>(ChangeTypes.TYPE_ARRAY.filter((d) =>d.isActive).map((d) => d.type));
+  private activeChangeTypes:Set<string> = new Set<string>(ChangeTypes.TYPE_ARRAY.filter((d) =>d.isActive).map((d) => d.type));
 
   private static getJSON(pair: string[]) {
     const operations = ChangeTypes.forURL();
@@ -102,6 +136,9 @@ class DiffHeatMap implements IAppView {
     return Promise.resolve(this);
   }
 
+  /**
+   * Build DOM node
+   */
   private build() {
     // wrap view ids from package.json as plugin and load the necessary files
     get(AppConstants.VIEW, 'ReorderView')
@@ -135,7 +172,7 @@ class DiffHeatMap implements IAppView {
     });
 
     //attach event listener
-    events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items: IAnyMatrix[]) => {
+    events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items: INumericalMatrix[]) => {
       if(items.length !== 2) {
         return;
       }
@@ -174,6 +211,10 @@ class DiffHeatMap implements IAppView {
     });
   }
 
+  /**
+   * Toggle a given change type and update the view
+   * @param changeType
+   */
   private toggleChangeType(changeType:IChangeType) {
     if(!this.data) {
       return;
@@ -200,6 +241,10 @@ class DiffHeatMap implements IAppView {
     return null;
   }
 
+  /**
+   * Draw the diff heatmap on the given diff data
+   * @param data
+   */
   private drawDiffHeatmap(data: IDiffData) {
     this.drawLegend(data);
 
@@ -228,6 +273,13 @@ class DiffHeatMap implements IAppView {
     this.render(<HTMLCanvasElement>$root.node(), data);
   }
 
+  /**
+   * Update the title attribute to show an updated tooltip
+   * @param $root
+   * @param data
+   * @param scaleFactorX
+   * @param scaleFactorY
+   */
   private handleTooltip($root: d3.Selection<any>, data: IDiffData, scaleFactorX: number, scaleFactorY: number) {
     const toIndices = (x: number, y: number) => {
       const col = Math.round(x / scaleFactorX + 0.5) - 1;
@@ -287,10 +339,18 @@ class DiffHeatMap implements IAppView {
 
   }
 
+  /**
+   * Update the view with the updated data
+   */
   private update() {
     this.render(<HTMLCanvasElement>this.$node.select('canvas').node(), this.data);
   }
 
+  /**
+   * Render the canvas
+   * @param canvas
+   * @param data
+   */
   private render(canvas: HTMLCanvasElement, data: IDiffData) {
     const ctx = canvas.getContext('2d');
 
@@ -401,6 +461,11 @@ class DiffHeatMap implements IAppView {
     ctx.restore();
   }
 
+  /**
+   * Render the selections to the canvas
+   * @param ctx
+   * @param data
+   */
   private renderSelections(ctx: CanvasRenderingContext2D, data: IDiffData) {
     const selections = this.selectedTables[0].producttype.productSelections();
     ctx.save();
@@ -447,6 +512,10 @@ class DiffHeatMap implements IAppView {
     ctx.restore();
   }
 
+  /**
+   * Draw a legend for the content changes
+   * @param data
+   */
   private drawLegend(data:IDiffData) {
     let $legend = this.$node.select('div.legend');
 
@@ -461,6 +530,9 @@ class DiffHeatMap implements IAppView {
     }
   }
 
+  /**
+   * Clear the content and reset this view
+   */
   private clearContent() {
     this.data = null;
     this.$node.select('.taco-table').remove();
