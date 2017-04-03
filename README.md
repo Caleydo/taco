@@ -1,6 +1,8 @@
 TACO [![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
 =====================
 
+![TACO with Olympic Games Dataset](https://raw.githubusercontent.com/Caleydo/taco/assets/olympic-games.png)
+
 TACO (for **Ta**ble **Co**mparison) is an interactive comparison tool that effectively visualizes the differences between multiple tables at various levels of granularity.
 
 This is the repository for the client code. **The server code is available in the [taco_server](https://github.com/Caleydo/taco_server) repository.**
