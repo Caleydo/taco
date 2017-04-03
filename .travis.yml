@@ -1,3 +1,7 @@
+branches:
+  except:
+  - assets
+  
 language: node_js
 
 node_js:
