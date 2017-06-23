@@ -15,6 +15,10 @@ import {
   COLOR_CONTENT_NEGATIVE, COLOR_CONTENT_POSITIVE, COLOR_NO_CHANGE
 } from './app_constants';
 import {get} from 'phovea_core/src/plugin';
+import * as $ from 'jquery';
+import 'jquery-ui/ui/widgets/slider'; // specify the widget here
+import 'style-loader!css-loader!jquery-ui/themes/base/all.css'; // use Webpack CSS loader to import base style for all widgets
+
 
 export interface IDiffRow {
   id: string;
@@ -522,9 +526,25 @@ class DiffHeatMap implements IAppView {
         .classed('legend', true)
         .classed('hidden', ChangeTypes.REORDER.isActive);
 
-      $legend.append('div')
-        .classed('content-change', true)
-        .append('div');
+      const values = d3.extent(this.contentScale.domain()); // only min-max value
+
+      const $slider = $legend.append('div').classed('content-change', true);
+      const $minVal = $slider.append('span').classed('handle-value min', true).text(values[0]);
+      const $maxVal = $slider.append('span').classed('handle-value max', true).text(values[1]);
+
+      $($slider.node()).slider({
+        range: true,
+        min: -1,
+        max: 1,
+        step: 0.01,
+        values,
+        slide: ( event, ui ) => {
+          this.contentScale.domain([ui.values[0], 0, ui.values[1]]); // note the `0` in the center for white
+          $minVal.text(ui.values[0]);
+          $maxVal.text(ui.values[1]);
+          this.update();
+        }
+      });
     }
   }
 

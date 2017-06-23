@@ -67,10 +67,11 @@
   },
   "dependencies": {
     "@types/moment": "2.13.0",
-    "moment": "2.15.2",
-    "phovea_ui": "github:phovea/phovea_ui#develop",
+    "jquery-ui": "1.12.1",
+    "moment": "2.15.2yo p",
     "phovea_core": "github:phovea/phovea_core#develop",
     "phovea_d3": "github:phovea/phovea_d3#develop",
+    "phovea_ui": "github:phovea/phovea_ui#develop",
     "phovea_vis": "github:phovea/phovea_vis#develop"
   },
   "name": "taco",

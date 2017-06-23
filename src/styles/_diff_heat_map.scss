@@ -14,32 +14,47 @@
 
     .content-change {
       text-align: center;
+      font-size: 12px;
+      background: linear-gradient(to right, $neg-content-change-color 0%, $neg-content-change-color 50%, $pos-content-change-color 50%, $pos-content-change-color 100%);
 
       &:before {
         content: 'Content Change';
+        position: absolute;
+        top: -25px;
+        left: 0;
+        width: 100%;
+      }
+
+      span.handle-value {
+        position: absolute;
+          top: -4px;
+
+        &.min {
+          right: 12px;
+          margin-right: 100%;
+        }
+
+        &.max {
+          left: 12px;
+          margin-left: 100%;
+        }
+      }
+
+      .ui-slider-handle {
+        opacity: 0;
+        transition: opacity 0.25s ease-in-out;
+      }
+
+      &:hover {
+        .ui-slider-handle {
+          opacity: 1;
+        }
       }
 
       div {
         position: relative;
         width: 100%;
-        height: 10px;
         background: linear-gradient(to right, $neg-content-change-color, $no-change-color, $pos-content-change-color);
-
-        &:before {
-          content: '-1';
-          position: absolute;
-          margin-right: 100%;
-          right: 5px;
-          top: -3px;
-        }
-
-        &:after {
-          content: '1';
-          position: absolute;
-          margin-left: 100%;
-          left: 5px;
-          top: -3px;
-        }
       }
     }
   }
