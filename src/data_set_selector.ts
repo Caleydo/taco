@@ -32,7 +32,7 @@ export interface ITacoTimePoint {
 export interface ITacoTimeFormat {
   d3: string;
   moment: string;
-  momentIsSame: string;
+  momentIsSame: moment.unitOfTime.StartOf;
 }
 
 /**
