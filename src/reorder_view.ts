@@ -84,6 +84,12 @@ class ReorderView implements IAppView {
   private build() {
     this.$srcSlopes = this.$node.append('g').classed('src slopes', true);
     this.$dstSlopes = this.$node.append('g').classed('dst slopes', true);
+  }
+
+  private buildRenderToggle() {
+    if(this.$reorderToggle) {
+      return;
+    }
 
     this.$reorderToggle = d3.select(this.parent)
       .append('div')
@@ -101,6 +107,9 @@ class ReorderView implements IAppView {
   }
 
   private deactivateAndHideReorderToggle() {
+    if(!this.$reorderToggle) {
+      return;
+    }
     this.$reorderToggle.classed('fadeout', true);
     this.$reorderToggle.select('button').classed('active', false);
     events.fire(AppConstants.EVENT_FOCUS_ON_REORDER, false);
@@ -133,6 +142,8 @@ class ReorderView implements IAppView {
           idType.on(ProductIDType.EVENT_SELECT_PRODUCT, this.selectionListener);
         }
         this.draw(pair[0], pair[1], diffData, scaleFactor);
+
+        this.buildRenderToggle();
 
         // show reorder toogle (without activating it again)
         if(ChangeTypes.REORDER.isActive) {
