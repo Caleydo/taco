@@ -29,8 +29,9 @@
 
   line.slope {
     fill: none;
-    stroke: darken($reorder-color, 30%);
+    stroke: darken($reorder-color, 40%);
     stroke-width: 1;
+    stroke-opacity: 0.5;
 
     &.hovered,
     &:hover {
