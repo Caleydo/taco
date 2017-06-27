@@ -524,7 +524,7 @@ class DiffHeatMap implements IAppView {
     if($legend.empty()) {
       $legend = this.$node.append('div')
         .classed('legend', true)
-        .classed('hidden', ChangeTypes.REORDER.isActive);
+        .classed('hidden', !ChangeTypes.CONTENT.isActive);
 
       const values = d3.extent(this.contentScale.domain()); // only min-max value
 
