@@ -36,10 +36,12 @@
     &.hovered,
     &:hover {
       stroke: $hover-color;
+      stroke-opacity: 1;
     }
 
     &.selected {
       stroke: $select-color;
+      stroke-opacity: 1;
     }
   }
 
