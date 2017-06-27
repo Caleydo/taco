@@ -27,6 +27,8 @@ export interface ITacoTimePoint {
   time: Moment;
   timeFormat: ITacoTimeFormat;
   values: INumericalMatrix[];
+  rowStratId: string;
+  colStratId: string;
 }
 
 export interface ITacoTimeFormat {
@@ -218,6 +220,10 @@ class DataProvider {
           const matches = e.key.match(dateRegex);
           e.time = (matches === null) ? null : moment(e.key, AppConstants.PARSE_DATE_FORMATS);
 
+          // NOTE: ids must match with the hard-coded ones in taco_server/src/diff_cache.py -> stratifyMatrix()
+          e.rowStratId = '4CnmfClustering';
+          e.colStratId = 'TreeClusterer1';
+
           return e;
         });
         return d;
@@ -241,6 +247,9 @@ class DataProvider {
 
           const matches = e.key.match(/(\d)\w+/g);
           e.time = (matches === null) ? null : moment(e.key, AppConstants.PARSE_DATE_FORMATS);
+
+          e.rowStratId = '';
+          e.colStratId = '';
 
           return e;
         });

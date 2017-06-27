@@ -5,10 +5,13 @@
 import {IAppView} from './app';
 import * as d3 from 'd3';
 import * as events from 'phovea_core/src/event';
+import * as data from 'phovea_core/src/data';
 import {AppConstants} from './app_constants';
 import {hash} from 'phovea_core/src';
 import {ITacoTimePoint} from './data_set_selector';
 import {Language} from './language';
+import {INumericalMatrix} from 'phovea_core/src/matrix';
+import {join, all} from 'phovea_core/src/range';
 
 class DetailView implements IAppView {
 
@@ -93,8 +96,38 @@ class DetailView implements IAppView {
     hash.setInt(AppConstants.HASH_PROPS.DETAIL_VIEW, 1);
 
     events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, selection.map((d) => d.item));
-    events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, selection[0].item);
-    events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, selection[1].item);
+
+    const loadStratIds = (stratName:string) => {
+      return data.get(stratName)
+        .then((s) => s.ids())
+        .catch(() => all());
+    };
+
+    const clusterMatrix = (matrix:INumericalMatrix, rowStratId:string, colStratId:string) => {
+      if(colStratId !== '' && rowStratId !== '') {
+        return Promise.all([
+            loadStratIds(matrix.desc.id + rowStratId),
+            loadStratIds(matrix.desc.id + colStratId)
+          ])
+          .then((ranges) => matrix.idView(join(ranges))) // Range must be [1] row ids, [2] col ids
+          .then((matrixView) => <INumericalMatrix>matrixView)
+          .catch((error) => {
+            return matrix;
+          });
+      }
+      return Promise.resolve(matrix);
+    };
+
+    clusterMatrix(selection[0].item, selection[0].rowStratId, selection[0].colStratId)
+      .then((matrix) => {
+        events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, matrix);
+      });
+
+    clusterMatrix(selection[1].item, selection[1].rowStratId, selection[1].colStratId)
+      .then((matrix) => {
+        events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, matrix);
+      });
+
     this.$node.select('button').attr('disabled', 'disabled').classed('loading', true);
   }
 }
