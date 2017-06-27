@@ -1,12 +1,30 @@
+.reorderToggle {
+  position: absolute;
+  top: -55px;
+  margin-left: 110px;
+
+  opacity: 1;
+  visibility: visible;
+  transition: visibility 0s ease, opacity 0.2s ease;
+
+  &.fadeout {
+    opacity: 0;
+    visibility: hidden;
+    transition-delay: 0.2s, 0s;
+  }
+}
 
 .reorderView {
   position: absolute;
   width: 100%;
   opacity: 1;
-  transition: opacity ease 0.2s;
+  visibility: visible;
+  transition: visibility 0s ease, opacity 0.2s ease;
 
   &.fadeout {
     opacity: 0;
+    visibility: hidden;
+    transition-delay: 0.2s, 0s;
   }
 
   line.slope {
@@ -29,5 +47,22 @@
     stroke: black;
     stroke-width: 1;
     shape-rendering: crispEdges;
+  }
+}
+
+// Fade out animation on focus
+.diffheatmap {
+  .dst.slopes {
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0s ease, opacity 0.2s ease;
+  }
+
+  &.focusOnReorder {
+    .dst.slopes {
+      opacity: 0;
+      visibility: hidden;
+      transition-delay: 0.2s, 0s;
+    }
   }
 }
