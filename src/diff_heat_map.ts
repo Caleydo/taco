@@ -213,6 +213,10 @@ class DiffHeatMap implements IAppView {
         events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
       }
     });
+
+    events.on(AppConstants.EVENT_FOCUS_ON_REORDER, (evt, isActive: boolean) => {
+      this.$node.classed('focusOnReorder', isActive);
+    });
   }
 
   /**

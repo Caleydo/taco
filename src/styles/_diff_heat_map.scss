@@ -11,6 +11,9 @@
     width: 100px;
     top: -35px;
     margin-left: -35px;
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0s ease, opacity 0.2s ease;
 
     .content-change {
       text-align: center;
@@ -58,18 +61,29 @@
       }
     }
   }
-}
 
-.taco-table {
-  position: relative;
-  border: 1px solid black;
-  margin: 0 50px;
-  //width: calc(100% - 100px);
-  background: $no-change-color;
+  .taco-table {
+    position: relative;
+    border: 1px solid black;
+    margin: 0 50px;
+    //width: calc(100% - 100px);
+    background: $no-change-color;
+    opacity: 1;
+    visibility: visible;
 
-  transition: height 0.2s ease, width 0.2s ease;
+    transition: visibility 0s ease, opacity 0.2s ease, width 0.2s ease, height 0.2s ease;
 
-  & div.transform > div {
-    position: absolute;
+    & div.transform > div {
+      position: absolute;
+    }
+  }
+
+  &.focusOnReorder {
+    .taco-table,
+    .legend {
+      opacity: 0;
+      visibility: hidden;
+      transition-delay: 0.2s, 0s, 0s, 0s;
+    }
   }
 }

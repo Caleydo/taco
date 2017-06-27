@@ -40,6 +40,7 @@ class ReorderView implements IAppView {
   private $node:d3.Selection<any>;
   private $srcSlopes:d3.Selection<any>;
   private $dstSlopes:d3.Selection<any>;
+  private $reorderToggle:d3.Selection<any>;
 
   // cached data
   private data: IDiffData;
@@ -83,6 +84,26 @@ class ReorderView implements IAppView {
   private build() {
     this.$srcSlopes = this.$node.append('g').classed('src slopes', true);
     this.$dstSlopes = this.$node.append('g').classed('dst slopes', true);
+
+    this.$reorderToggle = d3.select(this.parent)
+      .append('div')
+      .classed('reorderToggle', true)
+      .classed('fadeout', !ChangeTypes.REORDER.isActive);
+
+    const $button = this.$reorderToggle.append('button')
+      .attr('class', 'btn btn-sm btn-default')
+      .text('Focus on Reorder')
+      .on('click', () => {
+        const isActive = !$button.classed('active');
+        $button.classed('active', isActive);
+        events.fire(AppConstants.EVENT_FOCUS_ON_REORDER, isActive);
+      });
+  }
+
+  private deactivateAndHideReorderToggle() {
+    this.$reorderToggle.classed('fadeout', true);
+    this.$reorderToggle.select('button').classed('active', false);
+    events.fire(AppConstants.EVENT_FOCUS_ON_REORDER, false);
   }
 
   /**
@@ -112,18 +133,54 @@ class ReorderView implements IAppView {
           idType.on(ProductIDType.EVENT_SELECT_PRODUCT, this.selectionListener);
         }
         this.draw(pair[0], pair[1], diffData, scaleFactor);
+
+        // show reorder toogle (without activating it again)
+        if(ChangeTypes.REORDER.isActive) {
+          this.$reorderToggle.classed('fadeout', false);
+        }
       }
     });
 
     events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
       if(changeType === ChangeTypes.REORDER) {
         this.$node.classed('fadeout', !changeType.isActive);
+        this.$reorderToggle.classed('fadeout', false); // show reorder toogle (without activating it again)
       }
     });
 
     events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
       if(changeType === ChangeTypes.REORDER) {
         this.$node.classed('fadeout', !changeType.isActive);
+        this.deactivateAndHideReorderToggle();
+      }
+    });
+
+    let xPosBak = '0';
+
+    events.on(AppConstants.EVENT_FOCUS_ON_REORDER, (evt, isActive: boolean) => {
+      const $slopes = this.$srcSlopes.selectAll('.slope');
+      const $axis = this.$srcSlopes.select('.axis');
+
+      if(isActive) {
+        xPosBak = $slopes.attr('x2');
+        $slopes
+          .transition().duration(200)
+          .attr('x2', this.$node.property('clientWidth'));
+
+        $axis
+          .transition().duration(200)
+          .attr('x1', this.$node.property('clientWidth'))
+          .attr('x2', this.$node.property('clientWidth'));
+
+      } else {
+        $slopes
+          .transition().duration(200)
+          .attr('x2', xPosBak);
+
+        $axis
+          .transition().duration(200)
+          .attr('x1', xPosBak)
+          .attr('x2', xPosBak);
       }
     });
   }
@@ -297,6 +354,7 @@ class ReorderView implements IAppView {
   private clearContent() {
     this.$srcSlopes.selectAll('*').remove();
     this.$dstSlopes.selectAll('*').remove();
+    this.deactivateAndHideReorderToggle();
   }
 
 }

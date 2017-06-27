@@ -38,8 +38,10 @@ export class AppConstants {
   static EVENT_TIME_POINTS_SELECTED = 'eventTimePointsSelected';
   static EVENT_TIME_POINT_HOVERED = 'eventTimePointHovered';
 
-  static EVENT_SHOW_CHANGE = 'showChange';
-  static EVENT_HIDE_CHANGE = 'hideChange';
+  static EVENT_SHOW_CHANGE = 'eventShowChange';
+  static EVENT_HIDE_CHANGE = 'eventHideChange';
+
+  static EVENT_FOCUS_ON_REORDER = 'eventFocusOnReorder';
 
   /**
    * Parse the following date formats from strings using moment.js (see http://momentjs.com/docs/#/parsing/)
