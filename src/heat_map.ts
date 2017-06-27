@@ -8,6 +8,7 @@ import {IAppView} from './app';
 import * as d3 from 'd3';
 import {AppConstants} from './app_constants';
 import {IAnyMatrix} from 'phovea_core/src/matrix';
+import {INumberValueTypeDesc} from 'phovea_core/src/datatype';
 import {mixin} from 'phovea_core/src';
 
 /**
@@ -21,7 +22,8 @@ class HeatMap implements IAppView {
 
   private heatMapOptions = {
       initialScale: AppConstants.HEATMAP_CELL_SIZE,
-      color: ['black', 'white']
+      color: ['black', 'white', 'black'],
+      domain: [-1, 0, 1]
     };
 
   constructor(parent: Element, private options: any) {
@@ -103,9 +105,12 @@ class HeatMap implements IAppView {
         break;
     }
 
+    const maxRangeValue = Math.max(...(<INumberValueTypeDesc>dataset.valuetype).range.map((d) => Math.abs(d)));
+
     const options = mixin({}, this.heatMapOptions, {
       scale,
-      labels: showLabels
+      labels: showLabels,
+      domain: [-maxRangeValue, 0, maxRangeValue]
     });
 
     this.$node.classed('loading', true);
