@@ -19,6 +19,7 @@ class HeatMap implements IAppView {
   private $node:d3.Selection<any>;
 
   private matrix:IAnyMatrix;
+  private scaleFactor: {x: number, y: number};
 
   private heatMapOptions = {
       initialScale: AppConstants.HEATMAP_CELL_SIZE,
@@ -57,11 +58,24 @@ class HeatMap implements IAppView {
       this.clearContent();
     });
 
-    events.on(this.options.eventName, (evt, dataset:IAnyMatrix) => this.matrix = dataset);
+    events.on(this.options.eventName, (evt, dataset:IAnyMatrix) => {
+      this.matrix = dataset;
+      this.checkAndUpdate();
+    });
 
     events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor) => {
-      this.update(this.matrix, scaleFactor);
+      this.scaleFactor = scaleFactor;
+      this.checkAndUpdate();
     });
+  }
+
+  /**
+   * Run update only if scaleFactor and matrix data is set
+   */
+  private checkAndUpdate() {
+    if(this.matrix && this.scaleFactor) {
+      this.update(this.matrix, this.scaleFactor);
+    }
   }
 
   /**
