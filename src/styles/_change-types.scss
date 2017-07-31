@@ -14,7 +14,7 @@ div.removed-color {
 #btn-content.active,
 div.content-color {
   transition: background-color ease 0.2s;
-  background-color: $pos-content-change-color;
+  background-color: $neg-content-change-color;
 }
 
 #btn-nochange.active,
@@ -40,7 +40,7 @@ rect.removed-color {
 }
 
 rect.content-color {
-  fill: $pos-content-change-color;
+  fill: $neg-content-change-color;
   transition: fill ease 0.2s;
 }
 
