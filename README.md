@@ -9,7 +9,7 @@ This is the repository for the client code. **The server code is available in th
 
 A simple way to install taco is using the [taco_product](https://github.com/Caleydo/taco_product). 
 
-A [demonstration](http://taco-daily.caleydoapp.org) is available in the caleydoapp.org.
+A [demonstration](http://taco.caleydoapp.org) is available in the caleydoapp.org.
 
 Installation
 ------------
