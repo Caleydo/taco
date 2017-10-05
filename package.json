@@ -75,7 +75,7 @@
   },
   "name": "taco",
   "description": "Comparative visualization of large tabular data using Phovea",
-  "homepage": "http://caleydo.org",
+  "homepage": "http://taco.caleydo.org",
   "version": "1.0.0-SNAPSHOT",
   "author": {
     "name": "The Caleydo Team",
