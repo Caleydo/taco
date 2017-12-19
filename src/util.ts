@@ -10,7 +10,7 @@ import {hash} from 'phovea_core/src';
 import {ITacoTimePoint} from './data_set_selector';
 
 export function getTotalWidth(items:ITacoTimePoint[], itemWidth:number, totalWidth:number):number {
-  totalWidth = (items && items.length * itemWidth > totalWidth) ? (items.length * (itemWidth * 2)) : totalWidth;
+  totalWidth = (items && items.length * itemWidth > totalWidth) ? (items.length * (itemWidth * 2.5)) : totalWidth;
   return totalWidth;
 }
 

@@ -165,7 +165,7 @@ class Timeline implements IAppView {
     const xAxis = d3.svg.axis()
       .scale(timeScale)
       .ticks((startDate, endDate) => this.items.map((item) => item.time.toDate()))
-      .tickFormat(d3.time.format(this.items[0].timeFormat.d3)) // HACK considers only the time format of the first item
+      .tickFormat(<string>this.items[0].timeFormat.d3) // HACK considers only the time format of the first item
       .tickPadding(8);
 
     $node.call(xAxis);

@@ -15,6 +15,7 @@ import {selectTimePointFromHash} from './util';
 import {ProductIDType} from 'phovea_core/src/idtype';
 import {parse} from 'phovea_core/src/range';
 import {Moment} from 'moment';
+import Format = d3.time.Format;
 
 export interface ITacoDataset {
   key: string;
@@ -32,7 +33,7 @@ export interface ITacoTimePoint {
 }
 
 export interface ITacoTimeFormat {
-  d3: string;
+  d3: ((d:any) => string) | Format | string;
   moment: string;
   momentIsSame: moment.unitOfTime.StartOf;
 }
@@ -215,7 +216,7 @@ class DataProvider {
       .entries(matrices.filter((d) => dateRegex.test(d.desc.fqname) === true))
       .map((d:ITacoDataset) => {
         d.values = d.values.map((e:ITacoTimePoint) => {
-          e.timeFormat = {d3: '%Y-%m-%d', moment: 'YYYY-MM-DD', momentIsSame: 'day'};
+          e.timeFormat = {d3: d3.time.format('%Y-%m-%d'), moment: 'YYYY-MM-DD', momentIsSame: 'day'};
           e.item = e.values[0]; // shortcut reference
 
           const matches = e.key.match(dateRegex);
@@ -243,7 +244,7 @@ class DataProvider {
       .reduce((prev, curr) => prev.concat(curr), [])
       .map((d:ITacoDataset) => {
         d.values = d.values.map((e:ITacoTimePoint) => {
-          e.timeFormat = {d3: '%Y', moment: 'YYYY', momentIsSame: 'year'};
+          e.timeFormat = {d3: d3.time.format('%Y'), moment: 'YYYY', momentIsSame: 'year'};
           e.item = e.values[0]; // shortcut reference
 
           const matches = e.key.match(/(\d)\w+/g);
@@ -260,13 +261,23 @@ class DataProvider {
 
   prepareLastFmData(matrices:INumericalMatrix[]):ITacoDataset[] {
     const dateRegex = new RegExp(/.*(\d{4}[_-]\d{2}).*/); // matches YYYY_MM or YYYY-MM
-    const r = d3.nest()
+
+    let lastYear = 0;
+    const d3TimeFormat = (d:Date) => {
+      if(d.getFullYear() !== lastYear) {
+        lastYear = d.getFullYear();
+        return d3.time.format('%Y-%m')(d);
+      }
+      return d3.time.format('%m')(d);
+    };
+
+    return d3.nest()
       .key((d: INumericalMatrix) => 'last.fm').sortKeys(d3.ascending)
       .key((d: INumericalMatrix) => d.desc.name.match(dateRegex)[1]+'-01').sortKeys(d3.ascending) // e.g. 2010-03
       .entries(matrices.filter((d) => d.desc.name.toLowerCase().search('last.fm') > -1))
       .map((d:ITacoDataset) => {
         d.values = d.values.map((e:ITacoTimePoint) => {
-          e.timeFormat = {d3: '%m', moment: 'YYYY-MM', momentIsSame: 'month'};
+          e.timeFormat = {d3: d3TimeFormat, moment: 'YYYY-MM', momentIsSame: 'month'};
           e.item = e.values[0]; // shortcut reference
 
           const matches = e.key.match(/(\d)\w+/g);
@@ -279,7 +290,6 @@ class DataProvider {
         });
         return d;
       });
-    return r;
   }
 
 }
