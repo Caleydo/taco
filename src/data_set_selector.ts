@@ -201,7 +201,8 @@ class DataProvider {
       .then((list: INumericalMatrix[]) => {
         const olympicsData:ITacoDataset[] = this.prepareOlympicsData(list);
         const tcgaData:ITacoDataset[] = this.prepareTCGAData(list);
-        return [].concat(olympicsData, tcgaData);
+        const lastfmData:ITacoDataset[] = this.prepareLastFmData(list);
+        return [].concat(olympicsData, tcgaData, lastfmData);
       });
   }
 
@@ -255,6 +256,30 @@ class DataProvider {
         });
         return d;
       });
+  }
+
+  prepareLastFmData(matrices:INumericalMatrix[]):ITacoDataset[] {
+    const dateRegex = new RegExp(/.*(\d{4}[_-]\d{2}).*/); // matches YYYY_MM or YYYY-MM
+    const r = d3.nest()
+      .key((d: INumericalMatrix) => 'last.fm').sortKeys(d3.ascending)
+      .key((d: INumericalMatrix) => d.desc.name.match(dateRegex)[1]+'-01').sortKeys(d3.ascending) // e.g. 2010-03
+      .entries(matrices.filter((d) => d.desc.name.toLowerCase().search('last.fm') > -1))
+      .map((d:ITacoDataset) => {
+        d.values = d.values.map((e:ITacoTimePoint) => {
+          e.timeFormat = {d3: '%m', moment: 'YYYY-MM', momentIsSame: 'month'};
+          e.item = e.values[0]; // shortcut reference
+
+          const matches = e.key.match(/(\d)\w+/g);
+          e.time = (matches === null) ? null : moment(e.key, AppConstants.PARSE_DATE_FORMATS);
+
+          e.rowStratId = '';
+          e.colStratId = '';
+
+          return e;
+        });
+        return d;
+      });
+    return r;
   }
 
 }
