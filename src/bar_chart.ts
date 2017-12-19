@@ -8,7 +8,7 @@ import * as $ from 'jquery';
 import * as events from 'phovea_core/src/event';
 import {AppConstants, ChangeTypes, IChangeType} from './app_constants';
 import {IAppView} from './app';
-import {getTimeScale, selectTimePoint} from './util';
+import {getTimeScale, getTotalWidth, selectTimePoint} from './util';
 import {ITacoTimePoint} from './data_set_selector';
 
 /**
@@ -23,10 +23,10 @@ class BarChart implements IAppView {
   private totalWidth: number = 0;
 
   // Width of the bars in the bar chart
-  private widthBar: number = 16;
+  private widthBar: number = AppConstants.TIMELINE_BAR_WIDTH;
 
   // Width and Height for the bar chart between time points
-  private widthBarChart: number = 16;
+  private widthBarChart: number = AppConstants.TIMELINE_BAR_WIDTH;
   private heightBarChart: number = 100;
 
   private barScaling = d3.scale.linear()
@@ -61,7 +61,6 @@ class BarChart implements IAppView {
    * @returns {Promise<BarChart>}
    */
   init() {
-    this.resize();
     this.attachListener();
 
     // Return the promise directly as long there is no dynamical data to update
@@ -73,7 +72,7 @@ class BarChart implements IAppView {
    * It calculates the new width and sets it for the bar chart.
    */
   private resize() {
-    this.totalWidth = $(this.$node.node()).width();
+    this.totalWidth = getTotalWidth(this.items, AppConstants.TIMELINE_BAR_WIDTH, $(this.$node.node()).width());
     this.$node.style('width', this.totalWidth);
   }
 
@@ -114,6 +113,9 @@ class BarChart implements IAppView {
 
     // duplicate the first entry to show a bar for the first timestep
     items.unshift(items[0]);
+
+    // calculate total width and resize now
+    this.resize();
 
     const pairs = d3.pairs(items);
     const posXScale = getTimeScale(items, this.totalWidth);

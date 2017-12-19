@@ -7,7 +7,7 @@ import * as $ from 'jquery';
 import * as events from 'phovea_core/src/event';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
-import {getTimeScale, selectTimePoint} from './util';
+import {getTimeScale, getTotalWidth, selectTimePoint} from './util';
 import {ITacoTimePoint} from './data_set_selector';
 
 /**
@@ -68,7 +68,7 @@ class Timeline implements IAppView {
       }
       this.$svgTimeline.selectAll('text')[0] // the list is in the first element
         .map((d) => d3.select(d)) // convert to d3
-        .filter((d) => timePoints.filter((e) => e.time.isSame(d.datum())).length > 0) // check if datum is selected
+        .filter((d) => timePoints.filter((e) => e.time.isSame(d.datum(), e.timeFormat.momentIsSame)).length > 0) // check if datum is selected
         .forEach((d) => d.classed('active', true)); // add .active class
     });
 
@@ -96,7 +96,7 @@ class Timeline implements IAppView {
    * This method updates the graph and the timeline based on the window size and resizes the whole page.
    */
   private resize() {
-    this.totalWidth = $(this.$node.node()).width();
+    this.totalWidth = getTotalWidth(this.items, AppConstants.TIMELINE_BAR_WIDTH, $(this.$node.node()).width());
     this.$svgTimeline.attr('width', this.totalWidth);
     this.updateTimelineAxis(this.$svgTimeline.select('g.axis.x'));
   }

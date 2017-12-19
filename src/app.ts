@@ -52,32 +52,32 @@ export class App implements IAppView {
   private views:IAppViewDesc[] = [
     {
       view: 'DataSetSelector',
-      parent: 'selector',
+      parent: 'selector-dataset',
       options: {}
     },
     {
       view: 'FilterBar',
-      parent: 'selector',
+      parent: 'selector-dataset',
       options: {}
     },
     {
       view: 'BarChart',
-      parent: 'selector',
+      parent: 'selector-timepoint',
       options: {}
     },
     {
       view: 'Timeline',
-      parent: 'selector',
+      parent: 'selector-timepoint',
       options: {}
     },
     {
       view: 'MetaInfoBox',
-      parent: 'selector',
+      parent: 'selector-detail',
       options: {}
     },
     {
       view: 'DetailView',
-      parent: 'selector',
+      parent: 'selector-detail',
       options: {}
     },
     {
@@ -106,7 +106,9 @@ export class App implements IAppView {
   constructor(parent:Element) {
     this.$node = d3.select(parent);
 
-    this.$node.append('div').classed('selector', true);
+    this.$node.append('div').classed('selector-dataset', true);
+    this.$node.append('div').classed('selector-timepoint', true);
+    this.$node.append('div').classed('selector-detail', true);
     this.$node.append('div').classed('comparison', true);
   }
 

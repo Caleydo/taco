@@ -9,6 +9,11 @@ import {AppConstants} from './app_constants';
 import {hash} from 'phovea_core/src';
 import {ITacoTimePoint} from './data_set_selector';
 
+export function getTotalWidth(items:ITacoTimePoint[], itemWidth:number, totalWidth:number):number {
+  totalWidth = (items && items.length * itemWidth > totalWidth) ? (items.length * (itemWidth * 2)) : totalWidth;
+  return totalWidth;
+}
+
 export function getTimeScale(items:ITacoTimePoint[], totalWidth:number, padding:number = 20) {
   const firstTimePoint = moment(items[0].time).toDate();
   const lastTimePoint = moment(items[items.length - 1].time).toDate();

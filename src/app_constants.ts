@@ -51,6 +51,8 @@ export class AppConstants {
 
   static MAXIMAL_HEATMAP_LABEL_SIZE = 70;
 
+  static TIMELINE_BAR_WIDTH = 16;
+
   /**
    * Initial size of a heatmap cell
    * @type {number}
