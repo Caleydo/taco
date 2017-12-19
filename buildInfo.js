@@ -153,6 +153,7 @@ function metaData(pkg) {
     name: pkg.name,
     version: pkg.version,
     repository: pkg.repository.url,
+    homepage: pkg.homepage,
     description: pkg.description,
     screenshot: resolveScreenshot()
   };
