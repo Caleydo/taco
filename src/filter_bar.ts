@@ -39,9 +39,9 @@ class FilterBar implements IAppView {
    */
   private build() {
 
-    this.$node.html(`<div id="nav-bar">  
+    this.$node.html(`<div id="nav-bar">
       <div class="btn-group change" role="group" aria-label="Toggle visibility of changes by type">
-      </div>  
+      </div>
     </div>`);
 
     const $buttons = this.$node.select('.btn-group.change')

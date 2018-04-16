@@ -292,14 +292,14 @@ class ReorderView implements IAppView {
    */
   private markLine(id:string, isActive:boolean, cssClass:string = 'hovered') {
     this.$srcSlopes.selectAll('line.slope')
-      .each(function(d){
+      .each(function(d) {
         if(d.id === id) {
           d3.select(this).classed(cssClass, isActive);
         }
       });
 
     this.$dstSlopes.selectAll('line.slope')
-      .each(function(d){
+      .each(function(d) {
         if(d.id === id) {
           d3.select(this).classed(cssClass, isActive);
         }
