@@ -1,0 +1,46 @@
+image: circleci/node:6-browsers
+
+variables:
+  GIT_DEPTH: "1"
+
+cache:
+  key: "$CI_REPOSITORY_URL-$CI_COMMIT_REF_NAME"
+  paths:
+  - node_modules
+
+before_script:
+  # Install ssh-agent if not already installed, it is required by Docker.
+  # (change apt-get to yum if you use a CentOS-based image)
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+
+  # Run ssh-agent (inside the build environment)
+  - eval $(ssh-agent -s)
+
+  # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+
+  # For Docker builds disable host key checking. Be aware that by adding that
+  # you are suspectible to man-in-the-middle attacks.
+  # WARNING: Use this only with the Docker executor, if you use it with shell
+  # you will overwrite your user's SSH config.
+  - mkdir -p ~/.ssh
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+stages:
+  - install
+  - build
+
+install-npm-wee:
+  stage: install
+  script:
+  - npm install
+
+dist:
+  stage: build
+  script:
+    - npm run dist
+  allow_failure: false
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - dist

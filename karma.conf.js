@@ -14,7 +14,7 @@ module.exports = (config) => {
 
     // list of files / patterns to load in the browser
     files: [
-      'tests.webpack.js' //just load this file
+      'tests.webpack.js' // just load this file
     ],
 
     // preprocess matching files before serving them to the browser
