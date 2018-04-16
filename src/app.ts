@@ -17,7 +17,7 @@ export interface IAppView {
    * that is resolved as soon the view is completely initialized.
    * @returns {Promise<IAppView>}
    */
-  init():Promise<IAppView>;
+  init(): Promise<IAppView>;
 
 }
 
@@ -49,7 +49,7 @@ export class App implements IAppView {
 
   private $node;
 
-  private views:IAppViewDesc[] = [
+  private views: IAppViewDesc[] = [
     {
       view: 'DataSetSelector',
       parent: 'selector-dataset',
@@ -103,7 +103,7 @@ export class App implements IAppView {
     }
   ];
 
-  constructor(parent:Element) {
+  constructor(parent: Element) {
     this.$node = d3.select(parent);
 
     this.$node.append('div').classed('selector-dataset', true);
@@ -186,6 +186,6 @@ export class App implements IAppView {
  * @param parent
  * @returns {App}
  */
-export function create(parent:Element) {
+export function create(parent: Element) {
   return new App(parent);
 }

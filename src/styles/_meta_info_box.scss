@@ -7,7 +7,7 @@
   align-content: stretch;
   justify-content: space-around;
 
-  & > div{
+  & > div {
     width: 33%;
   }
 
@@ -20,7 +20,7 @@
     text-align: center;
 
     // show placeholder text if boxes are empty
-    &:empty{
+    &:empty {
       display: flex;
       align-items: center;
 

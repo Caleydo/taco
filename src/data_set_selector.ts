@@ -33,7 +33,7 @@ export interface ITacoTimePoint {
 }
 
 export interface ITacoTimeFormat {
-  d3: ((d:any) => string) | Format | string;
+  d3: ((d: any) => string) | Format | string;
   moment: string;
   momentIsSame: moment.unitOfTime.StartOf;
 }
@@ -50,7 +50,7 @@ class DataSetSelector implements IAppView {
   private trackedSelections: ProductIDType = null;
   private onSelectionChanged = () => this.updateSelectionHash();
 
-  constructor(parent:Element, private options:any) {
+  constructor(parent: Element, private options: any) {
     this.$node = d3.select('.navbar-header')
       .append('div')
       .classed('dataSelector', true)
@@ -85,15 +85,15 @@ class DataSetSelector implements IAppView {
       .classed('form-control', true)
       .on('change', () => {
         const selectedData = this.$select.selectAll('option')
-            .filter((d, i) => i === this.$select.property('selectedIndex'))
-            .data();
+          .filter((d, i) => i === this.$select.property('selectedIndex'))
+          .data();
 
         hash.setProp(AppConstants.HASH_PROPS.DATASET, selectedData[0].key);
         hash.removeProp(AppConstants.HASH_PROPS.TIME_POINTS);
         hash.removeProp(AppConstants.HASH_PROPS.DETAIL_VIEW);
         hash.removeProp(AppConstants.HASH_PROPS.SELECTION);
 
-        if(selectedData.length > 0) {
+        if (selectedData.length > 0) {
           events.fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
           this.trackSelections(selectedData[0].values[0].item);
         }
@@ -146,7 +146,7 @@ class DataSetSelector implements IAppView {
   private update() {
     const dataprovider = new DataProvider();
     return dataprovider.load()
-      .then((data:ITacoDataset[]) => {
+      .then((data: ITacoDataset[]) => {
         const $options = this.$select.selectAll('option').data(data);
 
         $options.enter().append('option');
@@ -157,10 +157,10 @@ class DataSetSelector implements IAppView {
 
         $options.exit().remove();
 
-        if(hash.has(AppConstants.HASH_PROPS.DATASET)) {
+        if (hash.has(AppConstants.HASH_PROPS.DATASET)) {
           const selectedData = data.filter((d, i) => d.key === hash.getProp(AppConstants.HASH_PROPS.DATASET));
 
-          if(selectedData.length > 0) {
+          if (selectedData.length > 0) {
             this.$select.property('selectedIndex', data.indexOf(selectedData[0]));
             events.fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
 
@@ -195,27 +195,27 @@ class DataProvider {
    */
   load() {
     return data
-      //.list((d) => {
-      //  return d.desc.type === 'matrix' && (<IMatrixDataDescription<IValueTypeDesc>>d.desc).value.type === VALUE_TYPE_REAL; // return numerical matrices only
-      //})
+    //.list((d) => {
+    //  return d.desc.type === 'matrix' && (<IMatrixDataDescription<IValueTypeDesc>>d.desc).value.type === VALUE_TYPE_REAL; // return numerical matrices only
+    //})
       .list({'type': 'matrix'}) // use server-side filtering
       .then((list: INumericalMatrix[]) => {
-        const olympicsData:ITacoDataset[] = this.prepareOlympicsData(list);
-        const tcgaData:ITacoDataset[] = this.prepareTCGAData(list);
-        const lastfmData:ITacoDataset[] = this.prepareLastFmData(list);
+        const olympicsData: ITacoDataset[] = this.prepareOlympicsData(list);
+        const tcgaData: ITacoDataset[] = this.prepareTCGAData(list);
+        const lastfmData: ITacoDataset[] = this.prepareLastFmData(list);
         return [].concat(olympicsData, tcgaData, lastfmData);
       });
   }
 
-  prepareTCGAData(matrices:INumericalMatrix[]):ITacoDataset[] {
+  prepareTCGAData(matrices: INumericalMatrix[]): ITacoDataset[] {
     const dateRegex = new RegExp(/.*(\d{4})[_-](\d{2})[_-](\d{2}).*/); // matches YYYY_MM_DD or YYYY-MM-DD
 
     return d3.nest()
       .key((d: INumericalMatrix) => d.desc.fqname.split('/')[1]).sortKeys(d3.ascending) // e.g. Copynumber, mRNA
       .key((d: INumericalMatrix) => d.desc.fqname.split('/')[0]).sortKeys(d3.ascending) // e.g., TCGA_GBM_2013_02_22
       .entries(matrices.filter((d) => dateRegex.test(d.desc.fqname) === true))
-      .map((d:ITacoDataset) => {
-        d.values = d.values.map((e:ITacoTimePoint) => {
+      .map((d: ITacoDataset) => {
+        d.values = d.values.map((e: ITacoTimePoint) => {
           e.timeFormat = {d3: d3.time.format('%Y-%m-%d'), moment: 'YYYY-MM-DD', momentIsSame: 'day'};
           e.item = e.values[0]; // shortcut reference
 
@@ -232,7 +232,7 @@ class DataProvider {
       });
   }
 
-  prepareOlympicsData(matrices:INumericalMatrix[]):ITacoDataset[] {
+  prepareOlympicsData(matrices: INumericalMatrix[]): ITacoDataset[] {
     const olympicsCats = ['total', 'bronze', 'silver', 'gold'];
     return olympicsCats
       .map((cat) => {
@@ -242,8 +242,8 @@ class DataProvider {
           .entries(matrices.filter((d) => d.desc.fqname.toLowerCase().search('olympic') > -1 && d.desc.fqname.toLowerCase().search(cat) > -1));
       })
       .reduce((prev, curr) => prev.concat(curr), [])
-      .map((d:ITacoDataset) => {
-        d.values = d.values.map((e:ITacoTimePoint) => {
+      .map((d: ITacoDataset) => {
+        d.values = d.values.map((e: ITacoTimePoint) => {
           e.timeFormat = {d3: d3.time.format('%Y'), moment: 'YYYY', momentIsSame: 'year'};
           e.item = e.values[0]; // shortcut reference
 
@@ -259,12 +259,12 @@ class DataProvider {
       });
   }
 
-  prepareLastFmData(matrices:INumericalMatrix[]):ITacoDataset[] {
+  prepareLastFmData(matrices: INumericalMatrix[]): ITacoDataset[] {
     const dateRegex = new RegExp(/.*(\d{4}[_-]\d{2}).*/); // matches YYYY_MM or YYYY-MM
 
     let lastYear = 0;
-    const d3TimeFormat = (d:Date) => {
-      if(d.getFullYear() !== lastYear) {
+    const d3TimeFormat = (d: Date) => {
+      if (d.getFullYear() !== lastYear) {
         lastYear = d.getFullYear();
         return d3.time.format('%Y-%m')(d);
       }
@@ -273,10 +273,10 @@ class DataProvider {
 
     return d3.nest()
       .key((d: INumericalMatrix) => 'last.fm').sortKeys(d3.ascending)
-      .key((d: INumericalMatrix) => d.desc.name.match(dateRegex)[1]+'-01').sortKeys(d3.ascending) // e.g. 2010-03
+      .key((d: INumericalMatrix) => d.desc.name.match(dateRegex)[1] + '-01').sortKeys(d3.ascending) // e.g. 2010-03
       .entries(matrices.filter((d) => d.desc.name.toLowerCase().search('last.fm') > -1))
-      .map((d:ITacoDataset) => {
-        d.values = d.values.map((e:ITacoTimePoint) => {
+      .map((d: ITacoDataset) => {
+        d.values = d.values.map((e: ITacoTimePoint) => {
           e.timeFormat = {d3: d3TimeFormat, moment: 'YYYY-MM', momentIsSame: 'month'};
           e.item = e.values[0]; // shortcut reference
 
@@ -300,6 +300,6 @@ class DataProvider {
  * @param options
  * @returns {DataSetSelector}
  */
-export function create(parent:Element, options:any) {
+export function create(parent: Element, options: any) {
   return new DataSetSelector(parent, options);
 }

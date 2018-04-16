@@ -17,8 +17,8 @@ import {ITacoTimePoint} from './data_set_selector';
  */
 class BarChart implements IAppView {
 
-  private $node:d3.Selection<any>;
-  private items:ITacoTimePoint[];
+  private $node: d3.Selection<any>;
+  private items: ITacoTimePoint[];
 
   private totalWidth: number = 0;
 
@@ -38,7 +38,7 @@ class BarChart implements IAppView {
    * @param pair
    * @returns {Promise<any>}
    */
-  private static getJSON(pair):Promise<any> {
+  private static getJSON(pair): Promise<any> {
     const operations = ChangeTypes.forURL();
     return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/bar_chart`);
   }
@@ -83,23 +83,23 @@ class BarChart implements IAppView {
   private attachListener() {
     // Call the resize function whenever a resize event occurs
     events.on(AppConstants.EVENT_RESIZE, () => {
-      if(this.items) {
+      if (this.items) {
         this.resize();
         this.updateItems(this.items);
       }
     });
 
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items:ITacoTimePoint[]) => {
+    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items: ITacoTimePoint[]) => {
       this.items = items;
-      this.barScaling.domain([0,1]);
+      this.barScaling.domain([0, 1]);
       this.updateItems(items);
     });
 
-    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType:IChangeType) => {
+    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
       this.scaleBarsHeight(); // just rescale the height of the bars
     });
 
-    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType:IChangeType) => {
+    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
       this.scaleBarsHeight(); // just rescale the height of the bars
     });
   }
@@ -108,7 +108,7 @@ class BarChart implements IAppView {
    * This method updates the chart upon changing the data or if new data arrives.
    * @param items which are used for the chart
    */
-  private updateItems(items:ITacoTimePoint[]) {
+  private updateItems(items: ITacoTimePoint[]) {
     const that = this;
 
     // duplicate the first entry to show a bar for the first timestep
@@ -137,12 +137,12 @@ class BarChart implements IAppView {
       .on('click', (d) => {
         selectTimePoint(d[1]);
       })
-      .each(function(pair, i) {
+      .each(function (pair, i) {
         const ids = pair.map((d: any) => d.item.desc.id);
         return BarChart.getJSON(ids)
           .then((json) => {
             // shift no-change to additions for first bar
-            if(i === 0) {
+            if (i === 0) {
               json.counts.a_counts = json.counts.no_counts;
               json.counts.no_counts = 0;
               json.ratios.a_ratio = json.ratios.no_a_ratio;
@@ -171,7 +171,7 @@ class BarChart implements IAppView {
     const barData = this.getBarData(data.counts, 'countName');
 
     // update the maximum bar height
-    const maxDomain = Math.max(this.barScaling.domain()[1], barData.map((d) => d.value).reduce((a,b) => a+b, 0));
+    const maxDomain = Math.max(this.barScaling.domain()[1], barData.map((d) => d.value).reduce((a, b) => a + b, 0));
     this.barScaling.domain([this.barScaling.domain()[0], maxDomain]);
 
     //individual bars in the bar group div
@@ -187,7 +187,7 @@ class BarChart implements IAppView {
 
     // move the reorder bar into the content change element
     $parent.selectAll(`.bar.${ChangeTypes.REORDER.type}-color`)[0]
-      .forEach((d:HTMLElement) => {
+      .forEach((d: HTMLElement) => {
         d.parentElement.querySelector(`.bar.${ChangeTypes.CONTENT.type}-color`).appendChild(d);
       });
 
@@ -197,8 +197,8 @@ class BarChart implements IAppView {
   private scaleBarsHeight() {
     const that = this;
     this.$node.selectAll('.bar')
-      .style('height', function(d) {
-        if(ChangeTypes.TYPE_ARRAY.filter((ct) => ct.type === d.type)[0].isActive) {
+      .style('height', function (d) {
+        if (ChangeTypes.TYPE_ARRAY.filter((ct) => ct.type === d.type)[0].isActive) {
           d3.select(this).style('border-width', null);
           return that.barScaling(d.value) + 'px';
         }
@@ -215,7 +215,7 @@ class BarChart implements IAppView {
    */
   private getBarData(data, propertyName) {
     return ChangeTypes.TYPE_ARRAY
-      //.filter((d) => d.isActive === true)
+    //.filter((d) => d.isActive === true)
       .map((d) => {
         return {
           type: d.type,

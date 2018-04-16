@@ -72,15 +72,15 @@ export interface IDiffData {
    * Not further used or specified
    */
   merge: {
-    merged_cols:any[];
-    merged_rows:any[];
-    split_cols:any[];
-    split_rows:any[];
+    merged_cols: any[];
+    merged_rows: any[];
+    split_cols: any[];
+    split_rows: any[];
   };
 }
 
 export interface IDiffReorderChange {
-  to:number;
+  to: number;
   from: number;
   id: string;
   diff: number; // distance from-to
@@ -99,30 +99,30 @@ class DiffHeatMap implements IAppView {
   private selectedTables: INumericalMatrix[];
 
   private readonly contentScale = d3.scale.linear<string>()
-      .domain([-1, 0, 1])
-      .range([COLOR_CONTENT_NEGATIVE, COLOR_NO_CHANGE, COLOR_CONTENT_POSITIVE])
-      .clamp(true);
+    .domain([-1, 0, 1])
+    .range([COLOR_CONTENT_NEGATIVE, COLOR_NO_CHANGE, COLOR_CONTENT_POSITIVE])
+    .clamp(true);
 
-  private margin:number = 2 * 50;
+  private margin: number = 2 * 50;
 
   /**
    * The height that should be used, if the height of the container is 0
    * @type {number}
    */
-  private minimumHeight:number = 300;
+  private minimumHeight: number = 300;
 
-  private scaleFactor = { x: 1, y: 1};
+  private scaleFactor = {x: 1, y: 1};
 
   private selectionListener = (evt: any) => this.update();
 
-  private activeChangeTypes:Set<string> = new Set<string>(ChangeTypes.TYPE_ARRAY.filter((d) =>d.isActive).map((d) => d.type));
+  private activeChangeTypes: Set<string> = new Set<string>(ChangeTypes.TYPE_ARRAY.filter((d) => d.isActive).map((d) => d.type));
 
   private static getJSON(pair: string[]) {
     const operations = ChangeTypes.forURL();
     return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/diff_heat_map`);
   }
 
-  constructor(public parent:Element, private options:any) {
+  constructor(public parent: Element, private options: any) {
     this.$node = d3.select(parent)
       .append('div')
       .classed('diffheatmap', true);
@@ -177,7 +177,7 @@ class DiffHeatMap implements IAppView {
 
     //attach event listener
     events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items: INumericalMatrix[]) => {
-      if(items.length !== 2) {
+      if (items.length !== 2) {
         return;
       }
 
@@ -208,7 +208,7 @@ class DiffHeatMap implements IAppView {
     events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
 
     events.on(AppConstants.EVENT_RESIZE, () => {
-      if(this.data) {
+      if (this.data) {
         this.drawDiffHeatmap(this.data);
         events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
       }
@@ -223,12 +223,12 @@ class DiffHeatMap implements IAppView {
    * Toggle a given change type and update the view
    * @param changeType
    */
-  private toggleChangeType(changeType:IChangeType) {
-    if(!this.data) {
+  private toggleChangeType(changeType: IChangeType) {
+    if (!this.data) {
       return;
     }
 
-    if(changeType === ChangeTypes.CONTENT) {
+    if (changeType === ChangeTypes.CONTENT) {
       this.$node.select('div.legend').classed('hidden', !changeType.isActive);
     }
 
@@ -266,7 +266,7 @@ class DiffHeatMap implements IAppView {
 
     let $root = this.$node.select('canvas.taco-table');
 
-    if($root.empty()) {
+    if ($root.empty()) {
       $root = this.$node.append('canvas')
         .attr('class', 'taco-table');
     }
@@ -375,19 +375,19 @@ class DiffHeatMap implements IAppView {
     let height = data.union.ur_ids.length;
 
     // substract rows and cols for invisible change types
-    if(this.activeChangeTypes.has(ChangeTypes.ADDED.type) === false) {
+    if (this.activeChangeTypes.has(ChangeTypes.ADDED.type) === false) {
       width -= data.structure.added_cols.length;
     }
 
-    if(this.activeChangeTypes.has(ChangeTypes.REMOVED.type) === false) {
+    if (this.activeChangeTypes.has(ChangeTypes.REMOVED.type) === false) {
       width -= data.structure.deleted_cols.length;
     }
 
-    if(this.activeChangeTypes.has(ChangeTypes.ADDED.type) === false) {
+    if (this.activeChangeTypes.has(ChangeTypes.ADDED.type) === false) {
       height -= data.structure.added_rows.length;
     }
 
-    if(this.activeChangeTypes.has(ChangeTypes.REMOVED.type) === false) {
+    if (this.activeChangeTypes.has(ChangeTypes.REMOVED.type) === false) {
       height -= data.structure.deleted_rows.length;
     }
 
@@ -400,21 +400,21 @@ class DiffHeatMap implements IAppView {
 
     ctx.scale(scaleFactorX, scaleFactorY);
 
-    const calcColPos = (pos:number) => {
-      if(this.activeChangeTypes.has(ChangeTypes.ADDED.type) === false) {
+    const calcColPos = (pos: number) => {
+      if (this.activeChangeTypes.has(ChangeTypes.ADDED.type) === false) {
         pos -= data.structure.added_cols.filter((d) => d.pos <= pos).length;
       }
-      if(this.activeChangeTypes.has(ChangeTypes.REMOVED.type) === false) {
+      if (this.activeChangeTypes.has(ChangeTypes.REMOVED.type) === false) {
         pos -= data.structure.deleted_cols.filter((d) => d.pos <= pos).length;
       }
       return pos;
     };
 
-    const calcRowPos = (pos:number) => {
-      if(this.activeChangeTypes.has(ChangeTypes.ADDED.type) === false) {
+    const calcRowPos = (pos: number) => {
+      if (this.activeChangeTypes.has(ChangeTypes.ADDED.type) === false) {
         pos -= data.structure.added_rows.filter((d) => d.pos <= pos).length;
       }
-      if(this.activeChangeTypes.has(ChangeTypes.REMOVED.type) === false) {
+      if (this.activeChangeTypes.has(ChangeTypes.REMOVED.type) === false) {
         pos -= data.structure.deleted_rows.filter((d) => d.pos <= pos).length;
       }
       return pos;
@@ -482,9 +482,9 @@ class DiffHeatMap implements IAppView {
     }
 
     const rowLookup = new Map<number, number>();
-    data.union.r_ids.map((d,i) => rowLookup.set(d,i));
+    data.union.r_ids.map((d, i) => rowLookup.set(d, i));
     const colLookup = new Map<number, number>();
-    data.union.c_ids.map((d,i) => colLookup.set(d,i));
+    data.union.c_ids.map((d, i) => colLookup.set(d, i));
 
     selections.forEach((cell) => {
       if (cell.isUnbound) {
@@ -510,7 +510,7 @@ class DiffHeatMap implements IAppView {
         const row = rowLookup.get(i);
         const col = colLookup.get(j);
         ctx.fillRect(col, row, 1, 1);
-      }, [0,0]);
+      }, [0, 0]);
     });
 
     ctx.restore();
@@ -520,10 +520,10 @@ class DiffHeatMap implements IAppView {
    * Draw a legend for the content changes
    * @param data
    */
-  private drawLegend(data:IDiffData) {
+  private drawLegend(data: IDiffData) {
     let $legend = this.$node.select('div.legend');
 
-    if($legend.empty()) {
+    if ($legend.empty()) {
       $legend = this.$node.append('div')
         .classed('legend', true)
         .classed('hidden', !ChangeTypes.CONTENT.isActive);
@@ -540,7 +540,7 @@ class DiffHeatMap implements IAppView {
         max: 1,
         step: 0.01,
         values,
-        slide: ( event, ui ) => {
+        slide: (event, ui) => {
           this.contentScale.domain([ui.values[0], 0, ui.values[1]]); // note the `0` in the center for white
           $minVal.text(ui.values[0]);
           $maxVal.text(ui.values[1]);
@@ -567,6 +567,6 @@ class DiffHeatMap implements IAppView {
  * @param options
  * @returns {DiffHeatMap}
  */
-export function create(parent:Element, options:any) {
+export function create(parent: Element, options: any) {
   return new DiffHeatMap(parent, options);
 }

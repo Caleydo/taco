@@ -15,9 +15,9 @@ import {join, all} from 'phovea_core/src/range';
 
 class DetailView implements IAppView {
 
-  private $node:d3.Selection<any>;
+  private $node: d3.Selection<any>;
 
-  constructor(public parent:Element, private options:any) {
+  constructor(public parent: Element, private options: any) {
     this.$node = d3.select(parent)
       .append('div')
       .classed('invisibleClass', true)
@@ -51,32 +51,32 @@ class DetailView implements IAppView {
       this.$node.select('button').attr('disabled', 'disabled').classed('loading', false);
     });
 
-    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items:ITacoTimePoint[]) => {
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items: ITacoTimePoint[]) => {
       this.openEvents(items);
     });
 
-    events.on(AppConstants.EVENT_OPEN_DETAIL_VIEW, (evt, items:ITacoTimePoint[]) => {
+    events.on(AppConstants.EVENT_OPEN_DETAIL_VIEW, (evt, items: ITacoTimePoint[]) => {
       this.loadDetailView(items);
     });
 
     let heatmapsLoaded = 0;
     events.on(AppConstants.EVENT_HEATMAP_LOADED, () => {
       heatmapsLoaded++;
-      if(heatmapsLoaded === 3) {
+      if (heatmapsLoaded === 3) {
         this.$node.select('button').classed('loading', false);
         heatmapsLoaded = 0;
       }
     });
     events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, () => {
       heatmapsLoaded++;
-      if(heatmapsLoaded === 3) {
+      if (heatmapsLoaded === 3) {
         this.$node.select('button').classed('loading', false);
         heatmapsLoaded = 0;
       }
     });
   }
 
-  private openEvents (items:ITacoTimePoint[]) {
+  private openEvents(items: ITacoTimePoint[]) {
     this.$node.select('button')
       .attr('disabled', (items.length === 2) ? null : 'disabled')
       .on('click', (e) => {
@@ -88,8 +88,8 @@ class DetailView implements IAppView {
    * Fire events to load detail view based on the selected time points
    * @param selection
    */
-  private loadDetailView(selection:ITacoTimePoint[]) {
-    if(selection.length !== 2) {
+  private loadDetailView(selection: ITacoTimePoint[]) {
+    if (selection.length !== 2) {
       return;
     }
 
@@ -97,18 +97,18 @@ class DetailView implements IAppView {
 
     events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, selection.map((d) => d.item));
 
-    const loadStratIds = (stratName:string) => {
+    const loadStratIds = (stratName: string) => {
       return data.get(stratName)
         .then((s) => s.ids())
         .catch(() => all());
     };
 
-    const clusterMatrix = (matrix:INumericalMatrix, rowStratId:string, colStratId:string) => {
-      if(colStratId !== '' && rowStratId !== '') {
+    const clusterMatrix = (matrix: INumericalMatrix, rowStratId: string, colStratId: string) => {
+      if (colStratId !== '' && rowStratId !== '') {
         return Promise.all([
-            loadStratIds(matrix.desc.id + rowStratId),
-            loadStratIds(matrix.desc.id + colStratId)
-          ])
+          loadStratIds(matrix.desc.id + rowStratId),
+          loadStratIds(matrix.desc.id + colStratId)
+        ])
           .then((ranges) => matrix.idView(join(ranges))) // Range must be [1] row ids, [2] col ids
           .then((matrixView) => <INumericalMatrix>matrixView)
           .catch((error) => {
@@ -138,6 +138,6 @@ class DetailView implements IAppView {
  * @param options
  * @returns {DiffHeatMap}
  */
-export function create(parent:Element, options:any) {
+export function create(parent: Element, options: any) {
   return new DetailView(parent, options);
 }

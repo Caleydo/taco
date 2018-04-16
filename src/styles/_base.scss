@@ -4,7 +4,7 @@ body, html {
   //height: auto !important;
 }
 
-h1,h2,h3,h4,h5,h6 {
+h1, h2, h3, h4, h5, h6 {
   font-family: Yantramanav, 'Helvetica Neue', Helvetica, sans-serif !important;
 }
 
@@ -33,8 +33,12 @@ b,
  * @usage: `animation: color_change 1s ease-out infinite alternate;`
  */
 @keyframes color_change {
-  from { background-color: transparent; }
-  to { background-color: $hover-color; }
+  from {
+    background-color: transparent;
+  }
+  to {
+    background-color: $hover-color;
+  }
 }
 
 .loading {

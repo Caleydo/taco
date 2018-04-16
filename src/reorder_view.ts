@@ -37,10 +37,10 @@ interface IReorderChange {
 
 class ReorderView implements IAppView {
 
-  private $node:d3.Selection<any>;
-  private $srcSlopes:d3.Selection<any>;
-  private $dstSlopes:d3.Selection<any>;
-  private $reorderToggle:d3.Selection<any>;
+  private $node: d3.Selection<any>;
+  private $srcSlopes: d3.Selection<any>;
+  private $dstSlopes: d3.Selection<any>;
+  private $reorderToggle: d3.Selection<any>;
 
   // cached data
   private data: IDiffData;
@@ -50,13 +50,13 @@ class ReorderView implements IAppView {
     orientation: EOrientation.ROW
   };
 
-  private slopeWidth:number = 30;
+  private slopeWidth: number = 30;
 
-  private scale:d3.scale.Linear<number, number> = d3.scale.linear().range([0, 200]);
+  private scale: d3.scale.Linear<number, number> = d3.scale.linear().range([0, 200]);
 
   private selectionListener = (evt: any) => this.selectLine();
 
-  constructor(public parent:Element, options:any) {
+  constructor(public parent: Element, options: any) {
     this.options = mixin(this.options, options);
 
     this.$node = d3.select(parent)
@@ -87,7 +87,7 @@ class ReorderView implements IAppView {
   }
 
   private buildRenderToggle() {
-    if(this.$reorderToggle) {
+    if (this.$reorderToggle) {
       return;
     }
 
@@ -107,7 +107,7 @@ class ReorderView implements IAppView {
   }
 
   private deactivateAndHideReorderToggle() {
-    if(!this.$reorderToggle) {
+    if (!this.$reorderToggle) {
       return;
     }
     this.$reorderToggle.classed('fadeout', true);
@@ -133,8 +133,8 @@ class ReorderView implements IAppView {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair:INumericalMatrix[], diffData:IDiffData, scaleFactor:{x: number, y: number}) => {
-      if(pair.length === 2) {
+    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair: INumericalMatrix[], diffData: IDiffData, scaleFactor: { x: number, y: number }) => {
+      if (pair.length === 2) {
         this.data = diffData;
         this.selectedTables = pair;
         const idType = this.getProductIDType();
@@ -146,21 +146,21 @@ class ReorderView implements IAppView {
         this.buildRenderToggle();
 
         // show reorder toogle (without activating it again)
-        if(ChangeTypes.REORDER.isActive) {
+        if (ChangeTypes.REORDER.isActive) {
           this.$reorderToggle.classed('fadeout', false);
         }
       }
     });
 
     events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
-      if(changeType === ChangeTypes.REORDER) {
+      if (changeType === ChangeTypes.REORDER) {
         this.$node.classed('fadeout', !changeType.isActive);
         this.$reorderToggle.classed('fadeout', false); // show reorder toogle (without activating it again)
       }
     });
 
     events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
-      if(changeType === ChangeTypes.REORDER) {
+      if (changeType === ChangeTypes.REORDER) {
         this.$node.classed('fadeout', !changeType.isActive);
         this.deactivateAndHideReorderToggle();
       }
@@ -172,7 +172,7 @@ class ReorderView implements IAppView {
       const $slopes = this.$srcSlopes.selectAll('.slope');
       const $axis = this.$srcSlopes.select('.axis');
 
-      if(isActive) {
+      if (isActive) {
         xPosBak = $slopes.attr('x2');
         $slopes
           .transition().duration(200)
@@ -203,7 +203,7 @@ class ReorderView implements IAppView {
    * @param diffData
    * @param scaleFactor
    */
-  private draw(src: INumericalMatrix, dst: INumericalMatrix, diffData:IDiffData, scaleFactor: {x: number, y: number}) {
+  private draw(src: INumericalMatrix, dst: INumericalMatrix, diffData: IDiffData, scaleFactor: { x: number, y: number }) {
     switch (this.options.orientation) {
       case EOrientation.COLUMN:
         this.scale.domain([0, Math.max(src.desc.size[1], dst.desc.size[1])]);
@@ -248,7 +248,7 @@ class ReorderView implements IAppView {
    * @param reorders
    * @param scaleFactor
    */
-  private drawColumns($parent:d3.Selection<any>, reorders:IReorderChange[], scaleFactor:number) {
+  private drawColumns($parent: d3.Selection<any>, reorders: IReorderChange[], scaleFactor: number) {
     throw new Error('Drawing reorder view in column direction is not implemented yet!');
   }
 
@@ -257,7 +257,7 @@ class ReorderView implements IAppView {
    * @param reorders
    * @param scaleFactor
    */
-  private drawRows($parent:d3.Selection<any>, reorders:IReorderChange[], scaleFactor:number) {
+  private drawRows($parent: d3.Selection<any>, reorders: IReorderChange[], scaleFactor: number) {
 
     this.$node.attr('height', this.scale.range()[1]);
 
@@ -290,17 +290,17 @@ class ReorderView implements IAppView {
    * @param isActive
    * @param cssClass
    */
-  private markLine(id:string, isActive:boolean, cssClass:string = 'hovered') {
+  private markLine(id: string, isActive: boolean, cssClass: string = 'hovered') {
     this.$srcSlopes.selectAll('line.slope')
-      .each(function(d) {
-        if(d.id === id) {
+      .each(function (d) {
+        if (d.id === id) {
           d3.select(this).classed(cssClass, isActive);
         }
       });
 
     this.$dstSlopes.selectAll('line.slope')
-      .each(function(d) {
-        if(d.id === id) {
+      .each(function (d) {
+        if (d.id === id) {
           d3.select(this).classed(cssClass, isActive);
         }
       });
@@ -328,9 +328,9 @@ class ReorderView implements IAppView {
     this.$dstSlopes.selectAll('line.slope').classed(cssClass, false);
 
     const rowLookup = new Map<number, number>();
-    this.data.union.r_ids.map((d,i) => rowLookup.set(d,i));
+    this.data.union.r_ids.map((d, i) => rowLookup.set(d, i));
     const colLookup = new Map<number, number>();
-    this.data.union.c_ids.map((d,i) => colLookup.set(d,i));
+    this.data.union.c_ids.map((d, i) => colLookup.set(d, i));
 
     selections.forEach((cell) => {
       if (cell.isUnbound) {
@@ -342,13 +342,13 @@ class ReorderView implements IAppView {
           // just support all for now
 
 
-        // highlight cols
+          // highlight cols
         } else if (rowIds.isUnbound) {
           //colIds.forEach((colId) => {
           //  const col = colLookup.get(colId);
           //});
 
-        // highlight rows
+          // highlight rows
         } else if (colIds.isUnbound) {
           rowIds.forEach((rowId) => {
             const row = rowLookup.get(rowId);
@@ -377,6 +377,6 @@ class ReorderView implements IAppView {
  * @param options
  * @returns {ReorderView}
  */
-export function create(parent:Element, options:any) {
+export function create(parent: Element, options: any) {
   return new ReorderView(parent, options);
 }

@@ -16,16 +16,16 @@ import {mixin} from 'phovea_core/src';
  */
 class HeatMap implements IAppView {
 
-  private $node:d3.Selection<any>;
+  private $node: d3.Selection<any>;
 
-  private matrix:IAnyMatrix;
-  private scaleFactor: {x: number, y: number};
+  private matrix: IAnyMatrix;
+  private scaleFactor: { x: number, y: number };
 
   private heatMapOptions = {
-      initialScale: AppConstants.HEATMAP_CELL_SIZE,
-      color: ['black', 'white', 'black'],
-      domain: [-1, 0, 1]
-    };
+    initialScale: AppConstants.HEATMAP_CELL_SIZE,
+    color: ['black', 'white', 'black'],
+    domain: [-1, 0, 1]
+  };
 
   constructor(parent: Element, private options: any) {
     this.$node = d3.select(parent)
@@ -58,7 +58,7 @@ class HeatMap implements IAppView {
       this.clearContent();
     });
 
-    events.on(this.options.eventName, (evt, dataset:IAnyMatrix) => {
+    events.on(this.options.eventName, (evt, dataset: IAnyMatrix) => {
       this.matrix = dataset;
       this.checkAndUpdate();
     });
@@ -73,7 +73,7 @@ class HeatMap implements IAppView {
    * Run update only if scaleFactor and matrix data is set
    */
   private checkAndUpdate() {
-    if(this.matrix && this.scaleFactor) {
+    if (this.matrix && this.scaleFactor) {
       this.update(this.matrix, this.scaleFactor);
     }
   }
@@ -84,9 +84,9 @@ class HeatMap implements IAppView {
    * @param scaleFactor
    * @returns {Promise<HeatMap>}
    */
-  private update(dataset: IAnyMatrix, scaleFactor: {x: number, y: number}) {
+  private update(dataset: IAnyMatrix, scaleFactor: { x: number, y: number }) {
 
-    if(dataset.desc.type !== 'matrix') {
+    if (dataset.desc.type !== 'matrix') {
       console.warn(`Data set is not of type matrix and cannot be visualized from heat map plugin`);
       return;
 
@@ -103,7 +103,7 @@ class HeatMap implements IAppView {
     const showLabels = chooseLabel(dataset.nrow, dataset.ncol);
     const scale = [this.heatMapOptions.initialScale * scaleFactor.x, this.heatMapOptions.initialScale * scaleFactor.y];
 
-    switch(showLabels) {
+    switch (showLabels) {
       case 'CELL':
         d3.select(this.$node.node().parentElement).classed('heatmap-has-column-labels', true);
         this.$node.classed('heatmap-row-labels', true).classed('heatmap-column-labels', true);
@@ -133,9 +133,9 @@ class HeatMap implements IAppView {
       .then((args) => {
         this.clearContent();
 
-       // console.log('args from plugins', args);
+        // console.log('args from plugins', args);
         const plugin = args[0];
-       // console.log('const plugin- args', plugin);
+        // console.log('const plugin- args', plugin);
         plugin.factory(
           dataset,
           this.$node.node(),
@@ -165,7 +165,7 @@ class HeatMap implements IAppView {
  * @param ncol
  * @returns {string}
  */
-function chooseLabel(nrow: number, ncol: number):string {
+function chooseLabel(nrow: number, ncol: number): string {
   if (nrow < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE && ncol < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE) {
     return 'CELL';
   }
@@ -184,6 +184,6 @@ function chooseLabel(nrow: number, ncol: number):string {
  * @param options
  * @returns {HeatMap}
  */
-export function create(parent:Element, options:any) {
+export function create(parent: Element, options: any) {
   return new HeatMap(parent, options);
 }

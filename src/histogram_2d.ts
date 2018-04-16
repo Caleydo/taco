@@ -15,74 +15,74 @@ interface ICountsData {
   /**
    * Added change counts
    */
-  a_counts:number;
+  a_counts: number;
 
   /**
    * Content change
    */
-  c_counts:number;
+  c_counts: number;
 
   /**
    * Deleted change counts
    */
-  d_counts:number;
+  d_counts: number;
 
   /**
    * Merge counts
    */
-  m_counts:number;
+  m_counts: number;
 
   /**
    * No changes counts
    */
-  no_counts:number;
+  no_counts: number;
 
   /**
    * Reorder counts
    */
-  r_counts:number;
+  r_counts: number;
 }
 
 interface IRatiosData {
   /**
    * Added change ratios
    */
-  a_ratio:number;
+  a_ratio: number;
 
   /**
    * Content ratios
    */
-  c_ratio:number;
+  c_ratio: number;
 
   /**
    * Deleted change ratios
    */
-  d_ratio:number;
+  d_ratio: number;
 
   /**
    * Merge ratios
    */
-  m_ratio:number;
+  m_ratio: number;
 
   /**
    * No changes ratios
    */
-  no_ratio:number;
+  no_ratio: number;
 
   /**
    * Reorder ratios
    */
-  r_ratio:number;
+  r_ratio: number;
 }
 
 interface IRatio2DData {
-  cols:IRatio1DData;
-  rows:IRatio1DData;
+  cols: IRatio1DData;
+  rows: IRatio1DData;
 }
 
 interface IRatio1DData {
-  counts:ICountsData;
-  ratios:IRatiosData;
+  counts: ICountsData;
+  ratios: IRatiosData;
 }
 
 interface IPreparedRatio2DData {
@@ -151,33 +151,33 @@ interface IHistogramBarData {
  */
 class Histogram2D implements IAppView {
 
-  private $node:d3.Selection<any>;
-  private $ratio:d3.Selection<any>;
-  private $histogramRows:d3.Selection<any>;
-  private $histogramCols:d3.Selection<any>;
+  private $node: d3.Selection<any>;
+  private $ratio: d3.Selection<any>;
+  private $histogramRows: d3.Selection<any>;
+  private $histogramCols: d3.Selection<any>;
 
-  private borderWidth:number = 2;
-  private height:number = 160 + this.borderWidth;
-  private width:number = 160 + this.borderWidth;
+  private borderWidth: number = 2;
+  private height: number = 160 + this.borderWidth;
+  private width: number = 160 + this.borderWidth;
 
-  private x:d3.scale.Linear<number, number> = d3.scale.linear().domain([0, 1]).range([0, this.width - this.borderWidth]);
-  private y:d3.scale.Linear<number, number> = d3.scale.linear().domain([0, 1]).range([0, this.height - this.borderWidth]);
+  private x: d3.scale.Linear<number, number> = d3.scale.linear().domain([0, 1]).range([0, this.width - this.borderWidth]);
+  private y: d3.scale.Linear<number, number> = d3.scale.linear().domain([0, 1]).range([0, this.height - this.borderWidth]);
 
-  private widthRowHistogram:number = 60;
+  private widthRowHistogram: number = 60;
 
-  private histogramScale:d3.scale.Linear<number, number> = d3.scale.linear()
-    //.domain([0, d3.max(histodata)])
-      .domain([0, 1])
-      .range([0, this.widthRowHistogram]);
+  private histogramScale: d3.scale.Linear<number, number> = d3.scale.linear()
+  //.domain([0, d3.max(histodata)])
+    .domain([0, 1])
+    .range([0, this.widthRowHistogram]);
 
-  private ratioData:IRatio2DData;
+  private ratioData: IRatio2DData;
 
   /**
    * Create AJAX call to load the 2D ratio data
    * @param pair
    * @returns {Promise<any>}
    */
-  private static getJSONRatio2D(pair:string[]) {
+  private static getJSONRatio2D(pair: string[]) {
     const operations = ChangeTypes.forURL();
     return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/ratio_2d`);
   }
@@ -189,7 +189,7 @@ class Histogram2D implements IAppView {
    * @param binCols
    * @returns {Promise<any>}
    */
-  private static getJSONHistogram(pair:string[], binRows:number, binCols:number) {
+  private static getJSONHistogram(pair: string[], binRows: number, binCols: number) {
     const operations = ChangeTypes.forURL();
     return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${binRows}/${binCols}/${operations}/histogram`);
   }
@@ -254,8 +254,8 @@ class Histogram2D implements IAppView {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items:ITacoTimePoint[]) => {
-      if(items.length === 2) {
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items: ITacoTimePoint[]) => {
+      if (items.length === 2) {
         this.updateItems(items);
 
       } else {
@@ -264,14 +264,14 @@ class Histogram2D implements IAppView {
     });
 
     events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
-      if(this.ratioData) {
+      if (this.ratioData) {
         this.show2DRatio(this.ratioData);
         this.scaleHistogramWidth(); // just rescale the height of the bars
       }
     });
 
     events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
-      if(this.ratioData) {
+      if (this.ratioData) {
         this.show2DRatio(this.ratioData);
         this.scaleHistogramWidth(); // just rescale the height of the bars
       }
@@ -282,7 +282,7 @@ class Histogram2D implements IAppView {
    * Initialize loading of the 2D ratio and histograms for the given time points
    * @param items
    */
-  private updateItems(items:ITacoTimePoint[]) {
+  private updateItems(items: ITacoTimePoint[]) {
     this.$ratio.classed('loading', true);
     this.$histogramRows.classed('loading', true);
     this.$histogramCols.classed('loading', true);
@@ -290,13 +290,13 @@ class Histogram2D implements IAppView {
     const pair = [items[0].item.desc.id, items[1].item.desc.id];
 
     Histogram2D.getJSONRatio2D(pair)
-      .then((data:IRatio2DData) => {
+      .then((data: IRatio2DData) => {
         this.ratioData = data;
         this.show2DRatio(data);
       });
 
     this.requestDataHistogram(pair)
-      .then((histodata:IHistogramData) => {
+      .then((histodata: IHistogramData) => {
         this.showHistogram(this.$histogramRows, histodata.rows);
         this.showHistogram(this.$histogramCols, histodata.cols);
       });
@@ -307,10 +307,10 @@ class Histogram2D implements IAppView {
    * @param pair
    * @returns {Promise<IHistogramData>}
    */
-  private requestDataHistogram(pair:string[]):Promise<IHistogramData> {
+  private requestDataHistogram(pair: string[]): Promise<IHistogramData> {
     // use width as number of bins => 1 bin = 1px
     return Histogram2D.getJSONHistogram(pair, this.widthRowHistogram, this.widthRowHistogram)
-      .then((json:IHistogramData) => json);
+      .then((json: IHistogramData) => json);
   }
 
   /**
@@ -319,45 +319,45 @@ class Histogram2D implements IAppView {
    * @param data
    * @returns {IPreparedRatio2DData[]}
    */
-  private prepareRatioData(data:IRatio2DData) {
-    const cols:IRatiosData = data.cols.ratios;
-    const rows:IRatiosData = data.rows.ratios;
+  private prepareRatioData(data: IRatio2DData) {
+    const cols: IRatiosData = data.cols.ratios;
+    const rows: IRatiosData = data.rows.ratios;
 
     // custom order because of special width/height calucation of 2d ratio
-    const orderOfChangeTypes:IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED, ChangeTypes.REORDER];
+    const orderOfChangeTypes: IChangeType[] = [ChangeTypes.NO_CHANGE, ChangeTypes.CONTENT, ChangeTypes.ADDED, ChangeTypes.REMOVED, ChangeTypes.REORDER];
 
     // consider and show only active change types
-    const activeTypes:IChangeType[] = orderOfChangeTypes
+    const activeTypes: IChangeType[] = orderOfChangeTypes
       .filter((d) => d !== ChangeTypes.REORDER)
       .filter((d) => d.isActive === true);
 
     // calculate the row and col domain
-    const rowDomain:number = activeTypes
+    const rowDomain: number = activeTypes
       .map((ct) => rows[ct.ratioName])
       .reduce((a, b) => a + b, 0);
 
-    const colDomain:number = activeTypes
+    const colDomain: number = activeTypes
       .map((ct) => cols[ct.ratioName])
       .reduce((a, b) => a + b, 0);
 
-    const scaleRows:d3.scale.Linear<number, number> = d3.scale.linear().domain([0, rowDomain]).range([0, 1]);
-    const scaleCols:d3.scale.Linear<number, number> = d3.scale.linear().domain([0, colDomain]).range([0, 1]);
+    const scaleRows: d3.scale.Linear<number, number> = d3.scale.linear().domain([0, rowDomain]).range([0, 1]);
+    const scaleCols: d3.scale.Linear<number, number> = d3.scale.linear().domain([0, colDomain]).range([0, 1]);
 
     // reverse the order because of DOM stacking
-    const reverseTypes:IChangeType[] = activeTypes.reverse();
+    const reverseTypes: IChangeType[] = activeTypes.reverse();
 
-    const rowRatios:{ct:IChangeType, ratio:number}[] = reverseTypes.map((ct) => {
+    const rowRatios: { ct: IChangeType, ratio: number }[] = reverseTypes.map((ct) => {
       return {ratio: rows[ct.ratioName], ct};
     });
 
-    const colRatios:{ct:IChangeType, ratio:number}[] = reverseTypes.map((ct) => {
+    const colRatios: { ct: IChangeType, ratio: number }[] = reverseTypes.map((ct) => {
       return {ratio: cols[ct.ratioName], ct};
     });
 
-    const r:IPreparedRatio2DData[] = [];
+    const r: IPreparedRatio2DData[] = [];
 
     // calculate the ratio for each content type
-    while(colRatios.length > 0) {
+    while (colRatios.length > 0) {
       const rowRatio = rowRatios.map((d) => scaleRows(d.ratio)).reduce((a, b) => a + b, 0);
       const colRatio = colRatios.map((d) => scaleCols(d.ratio)).reduce((a, b) => a + b, 0);
 
@@ -378,7 +378,7 @@ class Histogram2D implements IAppView {
     orderOfChangeTypes
       .filter((d) => d !== ChangeTypes.REORDER)
       .filter((d) => d.isActive === false)
-      .forEach((ct:IChangeType) => {
+      .forEach((ct: IChangeType) => {
         r.push(<IPreparedRatio2DData>{
           ct,
           rows: 0,
@@ -395,8 +395,8 @@ class Histogram2D implements IAppView {
    * Draw 2D ratio chart from given data
    * @param data
    */
-  private show2DRatio(data:IRatio2DData) {
-    const preparedData:IPreparedRatio2DData[] = this.prepareRatioData(data);
+  private show2DRatio(data: IRatio2DData) {
+    const preparedData: IPreparedRatio2DData[] = this.prepareRatioData(data);
 
     const ratio2d = this.$ratio.selectAll('div').data(preparedData, (d) => d.ct.type);
 
@@ -418,7 +418,7 @@ class Histogram2D implements IAppView {
    * @param $parent
    * @param data
    */
-  private showHistogram($parent:d3.Selection<any>, data:IHistogram1DData[]) {
+  private showHistogram($parent: d3.Selection<any>, data: IHistogram1DData[]) {
     const that = this;
 
     const $containers = $parent.selectAll('div.bin-container')
@@ -426,7 +426,7 @@ class Histogram2D implements IAppView {
 
     $containers.enter().append('div')
       .classed('bin-container', true)
-      .each(function(d) {
+      .each(function (d) {
         that.drawBar(d3.select(this), d);
       });
 
@@ -440,8 +440,8 @@ class Histogram2D implements IAppView {
    * @param $parent
    * @param data
    */
-  private drawBar($parent, data:IHistogram1DData) {
-    const barData:IHistogramBarData[] = this.getBarData(data, 'ratioName');
+  private drawBar($parent, data: IHistogram1DData) {
+    const barData: IHistogramBarData[] = this.getBarData(data, 'ratioName');
     //const barData = this.getBarData(data.counts, 'countName');
 
     //individual bars in the bar group div
@@ -458,7 +458,7 @@ class Histogram2D implements IAppView {
 
     // move the reorder bar into the content change  element
     $parent.selectAll(`.bar.${ChangeTypes.REORDER.type}-color`)[0]
-      .forEach((d:HTMLElement) => {
+      .forEach((d: HTMLElement) => {
         d.parentElement.querySelector(`.bar.${ChangeTypes.CONTENT.type}-color`).appendChild(d);
       });
 
@@ -471,7 +471,7 @@ class Histogram2D implements IAppView {
   private scaleHistogramWidth() {
     this.$node.selectAll('.bar')
       .style('width', (d) => {
-        if(ChangeTypes.TYPE_ARRAY.filter((ct) => ct.type === d.ct.type)[0].isActive) {
+        if (ChangeTypes.TYPE_ARRAY.filter((ct) => ct.type === d.ct.type)[0].isActive) {
           return this.histogramScale(d.value) + 'px';
         }
         return 0; // shrink bar to 0 if change is not active
@@ -484,9 +484,9 @@ class Histogram2D implements IAppView {
    * @param propertyName
    * @returns {IHistogramBarData[]}
    */
-  private getBarData(data, propertyName):IHistogramBarData[] {
+  private getBarData(data, propertyName): IHistogramBarData[] {
     return ChangeTypes.TYPE_ARRAY
-      //.filter((d) => d.isActive === true)
+    //.filter((d) => d.isActive === true)
       .filter((d) => d !== ChangeTypes.NO_CHANGE)
       .map((ct) => {
         return <IHistogramBarData>{

@@ -16,13 +16,13 @@ import {Language} from './language';
  */
 class MetaInfoBox implements IAppView {
 
-  private $node:d3.Selection<any>;
-  private $leftMetaBox:d3.Selection<any>;
-  private $rightMetaBox:d3.Selection<any>;
+  private $node: d3.Selection<any>;
+  private $leftMetaBox: d3.Selection<any>;
+  private $rightMetaBox: d3.Selection<any>;
 
   private totalWidth: number;
-  private boxHeight:number = 162;
-  private boxWidth:number = 162;
+  private boxHeight: number = 162;
+  private boxWidth: number = 162;
 
 
   /**
@@ -57,15 +57,15 @@ class MetaInfoBox implements IAppView {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items:ITacoTimePoint[]) => {
-      if(items.length === 2) {
+    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items: ITacoTimePoint[]) => {
+      if (items.length === 2) {
         this.updateItems(items);
       } else {
         this.clearContent();
       }
     });
 
-    events.on(AppConstants.EVENT_DATASET_SELECTED, (evt, items:ITacoTimePoint[]) => {
+    events.on(AppConstants.EVENT_DATASET_SELECTED, (evt, items: ITacoTimePoint[]) => {
       this.clearContent();
     });
   }
@@ -113,7 +113,7 @@ class MetaInfoBox implements IAppView {
    * Show content for the given items in the left and right meta box
    * @param items
    */
-  private updateItems(items:ITacoTimePoint[]) {
+  private updateItems(items: ITacoTimePoint[]) {
     this.$leftMetaBox.html(this.generateHTML(items[0]));
     this.$rightMetaBox.html(this.generateHTML(items[1]));
   }
@@ -123,7 +123,7 @@ class MetaInfoBox implements IAppView {
    * @param item
    * @returns {string}
    */
-  private generateHTML(item:ITacoTimePoint) {
+  private generateHTML(item: ITacoTimePoint) {
     return `
       <h3>${item.time.format(item.timeFormat.moment)}</h3>
       <dl>
