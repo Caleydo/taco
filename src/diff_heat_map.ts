@@ -17,7 +17,7 @@ import {
 import {get} from 'phovea_core/src/plugin';
 import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/slider'; // specify the widget here
-import 'style-loader!css-loader!jquery-ui/themes/base/all.css'; // use Webpack CSS loader to import base style for all widgets
+import 'jquery-ui/themes/base/all.css'; // import base style for all widgets
 
 
 export interface IDiffRow {
