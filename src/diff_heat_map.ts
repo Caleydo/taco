@@ -324,14 +324,14 @@ class DiffHeatMap implements IAppView {
       $root.attr('title', `${rowName} / ${colName}: ${findValue(col, row)}`);
     };
 
-    let timer = -1;
+    let timer = setTimeout(() => {}, -1);
     $root.on('mousemove', () => {
       const evt = <MouseEvent>d3.event;
       clearTimeout(timer);
       timer = setTimeout(updateTooltip.bind(this, evt.offsetX, evt.offsetY), 100);
     }).on('mouseleave', () => {
       clearTimeout(timer);
-      timer = -1;
+      timer = setTimeout(() => {}, -1);
     }).on('click', () => {
       const evt = <MouseEvent>d3.event;
       const {col, row} = toIndices(evt.offsetX, evt.offsetY);
