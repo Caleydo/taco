@@ -1,4 +1,22 @@
 {
+  "name": "taco",
+  "description": "Comparative visualization of large tabular data using Phovea",
+  "version": "1.0.0-SNAPSHOT",
+  "author": {
+    "name": "The Caleydo Team",
+    "email": "contact@caleydo.org",
+    "url": "https://caleydo.org"
+  },
+  "license": "BSD-3-Clause",
+  "homepage": "http://taco.caleydo.org",
+  "bugs": {
+    "url": "https://github.com/caleydo/taco/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/caleydo/taco.git"
+  },
+  "private": true,
   "files": [
     "src",
     "index.js",
@@ -7,9 +25,8 @@
     "build"
   ],
   "engines": {
-    "npm": ">= 3",
-    "node": ">= 6",
-    "iojs": ">= 3"
+    "npm": ">= 6",
+    "node": ">= 12"
   },
   "scripts": {
     "compile": "tsc",
@@ -77,23 +94,5 @@
     "phovea_d3": "github:phovea/phovea_d3#develop",
     "phovea_ui": "github:phovea/phovea_ui#develop",
     "phovea_vis": "github:phovea/phovea_vis#develop"
-  },
-  "name": "taco",
-  "description": "Comparative visualization of large tabular data using Phovea",
-  "homepage": "http://taco.caleydo.org",
-  "version": "1.0.0-SNAPSHOT",
-  "author": {
-    "name": "The Caleydo Team",
-    "email": "contact@caleydo.org",
-    "url": "https://caleydo.org"
-  },
-  "license": "BSD-3-Clause",
-  "bugs": {
-    "url": "https://github.com/caleydo/taco/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/caleydo/taco.git"
-  },
-  "private": true
+  }
 }
