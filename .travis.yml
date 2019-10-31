@@ -1,11 +1,11 @@
 branches:
   except:
   - assets
-  
+
 language: node_js
 
 node_js:
-- 6
+- 8
 
 addons:
   firefox: 49.0.1
