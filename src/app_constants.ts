@@ -2,7 +2,6 @@
  * Created by Holger Stitz on 26.08.2016.
  */
 import {hash} from 'phovea_core/src';
-import {App} from 'taco/src/app';
 
 export class AppConstants {
 
