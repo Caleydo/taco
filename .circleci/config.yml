@@ -29,3 +29,30 @@ jobs:
           command: npm run dist
       - store_artifacts:
           path: dist
+workflows:
+  version: 2
+#  build-nightly:
+#    triggers:
+#      - schedule: # nightly build during weekday
+#          cron: "15 1 * * 1-5"
+#          filters:
+#            branches:
+#              only:
+#                - develop
+#    jobs:
+#      - build
+  build-branch:
+    jobs:
+      - build:
+          filters:
+            tags:
+              ignore: /^v.*/
+  build-tag:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
