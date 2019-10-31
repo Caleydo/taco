@@ -25,9 +25,8 @@
     "build"
   ],
   "engines": {
-    "npm": ">= 3",
-    "node": ">= 6",
-    "iojs": ">= 3"
+    "npm": ">= 6",
+    "node": ">= 12"
   },
   "scripts": {
     "compile": "tsc",
