@@ -69,7 +69,7 @@
     "karma-sourcemap-loader": "0.3.7",
     "karma-webpack": "2.0.3",
     "mkdirp": "0.5.1",
-    "node-sass": "4.12.0",
+    "node-sass": "^4.12.0",
     "null-loader": "0.1.1",
     "raw-loader": "0.5.1",
     "sass-loader": "6.0.7",
