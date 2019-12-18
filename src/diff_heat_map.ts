@@ -534,7 +534,7 @@ class DiffHeatMap implements IAppView {
       const $minVal = $slider.append('span').classed('handle-value min', true).text(values[0]);
       const $maxVal = $slider.append('span').classed('handle-value max', true).text(values[1]);
 
-      $($slider.node()).slider({
+      (<any>$($slider.node())).slider({
         range: true,
         min: -1,
         max: 1,
