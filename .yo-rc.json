@@ -6,8 +6,8 @@
     "githubAccount": "caleydo",
     "modules": [
       "phovea_core",
-      "phovea_vis",
       "phovea_d3",
+      "phovea_vis",
       "phovea_ui"
     ],
     "extensions": [
@@ -74,7 +74,7 @@
       "debianPackages": [],
       "redhatPackages": []
     },
-    "app": "",
+    "app": "taco",
     "entries": {
       "app": "./src/index.ts"
     },
@@ -89,6 +89,12 @@
     ],
     "ignores": [],
     "today": "Tue, 08 Nov 2016 08:57:09 GMT",
-    "clientOnly": false
+    "clientOnly": false,
+    "promptValues": {
+      "authorName": "The Caleydo Team",
+      "authorEmail": "contact@caleydo.org",
+      "authorUrl": "https://caleydo.org",
+      "githubAccount": "caleydo"
+    }
   }
 }
