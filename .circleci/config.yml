@@ -4,8 +4,6 @@ jobs:
     working_directory: ~/phovea
     docker:
       - image: circleci/node:12.13-buster-browsers
-        environment:
-          NODE_VERSION: "12.13"
     steps:
       - checkout
       - run:
