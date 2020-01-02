@@ -291,7 +291,6 @@ class DataSetSelector implements IAppView {
         return this;
       });
   }
-
 }
 
 /**

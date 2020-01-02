@@ -328,7 +328,7 @@ class DiffHeatMap implements IAppView {
     $root.on('mousemove', () => {
       const evt = <MouseEvent>d3.event;
       clearTimeout(timer);
-      timer = setTimeout(updateTooltip.bind(this, evt.offsetX, evt.offsetY), 100);
+      timer = self.setTimeout(updateTooltip.bind(this, evt.offsetX, evt.offsetY), 100);
     }).on('mouseleave', () => {
       clearTimeout(timer);
       timer = -1;
