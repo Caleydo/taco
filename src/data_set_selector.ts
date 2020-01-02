@@ -149,7 +149,6 @@ class DataProvider {
 
 }
 
-
 /**
  * Shows a list of available datasets and lets the user choose one.
  * The selection is broadcasted as event throughout the application.
