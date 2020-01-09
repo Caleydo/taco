@@ -9,3 +9,4 @@ node_modules/
 *.css
 *.log
 /.cache-loader
+package-lock.json
