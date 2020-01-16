@@ -91,8 +91,8 @@
     "jquery-ui": "1.12.1",
     "moment": "~2.22.2",
     "phovea_core": "^3.1.0",
-    "phovea_d3": "github:phovea/phovea_d3#semver:^3.1.0",
-    "phovea_ui": "github:phovea/phovea_ui#semver:^3.1.0",
-    "phovea_vis": "github:phovea/phovea_vis#semver:^3.1.0"
+    "phovea_d3": "^3.1.0",
+    "phovea_ui": "^3.1.0",
+    "phovea_vis": "^3.1.0"
   }
 }
