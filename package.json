@@ -1,7 +1,7 @@
 {
   "name": "taco",
   "description": "Comparative visualization of large tabular data using Phovea",
-  "version": "1.0.0-SNAPSHOT",
+  "version": "2.0.0",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",
@@ -90,9 +90,9 @@
   "dependencies": {
     "jquery-ui": "1.12.1",
     "moment": "~2.22.2",
-    "phovea_core": "github:phovea/phovea_core#develop",
-    "phovea_d3": "github:phovea/phovea_d3#develop",
-    "phovea_ui": "github:phovea/phovea_ui#develop",
-    "phovea_vis": "github:phovea/phovea_vis#develop"
+    "phovea_core": "^3.1.0",
+    "phovea_d3": "github:phovea/phovea_d3#semver:^3.1.0",
+    "phovea_ui": "github:phovea/phovea_ui#semver:^3.1.0",
+    "phovea_vis": "github:phovea/phovea_vis#semver:^3.1.0"
   }
 }
