@@ -1,7 +1,7 @@
 {
   "name": "taco",
   "description": "Comparative visualization of large tabular data using Phovea",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",
