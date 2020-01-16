@@ -328,7 +328,7 @@ class DiffHeatMap implements IAppView {
     $root.on('mousemove', () => {
       const evt = <MouseEvent>d3.event;
       clearTimeout(timer);
-      timer = setTimeout(updateTooltip.bind(this, evt.offsetX, evt.offsetY), 100);
+      timer = self.setTimeout(updateTooltip.bind(this, evt.offsetX, evt.offsetY), 100);
     }).on('mouseleave', () => {
       clearTimeout(timer);
       timer = -1;
@@ -534,7 +534,7 @@ class DiffHeatMap implements IAppView {
       const $minVal = $slider.append('span').classed('handle-value min', true).text(values[0]);
       const $maxVal = $slider.append('span').classed('handle-value max', true).text(values[1]);
 
-      $($slider.node()).slider({
+      (<any>$($slider.node())).slider({
         range: true,
         min: -1,
         max: 1,

@@ -1,6 +1,6 @@
 FROM nginx:alpine
 
-MAINTAINER Samuel Gratzl <samuel.gratzl@datavisyn.io>
+LABEL maintainer="contact@caleydo.org"
 
 ENV PHOVEA_API_SERVER=api
 ENV PHOVEA_NGINX_PORT=80

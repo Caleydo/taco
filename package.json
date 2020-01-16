@@ -1,4 +1,22 @@
 {
+  "name": "taco",
+  "description": "Comparative visualization of large tabular data using Phovea",
+  "version": "3.0.0",
+  "author": {
+    "name": "The Caleydo Team",
+    "email": "contact@caleydo.org",
+    "url": "https://caleydo.org"
+  },
+  "license": "BSD-3-Clause",
+  "homepage": "http://taco.caleydo.org",
+  "bugs": {
+    "url": "https://github.com/caleydo/taco/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Caleydo/taco.git"
+  },
+  "private": true,
   "files": [
     "src",
     "index.js",
@@ -7,14 +25,13 @@
     "build"
   ],
   "engines": {
-    "npm": ">= 3",
-    "node": ">= 6",
-    "iojs": ">= 3"
+    "npm": ">= 6.12",
+    "node": ">= 12.13"
   },
   "scripts": {
     "compile": "tsc",
-    "lint": "tslint -c tslint.json src/**.ts tests/**.ts",
-    "docs": "typedoc --options typedoc.json src/**.ts",
+    "lint": "tslint -c tslint.json -p . 'src/**/*.ts?(x)' 'tests/**/*.ts?(x)'",
+    "docs": "typedoc --options typedoc.json src/",
     "prebuild": "node -e \"process.exit(process.env.PHOVEA_SKIP_TESTS === undefined?1:0)\" || npm run test",
     "pretest": "npm run compile",
     "test": "test ! -d tests || karma start",
@@ -52,7 +69,7 @@
     "karma-sourcemap-loader": "0.3.7",
     "karma-webpack": "2.0.3",
     "mkdirp": "0.5.1",
-    "node-sass": "4.7.2",
+    "node-sass": "^4.12.0",
     "null-loader": "0.1.1",
     "raw-loader": "0.5.1",
     "sass-loader": "6.0.7",
@@ -60,7 +77,7 @@
     "tslib": "1.9.0",
     "tslint": "5.9.1",
     "typedoc": "0.11.1",
-    "typescript": "2.7.2",
+    "typescript": "2.8.1",
     "url-loader": "0.5.8",
     "webpack": "2.3.3",
     "webpack-dev-server": "2.4.2",
@@ -72,28 +89,10 @@
   },
   "dependencies": {
     "jquery-ui": "1.12.1",
-    "moment": "2.22.1",
-    "phovea_core": "2.0.0",
-    "phovea_d3": "github:phovea/phovea_d3#update_dependencies",
-    "phovea_ui": "2.0.0",
-    "phovea_vis": "github:phovea/phovea_vis#update_dependencies"
-  },
-  "name": "taco",
-  "description": "Comparative visualization of large tabular data using Phovea",
-  "homepage": "http://taco.caleydo.org",
-  "version": "1.0.0-SNAPSHOT",
-  "author": {
-    "name": "The Caleydo Team",
-    "email": "contact@caleydo.org",
-    "url": "https://caleydo.org"
-  },
-  "license": "BSD-3-Clause",
-  "bugs": {
-    "url": "https://github.com/caleydo/taco/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/caleydo/taco.git"
-  },
-  "private": true
+    "moment": "~2.22.2",
+    "phovea_core": "^3.1.0",
+    "phovea_d3": "^3.1.0",
+    "phovea_ui": "^3.1.0",
+    "phovea_vis": "^3.1.0"
+  }
 }

@@ -3,29 +3,61 @@ jobs:
   build:
     working_directory: ~/phovea
     docker:
-      - image: circleci/node:6-browsers
-    tags:
-      - /v\d+.\d+.\d+.*/
+      - image: circleci/node:12.13-buster-browsers
     steps:
       - checkout
-      - restore_cache:
-          key: deps2-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
-          name: install-npm-wee
+          name: Show Node.js and npm version
+          command: |
+            node -v
+            npm -v
+      - restore_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "package.json" }}
+      - run:
+          name: Install npm dependencies
           command: npm install
-      - run: #remove all resolved github dependencies
-          name: delete-vcs-dependencies
+      - run:
+          name: Remove npm dependencies installed from git repositories (avoid caching of old commits)
           command: |
             (grep -l '._resolved.: .\(git[^:]*\|bitbucket\):' ./node_modules/*/package.json || true) | xargs -r dirname | xargs -r rm -rf
       - save_cache:
-          key: deps2-{{ .Branch }}-{{ checksum "package.json" }}
+          key: deps1-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
           - ./node_modules
-      - run: #install all dependencies
-          name: install-npm-wee2
+      - run:
+          name: Install npm dependencies from git repositories (always get latest commit)
           command: npm install
       - run:
-          name: dist
+          name: Show installed npm dependencies
+          command: npm list --depth=1 || true
+      - run:
+          name: Build
           command: npm run dist
       - store_artifacts:
           path: dist
+workflows:
+  version: 2
+#  build-nightly:
+#    triggers:
+#      - schedule:
+#          cron: "15 1 * * 1-5" # "At 01:15 on every day-of-week from Monday through Friday.”, see: https://crontab.guru/#15_1_*_*_1-5
+#          filters:
+#            branches:
+#              only:
+#                - develop
+#    jobs:
+#      - build
+  build-branch:
+    jobs:
+      - build:
+          filters:
+            tags:
+              ignore: /^v.*/
+  build-tag:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
