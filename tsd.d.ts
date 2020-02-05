@@ -20,6 +20,10 @@ declare module "*.html" {
   const content:string;
   export default content;
 }
+declare module "*.xml" {
+  const content:string;
+  export default content;
+}
 //allow json dependencies
 declare module "*.json";
 //allow file dependencies
