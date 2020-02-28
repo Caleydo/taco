@@ -46,7 +46,7 @@
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
     "predist": "npm run build && npm run docs",
-    "dist": "mkdirp dist && cd build && tar cvzf ../dist/taco.tar.gz *",
+    "dist": "mkdir dist && cd build && tar cvzf ../dist/taco.tar.gz *",
     "predocker": "npm run build",
     "docker": "docker build -t taco -f deploy/Dockerfile ."
   },
@@ -68,7 +68,6 @@
     "karma-junit-reporter": "2.0.0",
     "karma-sourcemap-loader": "0.3.7",
     "karma-webpack": "2.0.3",
-    "mkdirp": "0.5.1",
     "node-sass": "^4.12.0",
     "null-loader": "0.1.1",
     "raw-loader": "0.5.1",
