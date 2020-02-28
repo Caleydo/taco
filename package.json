@@ -82,7 +82,7 @@
     "webpack-dev-server": "2.4.2",
     "cache-loader": "1.2.0",
     "ifdef-loader": "2.0.0",
-    "fork-ts-checker-webpack-plugin": "0.4.1",
+    "fork-ts-checker-webpack-plugin": "0.4.4",
     "thread-loader": "1.1.2",
     "ts-loader": "4.0.1"
   },
