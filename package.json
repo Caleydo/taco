@@ -90,9 +90,9 @@
   "dependencies": {
     "jquery-ui": "1.12.1",
     "moment": "~2.22.2",
-    "phovea_core": "github:phovea/phovea_core#typescript_3.8",
-    "phovea_d3": "github:phovea/phovea_d3#typescript_3.8",
-    "phovea_ui": "github:phovea/phovea_ui#typescript_3.8",
-    "phovea_vis": "github:phovea/phovea_vis#typescript_3.8"
+    "phovea_core": "github:phovea/phovea_core#develop",
+    "phovea_d3": "github:phovea/phovea_d3#develop",
+    "phovea_ui": "github:phovea/phovea_ui#develop",
+    "phovea_vis": "github:phovea/phovea_vis#develop"
   }
 }
