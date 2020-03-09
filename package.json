@@ -89,9 +89,9 @@
   "dependencies": {
     "jquery-ui": "1.12.1",
     "moment": "~2.24.0",
-    "phovea_core": "github:phovea/phovea_core#update_dependencies_38",
-    "phovea_d3": "github:phovea/phovea_d3#update_dependencies_38",
-    "phovea_ui": "github:phovea/phovea_ui#update_dependencies_38",
-    "phovea_vis": "github:phovea/phovea_vis#update_dependencies_38"
+    "phovea_core": "github:phovea/phovea_core#update_dep_req",
+    "phovea_d3": "github:phovea/phovea_d3#update_dep_req",
+    "phovea_ui": "github:phovea/phovea_ui#update_dep_req",
+    "phovea_vis": "github:phovea/phovea_vis#update_dep_req"
   }
 }
