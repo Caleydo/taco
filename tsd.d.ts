@@ -14,6 +14,7 @@ declare module "*.css" {
   export default content;
 }
 declare module "*.png";
+declare module "*.gif";
 declare module "*.jpg";
 //allow html dependencies
 declare module "*.html" {
