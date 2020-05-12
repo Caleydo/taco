@@ -1,5 +1,7 @@
-TACO [![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+TACO 
 =====================
+[![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] [![Build Status][circleci-image]][circleci-url]
+
 
 ![TACO with Olympic Games Dataset](https://raw.githubusercontent.com/Caleydo/taco/assets/olympic-games.png)
 
@@ -48,5 +50,3 @@ This repository is part of **[Phovea](http://phovea.caleydo.org/)**, a platform 
 [npm-url]: https://npmjs.org/package/taco
 [circleci-image]: https://circleci.com/gh/Caleydo/taco.svg?style=shield
 [circleci-url]: https://circleci.com/gh/Caleydo/taco
-[daviddm-image]: https://david-dm.org/caleydo/taco/status.svg
-[daviddm-url]: https://david-dm.org/caleydo/taco
