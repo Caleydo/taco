@@ -17,12 +17,14 @@
     "url": "https://github.com/Caleydo/taco.git"
   },
   "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "src",
     "index.js",
     "phovea.js",
     "phovea_registry.js",
-    "build"
+    "dist"
   ],
   "engines": {
     "npm": ">= 6.12",
@@ -39,11 +41,9 @@
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "posttest": "npm run lint",
-    "build:dev": "webpack",
-    "build": "webpack --env prod",
-    "start": "webpack-dev-server --inline",
-    "start:hot": "webpack-dev-server --inline --hot",
-    "watch": "webpack --watch",
+    "build": "npm run clean && npm run compile && npm run copy-assets && npm run copy-styles",
+    "copy-assets": "if [ -d src/assets ]; then cp -rv src/assets/ dist/assets/; fi",
+    "copy-styles": "cd src && find . -name '*.scss' -exec cp --parents '{}' ./../dist/ ';'",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
@@ -54,43 +54,31 @@
   },
   "devDependencies": {
     "@types/jest": "25.1.4",
-    "awesome-typescript-loader": "3.1.2",
-    "css-loader": "0.28.0",
     "extract-loader": "0.1.0",
-    "extract-text-webpack-plugin": "2.1.0",
     "file-loader": "0.11.1",
     "html-loader": "0.4.5",
     "imports-loader": "0.7.1",
     "jest": "25.1.0",
-    "json-loader": "0.5.4",
     "node-sass": "^4.13.1",
     "null-loader": "0.1.1",
     "raw-loader": "0.5.1",
     "rimraf": "^3.0.0",
-    "sass-loader": "6.0.7",
-    "style-loader": "0.16.1",
     "tslib": "~1.11.0",
     "tslint": "5.9.1",
     "ts-jest": "25.2.1",
     "typedoc": "~0.16.10",
     "typescript": "~3.8.2",
     "url-loader": "0.5.8",
-    "webpack": "2.3.3",
-    "webpack-dev-server": "2.4.2",
-    "cache-loader": "1.2.0",
     "identity-obj-proxy": "^3.0.0",
     "ifdef-loader": "2.0.0",
-    "fork-ts-checker-webpack-plugin": "0.4.4",
-    "thread-loader": "1.1.2",
-    "ts-loader": "4.0.1",
     "jest-raw-loader": "1.0.1"
   },
   "dependencies": {
     "jquery-ui": "1.12.1",
     "moment": "~2.24.0",
-    "phovea_core": "github:phovea/phovea_core#develop",
-    "phovea_d3": "github:phovea/phovea_d3#develop",
-    "phovea_ui": "github:phovea/phovea_ui#develop",
-    "phovea_vis": "github:phovea/phovea_vis#develop"
+    "phovea_core": "github:phovea/phovea_core#asteiner/refactoring",
+    "phovea_d3": "github:phovea/phovea_d3#vstoiber/refactoring",
+    "phovea_ui": "github:phovea/phovea_ui#vstoiber/refactoring",
+    "phovea_vis": "github:phovea/phovea_vis#vstoiber/refactoring"
   }
 }
