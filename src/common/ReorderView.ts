@@ -2,14 +2,14 @@
  * Created by Holger Stitz on 22.03.2017.
  */
 
-import {IAppView} from './app';
+import {IAppView} from '../app/App';
 import * as d3 from 'd3';
 import {EventHandler, AppContext} from 'phovea_core';
-import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
+import {AppConstants, IChangeType, ChangeTypes} from '../app/AppConstants';
 import {BaseUtils} from 'phovea_core';
 import {INumericalMatrix} from 'phovea_core';
 import {ProductIDType} from 'phovea_core';
-import {IDiffData} from './diff_heat_map';
+import {IDiffData} from '../heatmap/DiffHeatMap';
 
 export enum EOrientation {
   COLUMN,
@@ -368,15 +368,13 @@ class ReorderView implements IAppView {
     this.deactivateAndHideReorderToggle();
   }
 
-}
-
-
-/**
- * Factory method to create a new ReorderView instance
- * @param parent
- * @param options
- * @returns {ReorderView}
- */
-export function create(parent: Element, options: any) {
-  return new ReorderView(parent, options);
+  /**
+   * Factory method to create a new ReorderView instance
+   * @param parent
+   * @param options
+   * @returns {ReorderView}
+   */
+  static create(parent: Element, options: any) {
+    return new ReorderView(parent, options);
+  }
 }

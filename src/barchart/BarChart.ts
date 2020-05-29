@@ -6,10 +6,10 @@ import * as d3 from 'd3';
 import {AppContext} from 'phovea_core';
 import * as $ from 'jquery';
 import {EventHandler} from 'phovea_core';
-import {AppConstants, ChangeTypes, IChangeType} from './app_constants';
-import {IAppView} from './app';
-import {getTimeScale, getTotalWidth, selectTimePoint} from './util';
-import {ITacoTimePoint} from './data_set_selector';
+import {AppConstants, ChangeTypes, IChangeType} from '../app/AppConstants';
+import {IAppView} from '../app/App';
+import {TimePointUtils} from '../common/TimePointUtils';
+import {ITacoTimePoint} from '../common/DataSetSelector';
 
 /**
  * This class adds a bar chart, that shows bars with click functionality,
@@ -72,7 +72,7 @@ class BarChart implements IAppView {
    * It calculates the new width and sets it for the bar chart.
    */
   private resize() {
-    this.totalWidth = getTotalWidth(this.items, AppConstants.TIMELINE_BAR_WIDTH, $(this.$node.node()).width());
+    this.totalWidth = TimePointUtils.getTotalWidth(this.items, AppConstants.TIMELINE_BAR_WIDTH, $(this.$node.node()).width());
     this.$node.style('width', this.totalWidth);
   }
 
@@ -118,7 +118,7 @@ class BarChart implements IAppView {
     this.resize();
 
     const pairs = d3.pairs(items);
-    const posXScale = getTimeScale(items, this.totalWidth);
+    const posXScale = TimePointUtils.getTimeScale(items, this.totalWidth);
 
     const $bars = this.$node.selectAll('div.bars')
       .data(pairs, (d) => d[1].item.desc.id);
@@ -135,7 +135,7 @@ class BarChart implements IAppView {
         EventHandler.getInstance().fire(AppConstants.EVENT_TIME_POINT_HOVERED, d[1].time.toDate(), false);
       })
       .on('click', (d) => {
-        selectTimePoint(d[1]);
+        TimePointUtils.selectTimePoint(d[1]);
       })
       .each(function (pair, i) {
         const ids = pair.map((d: any) => d.item.desc.id);
@@ -223,14 +223,15 @@ class BarChart implements IAppView {
         };
       });
   }
+
+  /**
+   * Factory method to create a new BarChart instance.
+   * @param parent Element on which the bar chart is drawn
+   * @param options Parameters for the instance (optional)
+   * @returns {BarChart}
+   */
+  static create(parent: Element, options: any) {
+    return new BarChart(parent, options);
+  }
 }
 
-/**
- * Factory method to create a new BarChart instance.
- * @param parent Element on which the bar chart is drawn
- * @param options Parameters for the instance (optional)
- * @returns {BarChart}
- */
-export function create(parent: Element, options: any) {
-  return new BarChart(parent, options);
-}

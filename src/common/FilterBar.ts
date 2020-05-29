@@ -3,8 +3,8 @@
  */
 
 import {EventHandler} from 'phovea_core';
-import {AppConstants, ChangeTypes} from './app_constants';
-import {IAppView} from './app';
+import {AppConstants, ChangeTypes} from '../app/AppConstants';
+import {IAppView} from '../app/App';
 import * as d3 from 'd3';
 
 /**
@@ -81,15 +81,14 @@ class FilterBar implements IAppView {
         }
       });
   }
-
+  /**
+   * Factory method to create a new Histogram2D instance
+   * @param parent
+   * @param options
+   * @returns {FilterBar}
+   */
+  static create(parent: Element, options: any) {
+    return new FilterBar(parent, options);
+  }
 }
 
-/**
- * Factory method to create a new Histogram2D instance
- * @param parent
- * @param options
- * @returns {FilterBar}
- */
-export function create(parent: Element, options: any) {
-  return new FilterBar(parent, options);
-}

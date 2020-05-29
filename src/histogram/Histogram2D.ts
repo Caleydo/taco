@@ -3,12 +3,12 @@
  */
 
 import {EventHandler} from 'phovea_core';
-import {IAppView} from './app';
+import {IAppView} from '../app/App';
 import {AppContext} from 'phovea_core';
-import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
+import {AppConstants, IChangeType, ChangeTypes} from '../app/AppConstants';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
-import {ITacoTimePoint} from './data_set_selector';
+import {ITacoTimePoint} from '../common/DataSetSelector';
 
 
 interface ICountsData {
@@ -508,14 +508,13 @@ class Histogram2D implements IAppView {
     this.$histogramRows.html('');
   }
 
-}
-
-/**
- * Factory method to create a new Histogram2D instance
- * @param parent
- * @param options
- * @returns {Histogram2D}
- */
-export function create(parent: Element, options: any) {
-  return new Histogram2D(parent, options);
+  /**
+   * Factory method to create a new Histogram2D instance
+   * @param parent
+   * @param options
+   * @returns {Histogram2D}
+   */
+  static create(parent: Element, options: any) {
+    return new Histogram2D(parent, options);
+  }
 }

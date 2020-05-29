@@ -71,11 +71,13 @@ export class AppConstants {
   };
 }
 
-export const COLOR_ADDED = '#a1d76a';
-export const COLOR_DELETED = '#e9a3c9';
-export const COLOR_NO_CHANGE = '#fff';
-export const COLOR_CONTENT_NEGATIVE = '#8da0cb';
-export const COLOR_CONTENT_POSITIVE = '#d8b365';
+export module DiffColors {
+  export const COLOR_ADDED = '#a1d76a';
+  export const COLOR_DELETED = '#e9a3c9';
+  export const COLOR_NO_CHANGE = '#fff';
+  export const COLOR_CONTENT_NEGATIVE = '#8da0cb';
+  export const COLOR_CONTENT_POSITIVE = '#d8b365';
+}
 
 export interface IChangeType {
   type: string;

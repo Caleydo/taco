@@ -2,14 +2,14 @@
  * Created by cniederer on 20.01.17.
  */
 
-import {IAppView} from './app';
+import {IAppView} from '../app/App';
 import * as d3 from 'd3';
 import {EventHandler} from 'phovea_core';
 import {Ajax} from 'phovea_core';
-import {AppConstants} from './app_constants';
+import {AppConstants} from '../app/AppConstants';
 import {AppContext} from 'phovea_core';
-import {ITacoTimePoint} from './data_set_selector';
-import {Language} from './language';
+import {ITacoTimePoint} from './DataSetSelector';
+import {Language} from '../app/Language';
 import {INumericalMatrix} from 'phovea_core';
 import {Range} from 'phovea_core';
 
@@ -130,14 +130,14 @@ class DetailView implements IAppView {
 
     this.$node.select('button').attr('disabled', 'disabled').classed('loading', true);
   }
-}
 
-/**
- * Factory method to create a new DiffHeatMap instance
- * @param parent
- * @param options
- * @returns {DiffHeatMap}
- */
-export function create(parent: Element, options: any) {
-  return new DetailView(parent, options);
+  /**
+   * Factory method to create a new DiffHeatMap instance
+   * @param parent
+   * @param options
+   * @returns {DiffHeatMap}
+   */
+  static create(parent: Element, options: any) {
+    return new DetailView(parent, options);
+  }
 }

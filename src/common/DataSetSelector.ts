@@ -5,13 +5,13 @@
 import * as moment from 'moment';
 import {DataCache} from 'phovea_core';
 import {EventHandler} from 'phovea_core';
-import {AppConstants} from './app_constants';
-import {IAppView} from './app';
-import {Language} from './language';
+import {AppConstants} from '../app/AppConstants';
+import {IAppView} from '../app/App';
+import {Language} from '../app/Language';
 import {INumericalMatrix} from 'phovea_core';
 import * as d3 from 'd3';
 import {AppContext} from 'phovea_core';
-import {selectTimePointFromHash} from './util';
+import {TimePointUtils} from './TimePointUtils';
 import {ProductIDType} from 'phovea_core';
 import {ParseRangeUtils} from 'phovea_core';
 import {Moment} from 'moment';
@@ -277,7 +277,7 @@ class DataSetSelector implements IAppView {
 
             this.trackSelections(selectedData[0].values[0].item);
             this.restoreSelections();
-            selectTimePointFromHash(selectedData[0].values);
+            TimePointUtils.selectTimePointFromHash(selectedData[0].values);
           }
 
         } else {
@@ -291,14 +291,14 @@ class DataSetSelector implements IAppView {
         return this;
       });
   }
+  /**
+   * Factory method to create a new DataSetSelector instance
+   * @param parent
+   * @param options
+   * @returns {DataSetSelector}
+   */
+  static create(parent: Element, options: any) {
+    return new DataSetSelector(parent, options);
+  }
 }
 
-/**
- * Factory method to create a new DataSetSelector instance
- * @param parent
- * @param options
- * @returns {DataSetSelector}
- */
-export function create(parent: Element, options: any) {
-  return new DataSetSelector(parent, options);
-}

@@ -2,7 +2,7 @@
  * Created by Christina Niederer on 12.01.2017.
  */
 
-import {IAppView} from './app';
+import {IAppView} from '../app/App';
 import * as d3 from 'd3';
 import {EventHandler} from 'phovea_core';
 import {AppContext} from 'phovea_core';
@@ -10,9 +10,8 @@ import {SelectionUtils, ProductIDType} from 'phovea_core';
 import {Range} from 'phovea_core';
 import {INumericalMatrix} from 'phovea_core';
 import {
-  AppConstants, IChangeType, ChangeTypes, COLOR_ADDED, COLOR_DELETED,
-  COLOR_CONTENT_NEGATIVE, COLOR_CONTENT_POSITIVE, COLOR_NO_CHANGE
-} from './app_constants';
+  AppConstants, IChangeType, ChangeTypes, DiffColors
+} from '../app/AppConstants';
 import {PluginRegistry} from 'phovea_core';
 import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/slider'; // specify the widget here
@@ -99,7 +98,7 @@ class DiffHeatMap implements IAppView {
 
   private readonly contentScale = d3.scale.linear<string>()
     .domain([-1, 0, 1])
-    .range([COLOR_CONTENT_NEGATIVE, COLOR_NO_CHANGE, COLOR_CONTENT_POSITIVE])
+    .range([DiffColors.COLOR_CONTENT_NEGATIVE, DiffColors.COLOR_NO_CHANGE, DiffColors.COLOR_CONTENT_POSITIVE])
     .clamp(true);
 
   private margin: number = 2 * 50;
@@ -443,12 +442,12 @@ class DiffHeatMap implements IAppView {
 
     if (data.structure) {
       if (this.activeChangeTypes.has(ChangeTypes.ADDED.type)) {
-        drawRows(data.structure.added_rows, COLOR_ADDED);
-        drawCols(data.structure.added_cols, COLOR_ADDED);
+        drawRows(data.structure.added_rows, DiffColors.COLOR_ADDED);
+        drawCols(data.structure.added_cols, DiffColors.COLOR_ADDED);
       }
       if (this.activeChangeTypes.has(ChangeTypes.REMOVED.type)) {
-        drawRows(data.structure.deleted_rows, COLOR_DELETED);
-        drawCols(data.structure.deleted_cols, COLOR_DELETED);
+        drawRows(data.structure.deleted_rows, DiffColors.COLOR_DELETED);
+        drawCols(data.structure.deleted_cols, DiffColors.COLOR_DELETED);
       }
     }
 
@@ -557,15 +556,16 @@ class DiffHeatMap implements IAppView {
     this.$node.select('.taco-table').remove();
     this.$node.select('.legend').remove();
   }
+
+  /**
+   * Factory method to create a new DiffHeatMap instance
+   * @param parent
+   * @param options
+   * @returns {DiffHeatMap}
+   */
+  static create(parent: Element, options: any) {
+    return new DiffHeatMap(parent, options);
+  }
 }
 
 
-/**
- * Factory method to create a new DiffHeatMap instance
- * @param parent
- * @param options
- * @returns {DiffHeatMap}
- */
-export function create(parent: Element, options: any) {
-  return new DiffHeatMap(parent, options);
-}

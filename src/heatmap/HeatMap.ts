@@ -4,9 +4,9 @@
 
 import {VisUtils} from 'phovea_core';
 import {EventHandler} from 'phovea_core';
-import {IAppView} from './app';
+import {IAppView} from '../app/App';
 import * as d3 from 'd3';
-import {AppConstants} from './app_constants';
+import {AppConstants} from '../app/AppConstants';
 import {IAnyMatrix} from 'phovea_core';
 import {INumberValueTypeDesc} from 'phovea_core';
 import {BaseUtils} from 'phovea_core';
@@ -100,7 +100,7 @@ class HeatMap implements IAppView {
       return;
     }
 
-    const showLabels = chooseLabel(dataset.nrow, dataset.ncol);
+    const showLabels = HeatMap.chooseLabel(dataset.nrow, dataset.ncol);
     const scale = [this.heatMapOptions.initialScale * scaleFactor.x, this.heatMapOptions.initialScale * scaleFactor.y];
 
     switch (showLabels) {
@@ -157,33 +157,32 @@ class HeatMap implements IAppView {
     this.$node.html('');
   }
 
-}
+  /**
+   * Decided based on the number of rows and columns if and if yes, which labels should be shown for the heatmap
+   * @param nrow
+   * @param ncol
+   * @returns {string}
+   */
+  static chooseLabel(nrow: number, ncol: number): string {
+    if (nrow < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE && ncol < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE) {
+      return 'CELL';
+    }
+    if (nrow < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE) {
+      return 'ROW';
+    }
+    if (ncol < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE) {
+      return 'COLUMN';
+    }
+    return 'NONE';
+  }
 
-/**
- * Decided based on the number of rows and columns if and if yes, which labels should be shown for the heatmap
- * @param nrow
- * @param ncol
- * @returns {string}
- */
-function chooseLabel(nrow: number, ncol: number): string {
-  if (nrow < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE && ncol < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE) {
-    return 'CELL';
+  /**
+   * Factory method to create a new HeatMap instance
+   * @param parent
+   * @param options
+   * @returns {HeatMap}
+   */
+  static create(parent: Element, options: any) {
+    return new HeatMap(parent, options);
   }
-  if (nrow < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE) {
-    return 'ROW';
-  }
-  if (ncol < AppConstants.MAXIMAL_HEATMAP_LABEL_SIZE) {
-    return 'COLUMN';
-  }
-  return 'NONE';
-}
-
-/**
- * Factory method to create a new HeatMap instance
- * @param parent
- * @param options
- * @returns {HeatMap}
- */
-export function create(parent: Element, options: any) {
-  return new HeatMap(parent, options);
 }

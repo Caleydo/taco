@@ -4,7 +4,7 @@
 
 import {PluginRegistry} from 'phovea_core';
 import * as d3 from 'd3';
-import {AppConstants} from './app_constants';
+import {AppConstants} from './AppConstants';
 import {EventHandler} from 'phovea_core';
 
 /**
@@ -179,13 +179,14 @@ export class App implements IAppView {
     this.$node.select('.busy').classed('hidden', !isBusy);
   }
 
+  /**
+   * Factory method to create a new TACO instance
+   * @param parent
+   * @returns {App}
+   */
+  static create(parent: Element) {
+    return new App(parent);
+  }
 }
 
-/**
- * Factory method to create a new TACO instance
- * @param parent
- * @returns {App}
- */
-export function create(parent: Element) {
-  return new App(parent);
-}
+

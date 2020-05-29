@@ -4,10 +4,10 @@
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 import {EventHandler, PluginRegistry} from 'phovea_core';
-import {AppConstants} from './app_constants';
-import {IAppView} from './app';
-import {ITacoTimePoint} from './data_set_selector';
-import {Language} from './language';
+import {AppConstants} from '../app/AppConstants';
+import {IAppView} from '../app/App';
+import {ITacoTimePoint} from './DataSetSelector';
+import {Language} from '../app/Language';
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -140,14 +140,14 @@ class MetaInfoBox implements IAppView {
     this.$leftMetaBox.html('');
     this.$rightMetaBox.html('');
   }
-}
 
-/**
- * Factory method to create a new MetaInfoBox instance.
- * @param parent Element on which the MetaInfoBox is drawn
- * @param options Parameters for the instance (optional)
- * @returns {MetaInfoBox}
- */
-export function create(parent: Element, options: any) {
-  return new MetaInfoBox(parent, options);
+  /**
+   * Factory method to create a new MetaInfoBox instance.
+   * @param parent Element on which the MetaInfoBox is drawn
+   * @param options Parameters for the instance (optional)
+   * @returns {MetaInfoBox}
+   */
+  static create(parent: Element, options: any) {
+    return new MetaInfoBox(parent, options);
+  }
 }

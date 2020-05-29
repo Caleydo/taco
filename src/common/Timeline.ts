@@ -5,10 +5,10 @@
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 import {EventHandler} from 'phovea_core';
-import {AppConstants} from './app_constants';
-import {IAppView} from './app';
-import {getTimeScale, getTotalWidth, selectTimePoint} from './util';
-import {ITacoTimePoint} from './data_set_selector';
+import {AppConstants} from '../app/AppConstants';
+import {IAppView} from '../app/App';
+import {TimePointUtils} from './TimePointUtils';
+import {ITacoTimePoint} from './DataSetSelector';
 
 /**
  * Shows a timeline with all available data points for a selected data set
@@ -96,7 +96,7 @@ class Timeline implements IAppView {
    * This method updates the graph and the timeline based on the window size and resizes the whole page.
    */
   private resize() {
-    this.totalWidth = getTotalWidth(this.items, AppConstants.TIMELINE_BAR_WIDTH, $(this.$node.node()).width());
+    this.totalWidth = TimePointUtils.getTotalWidth(this.items, AppConstants.TIMELINE_BAR_WIDTH, $(this.$node.node()).width());
     this.$svgTimeline.attr('width', this.totalWidth);
     this.updateTimelineAxis(this.$svgTimeline.select('g.axis.x'));
   }
@@ -151,7 +151,7 @@ class Timeline implements IAppView {
           that.isClicked = 0;
         }
 
-        selectTimePoint(d);
+        TimePointUtils.selectTimePoint(d);
         d3.select(this).classed('active', true).attr('fill');
       });
   }
@@ -161,7 +161,7 @@ class Timeline implements IAppView {
    * @param $node
    */
   private updateTimelineAxis($node) {
-    const timeScale = getTimeScale(this.items, this.totalWidth);
+    const timeScale = TimePointUtils.getTimeScale(this.items, this.totalWidth);
     const xAxis = d3.svg.axis()
       .scale(timeScale)
       .ticks((startDate, endDate) => this.items.map((item) => item.time.toDate()))
@@ -170,14 +170,15 @@ class Timeline implements IAppView {
 
     $node.call(xAxis);
   }
+
+  /**
+   * Factory method to create a new Timeline instance.
+   * @param parent Element on which the timeline is drawn
+   * @param options Parameters for the instance (optional)
+   * @returns {Timeline}
+   */
+  static create(parent: Element, options: any) {
+    return new Timeline(parent, options);
+  }
 }
 
-/**
- * Factory method to create a new Timeline instance.
- * @param parent Element on which the timeline is drawn
- * @param options Parameters for the instance (optional)
- * @returns {Timeline}
- */
-export function create(parent: Element, options: any) {
-  return new Timeline(parent, options);
-}
