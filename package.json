@@ -31,7 +31,7 @@
     "node": ">= 12.13"
   },
   "scripts": {
-    "clean": "rimraf build dist && npm run clean:compile",
+    "clean": "rimraf lib dist && npm run clean:compile",
     "clean:compile": "rimraf src/**/*.map src/**/*.js src/**/*.d.ts tests/**/*.js tests/**/*.map tests/**/*.d.ts demo/**/*.js demo/**/*.map demo/**/*.d.ts",
     "compile": "tsc",
     "lint": "tslint -c tslint.json -p . 'src/**/*.ts?(x)' 'tests/**/*.ts?(x)'",
@@ -48,7 +48,7 @@
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
     "predist": "npm run build && npm run docs",
-    "dist": "mkdir dist && cd build && tar cvzf ../dist/taco.tar.gz *",
+    "dist": "mkdir lib && cd dist && tar cvzf ../lib/taco.tar.gz *",
     "predocker": "npm run build",
     "docker": "docker build -t taco -f deploy/Dockerfile ."
   },
