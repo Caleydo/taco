@@ -17,7 +17,7 @@ if(pluginsToTransform.length > 0) {
  */
 module.exports = {
   transform: {
-    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.(js|ts|tsx)$": "ts-jest",
     "\\.xml$": "jest-raw-loader"
   },
   testRegex: "(.*(test|spec))\\.(tsx?)$",
