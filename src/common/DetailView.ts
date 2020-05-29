@@ -8,7 +8,7 @@ import {EventHandler} from 'phovea_core';
 import {Ajax} from 'phovea_core';
 import {AppConstants} from '../app/AppConstants';
 import {AppContext} from 'phovea_core';
-import {ITacoTimePoint} from './DataSetSelector';
+import {ITacoTimePoint} from './interfaces';
 import {Language} from '../app/Language';
 import {INumericalMatrix} from 'phovea_core';
 import {Range} from 'phovea_core';

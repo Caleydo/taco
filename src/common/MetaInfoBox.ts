@@ -6,7 +6,7 @@ import * as $ from 'jquery';
 import {EventHandler, PluginRegistry} from 'phovea_core';
 import {AppConstants} from '../app/AppConstants';
 import {IAppView} from '../app/App';
-import {ITacoTimePoint} from './DataSetSelector';
+import {ITacoTimePoint} from './interfaces';
 import {Language} from '../app/Language';
 
 /**

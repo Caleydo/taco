@@ -7,8 +7,7 @@ import {IAppView} from '../app/App';
 import {AppContext} from 'phovea_core';
 import {AppConstants, IChangeType, ChangeTypes} from '../app/AppConstants';
 import * as d3 from 'd3';
-import * as $ from 'jquery';
-import {ITacoTimePoint} from '../common/DataSetSelector';
+import {ITacoTimePoint} from '../common/interfaces';
 
 
 interface ICountsData {

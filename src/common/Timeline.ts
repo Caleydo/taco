@@ -8,7 +8,7 @@ import {EventHandler} from 'phovea_core';
 import {AppConstants} from '../app/AppConstants';
 import {IAppView} from '../app/App';
 import {TimePointUtils} from './TimePointUtils';
-import {ITacoTimePoint} from './DataSetSelector';
+import {ITacoTimePoint} from './interfaces';
 
 /**
  * Shows a timeline with all available data points for a selected data set

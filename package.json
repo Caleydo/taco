@@ -75,6 +75,7 @@
   },
   "dependencies": {
     "jquery-ui": "1.12.1",
+    "madge": "^3.9.0",
     "moment": "~2.24.0",
     "phovea_core": "github:phovea/phovea_core#asteiner/refactoring",
     "phovea_d3": "github:phovea/phovea_d3#vstoiber/refactoring",

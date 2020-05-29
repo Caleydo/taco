@@ -9,7 +9,7 @@ import {EventHandler} from 'phovea_core';
 import {AppConstants, ChangeTypes, IChangeType} from '../app/AppConstants';
 import {IAppView} from '../app/App';
 import {TimePointUtils} from '../common/TimePointUtils';
-import {ITacoTimePoint} from '../common/DataSetSelector';
+import {ITacoTimePoint} from '../common/interfaces';
 
 /**
  * This class adds a bar chart, that shows bars with click functionality,
