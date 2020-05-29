@@ -4,11 +4,11 @@
 
 import {IAppView} from './app';
 import * as d3 from 'd3';
-import * as events from 'phovea_core/src/event';
+import * as events from 'phovea_core';
 import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
-import {mixin, onDOMNodeRemoved} from 'phovea_core/src';
-import {INumericalMatrix} from 'phovea_core/src/matrix';
-import {ProductIDType} from 'phovea_core/src/idtype';
+import {mixin, onDOMNodeRemoved} from 'phovea_core';
+import {INumericalMatrix} from 'phovea_core';
+import {ProductIDType} from 'phovea_core';
 import {IDiffData} from './diff_heat_map';
 
 export enum EOrientation {

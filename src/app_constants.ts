@@ -1,7 +1,7 @@
 /**
  * Created by Holger Stitz on 26.08.2016.
  */
-import {hash} from 'phovea_core/src';
+import {hash} from 'phovea_core';
 
 export class AppConstants {
 

@@ -2,14 +2,14 @@
  * Created by Holger Stitz on 30.08.2016.
  */
 
-import * as vis from 'phovea_core/src/vis';
-import * as events from 'phovea_core/src/event';
+import * as vis from 'phovea_core';
+import * as events from 'phovea_core';
 import {IAppView} from './app';
 import * as d3 from 'd3';
 import {AppConstants} from './app_constants';
-import {IAnyMatrix} from 'phovea_core/src/matrix';
-import {INumberValueTypeDesc} from 'phovea_core/src/datatype';
-import {mixin} from 'phovea_core/src';
+import {IAnyMatrix} from 'phovea_core';
+import {INumberValueTypeDesc} from 'phovea_core';
+import {mixin} from 'phovea_core';
 
 /**
  * Shows a simple heat map for a given data set.

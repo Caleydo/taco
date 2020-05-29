@@ -8,10 +8,10 @@ import 'file-loader?name=robots.txt!./robots.txt';
 import 'phovea_ui/src/_bootstrap';
 import 'phovea_ui/src/_font-awesome';
 import './style.scss';
-import {initI18n} from 'phovea_core/src/i18n';
+import {initI18n} from 'phovea_core';
 
 import * as app from './app';
-import * as header from 'phovea_ui/src/header';
+import * as header from 'phovea_ui';
 import {Language} from './language';
 
 initI18n().then(() => {

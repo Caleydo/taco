@@ -2,10 +2,10 @@
  * Created by Holger Stitz on 25.08.2016.
  */
 
-import * as plugins from 'phovea_core/src/plugin';
+import * as plugins from 'phovea_core';
 import * as d3 from 'd3';
 import {AppConstants} from './app_constants';
-import * as events from 'phovea_core/src/event';
+import * as events from 'phovea_core';
 
 /**
  * Interface for all TACO Views

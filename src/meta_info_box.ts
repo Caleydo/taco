@@ -3,11 +3,11 @@
  */
 import * as d3 from 'd3';
 import * as $ from 'jquery';
-import * as events from 'phovea_core/src/event';
+import * as events from 'phovea_core';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 import {getTimeScale} from './util';
-import {get} from 'phovea_core/src/plugin';
+import {get} from 'phovea_core';
 import {ITacoTimePoint} from './data_set_selector';
 import {Language} from './language';
 

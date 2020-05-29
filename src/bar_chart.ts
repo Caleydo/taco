@@ -3,9 +3,9 @@
  */
 
 import * as d3 from 'd3';
-import * as ajax from 'phovea_core/src/ajax';
+import * as ajax from 'phovea_core';
 import * as $ from 'jquery';
-import * as events from 'phovea_core/src/event';
+import * as events from 'phovea_core';
 import {AppConstants, ChangeTypes, IChangeType} from './app_constants';
 import {IAppView} from './app';
 import {getTimeScale, getTotalWidth, selectTimePoint} from './util';

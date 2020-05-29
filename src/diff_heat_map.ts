@@ -4,17 +4,17 @@
 
 import {IAppView} from './app';
 import * as d3 from 'd3';
-import * as events from 'phovea_core/src/event';
-import * as ajax from 'phovea_core/src/ajax';
-import {toSelectOperation, ProductIDType} from 'phovea_core/src/idtype';
-import {cell} from 'phovea_core/src/range';
-import {onDOMNodeRemoved} from 'phovea_core/src';
-import {INumericalMatrix} from 'phovea_core/src/matrix';
+import * as events from 'phovea_core';
+import * as ajax from 'phovea_core';
+import {toSelectOperation, ProductIDType} from 'phovea_core';
+import {cell} from 'phovea_core';
+import {onDOMNodeRemoved} from 'phovea_core';
+import {INumericalMatrix} from 'phovea_core';
 import {
   AppConstants, IChangeType, ChangeTypes, COLOR_ADDED, COLOR_DELETED,
   COLOR_CONTENT_NEGATIVE, COLOR_CONTENT_POSITIVE, COLOR_NO_CHANGE
 } from './app_constants';
-import {get} from 'phovea_core/src/plugin';
+import {get} from 'phovea_core';
 import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/slider'; // specify the widget here
 import 'jquery-ui/themes/base/all.css'; // import base style for all widgets

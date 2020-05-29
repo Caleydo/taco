@@ -3,17 +3,17 @@
  */
 
 import * as moment from 'moment';
-import * as data from 'phovea_core/src/data';
-import * as events from 'phovea_core/src/event';
+import * as data from 'phovea_core';
+import * as events from 'phovea_core';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 import {Language} from './language';
-import {INumericalMatrix} from 'phovea_core/src/matrix';
+import {INumericalMatrix} from 'phovea_core';
 import * as d3 from 'd3';
-import {hash} from 'phovea_core/src';
+import {hash} from 'phovea_core';
 import {selectTimePointFromHash} from './util';
-import {ProductIDType} from 'phovea_core/src/idtype';
-import {parse} from 'phovea_core/src/range';
+import {ProductIDType} from 'phovea_core';
+import {parse} from 'phovea_core';
 import {Moment} from 'moment';
 import Format = d3.time.Format;
 

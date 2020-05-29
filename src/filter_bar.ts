@@ -2,7 +2,7 @@
  * Created by Holger Stitz on 19.12.2016.
  */
 
-import * as events from 'phovea_core/src/event';
+import * as events from 'phovea_core';
 import {AppConstants, ChangeTypes} from './app_constants';
 import {IAppView} from './app';
 import * as d3 from 'd3';

@@ -4,9 +4,9 @@
 
 import * as moment from 'moment';
 import * as d3 from 'd3';
-import * as events from 'phovea_core/src/event';
+import * as events from 'phovea_core';
 import {AppConstants} from './app_constants';
-import {hash} from 'phovea_core/src';
+import {hash} from 'phovea_core';
 import {ITacoTimePoint} from './data_set_selector';
 
 export function getTotalWidth(items: ITacoTimePoint[], itemWidth: number, totalWidth: number): number {

@@ -4,14 +4,14 @@
 
 import {IAppView} from './app';
 import * as d3 from 'd3';
-import * as events from 'phovea_core/src/event';
-import * as data from 'phovea_core/src/data';
+import * as events from 'phovea_core';
+import * as data from 'phovea_core';
 import {AppConstants} from './app_constants';
-import {hash} from 'phovea_core/src';
+import {hash} from 'phovea_core';
 import {ITacoTimePoint} from './data_set_selector';
 import {Language} from './language';
-import {INumericalMatrix} from 'phovea_core/src/matrix';
-import {join, all} from 'phovea_core/src/range';
+import {INumericalMatrix} from 'phovea_core';
+import {join, all} from 'phovea_core';
 
 class DetailView implements IAppView {
 
