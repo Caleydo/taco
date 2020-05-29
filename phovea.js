@@ -6,49 +6,49 @@
 
 //register all extensions in the registry following the given pattern
 module.exports = function(registry) {
-  //registry.push('extension-type', 'extension-id', function() { return System.import('./src/extension_impl'); }, {});
+  //registry.push('extension-type', 'extension-id', function() { return import('./src/extension_impl'); }, {});
   // generator-phovea:begin
-  registry.push('app', 'taco', function() { return System.import('./src/'); }, {
+  registry.push('app', 'taco', function() { return import('./src/'); }, {
     'name': 'TACO'
   });
 
-  registry.push('tacoView', 'DataSetSelector', function() { return System.import('./src/data_set_selector'); }, {
+  registry.push('tacoView', 'DataSetSelector', function() { return import('./src/data_set_selector'); }, {
     'name': 'Data Set Selector'
   });
 
-  registry.push('tacoView', 'Timeline', function() { return System.import('./src/timeline'); }, {
+  registry.push('tacoView', 'Timeline', function() { return import('./src/timeline'); }, {
     'name': 'Timeline'
   });
 
-  registry.push('tacoView', 'DetailView', function() { return System.import('./src/detail_view'); }, {
+  registry.push('tacoView', 'DetailView', function() { return import('./src/detail_view'); }, {
     'name': 'DetailView'
   });
 
-  registry.push('tacoView', 'HeatMap', function() { return System.import('./src/heat_map'); }, {
+  registry.push('tacoView', 'HeatMap', function() { return import('./src/heat_map'); }, {
     'name': 'Heat Map'
   });
 
-  registry.push('tacoView', 'DiffHeatMap', function() { return System.import('./src/diff_heat_map'); }, {
+  registry.push('tacoView', 'DiffHeatMap', function() { return import('./src/diff_heat_map'); }, {
     'name': 'Diff Heat Map'
   });
 
-  registry.push('tacoView', 'Histogram2D', function() { return System.import('./src/histogram_2d'); }, {
+  registry.push('tacoView', 'Histogram2D', function() { return import('./src/histogram_2d'); }, {
     'name': 'Histogram2D'
   });
 
-  registry.push('tacoView', 'FilterBar', function () { return System.import('./src/filter_bar'); }, {
+  registry.push('tacoView', 'FilterBar', function () { return import('./src/filter_bar'); }, {
     'name': 'FilterBar'
   });
 
-  registry.push('tacoView', 'BarChart', function () { return System.import('./src/bar_chart'); }, {
+  registry.push('tacoView', 'BarChart', function () { return import('./src/bar_chart'); }, {
     'name': 'BarChart'
   });
 
-  registry.push('tacoView', 'MetaInfoBox', function () { return System.import('./src/meta_info_box'); }, {
+  registry.push('tacoView', 'MetaInfoBox', function () { return import('./src/meta_info_box'); }, {
     'name': 'MetaInfoBox'
   });
 
-  registry.push('tacoView', 'ReorderView', function() { return System.import('./src/reorder_view'); }, {
+  registry.push('tacoView', 'ReorderView', function() { return import('./src/reorder_view'); }, {
     'name': 'Re-Order View'
   });
   // generator-phovea:end
