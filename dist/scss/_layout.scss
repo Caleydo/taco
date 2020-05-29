@@ -1,0 +1,26 @@
+
+.selector-timepoint {
+  overflow-x: auto;
+}
+
+.comparison {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  align-content: stretch;
+  justify-content: space-between;
+  margin-top: 50px;
+
+  &.heatmap-has-column-labels {
+    margin-top: 110px;
+  }
+
+  .heatmap {
+    width: 33%;
+  }
+
+  .heatmap:first-child {
+    text-align: right;
+  }
+}
