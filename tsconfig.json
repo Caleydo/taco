@@ -1,29 +1,31 @@
 {
   "compilerOptions": {
-    "module": "es6",
-    "target": "es5",
+    "module": "ES2020",
+    "target": "ES2019",
     "importHelpers": true,
     "sourceMap": true,
+    "declaration": true,
     "moduleResolution": "node",
     "jsx": "react",
+    "allowJs": true,
+    "declarationDir": "dist",
+    "outDir": "dist",
     "experimentalDecorators": true,
-    "downlevelIteration": true, // required as long as target is `es5`
     "lib": [
       "dom",
       "es2015",
       "es2016.array.include",
       "es2017.object"
     ],
-    "baseUrl": "../",
     "noImplicitAny": false,
     "skipLibCheck": true,
     "esModuleInterop": false,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true // required for i18next
   },
   "include": [
+    "dist/index.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "tests/**/*.ts",
     "index.ts",
     "tsd.d.ts"
   ]
