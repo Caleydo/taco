@@ -8,17 +8,17 @@ import 'file-loader?name=robots.txt!./robots.txt';
 import 'phovea_ui/src/_bootstrap';
 import 'phovea_ui/src/_font-awesome';
 import './style.scss';
-import {initI18n} from 'phovea_core';
+import {I18nextManager} from 'phovea_core';
 
 import * as app from './app';
-import * as header from 'phovea_ui';
+import {AppHeader, AppHeaderLink} from 'phovea_ui';
 import {Language} from './language';
 
-initI18n().then(() => {
-  header.create(
+I18nextManager.getInstance().initI18n().then(() => {
+  AppHeader.create(
     <HTMLElement>document.querySelector('#caleydoHeader'),
     {
-      appLink: new header.AppHeaderLink(Language.APP_NAME, (evt) => {
+      appLink: new AppHeaderLink(Language.APP_NAME, (evt) => {
         window.location.hash = '';
         window.location.reload();
         return false;

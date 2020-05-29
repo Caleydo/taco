@@ -2,9 +2,9 @@
  * Created by Holger Stitz on 29.11.2016.
  */
 
-import * as events from 'phovea_core';
+import {EventHandler} from 'phovea_core';
 import {IAppView} from './app';
-import * as ajax from 'phovea_core';
+import {AppContext} from 'phovea_core';
 import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
@@ -179,7 +179,7 @@ class Histogram2D implements IAppView {
    */
   private static getJSONRatio2D(pair: string[]) {
     const operations = ChangeTypes.forURL();
-    return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/ratio_2d`);
+    return AppContext.getInstance().getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/ratio_2d`);
   }
 
   /**
@@ -191,7 +191,7 @@ class Histogram2D implements IAppView {
    */
   private static getJSONHistogram(pair: string[], binRows: number, binCols: number) {
     const operations = ChangeTypes.forURL();
-    return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${binRows}/${binCols}/${operations}/histogram`);
+    return AppContext.getInstance().getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${binRows}/${binCols}/${operations}/histogram`);
   }
 
   constructor(parent: Element, private options: any) {
@@ -250,11 +250,11 @@ class Histogram2D implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+    EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items: ITacoTimePoint[]) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items: ITacoTimePoint[]) => {
       if (items.length === 2) {
         this.updateItems(items);
 
@@ -263,14 +263,14 @@ class Histogram2D implements IAppView {
       }
     });
 
-    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
       if (this.ratioData) {
         this.show2DRatio(this.ratioData);
         this.scaleHistogramWidth(); // just rescale the height of the bars
       }
     });
 
-    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
       if (this.ratioData) {
         this.show2DRatio(this.ratioData);
         this.scaleHistogramWidth(); // just rescale the height of the bars

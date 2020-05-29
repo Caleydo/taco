@@ -3,9 +3,9 @@
  */
 
 import * as d3 from 'd3';
-import * as ajax from 'phovea_core';
+import {AppContext} from 'phovea_core';
 import * as $ from 'jquery';
-import * as events from 'phovea_core';
+import {EventHandler} from 'phovea_core';
 import {AppConstants, ChangeTypes, IChangeType} from './app_constants';
 import {IAppView} from './app';
 import {getTimeScale, getTotalWidth, selectTimePoint} from './util';
@@ -40,7 +40,7 @@ class BarChart implements IAppView {
    */
   private static getJSON(pair): Promise<any> {
     const operations = ChangeTypes.forURL();
-    return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/bar_chart`);
+    return AppContext.getInstance().getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/bar_chart`);
   }
 
   /**
@@ -82,24 +82,24 @@ class BarChart implements IAppView {
    */
   private attachListener() {
     // Call the resize function whenever a resize event occurs
-    events.on(AppConstants.EVENT_RESIZE, () => {
+    EventHandler.getInstance().on(AppConstants.EVENT_RESIZE, () => {
       if (this.items) {
         this.resize();
         this.updateItems(this.items);
       }
     });
 
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items: ITacoTimePoint[]) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items: ITacoTimePoint[]) => {
       this.items = items;
       this.barScaling.domain([0, 1]);
       this.updateItems(items);
     });
 
-    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
       this.scaleBarsHeight(); // just rescale the height of the bars
     });
 
-    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
       this.scaleBarsHeight(); // just rescale the height of the bars
     });
   }
@@ -129,10 +129,10 @@ class BarChart implements IAppView {
       .style('width', this.widthBarChart + 'px')
       .style('height', this.heightBarChart + 'px')
       .on('mouseenter', (d) => {
-        events.fire(AppConstants.EVENT_TIME_POINT_HOVERED, d[1].time.toDate(), true);
+        EventHandler.getInstance().fire(AppConstants.EVENT_TIME_POINT_HOVERED, d[1].time.toDate(), true);
       })
       .on('mouseleave', (d) => {
-        events.fire(AppConstants.EVENT_TIME_POINT_HOVERED, d[1].time.toDate(), false);
+        EventHandler.getInstance().fire(AppConstants.EVENT_TIME_POINT_HOVERED, d[1].time.toDate(), false);
       })
       .on('click', (d) => {
         selectTimePoint(d[1]);

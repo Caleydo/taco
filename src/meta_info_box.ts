@@ -3,11 +3,9 @@
  */
 import * as d3 from 'd3';
 import * as $ from 'jquery';
-import * as events from 'phovea_core';
+import {EventHandler, PluginRegistry} from 'phovea_core';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
-import {getTimeScale} from './util';
-import {get} from 'phovea_core';
 import {ITacoTimePoint} from './data_set_selector';
 import {Language} from './language';
 
@@ -51,13 +49,13 @@ class MetaInfoBox implements IAppView {
    */
   private attachListener() {
     // Call the resize function whenever a resize event occurs
-    events.on(AppConstants.EVENT_RESIZE, () => this.resize());
+    EventHandler.getInstance().on(AppConstants.EVENT_RESIZE, () => this.resize());
 
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+    EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items: ITacoTimePoint[]) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items: ITacoTimePoint[]) => {
       if (items.length === 2) {
         this.updateItems(items);
       } else {
@@ -65,7 +63,7 @@ class MetaInfoBox implements IAppView {
       }
     });
 
-    events.on(AppConstants.EVENT_DATASET_SELECTED, (evt, items: ITacoTimePoint[]) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_DATASET_SELECTED, (evt, items: ITacoTimePoint[]) => {
       this.clearContent();
     });
   }
@@ -91,7 +89,7 @@ class MetaInfoBox implements IAppView {
       .style('height', this.boxHeight + 'px');
 
     // wrap view ids from package.json as plugin and load the necessary files
-    get(AppConstants.VIEW, 'Histogram2D')
+    PluginRegistry.getInstance().getPlugin(AppConstants.VIEW, 'Histogram2D')
       .load()
       .then((plugin) => {
         const view = plugin.factory(

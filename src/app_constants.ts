@@ -1,7 +1,7 @@
 /**
  * Created by Holger Stitz on 26.08.2016.
  */
-import {hash} from 'phovea_core';
+import {AppContext} from 'phovea_core';
 
 export class AppConstants {
 
@@ -88,7 +88,7 @@ export interface IChangeType {
   abbr: string;
 }
 
-const defaultFilter = hash.getProp(AppConstants.HASH_PROPS.FILTER, 'NCAR');
+const defaultFilter = AppContext.getInstance().hash.getProp(AppConstants.HASH_PROPS.FILTER, 'NCAR');
 
 export class ChangeTypes {
 
@@ -155,7 +155,7 @@ export class ChangeTypes {
   }
 
   static updateFilterHash() {
-    hash.setProp(AppConstants.HASH_PROPS.FILTER, ChangeTypes.TYPE_ARRAY.filter((d) => d.isActive).map((d) => d.abbr).join(''));
+    AppContext.getInstance().hash.setProp(AppConstants.HASH_PROPS.FILTER, ChangeTypes.TYPE_ARRAY.filter((d) => d.isActive).map((d) => d.abbr).join(''));
   }
 }
 

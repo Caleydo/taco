@@ -4,17 +4,16 @@
 
 import {IAppView} from './app';
 import * as d3 from 'd3';
-import * as events from 'phovea_core';
-import * as ajax from 'phovea_core';
-import {toSelectOperation, ProductIDType} from 'phovea_core';
-import {cell} from 'phovea_core';
-import {onDOMNodeRemoved} from 'phovea_core';
+import {EventHandler} from 'phovea_core';
+import {AppContext} from 'phovea_core';
+import {SelectionUtils, ProductIDType} from 'phovea_core';
+import {Range} from 'phovea_core';
 import {INumericalMatrix} from 'phovea_core';
 import {
   AppConstants, IChangeType, ChangeTypes, COLOR_ADDED, COLOR_DELETED,
   COLOR_CONTENT_NEGATIVE, COLOR_CONTENT_POSITIVE, COLOR_NO_CHANGE
 } from './app_constants';
-import {get} from 'phovea_core';
+import {PluginRegistry} from 'phovea_core';
 import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/slider'; // specify the widget here
 import 'jquery-ui/themes/base/all.css'; // import base style for all widgets
@@ -119,7 +118,7 @@ class DiffHeatMap implements IAppView {
 
   private static getJSON(pair: string[]) {
     const operations = ChangeTypes.forURL();
-    return ajax.getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/diff_heat_map`);
+    return AppContext.getInstance().getAPIJSON(`/taco/compare/${pair[0]}/${pair[1]}/${operations}/diff_heat_map`);
   }
 
   constructor(public parent: Element, private options: any) {
@@ -145,7 +144,7 @@ class DiffHeatMap implements IAppView {
    */
   private build() {
     // wrap view ids from package.json as plugin and load the necessary files
-    get(AppConstants.VIEW, 'ReorderView')
+    PluginRegistry.getInstance().getPlugin(AppConstants.VIEW, 'ReorderView')
       .load()
       .then((plugin) => {
         const view = plugin.factory(
@@ -160,15 +159,15 @@ class DiffHeatMap implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+    EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
+    EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
       this.clearContent();
     });
 
-    onDOMNodeRemoved(<HTMLElement>this.$node.node(), () => {
+    AppContext.getInstance().onDOMNodeRemoved(<HTMLElement>this.$node.node(), () => {
       const old = this.getProductIDType();
       if (old) {
         old.off(ProductIDType.EVENT_SELECT_PRODUCT, this.selectionListener);
@@ -176,7 +175,7 @@ class DiffHeatMap implements IAppView {
     });
 
     //attach event listener
-    events.on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items: INumericalMatrix[]) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items: INumericalMatrix[]) => {
       if (items.length !== 2) {
         return;
       }
@@ -200,21 +199,21 @@ class DiffHeatMap implements IAppView {
             idType.on(ProductIDType.EVENT_SELECT_PRODUCT, this.selectionListener);
           }
           this.drawDiffHeatmap(this.data);
-          events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
+          EventHandler.getInstance().fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
         });
     });
 
-    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
-    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+    EventHandler.getInstance().on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+    EventHandler.getInstance().on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
 
-    events.on(AppConstants.EVENT_RESIZE, () => {
+    EventHandler.getInstance().on(AppConstants.EVENT_RESIZE, () => {
       if (this.data) {
         this.drawDiffHeatmap(this.data);
-        events.fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
+        EventHandler.getInstance().fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
       }
     });
 
-    events.on(AppConstants.EVENT_FOCUS_ON_REORDER, (evt, isActive: boolean) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_FOCUS_ON_REORDER, (evt, isActive: boolean) => {
       this.$node.classed('focusOnReorder', isActive);
     });
   }
@@ -339,7 +338,7 @@ class DiffHeatMap implements IAppView {
       const rowId = data.union.r_ids[row];
       const idType = this.getProductIDType();
       if (idType) {
-        idType.select([cell(rowId, colId)], toSelectOperation(evt));
+        idType.select([Range.cell(rowId, colId)], SelectionUtils.toSelectOperation(evt));
       }
     });
 

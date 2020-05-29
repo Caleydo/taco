@@ -3,17 +3,17 @@
  */
 
 import * as moment from 'moment';
-import * as data from 'phovea_core';
-import * as events from 'phovea_core';
+import {DataCache} from 'phovea_core';
+import {EventHandler} from 'phovea_core';
 import {AppConstants} from './app_constants';
 import {IAppView} from './app';
 import {Language} from './language';
 import {INumericalMatrix} from 'phovea_core';
 import * as d3 from 'd3';
-import {hash} from 'phovea_core';
+import {AppContext} from 'phovea_core';
 import {selectTimePointFromHash} from './util';
 import {ProductIDType} from 'phovea_core';
-import {parse} from 'phovea_core';
+import {ParseRangeUtils} from 'phovea_core';
 import {Moment} from 'moment';
 import Format = d3.time.Format;
 
@@ -49,7 +49,7 @@ class DataProvider {
    * @returns {Promise<ITacoDataset[]>}
    */
   load() {
-    return data
+    return DataCache.getInstance()
     //.list((d) => {
     //  return d.desc.type === 'matrix' && (<IMatrixDataDescription<IValueTypeDesc>>d.desc).value.type === VALUE_TYPE_REAL; // return numerical matrices only
     //})
@@ -199,13 +199,13 @@ class DataSetSelector implements IAppView {
           .filter((d, i) => i === this.$select.property('selectedIndex'))
           .data();
 
-        hash.setProp(AppConstants.HASH_PROPS.DATASET, selectedData[0].key);
-        hash.removeProp(AppConstants.HASH_PROPS.TIME_POINTS);
-        hash.removeProp(AppConstants.HASH_PROPS.DETAIL_VIEW);
-        hash.removeProp(AppConstants.HASH_PROPS.SELECTION);
+        AppContext.getInstance().hash.setProp(AppConstants.HASH_PROPS.DATASET, selectedData[0].key);
+        AppContext.getInstance().hash.removeProp(AppConstants.HASH_PROPS.TIME_POINTS);
+        AppContext.getInstance().hash.removeProp(AppConstants.HASH_PROPS.DETAIL_VIEW);
+        AppContext.getInstance().hash.removeProp(AppConstants.HASH_PROPS.SELECTION);
 
         if (selectedData.length > 0) {
-          events.fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
+          EventHandler.getInstance().fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
           this.trackSelections(selectedData[0].values[0].item);
         }
       });
@@ -232,7 +232,7 @@ class DataSetSelector implements IAppView {
     }
     const ranges = this.trackedSelections.productSelections();
     const value = ranges.map((r) => r.toString()).join(';');
-    hash.setProp(AppConstants.HASH_PROPS.SELECTION, value);
+    AppContext.getInstance().hash.setProp(AppConstants.HASH_PROPS.SELECTION, value);
   }
 
   /**
@@ -242,11 +242,11 @@ class DataSetSelector implements IAppView {
     if (!this.trackedSelections) {
       return;
     }
-    const value = hash.getProp(AppConstants.HASH_PROPS.SELECTION, '');
+    const value = AppContext.getInstance().hash.getProp(AppConstants.HASH_PROPS.SELECTION, '');
     if (value === '') {
       return;
     }
-    const ranges = value.split(';').map((s) => parse(s));
+    const ranges = value.split(';').map((s) => ParseRangeUtils.parseRangeLike(s));
     this.trackedSelections.select(ranges);
   }
 
@@ -268,12 +268,12 @@ class DataSetSelector implements IAppView {
 
         $options.exit().remove();
 
-        if (hash.has(AppConstants.HASH_PROPS.DATASET)) {
-          const selectedData = data.filter((d, i) => d.key === hash.getProp(AppConstants.HASH_PROPS.DATASET));
+        if (AppContext.getInstance().hash.has(AppConstants.HASH_PROPS.DATASET)) {
+          const selectedData = data.filter((d, i) => d.key === AppContext.getInstance().hash.getProp(AppConstants.HASH_PROPS.DATASET));
 
           if (selectedData.length > 0) {
             this.$select.property('selectedIndex', data.indexOf(selectedData[0]));
-            events.fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
+            EventHandler.getInstance().fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
 
             this.trackSelections(selectedData[0].values[0].item);
             this.restoreSelections();

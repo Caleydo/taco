@@ -2,10 +2,10 @@
  * Created by Holger Stitz on 25.08.2016.
  */
 
-import * as plugins from 'phovea_core';
+import {PluginRegistry} from 'phovea_core';
 import * as d3 from 'd3';
 import {AppConstants} from './app_constants';
-import * as events from 'phovea_core';
+import {EventHandler} from 'phovea_core';
 
 /**
  * Interface for all TACO Views
@@ -124,7 +124,7 @@ export class App implements IAppView {
 
   private attachListener() {
     window.addEventListener('resize', () => {
-      events.fire(AppConstants.EVENT_RESIZE);
+      EventHandler.getInstance().fire(AppConstants.EVENT_RESIZE);
     });
   }
 
@@ -137,7 +137,7 @@ export class App implements IAppView {
 
     // wrap view ids from package.json as plugin and load the necessary files
     const pluginPromises = this.views
-      .map((d) => plugins.get(AppConstants.VIEW, d.view))
+      .map((d) => PluginRegistry.getInstance().getPlugin(AppConstants.VIEW, d.view))
       .filter((d) => d !== undefined) // filter views that does not exists
       .map((d) => d.load());
 

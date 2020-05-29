@@ -2,14 +2,14 @@
  * Created by Holger Stitz on 30.08.2016.
  */
 
-import * as vis from 'phovea_core';
-import * as events from 'phovea_core';
+import {VisUtils} from 'phovea_core';
+import {EventHandler} from 'phovea_core';
 import {IAppView} from './app';
 import * as d3 from 'd3';
 import {AppConstants} from './app_constants';
 import {IAnyMatrix} from 'phovea_core';
 import {INumberValueTypeDesc} from 'phovea_core';
-import {mixin} from 'phovea_core';
+import {BaseUtils} from 'phovea_core';
 
 /**
  * Shows a simple heat map for a given data set.
@@ -50,20 +50,20 @@ class HeatMap implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+    EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
+    EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
       this.clearContent();
     });
 
-    events.on(this.options.eventName, (evt, dataset: IAnyMatrix) => {
+    EventHandler.getInstance().on(this.options.eventName, (evt, dataset: IAnyMatrix) => {
       this.matrix = dataset;
       this.checkAndUpdate();
     });
 
-    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor) => {
       this.scaleFactor = scaleFactor;
       this.checkAndUpdate();
     });
@@ -92,7 +92,7 @@ class HeatMap implements IAppView {
 
     }
     //console.log('DATASET', dataset);
-    const plugins = vis.list(dataset).filter((d) => /.*heatmap.*/.test(d.id));
+    const plugins = VisUtils.listVisPlugins(dataset).filter((d) => /.*heatmap.*/.test(d.id));
 
 
     if (plugins.length === 0) {
@@ -121,7 +121,7 @@ class HeatMap implements IAppView {
 
     const maxRangeValue = Math.max(...(<INumberValueTypeDesc>dataset.valuetype).range.map((d) => Math.abs(d)));
 
-    const options = mixin({}, this.heatMapOptions, {
+    const options = BaseUtils.mixin({}, this.heatMapOptions, {
       scale,
       labels: showLabels,
       domain: [-maxRangeValue, 0, maxRangeValue]
@@ -145,7 +145,7 @@ class HeatMap implements IAppView {
       })
       .then((instance) => {
         this.$node.classed('loading', false);
-        events.fire(AppConstants.EVENT_HEATMAP_LOADED);
+        EventHandler.getInstance().fire(AppConstants.EVENT_HEATMAP_LOADED);
         return instance;
       });
   }

@@ -4,14 +4,14 @@
 
 import {IAppView} from './app';
 import * as d3 from 'd3';
-import * as events from 'phovea_core';
-import * as data from 'phovea_core';
+import {EventHandler} from 'phovea_core';
+import {Ajax} from 'phovea_core';
 import {AppConstants} from './app_constants';
-import {hash} from 'phovea_core';
+import {AppContext} from 'phovea_core';
 import {ITacoTimePoint} from './data_set_selector';
 import {Language} from './language';
 import {INumericalMatrix} from 'phovea_core';
-import {join, all} from 'phovea_core';
+import {Range} from 'phovea_core';
 
 class DetailView implements IAppView {
 
@@ -47,27 +47,27 @@ class DetailView implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+    EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
       this.$node.select('button').attr('disabled', 'disabled').classed('loading', false);
     });
 
-    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items: ITacoTimePoint[]) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items: ITacoTimePoint[]) => {
       this.openEvents(items);
     });
 
-    events.on(AppConstants.EVENT_OPEN_DETAIL_VIEW, (evt, items: ITacoTimePoint[]) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_OPEN_DETAIL_VIEW, (evt, items: ITacoTimePoint[]) => {
       this.loadDetailView(items);
     });
 
     let heatmapsLoaded = 0;
-    events.on(AppConstants.EVENT_HEATMAP_LOADED, () => {
+    EventHandler.getInstance().on(AppConstants.EVENT_HEATMAP_LOADED, () => {
       heatmapsLoaded++;
       if (heatmapsLoaded === 3) {
         this.$node.select('button').classed('loading', false);
         heatmapsLoaded = 0;
       }
     });
-    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, () => {
+    EventHandler.getInstance().on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, () => {
       heatmapsLoaded++;
       if (heatmapsLoaded === 3) {
         this.$node.select('button').classed('loading', false);
@@ -93,14 +93,14 @@ class DetailView implements IAppView {
       return;
     }
 
-    hash.setInt(AppConstants.HASH_PROPS.DETAIL_VIEW, 1);
+    AppContext.getInstance().hash.setInt(AppConstants.HASH_PROPS.DETAIL_VIEW, 1);
 
-    events.fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, selection.map((d) => d.item));
+    EventHandler.getInstance().fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, selection.map((d) => d.item));
 
     const loadStratIds = (stratName: string) => {
-      return data.get(stratName)
+      return Ajax.getData(stratName)
         .then((s) => s.ids())
-        .catch(() => all());
+        .catch(() => Range.all());
     };
 
     const clusterMatrix = (matrix: INumericalMatrix, rowStratId: string, colStratId: string) => {
@@ -109,7 +109,7 @@ class DetailView implements IAppView {
           loadStratIds(matrix.desc.id + rowStratId),
           loadStratIds(matrix.desc.id + colStratId)
         ])
-          .then((ranges) => matrix.idView(join(ranges))) // Range must be [1] row ids, [2] col ids
+          .then((ranges) => matrix.idView(Range.join(ranges))) // Range must be [1] row ids, [2] col ids
           .then((matrixView) => <INumericalMatrix>matrixView)
           .catch((error) => {
             return matrix;
@@ -120,12 +120,12 @@ class DetailView implements IAppView {
 
     clusterMatrix(selection[0].item, selection[0].rowStratId, selection[0].colStratId)
       .then((matrix) => {
-        events.fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, matrix);
+        EventHandler.getInstance().fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, matrix);
       });
 
     clusterMatrix(selection[1].item, selection[1].rowStratId, selection[1].colStratId)
       .then((matrix) => {
-        events.fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, matrix);
+        EventHandler.getInstance().fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, matrix);
       });
 
     this.$node.select('button').attr('disabled', 'disabled').classed('loading', true);

@@ -4,9 +4,9 @@
 
 import {IAppView} from './app';
 import * as d3 from 'd3';
-import * as events from 'phovea_core';
+import {EventHandler, AppContext} from 'phovea_core';
 import {AppConstants, IChangeType, ChangeTypes} from './app_constants';
-import {mixin, onDOMNodeRemoved} from 'phovea_core';
+import {BaseUtils} from 'phovea_core';
 import {INumericalMatrix} from 'phovea_core';
 import {ProductIDType} from 'phovea_core';
 import {IDiffData} from './diff_heat_map';
@@ -57,7 +57,7 @@ class ReorderView implements IAppView {
   private selectionListener = (evt: any) => this.selectLine();
 
   constructor(public parent: Element, options: any) {
-    this.options = mixin(this.options, options);
+    this.options = BaseUtils.mixin(this.options, options);
 
     this.$node = d3.select(parent)
       .append('svg')
@@ -102,7 +102,7 @@ class ReorderView implements IAppView {
       .on('click', () => {
         const isActive = !$button.classed('active');
         $button.classed('active', isActive);
-        events.fire(AppConstants.EVENT_FOCUS_ON_REORDER, isActive);
+        EventHandler.getInstance().fire(AppConstants.EVENT_FOCUS_ON_REORDER, isActive);
       });
   }
 
@@ -112,28 +112,28 @@ class ReorderView implements IAppView {
     }
     this.$reorderToggle.classed('fadeout', true);
     this.$reorderToggle.select('button').classed('active', false);
-    events.fire(AppConstants.EVENT_FOCUS_ON_REORDER, false);
+    EventHandler.getInstance().fire(AppConstants.EVENT_FOCUS_ON_REORDER, false);
   }
 
   /**
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    onDOMNodeRemoved(<HTMLElement>this.$node.node(), () => {
+    AppContext.getInstance().onDOMNodeRemoved(<HTMLElement>this.$node.node(), () => {
       const old = this.getProductIDType();
       if (old) {
         old.off(ProductIDType.EVENT_SELECT_PRODUCT, this.selectionListener);
       }
     });
-    events.on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+    EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
+    EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
       this.clearContent();
     });
 
-    events.on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair: INumericalMatrix[], diffData: IDiffData, scaleFactor: { x: number, y: number }) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair: INumericalMatrix[], diffData: IDiffData, scaleFactor: { x: number, y: number }) => {
       if (pair.length === 2) {
         this.data = diffData;
         this.selectedTables = pair;
@@ -152,14 +152,14 @@ class ReorderView implements IAppView {
       }
     });
 
-    events.on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => {
       if (changeType === ChangeTypes.REORDER) {
         this.$node.classed('fadeout', !changeType.isActive);
         this.$reorderToggle.classed('fadeout', false); // show reorder toogle (without activating it again)
       }
     });
 
-    events.on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => {
       if (changeType === ChangeTypes.REORDER) {
         this.$node.classed('fadeout', !changeType.isActive);
         this.deactivateAndHideReorderToggle();
@@ -168,7 +168,7 @@ class ReorderView implements IAppView {
 
     let xPosBak = '0';
 
-    events.on(AppConstants.EVENT_FOCUS_ON_REORDER, (evt, isActive: boolean) => {
+    EventHandler.getInstance().on(AppConstants.EVENT_FOCUS_ON_REORDER, (evt, isActive: boolean) => {
       const $slopes = this.$srcSlopes.selectAll('.slope');
       const $axis = this.$srcSlopes.select('.axis');
 
