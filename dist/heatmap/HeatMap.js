@@ -2,7 +2,7 @@
  * Created by Holger Stitz on 30.08.2016.
  */
 import { VisUtils } from 'phovea_core';
-import { EventHandler } from 'phovea_core';
+import { GlobalEventHandler } from 'phovea_core';
 import * as d3 from 'd3';
 import { AppConstants } from '../app/AppConstants';
 import { BaseUtils } from 'phovea_core';
@@ -36,17 +36,17 @@ class HeatMap {
      * Attach event handler for broadcasted events
      */
     attachListener() {
-        EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
             this.clearContent();
         });
-        EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
             this.clearContent();
         });
-        EventHandler.getInstance().on(this.options.eventName, (evt, dataset) => {
+        GlobalEventHandler.getInstance().on(this.options.eventName, (evt, dataset) => {
             this.matrix = dataset;
             this.checkAndUpdate();
         });
-        EventHandler.getInstance().on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor) => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor) => {
             this.scaleFactor = scaleFactor;
             this.checkAndUpdate();
         });
@@ -111,7 +111,7 @@ class HeatMap {
         })
             .then((instance) => {
             this.$node.classed('loading', false);
-            EventHandler.getInstance().fire(AppConstants.EVENT_HEATMAP_LOADED);
+            GlobalEventHandler.getInstance().fire(AppConstants.EVENT_HEATMAP_LOADED);
             return instance;
         });
     }

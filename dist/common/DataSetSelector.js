@@ -3,7 +3,7 @@
  */
 import * as moment from 'moment';
 import { DataCache } from 'phovea_core';
-import { EventHandler } from 'phovea_core';
+import { GlobalEventHandler } from 'phovea_core';
 import { AppConstants } from '../app/AppConstants';
 import { Language } from '../app/Language';
 import * as d3 from 'd3';
@@ -150,7 +150,7 @@ class DataSetSelector {
             AppContext.getInstance().hash.removeProp(AppConstants.HASH_PROPS.DETAIL_VIEW);
             AppContext.getInstance().hash.removeProp(AppConstants.HASH_PROPS.SELECTION);
             if (selectedData.length > 0) {
-                EventHandler.getInstance().fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
+                GlobalEventHandler.getInstance().fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
                 this.trackSelections(selectedData[0].values[0].item);
             }
         });
@@ -209,7 +209,7 @@ class DataSetSelector {
                 const selectedData = data.filter((d, i) => d.key === AppContext.getInstance().hash.getProp(AppConstants.HASH_PROPS.DATASET));
                 if (selectedData.length > 0) {
                     this.$select.property('selectedIndex', data.indexOf(selectedData[0]));
-                    EventHandler.getInstance().fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
+                    GlobalEventHandler.getInstance().fire(AppConstants.EVENT_DATA_COLLECTION_SELECTED, selectedData[0].values);
                     this.trackSelections(selectedData[0].values[0].item);
                     this.restoreSelections();
                     TimePointUtils.selectTimePointFromHash(selectedData[0].values);

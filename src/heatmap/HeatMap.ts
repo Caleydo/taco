@@ -3,7 +3,7 @@
  */
 
 import {VisUtils} from 'phovea_core';
-import {EventHandler} from 'phovea_core';
+import {GlobalEventHandler} from 'phovea_core';
 import {IAppView} from '../app/App';
 import * as d3 from 'd3';
 import {AppConstants} from '../app/AppConstants';
@@ -50,20 +50,20 @@ class HeatMap implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
       this.clearContent();
     });
 
-    EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
       this.clearContent();
     });
 
-    EventHandler.getInstance().on(this.options.eventName, (evt, dataset: IAnyMatrix) => {
+    GlobalEventHandler.getInstance().on(this.options.eventName, (evt, dataset: IAnyMatrix) => {
       this.matrix = dataset;
       this.checkAndUpdate();
     });
 
-    EventHandler.getInstance().on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor) => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, (evt, pair, diffData, scaleFactor) => {
       this.scaleFactor = scaleFactor;
       this.checkAndUpdate();
     });
@@ -145,7 +145,7 @@ class HeatMap implements IAppView {
       })
       .then((instance) => {
         this.$node.classed('loading', false);
-        EventHandler.getInstance().fire(AppConstants.EVENT_HEATMAP_LOADED);
+        GlobalEventHandler.getInstance().fire(AppConstants.EVENT_HEATMAP_LOADED);
         return instance;
       });
   }

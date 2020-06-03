@@ -4,7 +4,7 @@
 import * as d3 from 'd3';
 import { AppContext } from 'phovea_core';
 import * as $ from 'jquery';
-import { EventHandler } from 'phovea_core';
+import { GlobalEventHandler } from 'phovea_core';
 import { AppConstants, ChangeTypes } from '../app/AppConstants';
 import { TimePointUtils } from '../common/TimePointUtils';
 /**
@@ -66,21 +66,21 @@ class BarChart {
      */
     attachListener() {
         // Call the resize function whenever a resize event occurs
-        EventHandler.getInstance().on(AppConstants.EVENT_RESIZE, () => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_RESIZE, () => {
             if (this.items) {
                 this.resize();
                 this.updateItems(this.items);
             }
         });
-        EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items) => {
             this.items = items;
             this.barScaling.domain([0, 1]);
             this.updateItems(items);
         });
-        EventHandler.getInstance().on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType) => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType) => {
             this.scaleBarsHeight(); // just rescale the height of the bars
         });
-        EventHandler.getInstance().on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType) => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType) => {
             this.scaleBarsHeight(); // just rescale the height of the bars
         });
     }
@@ -104,10 +104,10 @@ class BarChart {
             .style('width', this.widthBarChart + 'px')
             .style('height', this.heightBarChart + 'px')
             .on('mouseenter', (d) => {
-            EventHandler.getInstance().fire(AppConstants.EVENT_TIME_POINT_HOVERED, d[1].time.toDate(), true);
+            GlobalEventHandler.getInstance().fire(AppConstants.EVENT_TIME_POINT_HOVERED, d[1].time.toDate(), true);
         })
             .on('mouseleave', (d) => {
-            EventHandler.getInstance().fire(AppConstants.EVENT_TIME_POINT_HOVERED, d[1].time.toDate(), false);
+            GlobalEventHandler.getInstance().fire(AppConstants.EVENT_TIME_POINT_HOVERED, d[1].time.toDate(), false);
         })
             .on('click', (d) => {
             TimePointUtils.selectTimePoint(d[1]);

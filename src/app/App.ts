@@ -5,7 +5,7 @@
 import {PluginRegistry} from 'phovea_core';
 import * as d3 from 'd3';
 import {AppConstants} from './AppConstants';
-import {EventHandler} from 'phovea_core';
+import {GlobalEventHandler} from 'phovea_core';
 
 /**
  * Interface for all TACO Views
@@ -124,7 +124,7 @@ export class App implements IAppView {
 
   private attachListener() {
     window.addEventListener('resize', () => {
-      EventHandler.getInstance().fire(AppConstants.EVENT_RESIZE);
+      GlobalEventHandler.getInstance().fire(AppConstants.EVENT_RESIZE);
     });
   }
 

@@ -4,7 +4,7 @@
 import { PluginRegistry } from 'phovea_core';
 import * as d3 from 'd3';
 import { AppConstants } from './AppConstants';
-import { EventHandler } from 'phovea_core';
+import { GlobalEventHandler } from 'phovea_core';
 /**
  * The main class for the TACO app
  */
@@ -80,7 +80,7 @@ export class App {
     }
     attachListener() {
         window.addEventListener('resize', () => {
-            EventHandler.getInstance().fire(AppConstants.EVENT_RESIZE);
+            GlobalEventHandler.getInstance().fire(AppConstants.EVENT_RESIZE);
         });
     }
     /**

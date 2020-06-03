@@ -4,7 +4,7 @@
 
 import * as d3 from 'd3';
 import * as $ from 'jquery';
-import {EventHandler} from 'phovea_core';
+import {GlobalEventHandler} from 'phovea_core';
 import {AppConstants} from '../app/AppConstants';
 import {IAppView} from '../app/App';
 import {TimePointUtils} from './TimePointUtils';
@@ -57,11 +57,11 @@ class Timeline implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items:ITacoTimePoint[]) => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, (evt, items:ITacoTimePoint[]) => {
      this.updateItems(items);
     });
 
-    EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, timePoints:ITacoTimePoint[]) => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, timePoints:ITacoTimePoint[]) => {
       // remove all highlights first
       if(timePoints.length === 1) {
          this.$svgTimeline.selectAll('text').classed('active', false);
@@ -72,14 +72,14 @@ class Timeline implements IAppView {
         .forEach((d) => d.classed('active', true)); // add .active class
     });
 
-    EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINT_HOVERED, (evt, timePointDate:Date, isActive:boolean) => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_TIME_POINT_HOVERED, (evt, timePointDate:Date, isActive:boolean) => {
       this.$svgTimeline.selectAll('text')[0] // the list is in the first element
         .map((d) => d3.select(d)) // convert to d3
         .filter((d) => timePointDate.getTime() === d.datum().getTime()) // check if datum is selected
         .forEach((d) => d.classed('hovered', isActive)); // add .active class
     });
 
-    EventHandler.getInstance().on(AppConstants.EVENT_RESIZE, () => this.resize());
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_RESIZE, () => this.resize());
   }
 
   /**
@@ -132,10 +132,10 @@ class Timeline implements IAppView {
     // Append the circles and add the mouseover and click listeners
     $xAxis.selectAll('.tick text')
       .on('mouseenter', (date:Date) => {
-        EventHandler.getInstance().fire(AppConstants.EVENT_TIME_POINT_HOVERED, date, true);
+        GlobalEventHandler.getInstance().fire(AppConstants.EVENT_TIME_POINT_HOVERED, date, true);
       })
       .on('mouseleave', (date:Date) => {
-        EventHandler.getInstance().fire(AppConstants.EVENT_TIME_POINT_HOVERED, date, false);
+        GlobalEventHandler.getInstance().fire(AppConstants.EVENT_TIME_POINT_HOVERED, date, false);
       })
       .on('click', function (date:Date) {
         const found = that.items.filter((item) => item.time.isSame(date, item.timeFormat.momentIsSame));

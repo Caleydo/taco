@@ -3,7 +3,7 @@
  */
 import * as d3 from 'd3';
 import * as $ from 'jquery';
-import { EventHandler, PluginRegistry } from 'phovea_core';
+import { GlobalEventHandler, PluginRegistry } from 'phovea_core';
 import { AppConstants } from '../app/AppConstants';
 import { Language } from '../app/Language';
 /**
@@ -36,11 +36,11 @@ class MetaInfoBox {
      */
     attachListener() {
         // Call the resize function whenever a resize event occurs
-        EventHandler.getInstance().on(AppConstants.EVENT_RESIZE, () => this.resize());
-        EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_RESIZE, () => this.resize());
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
             this.clearContent();
         });
-        EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items) => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items) => {
             if (items.length === 2) {
                 this.updateItems(items);
             }
@@ -48,7 +48,7 @@ class MetaInfoBox {
                 this.clearContent();
             }
         });
-        EventHandler.getInstance().on(AppConstants.EVENT_DATASET_SELECTED, (evt, items) => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_DATASET_SELECTED, (evt, items) => {
             this.clearContent();
         });
     }

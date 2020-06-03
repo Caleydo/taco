@@ -2,7 +2,7 @@
  * Created by Holger Stitz on 19.12.2016.
  */
 
-import {EventHandler} from 'phovea_core';
+import {GlobalEventHandler} from 'phovea_core';
 import {AppConstants, ChangeTypes} from '../app/AppConstants';
 import {IAppView} from '../app/App';
 import * as d3 from 'd3';
@@ -65,7 +65,7 @@ class FilterBar implements IAppView {
 
         if (button.classed('active')) {
           selectedType.isActive = false;
-          EventHandler.getInstance().fire(AppConstants.EVENT_HIDE_CHANGE, selectedType);
+          GlobalEventHandler.getInstance().fire(AppConstants.EVENT_HIDE_CHANGE, selectedType);
           ChangeTypes.updateFilterHash();
           button
             .classed('active', false)
@@ -73,7 +73,7 @@ class FilterBar implements IAppView {
 
         } else {
           selectedType.isActive = true;
-          EventHandler.getInstance().fire(AppConstants.EVENT_SHOW_CHANGE, selectedType);
+          GlobalEventHandler.getInstance().fire(AppConstants.EVENT_SHOW_CHANGE, selectedType);
           ChangeTypes.updateFilterHash();
           button
             .classed('active', true)

@@ -3,7 +3,7 @@
  */
 import * as d3 from 'd3';
 import * as $ from 'jquery';
-import {EventHandler, PluginRegistry} from 'phovea_core';
+import {GlobalEventHandler, PluginRegistry} from 'phovea_core';
 import {AppConstants} from '../app/AppConstants';
 import {IAppView} from '../app/App';
 import {ITacoTimePoint} from './interfaces';
@@ -49,13 +49,13 @@ class MetaInfoBox implements IAppView {
    */
   private attachListener() {
     // Call the resize function whenever a resize event occurs
-    EventHandler.getInstance().on(AppConstants.EVENT_RESIZE, () => this.resize());
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_RESIZE, () => this.resize());
 
-    EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
       this.clearContent();
     });
 
-    EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items: ITacoTimePoint[]) => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items: ITacoTimePoint[]) => {
       if (items.length === 2) {
         this.updateItems(items);
       } else {
@@ -63,7 +63,7 @@ class MetaInfoBox implements IAppView {
       }
     });
 
-    EventHandler.getInstance().on(AppConstants.EVENT_DATASET_SELECTED, (evt, items: ITacoTimePoint[]) => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_DATASET_SELECTED, (evt, items: ITacoTimePoint[]) => {
       this.clearContent();
     });
   }

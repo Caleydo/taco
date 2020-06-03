@@ -4,7 +4,7 @@
 
 import {IAppView} from '../app/App';
 import * as d3 from 'd3';
-import {EventHandler} from 'phovea_core';
+import {GlobalEventHandler} from 'phovea_core';
 import {Ajax} from 'phovea_core';
 import {AppConstants} from '../app/AppConstants';
 import {AppContext} from 'phovea_core';
@@ -47,27 +47,27 @@ class DetailView implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
       this.$node.select('button').attr('disabled', 'disabled').classed('loading', false);
     });
 
-    EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items: ITacoTimePoint[]) => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items: ITacoTimePoint[]) => {
       this.openEvents(items);
     });
 
-    EventHandler.getInstance().on(AppConstants.EVENT_OPEN_DETAIL_VIEW, (evt, items: ITacoTimePoint[]) => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_OPEN_DETAIL_VIEW, (evt, items: ITacoTimePoint[]) => {
       this.loadDetailView(items);
     });
 
     let heatmapsLoaded = 0;
-    EventHandler.getInstance().on(AppConstants.EVENT_HEATMAP_LOADED, () => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_HEATMAP_LOADED, () => {
       heatmapsLoaded++;
       if (heatmapsLoaded === 3) {
         this.$node.select('button').classed('loading', false);
         heatmapsLoaded = 0;
       }
     });
-    EventHandler.getInstance().on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, () => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_DIFF_HEATMAP_LOADED, () => {
       heatmapsLoaded++;
       if (heatmapsLoaded === 3) {
         this.$node.select('button').classed('loading', false);
@@ -95,7 +95,7 @@ class DetailView implements IAppView {
 
     AppContext.getInstance().hash.setInt(AppConstants.HASH_PROPS.DETAIL_VIEW, 1);
 
-    EventHandler.getInstance().fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, selection.map((d) => d.item));
+    GlobalEventHandler.getInstance().fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, selection.map((d) => d.item));
 
     const loadStratIds = (stratName: string) => {
       return Ajax.getData(stratName)
@@ -120,12 +120,12 @@ class DetailView implements IAppView {
 
     clusterMatrix(selection[0].item, selection[0].rowStratId, selection[0].colStratId)
       .then((matrix) => {
-        EventHandler.getInstance().fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, matrix);
+        GlobalEventHandler.getInstance().fire(AppConstants.EVENT_DATASET_SELECTED_LEFT, matrix);
       });
 
     clusterMatrix(selection[1].item, selection[1].rowStratId, selection[1].colStratId)
       .then((matrix) => {
-        EventHandler.getInstance().fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, matrix);
+        GlobalEventHandler.getInstance().fire(AppConstants.EVENT_DATASET_SELECTED_RIGHT, matrix);
       });
 
     this.$node.select('button').attr('disabled', 'disabled').classed('loading', true);

@@ -4,7 +4,7 @@
 
 import {IAppView} from '../app/App';
 import * as d3 from 'd3';
-import {EventHandler} from 'phovea_core';
+import {GlobalEventHandler} from 'phovea_core';
 import {AppContext} from 'phovea_core';
 import {SelectionUtils, ProductIDType} from 'phovea_core';
 import {Range} from 'phovea_core';
@@ -158,11 +158,11 @@ class DiffHeatMap implements IAppView {
    * Attach event handler for broadcasted events
    */
   private attachListener() {
-    EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
       this.clearContent();
     });
 
-    EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, () => {
       this.clearContent();
     });
 
@@ -174,7 +174,7 @@ class DiffHeatMap implements IAppView {
     });
 
     //attach event listener
-    EventHandler.getInstance().on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items: INumericalMatrix[]) => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_OPEN_DIFF_HEATMAP, (evt, items: INumericalMatrix[]) => {
       if (items.length !== 2) {
         return;
       }
@@ -198,21 +198,21 @@ class DiffHeatMap implements IAppView {
             idType.on(ProductIDType.EVENT_SELECT_PRODUCT, this.selectionListener);
           }
           this.drawDiffHeatmap(this.data);
-          EventHandler.getInstance().fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
+          GlobalEventHandler.getInstance().fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
         });
     });
 
-    EventHandler.getInstance().on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
-    EventHandler.getInstance().on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType: IChangeType) => this.toggleChangeType(changeType));
 
-    EventHandler.getInstance().on(AppConstants.EVENT_RESIZE, () => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_RESIZE, () => {
       if (this.data) {
         this.drawDiffHeatmap(this.data);
-        EventHandler.getInstance().fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
+        GlobalEventHandler.getInstance().fire(AppConstants.EVENT_DIFF_HEATMAP_LOADED, this.selectedTables, this.data, this.scaleFactor);
       }
     });
 
-    EventHandler.getInstance().on(AppConstants.EVENT_FOCUS_ON_REORDER, (evt, isActive: boolean) => {
+    GlobalEventHandler.getInstance().on(AppConstants.EVENT_FOCUS_ON_REORDER, (evt, isActive: boolean) => {
       this.$node.classed('focusOnReorder', isActive);
     });
   }

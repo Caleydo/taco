@@ -1,7 +1,7 @@
 /**
  * Created by Holger Stitz on 29.11.2016.
  */
-import { EventHandler } from 'phovea_core';
+import { GlobalEventHandler } from 'phovea_core';
 import { AppContext } from 'phovea_core';
 import { AppConstants, ChangeTypes } from '../app/AppConstants';
 import * as d3 from 'd3';
@@ -88,10 +88,10 @@ class Histogram2D {
      * Attach event handler for broadcasted events
      */
     attachListener() {
-        EventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_DATA_COLLECTION_SELECTED, () => {
             this.clearContent();
         });
-        EventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items) => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_TIME_POINTS_SELECTED, (evt, items) => {
             if (items.length === 2) {
                 this.updateItems(items);
             }
@@ -99,13 +99,13 @@ class Histogram2D {
                 this.clearContent();
             }
         });
-        EventHandler.getInstance().on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType) => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_SHOW_CHANGE, (evt, changeType) => {
             if (this.ratioData) {
                 this.show2DRatio(this.ratioData);
                 this.scaleHistogramWidth(); // just rescale the height of the bars
             }
         });
-        EventHandler.getInstance().on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType) => {
+        GlobalEventHandler.getInstance().on(AppConstants.EVENT_HIDE_CHANGE, (evt, changeType) => {
             if (this.ratioData) {
                 this.show2DRatio(this.ratioData);
                 this.scaleHistogramWidth(); // just rescale the height of the bars

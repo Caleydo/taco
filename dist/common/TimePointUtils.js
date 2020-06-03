@@ -3,7 +3,7 @@
  */
 import * as moment from 'moment';
 import * as d3 from 'd3';
-import { EventHandler } from 'phovea_core';
+import { GlobalEventHandler } from 'phovea_core';
 import { AppConstants } from '../app/AppConstants';
 import { AppContext } from 'phovea_core';
 export class TimePointUtils {
@@ -34,7 +34,7 @@ export class TimePointUtils {
         TimePointUtils.selectedTimePoints = TimePointUtils.selectedTimePoints.sort((a, b) => d3.ascending(a.time.toISOString(), b.time.toISOString()));
         AppContext.getInstance().hash.setProp(AppConstants.HASH_PROPS.TIME_POINTS, TimePointUtils.selectedTimePoints.map((d) => d.key).join(','));
         AppContext.getInstance().hash.removeProp(AppConstants.HASH_PROPS.DETAIL_VIEW);
-        EventHandler.getInstance().fire(AppConstants.EVENT_TIME_POINTS_SELECTED, TimePointUtils.selectedTimePoints);
+        GlobalEventHandler.getInstance().fire(AppConstants.EVENT_TIME_POINTS_SELECTED, TimePointUtils.selectedTimePoints);
         // clear after 2 selected time points
         if (TimePointUtils.selectedTimePoints.length === 2) {
             TimePointUtils.selectedTimePoints = [];
@@ -54,7 +54,7 @@ export class TimePointUtils {
         TimePointUtils.selectTimePoint(...selectedTimePoints);
         if (selectedTimePoints.length === 2 && showDetailView === 1) {
             AppContext.getInstance().hash.setInt(AppConstants.HASH_PROPS.DETAIL_VIEW, showDetailView);
-            EventHandler.getInstance().fire(AppConstants.EVENT_OPEN_DETAIL_VIEW, selectedTimePoints);
+            GlobalEventHandler.getInstance().fire(AppConstants.EVENT_OPEN_DETAIL_VIEW, selectedTimePoints);
         }
         else {
             AppContext.getInstance().hash.removeProp(AppConstants.HASH_PROPS.DETAIL_VIEW);
