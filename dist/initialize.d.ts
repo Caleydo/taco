@@ -6,4 +6,4 @@ import 'file-loader?name=404.html!./404.html';
 import 'file-loader?name=robots.txt!./robots.txt';
 import 'phovea_ui/src/_bootstrap';
 import 'phovea_ui/src/_font-awesome';
-import '../scss/style.scss';
+import '../scss/main.scss';

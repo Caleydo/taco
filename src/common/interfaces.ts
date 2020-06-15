@@ -1,6 +1,7 @@
 import {INumericalMatrix} from 'phovea_core';
 import {Moment} from 'moment';
 import * as moment from 'moment';
+import * as d3 from 'd3';
 import Format = d3.time.Format;
 
 export interface ITacoDataset {
