@@ -9,7 +9,7 @@ import { Language } from '../app/Language';
 /**
  * Shows a timeline with all available data points for a selected data set
  */
-class MetaInfoBox {
+export class MetaInfoBox {
     /**
      * @param parent element on which the infobox element is created
      * @param options optional options for the infobox element

@@ -14,7 +14,7 @@ import {BaseUtils} from 'phovea_core';
 /**
  * Shows a simple heat map for a given data set.
  */
-class HeatMap implements IAppView {
+export class HeatMap implements IAppView {
 
   private $node: d3.Selection<any>;
 

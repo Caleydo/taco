@@ -15,7 +15,7 @@ import {ITacoTimePoint} from '../common/interfaces';
  * This class adds a bar chart, that shows bars with click functionality,
  * in order to show further context.
  */
-class BarChart implements IAppView {
+export class BarChart implements IAppView {
 
   private $node: d3.Selection<any>;
   private items: ITacoTimePoint[];

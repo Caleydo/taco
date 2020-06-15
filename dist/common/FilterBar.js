@@ -7,7 +7,7 @@ import * as d3 from 'd3';
 /**
  * Shows a bar with buttons to filter other views
  */
-class FilterBar {
+export class FilterBar {
     constructor(parent, options) {
         this.options = options;
         this.$node = d3.select('.navbar-header')

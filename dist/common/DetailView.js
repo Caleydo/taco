@@ -8,7 +8,7 @@ import { AppConstants } from '../app/AppConstants';
 import { AppContext } from 'phovea_core';
 import { Language } from '../app/Language';
 import { Range } from 'phovea_core';
-class DetailView {
+export class DetailView {
     constructor(parent, options) {
         this.parent = parent;
         this.options = options;

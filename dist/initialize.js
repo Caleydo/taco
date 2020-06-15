@@ -8,9 +8,9 @@ import 'phovea_ui/src/_bootstrap';
 import 'phovea_ui/src/_font-awesome';
 import '../scss/style.scss';
 import { I18nextManager } from 'phovea_core';
-import { App } from './App';
+import { App } from './app/App';
 import { AppHeader, AppHeaderLink } from 'phovea_ui';
-import { Language } from './Language';
+import { Language } from './app/Language';
 I18nextManager.getInstance().initI18n().then(() => {
     AppHeader.create(document.querySelector('#caleydoHeader'), {
         appLink: new AppHeaderLink(Language.APP_NAME, (evt) => {
@@ -22,4 +22,4 @@ I18nextManager.getInstance().initI18n().then(() => {
     const parent = document.querySelector('#app');
     App.create(parent).init();
 });
-//# sourceMappingURL=init.js.map
+//# sourceMappingURL=initialize.js.map

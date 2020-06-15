@@ -12,7 +12,7 @@ import {Language} from '../app/Language';
 /**
  * Shows a timeline with all available data points for a selected data set
  */
-class MetaInfoBox implements IAppView {
+export class MetaInfoBox implements IAppView {
 
   private $node: d3.Selection<any>;
   private $leftMetaBox: d3.Selection<any>;

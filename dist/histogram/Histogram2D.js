@@ -8,7 +8,7 @@ import * as d3 from 'd3';
 /**
  * Shows a 2D ratio chart and histograms for row and column direction
  */
-class Histogram2D {
+export class Histogram2D {
     constructor(parent, options) {
         this.options = options;
         this.borderWidth = 2;

@@ -10,9 +10,9 @@ import 'phovea_ui/src/_font-awesome';
 import '../scss/style.scss';
 import {I18nextManager} from 'phovea_core';
 
-import {App} from './App';
+import {App} from './app/App';
 import {AppHeader, AppHeaderLink} from 'phovea_ui';
-import {Language} from './Language';
+import {Language} from './app/Language';
 
 I18nextManager.getInstance().initI18n().then(() => {
   AppHeader.create(

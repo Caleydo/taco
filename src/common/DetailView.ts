@@ -13,7 +13,7 @@ import {Language} from '../app/Language';
 import {INumericalMatrix} from 'phovea_core';
 import {Range} from 'phovea_core';
 
-class DetailView implements IAppView {
+export class DetailView implements IAppView {
 
   private $node: d3.Selection<any>;
 

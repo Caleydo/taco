@@ -35,7 +35,7 @@ interface IReorderChange {
   to: number;
 }
 
-class ReorderView implements IAppView {
+export class ReorderView implements IAppView {
 
   private $node: d3.Selection<any>;
   private $srcSlopes: d3.Selection<any>;

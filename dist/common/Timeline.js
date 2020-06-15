@@ -9,7 +9,7 @@ import { TimePointUtils } from './TimePointUtils';
 /**
  * Shows a timeline with all available data points for a selected data set
  */
-class Timeline {
+export class Timeline {
     /**
      * Constructor method for the Timeline class which creates the timeline on the given parent element.
      * Including eventual options if supplied.

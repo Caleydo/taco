@@ -10,7 +10,7 @@ import * as d3 from 'd3';
 /**
  * Shows a bar with buttons to filter other views
  */
-class FilterBar implements IAppView {
+export class FilterBar implements IAppView {
 
   private $node;
 

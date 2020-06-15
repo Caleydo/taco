@@ -14,7 +14,7 @@ import 'jquery-ui/themes/base/all.css'; // import base style for all widgets
 /**
  * Shows a simple heat map for a given data set.
  */
-class DiffHeatMap {
+export class DiffHeatMap {
     constructor(parent, options) {
         this.parent = parent;
         this.options = options;

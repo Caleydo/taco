@@ -76,7 +76,7 @@
     },
     "app": "taco",
     "entries": {
-      "app": "./src/index.ts"
+      "app": "./taco/dist/initialize.ts"
     },
     "libraryAliases": {
       "d3": "d3/d3"

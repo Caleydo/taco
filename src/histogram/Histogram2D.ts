@@ -148,7 +148,7 @@ interface IHistogramBarData {
 /**
  * Shows a 2D ratio chart and histograms for row and column direction
  */
-class Histogram2D implements IAppView {
+export class Histogram2D implements IAppView {
 
   private $node: d3.Selection<any>;
   private $ratio: d3.Selection<any>;

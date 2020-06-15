@@ -1,11 +1,10 @@
 /**
  * Created by Holger Stitz on 19.12.2016.
  */
-import * as d3 from 'd3';
 import { ITacoTimePoint } from './interfaces';
 export declare class TimePointUtils {
     static getTotalWidth(items: ITacoTimePoint[], itemWidth: number, totalWidth: number): number;
-    static getTimeScale(items: ITacoTimePoint[], totalWidth: number, padding?: number): d3.time.Scale<number, number>;
+    static getTimeScale(items: ITacoTimePoint[], totalWidth: number, padding?: number): any;
     static selectedTimePoints: ITacoTimePoint[];
     /**
      * Stores a selected time point and sends an event with all stored time points

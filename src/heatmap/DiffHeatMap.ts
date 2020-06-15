@@ -87,7 +87,7 @@ export interface IDiffReorderChange {
 /**
  * Shows a simple heat map for a given data set.
  */
-class DiffHeatMap implements IAppView {
+export class DiffHeatMap implements IAppView {
 
   //main div
   private $node: d3.Selection<any>;

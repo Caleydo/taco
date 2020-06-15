@@ -132,7 +132,7 @@ class DataProvider {
  * Shows a list of available datasets and lets the user choose one.
  * The selection is broadcasted as event throughout the application.
  */
-class DataSetSelector implements IAppView {
+export class DataSetSelector implements IAppView {
 
   private $node;
   private $select;

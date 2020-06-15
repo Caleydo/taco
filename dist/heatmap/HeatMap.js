@@ -9,7 +9,7 @@ import { BaseUtils } from 'phovea_core';
 /**
  * Shows a simple heat map for a given data set.
  */
-class HeatMap {
+export class HeatMap {
     constructor(parent, options) {
         this.options = options;
         this.heatMapOptions = {

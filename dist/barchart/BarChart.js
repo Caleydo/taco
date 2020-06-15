@@ -11,7 +11,7 @@ import { TimePointUtils } from '../common/TimePointUtils';
  * This class adds a bar chart, that shows bars with click functionality,
  * in order to show further context.
  */
-class BarChart {
+export class BarChart {
     /**
      * Constructor method for the BarChart class which creates the bar chart on the given parent element.
      * Including eventual options if supplied.

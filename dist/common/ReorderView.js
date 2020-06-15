@@ -11,7 +11,7 @@ export var EOrientation;
     EOrientation[EOrientation["COLUMN"] = 0] = "COLUMN";
     EOrientation[EOrientation["ROW"] = 1] = "ROW";
 })(EOrientation || (EOrientation = {}));
-class ReorderView {
+export class ReorderView {
     constructor(parent, options) {
         this.parent = parent;
         this.options = {

@@ -13,7 +13,7 @@ import {ITacoTimePoint} from './interfaces';
 /**
  * Shows a timeline with all available data points for a selected data set
  */
-class Timeline implements IAppView {
+export class Timeline implements IAppView {
 
   private $node:d3.Selection<any>;
   private $svgTimeline:d3.Selection<any>;

@@ -107,7 +107,7 @@ class DataProvider {
  * Shows a list of available datasets and lets the user choose one.
  * The selection is broadcasted as event throughout the application.
  */
-class DataSetSelector {
+export class DataSetSelector {
     constructor(parent, options) {
         this.options = options;
         this.trackedSelections = null;
