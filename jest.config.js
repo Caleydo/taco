@@ -36,9 +36,11 @@ module.exports = {
   globals: {
     "__VERSION__": "TEST_VERSION",
     "__APP_CONTEXT__": "TEST_CONTEXT",
-    // has to be set to true, otherwise i18n import fails
-    "tsConfig": {
-      "esModuleInterop": true
+    "ts-jest": {
+      // has to be set to true, otherwise i18n import fails
+      "tsConfig": {
+        "esModuleInterop": true,
+      }
     }
   },
   moduleNameMapper: {
