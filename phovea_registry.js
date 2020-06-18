@@ -4,7 +4,7 @@
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
 
-import {register} from 'phovea_core';
+import {PluginRegistry} from 'phovea_core';
 import reg from './dist/phovea';
 
 /**
@@ -16,4 +16,4 @@ import 'phovea_d3/phovea_registry.js';
 import 'phovea_vis/phovea_registry.js';
 import 'phovea_ui/phovea_registry.js';
 //self
-register('taco',reg);
+PluginRegistry.getInstance().register('taco',reg);
