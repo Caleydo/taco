@@ -19,7 +19,7 @@ module.exports = function (registry) {
     registry.push('tacoView', 'DetailView', function () { return import('./common/DetailView').then((d) => d.DetailView); }, {
         'name': 'DetailView'
     });
-    registry.push('tacoView', 'HeatMap', function () { return import('./heatmap/TacoHeatMap'); }, {
+    registry.push('tacoView', 'HeatMap', function () { return import('./heatmap/TacoHeatMap').then((t) => t.TacoHeatMap); }, {
         'name': 'Heat Map'
     });
     registry.push('tacoView', 'DiffHeatMap', function () { return import('./heatmap/DiffHeatMap').then((d) => d.DiffHeatMap); }, {

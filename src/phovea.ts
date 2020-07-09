@@ -24,7 +24,7 @@ module.exports = function(registry) {
     'name': 'DetailView'
   });
 
-  registry.push('tacoView', 'HeatMap', function() { return import('./heatmap/TacoHeatMap'); }, {
+  registry.push('tacoView', 'HeatMap', function() { return import('./heatmap/TacoHeatMap').then((t) => t.TacoHeatMap); }, {
     'name': 'Heat Map'
   });
 
