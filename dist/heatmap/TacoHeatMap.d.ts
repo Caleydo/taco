@@ -5,7 +5,7 @@ import { IAppView } from '../app/App';
 /**
  * Shows a simple heat map for a given data set.
  */
-export declare class HeatMap implements IAppView {
+export declare class TacoHeatMap implements IAppView {
     private options;
     private $node;
     private matrix;
@@ -48,7 +48,7 @@ export declare class HeatMap implements IAppView {
      * Factory method to create a new HeatMap instance
      * @param parent
      * @param options
-     * @returns {HeatMap}
+     * @returns {TacoHeatMap}
      */
-    static create(parent: Element, options: any): HeatMap;
+    static create(parent: Element, options: any): TacoHeatMap;
 }

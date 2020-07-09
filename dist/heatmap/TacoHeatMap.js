@@ -9,7 +9,7 @@ import { BaseUtils } from 'phovea_core';
 /**
  * Shows a simple heat map for a given data set.
  */
-export class HeatMap {
+export class TacoHeatMap {
     constructor(parent, options) {
         this.options = options;
         this.heatMapOptions = {
@@ -76,7 +76,7 @@ export class HeatMap {
             console.warn(`Heat map visualization plugin not found`);
             return;
         }
-        const showLabels = HeatMap.chooseLabel(dataset.nrow, dataset.ncol);
+        const showLabels = TacoHeatMap.chooseLabel(dataset.nrow, dataset.ncol);
         const scale = [this.heatMapOptions.initialScale * scaleFactor.x, this.heatMapOptions.initialScale * scaleFactor.y];
         switch (showLabels) {
             case 'CELL':
@@ -143,10 +143,10 @@ export class HeatMap {
      * Factory method to create a new HeatMap instance
      * @param parent
      * @param options
-     * @returns {HeatMap}
+     * @returns {TacoHeatMap}
      */
     static create(parent, options) {
-        return new HeatMap(parent, options);
+        return new TacoHeatMap(parent, options);
     }
 }
-//# sourceMappingURL=HeatMap.js.map
+//# sourceMappingURL=TacoHeatMap.js.map

@@ -1,3 +1,3 @@
 export * from './DiffHeatMap';
-export * from './HeatMap';
+export * from './TacoHeatMap';
 //# sourceMappingURL=index.js.map
