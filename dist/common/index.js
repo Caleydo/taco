@@ -1,3 +1,4 @@
+export * from './interfaces';
 export * from './TimePointUtils';
 export * from './Timeline';
 export * from './DataSetSelector';

@@ -15,7 +15,8 @@
     "skipLibCheck": true,
     "esModuleInterop": false,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "preserveWatchOutput": true
   },
   "include": [
     "src/**/*.ts",
