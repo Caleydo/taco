@@ -30,6 +30,7 @@
   },
   "scripts": {
     "clean": "rimraf lib dist",
+    "delete-dependencies": "rimraf node_modules",
     "compile": "tsc",
     "compile:watch": "tsc -w",
     "postcompile": "npm run copy",
@@ -68,9 +69,9 @@
   "dependencies": {
     "jquery-ui": "1.12.1",
     "moment": "~2.24.0",
-    "phovea_core": "github:phovea/phovea_core#asteiner/refactoring",
-    "phovea_d3": "github:phovea/phovea_d3#vstoiber/refactoring",
-    "phovea_ui": "github:phovea/phovea_ui#vstoiber/refactoring",
-    "phovea_vis": "github:phovea/phovea_vis#vstoiber/refactoring"
+    "phovea_core": "github:phovea/phovea_core#develop",
+    "phovea_d3": "github:phovea/phovea_d3#develop",
+    "phovea_ui": "github:phovea/phovea_ui#develop",
+    "phovea_vis": "github:phovea/phovea_vis#develop"
   }
 }
