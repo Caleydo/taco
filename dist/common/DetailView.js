@@ -2,12 +2,9 @@
  * Created by cniederer on 20.01.17.
  */
 import * as d3 from 'd3';
-import { GlobalEventHandler } from 'phovea_core';
-import { Ajax } from 'phovea_core';
+import { GlobalEventHandler, DataCache, AppContext, Range } from 'phovea_core';
 import { AppConstants } from '../app/AppConstants';
-import { AppContext } from 'phovea_core';
 import { Language } from '../app/Language';
-import { Range } from 'phovea_core';
 export class DetailView {
     constructor(parent, options) {
         this.parent = parent;
@@ -80,7 +77,7 @@ export class DetailView {
         AppContext.getInstance().hash.setInt(AppConstants.HASH_PROPS.DETAIL_VIEW, 1);
         GlobalEventHandler.getInstance().fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, selection.map((d) => d.item));
         const loadStratIds = (stratName) => {
-            return Ajax.getData(stratName)
+            return DataCache.getInstance().get(stratName)
                 .then((s) => s.ids())
                 .catch(() => Range.all());
         };

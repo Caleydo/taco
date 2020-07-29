@@ -2,16 +2,12 @@
  * Created by cniederer on 20.01.17.
  */
 
-import {IAppView} from '../app/App';
 import * as d3 from 'd3';
-import {GlobalEventHandler} from 'phovea_core';
-import {Ajax} from 'phovea_core';
+import {GlobalEventHandler, DataCache, AppContext, INumericalMatrix, Range} from 'phovea_core';
+import {IAppView} from '../app/App';
 import {AppConstants} from '../app/AppConstants';
-import {AppContext} from 'phovea_core';
-import {ITacoTimePoint} from './interfaces';
 import {Language} from '../app/Language';
-import {INumericalMatrix} from 'phovea_core';
-import {Range} from 'phovea_core';
+import {ITacoTimePoint} from './interfaces';
 
 export class DetailView implements IAppView {
 
@@ -98,7 +94,7 @@ export class DetailView implements IAppView {
     GlobalEventHandler.getInstance().fire(AppConstants.EVENT_OPEN_DIFF_HEATMAP, selection.map((d) => d.item));
 
     const loadStratIds = (stratName: string) => {
-      return Ajax.getData(stratName)
+      return DataCache.getInstance().get(stratName)
         .then((s) => s.ids())
         .catch(() => Range.all());
     };
