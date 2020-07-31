@@ -75,18 +75,27 @@
       "redhatPackages": []
     },
     "app": "taco",
+    "vendors": {
+      "others": "phovea.*|tdp_.*|tdp-.*|datavisyn.*",
+      "phovea": "phovea.*",
+      "tdp": "tdp_.|tdp-.*",
+      "dv": "datavisyn.*"
+    },
+    "filesToLoad": {
+      "file-loader": "404|robots"
+    },
     "entries": {
-      "app": "./src/index.ts"
+      "app": {
+        "js": "dist/initialize.js",
+        "template": "dist/index.template.ejs",
+        "html": "index.html",
+        "chunkName": "app"
+      }
     },
     "libraryAliases": {
-      "d3": "d3/d3"
+      "d3": "d3/d3.js"
     },
-    "libraryExternals": [
-      "moment",
-      "d3",
-      "jquery",
-      "font-awesome"
-    ],
+    "libraryExternals": [],
     "ignores": [],
     "today": "Tue, 08 Nov 2016 08:57:09 GMT",
     "clientOnly": false,
