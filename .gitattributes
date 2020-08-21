@@ -125,3 +125,10 @@ AUTHORS text
 # with the python modules ``pickle``, ``dbm.*``,
 # ``shelve``, ``marshal``, ``anydbm``, & ``bsddb``
 # (among others).
+
+
+# Mark compiled files as generated to hide them in PRs
+/dist/** linguist-generated=true
+
+# Hide compiled files from git diff and auto-replace them when merging different branches
+/dist/** -diff -merge
