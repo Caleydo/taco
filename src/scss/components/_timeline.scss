@@ -1,0 +1,22 @@
+
+.timeline {
+  text {
+    cursor: pointer;
+
+    &.hovered {
+      fill: $hover-color;
+    }
+
+    &.active {
+      fill: $select-color;
+      font-weight: 500;
+    }
+  }
+
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+  }
+}

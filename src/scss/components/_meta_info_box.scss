@@ -1,0 +1,61 @@
+
+.meta_info_box {
+  margin: 20px 0 100px;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  align-content: stretch;
+  justify-content: space-around;
+
+  & > div {
+    width: 33%;
+  }
+
+  .leftMetaBox > div,
+  .rightMetaBox > div {
+    border-radius: 5px;
+    background: $gentle-color;
+    border: 1px solid $gentle-color;
+    padding: 0 10px 0 10px;
+    text-align: center;
+
+    // show placeholder text if boxes are empty
+    &:empty {
+      display: flex;
+      align-items: center;
+
+      &:before {
+        content: 'Select two time points on the timeline to get more information.';
+        text-align: center;
+      }
+    }
+
+    dl {
+      margin: 0;
+    }
+
+    dt {
+      margin-top: 5px;
+    }
+  }
+
+  .leftMetaBox {
+    display: flex;
+    justify-content: flex-end;
+    order: 1;
+  }
+
+  .histogram_2d {
+    order: 2;
+    width: calc(33% + 100px);
+    //text-align: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  .rightMetaBox {
+    display: flex;
+    justify-content: flex-start;
+    order: 3;
+  }
+}
