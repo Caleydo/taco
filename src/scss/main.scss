@@ -1,21 +1,25 @@
 /**
- * Basic variables and layout
+ * Basic variables
  */
-@import 'vars';
-@import 'base';
-@import 'layout';
-@import 'change-types';
+@import './abstracts/variables';
+
+/**
+ * Basic layout
+ */
+@import './base/base';
+@import './base/layout';
+@import './base/change-types';
 
 /**
  * Styles for the different visualizations
  */
-@import 'data_selector';
-@import 'filter_bar';
-@import 'bar_chart';
-@import 'timeline';
-@import 'meta_info_box';
-@import 'histogram_2d';
-@import 'detail_view';
-@import 'reorder_view';
-@import 'diff_heat_map';
-@import 'heat_map';
+@import './components/data_selector';
+@import './components/filter_bar';
+@import './components/bar_chart';
+@import './components/timeline';
+@import './components/meta_info_box';
+@import './components/histogram_2d';
+@import './components/detail_view';
+@import './components/reorder_view';
+@import './components/diff_heat_map';
+@import './components/heat_map';
