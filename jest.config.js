@@ -38,7 +38,7 @@ module.exports = {
     "__APP_CONTEXT__": "TEST_CONTEXT",
     "ts-jest": {
       // has to be set to true, otherwise i18n import fails
-      "tsConfig": {
+      "tsconfig": {
         "esModuleInterop": true,
       }
     }
