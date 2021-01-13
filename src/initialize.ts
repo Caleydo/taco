@@ -2,8 +2,6 @@
  * Created by Holger Stitz on 25.08.2016.
  */
 
-import './404.html';
-import './robots.txt';
 import {I18nextManager} from 'phovea_core';
 
 import {App} from './app/App';
