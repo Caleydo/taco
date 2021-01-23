@@ -69,7 +69,7 @@
   "dependencies": {
     "jquery-ui": "1.12.1",
     "moment": "~2.29.1",
-    "phovea_ui": "github:phovea/phovea_ui#vstoiber/update_dependencies",
-    "phovea_vis": "github:phovea/phovea_vis#vstoiber/update_dependencies"
+    "phovea_ui": "github:phovea/phovea_ui#develop",
+    "phovea_vis": "github:phovea/phovea_vis#develop"
   }
 }
