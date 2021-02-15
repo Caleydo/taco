@@ -16,7 +16,9 @@
     "esModuleInterop": false,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "preserveWatchOutput": true
+    "preserveWatchOutput": true,
+    "incremental": true,
+    "tsBuildInfoFile": "dist/tsBuildInfoFile"
   },
   "include": [
     "src/**/*.ts",
