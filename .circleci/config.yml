@@ -1,9 +1,14 @@
-version: 2
-jobs:
-  build:
+version: 2.1
+
+executors:
+  node-executor:
     working_directory: ~/phovea
     docker:
       - image: circleci/node:12.13-buster-browsers
+
+jobs:
+  build:
+    executor: node-executor
     steps:
       - checkout
       - run:
@@ -22,8 +27,7 @@ jobs:
             (grep -l '._resolved.: .\(git[^:]*\|bitbucket\):' ./node_modules/*/package.json || true) | xargs -r dirname | xargs -r rm -rf
       - save_cache:
           key: deps1-{{ .Branch }}-{{ checksum "package.json" }}
-          paths:
-          - ./node_modules
+          paths: ./node_modules
       - run:
           name: Install npm dependencies from git repositories (always get latest commit)
           command: npm install
@@ -36,7 +40,7 @@ jobs:
       - store_artifacts:
           path: dist
 workflows:
-  version: 2
+  version: 2.1
 #  build-nightly:
 #    triggers:
 #      - schedule:
@@ -47,17 +51,9 @@ workflows:
 #                - develop
 #    jobs:
 #      - build
-  build-branch:
+  build-branches-and-tags:
     jobs:
       - build:
           filters:
             tags:
-              ignore: /^v.*/
-  build-tag:
-    jobs:
-      - build:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
+              only: /.*/
