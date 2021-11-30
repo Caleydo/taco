@@ -20,7 +20,8 @@ b,
   position: fixed;
   width: 100%;
   height: 100%;
-  background: $phovea-loading-icon-background;
+  background: rgba(255, 255, 255, 0.26) $phovea-loading-icon-url center center no-repeat;
+  background-attachment: fixed;
   z-index: 999;
   top: 0;
   bottom: 0;
